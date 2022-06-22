@@ -20,7 +20,7 @@ import static org.hamcrest.Matchers.equalTo;
 @TestPropertySource("/application-test.properties")
 @AutoConfigureMockMvc
 @SpringBootTest
-class DmpApplicationTests {
+class HelloControllerTest {
 
 	@Autowired
 	private MockMvc mockMvc;

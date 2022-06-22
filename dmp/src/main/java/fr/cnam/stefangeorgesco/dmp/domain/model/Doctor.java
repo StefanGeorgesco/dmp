@@ -2,6 +2,7 @@ package fr.cnam.stefangeorgesco.dmp.domain.model;
 
 import java.util.Collection;
 
+import javax.validation.Valid;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -29,11 +30,11 @@ public class Doctor {
 	String email;
 	
 	@NotNull(message = "address is mandatory")
-	Address address;
+	@Valid Address address;
 	
 	@NotNull(message = "specialties are mandatory")
 	@Size(min = 1, message = "doctor must have at least one specialty")
-	Collection<Specialty> specialties;
+	Collection<@Valid Specialty> specialties;
 	
 	String securityCode;
 

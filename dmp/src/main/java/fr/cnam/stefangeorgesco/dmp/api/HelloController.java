@@ -8,7 +8,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import fr.cnam.stefangeorgesco.dmp.authentication.domain.dto.UserDTO;
-import fr.cnam.stefangeorgesco.dmp.domain.model.Hello;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 
 @RestController
 public class HelloController {
@@ -37,4 +38,11 @@ public class HelloController {
 		throw new Exception("une erreur est survenue.");
 	}
 	
+	@Data
+	@AllArgsConstructor
+	private class Hello {
+		
+		private String message;
+		
+	}
 }

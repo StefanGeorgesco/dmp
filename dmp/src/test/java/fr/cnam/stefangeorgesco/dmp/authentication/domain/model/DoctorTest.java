@@ -26,6 +26,9 @@ public class DoctorTest {
 
 	private static Validator validator;
 	private Doctor doctor;
+	private Address address;
+	private List<Specialty> specialties;
+	private Specialty specialty;
 
 	@BeforeAll
 	public static void setupAll() {
@@ -35,14 +38,26 @@ public class DoctorTest {
 	@BeforeEach
 	public void setupEach() {
 		doctor = new Doctor();
+		
+		address = new Address();
+		address.setStreet1("street");
+		address.setCity("city");
+		address.setZipcode("zip");
+		address.setCountry("country");
+		
+		specialty = new Specialty();
+		specialty.setId("specialtyId");
+		specialty.setDescription("A specialty");
+		
+		specialties = new ArrayList<>();		
+		specialties.add(specialty);
+		
 		doctor.setId("id");
 		doctor.setFirstname("firstname");
 		doctor.setLastname("lastname");
 		doctor.setPhone("0123456789");
 		doctor.setEmail("doctor@doctors.com");
-		doctor.setAddress(new Address());
-		List<Specialty> specialties = new ArrayList<>();
-		specialties.add(new Specialty());
+		doctor.setAddress(address);
 		doctor.setSpecialties(specialties);
 	}
 	
@@ -207,6 +222,18 @@ public class DoctorTest {
 		
 		assertEquals(1, violations.size());
 		assertEquals("doctor must have at least one specialty", violations.iterator().next().getMessage());
+
+	}
+
+	@Test
+	public void doctorValidationAddressInvalidStreet1Null() {
+		
+		doctor.getAddress().setStreet1(null);
+		
+		Set<ConstraintViolation<Doctor>> violations = validator.validate(doctor);
+		
+		assertEquals(1, violations.size());
+		assertEquals("invalid street", violations.iterator().next().getMessage());
 
 	}
 
