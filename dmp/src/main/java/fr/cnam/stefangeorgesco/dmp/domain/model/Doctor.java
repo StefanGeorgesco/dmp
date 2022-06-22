@@ -8,6 +8,8 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import fr.cnam.stefangeorgesco.dmp.authentication.domain.model.User;
+import fr.cnam.stefangeorgesco.dmp.exception.domain.CheckException;
 import lombok.Data;
 
 @Data
@@ -37,5 +39,25 @@ public class Doctor {
 	Collection<@Valid Specialty> specialties;
 	
 	String securityCode;
+
+	public void checkUserData(User user) throws CheckException {
+		
+		if (user == null) {
+			throw new CheckException("tried to check null user");
+		}
+		
+		if (user.getId() == null) {
+			throw new CheckException("tried to check user with null id");
+		}
+		
+		if (user.getSecurityCode() == null) {
+			throw new CheckException("tried to check user with null security code");
+		}
+		
+		if (!user.getId().equals(this.id) || !user.getSecurityCode().equals(this.securityCode))  {
+			throw new CheckException("data did not match");
+		}
+		
+	}
 
 }

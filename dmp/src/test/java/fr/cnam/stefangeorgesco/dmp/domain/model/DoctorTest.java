@@ -1,6 +1,8 @@
 package fr.cnam.stefangeorgesco.dmp.domain.model;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +18,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestPropertySource;
 
+import fr.cnam.stefangeorgesco.dmp.authentication.domain.model.User;
+import fr.cnam.stefangeorgesco.dmp.exception.domain.CheckException;
+
 @TestPropertySource("/application-test.properties")
 @SpringBootTest
 public class DoctorTest {
@@ -25,6 +30,7 @@ public class DoctorTest {
 	private Address address;
 	private List<Specialty> specialties;
 	private Specialty specialty;
+	private User user;
 
 	@BeforeAll
 	public static void setupAll() {
@@ -33,14 +39,6 @@ public class DoctorTest {
 	
 	@BeforeEach
 	public void setupEach() {
-		doctor = new Doctor();
-		
-		address = new Address();
-		address.setStreet1("street");
-		address.setCity("city");
-		address.setZipcode("zip");
-		address.setCountry("country");
-		
 		specialty = new Specialty();
 		specialty.setId("specialtyId");
 		specialty.setDescription("A specialty");
@@ -48,6 +46,13 @@ public class DoctorTest {
 		specialties = new ArrayList<>();		
 		specialties.add(specialty);
 		
+		address = new Address();
+		address.setStreet1("street");
+		address.setCity("city");
+		address.setZipcode("zip");
+		address.setCountry("country");
+		
+		doctor = new Doctor();
 		doctor.setId("id");
 		doctor.setFirstname("firstname");
 		doctor.setLastname("lastname");
@@ -55,6 +60,12 @@ public class DoctorTest {
 		doctor.setEmail("doctor@doctors.com");
 		doctor.setAddress(address);
 		doctor.setSpecialties(specialties);
+		doctor.setSecurityCode("12345678");
+		
+		user = new User();
+		user.setId(doctor.getId());
+		user.setSecurityCode(doctor.getSecurityCode());
+		
 	}
 	
 	@Test
@@ -232,5 +243,62 @@ public class DoctorTest {
 		assertEquals("invalid street", violations.iterator().next().getMessage());
 
 	}
+	
+	@Test
+	public void checkUserDataMatchDoesNotThrowException() {
+		
+		assertDoesNotThrow(() -> doctor.checkUserData(user));
+		
+	}
 
+	@Test
+	public void checkUserNullUserThrowsCheckException() {
+		
+		user = null;
+		
+		CheckException exception = assertThrows(CheckException.class,() -> doctor.checkUserData(user));
+		assertEquals("tried to check null user", exception.getMessage());
+		
+	}
+	
+	@Test
+	public void checkUserNullUserIdThrowsCheckException() {
+		
+		user.setId(null);
+		
+		CheckException exception = assertThrows(CheckException.class,() -> doctor.checkUserData(user));
+		assertEquals("tried to check user with null id", exception.getMessage());
+		
+	}
+	
+	@Test
+	public void checkUserNullSecurityCodeThrowsCheckException() {
+		
+		user.setSecurityCode(null);
+		
+		CheckException exception = assertThrows(CheckException.class,() -> doctor.checkUserData(user));
+		assertEquals("tried to check user with null security code", exception.getMessage());
+		
+	}
+
+	@Test
+	public void checkUserDifferentUserIdThrowsCheckException() {
+		
+		user.setId("userId");
+		
+		CheckException exception = assertThrows(CheckException.class,() -> doctor.checkUserData(user));
+		assertEquals("data did not match", exception.getMessage());
+		
+	}
+	
+	@Test
+	public void checkUserDifferentSecurityCodeThrowsCheckException() {
+		
+		user.setSecurityCode("01234567");
+		
+		CheckException exception = assertThrows(CheckException.class,() -> doctor.checkUserData(user));
+		assertEquals("data did not match", exception.getMessage());
+		
+	}
+	
 }
