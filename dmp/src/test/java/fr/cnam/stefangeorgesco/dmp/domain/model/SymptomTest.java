@@ -17,13 +17,13 @@ import org.springframework.test.context.TestPropertySource;
 
 @TestPropertySource("/application-test.properties")
 @SpringBootTest
-public class MailTest {
+public class SymptomTest {
 
 	private static Validator validator;
-	private Mail mail;
-		private LocalDate now;
-		private LocalDate futureDate;
-		private LocalDate pastDate;
+	private Symptom symptom;
+	private LocalDate now;
+	private LocalDate futureDate;
+	private LocalDate pastDate;
 
 	@BeforeAll
 	public static void setupAll() {
@@ -32,74 +32,74 @@ public class MailTest {
 
 	@BeforeEach
 	public void setupEach() {
-		mail = new Mail();
+		symptom = new Symptom();
 		now = LocalDate.now();
 		pastDate = now.minusDays(1);
 		futureDate = now.plusDays(1);
-		mail.setDate(now);
-		mail.setText("mail text");
+		symptom.setDate(now);
+		symptom.setDescription("Symptom description");
 	}
-
+	
 	@Test
-	public void mailValidationMailValidDateNow() {
+	public void symptomValidationSymptomValidDateNow() {
 
-		Set<ConstraintViolation<Mail>> violations = validator.validate(mail);
+		Set<ConstraintViolation<Symptom>> violations = validator.validate(symptom);
 
 		assertEquals(0, violations.size());
 	}
 
 	@Test
-	public void mailValidationMailValidDatePast() {
+	public void symptomValidationSymptomValidDatePast() {
 
-		mail.setDate(pastDate);
+		symptom.setDate(pastDate);
 
-		Set<ConstraintViolation<Mail>> violations = validator.validate(mail);
+		Set<ConstraintViolation<Symptom>> violations = validator.validate(symptom);
 
 		assertEquals(0, violations.size());
 	}
 
 	@Test
-	public void mailValidationInvalidDateFuture() {
+	public void symptomValidationInvalidDateFuture() {
 
-		mail.setDate(futureDate);
+		symptom.setDate(futureDate);
 
-		Set<ConstraintViolation<Mail>> violations = validator.validate(mail);
+		Set<ConstraintViolation<Symptom>> violations = validator.validate(symptom);
 
 		assertEquals(1, violations.size());
 		assertEquals("patient file item date must be in the past or today", violations.iterator().next().getMessage());
 	}
 	
 	@Test
-	public void mailValidationInvalidTextBlank() {
+	public void symptomValidationInvalidTextBlank() {
 		
-		mail.setText("");
+		symptom.setDescription("");
 		
-		Set<ConstraintViolation<Mail>> violations = validator.validate(mail);
+		Set<ConstraintViolation<Symptom>> violations = validator.validate(symptom);
 
 		assertEquals(1, violations.size());
-		assertEquals("mail text is mandatory", violations.iterator().next().getMessage());
+		assertEquals("symptom description is mandatory", violations.iterator().next().getMessage());
 	}
 
 	@Test
-	public void mailValidationInvalidDateNull() {
+	public void symptomValidationInvalidDateNull() {
 
-		mail.setDate(null);
+		symptom.setDate(null);
 
-		Set<ConstraintViolation<Mail>> violations = validator.validate(mail);
+		Set<ConstraintViolation<Symptom>> violations = validator.validate(symptom);
 
 		assertEquals(1, violations.size());
 		assertEquals("patient file date is mandatory", violations.iterator().next().getMessage());
 	}
 
 	@Test
-	public void mailValidationInvalidTextNull() {
+	public void symptomValidationInvalidTextNull() {
 		
-		mail.setText(null);
+		symptom.setDescription(null);
 		
-		Set<ConstraintViolation<Mail>> violations = validator.validate(mail);
+		Set<ConstraintViolation<Symptom>> violations = validator.validate(symptom);
 
 		assertEquals(1, violations.size());
-		assertEquals("mail text is mandatory", violations.iterator().next().getMessage());
+		assertEquals("symptom description is mandatory", violations.iterator().next().getMessage());
 	}
 
 }
