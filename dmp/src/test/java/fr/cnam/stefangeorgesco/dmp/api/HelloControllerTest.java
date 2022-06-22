@@ -1,4 +1,4 @@
-package fr.cnam.stefangeorgesco.dmp;
+package fr.cnam.stefangeorgesco.dmp.api;
 
 import org.junit.jupiter.api.Test;
 

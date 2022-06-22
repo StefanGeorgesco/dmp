@@ -1,4 +1,4 @@
-package fr.cnam.stefangeorgesco.dmp.authentication.domain.model;
+package fr.cnam.stefangeorgesco.dmp.domain.model;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
