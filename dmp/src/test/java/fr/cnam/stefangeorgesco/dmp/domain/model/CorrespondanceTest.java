@@ -36,7 +36,6 @@ public class CorrespondanceTest {
 		now = LocalDate.now();
 		pastDate = now.minusDays(1);
 		futureDate = now.plusDays(1);
-		correspondance.setId("id");
 		correspondance.setDateUntil(futureDate);
 	}
 
@@ -46,17 +45,6 @@ public class CorrespondanceTest {
 		Set<ConstraintViolation<Correspondance>> violations = validator.validate(correspondance);
 
 		assertEquals(0, violations.size());
-	}
-
-	@Test
-	public void correspondanceValidationIdBlank() {
-
-		correspondance.setId("");
-
-		Set<ConstraintViolation<Correspondance>> violations = validator.validate(correspondance);
-
-		assertEquals(1, violations.size());
-		assertEquals("id is mandatory", violations.iterator().next().getMessage());
 	}
 
 	@Test
@@ -79,17 +67,6 @@ public class CorrespondanceTest {
 
 		assertEquals(1, violations.size());
 		assertEquals("correpondance date must be in the future", violations.iterator().next().getMessage());
-	}
-
-	@Test
-	public void correspondanceValidationIdNull() {
-
-		correspondance.setId(null);
-
-		Set<ConstraintViolation<Correspondance>> violations = validator.validate(correspondance);
-
-		assertEquals(1, violations.size());
-		assertEquals("id is mandatory", violations.iterator().next().getMessage());
 	}
 
 	@Test
