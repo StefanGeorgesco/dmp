@@ -70,7 +70,7 @@ public class SymptomTest {
 	}
 	
 	@Test
-	public void symptomValidationInvalidTextBlank() {
+	public void symptomValidationInvalidDesciptionBlank() {
 		
 		symptom.setDescription("");
 		
@@ -92,7 +92,7 @@ public class SymptomTest {
 	}
 
 	@Test
-	public void symptomValidationInvalidTextNull() {
+	public void symptomValidationInvalidDesciptionNull() {
 		
 		symptom.setDescription(null);
 		

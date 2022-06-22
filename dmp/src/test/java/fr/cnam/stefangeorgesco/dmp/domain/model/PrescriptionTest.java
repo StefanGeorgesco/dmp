@@ -70,7 +70,7 @@ public class PrescriptionTest {
 	}
 	
 	@Test
-	public void prescriptionValidationInvalidTextBlank() {
+	public void prescriptionValidationInvalidDesciptionBlank() {
 		
 		prescription.setDescription("");
 		
@@ -92,7 +92,7 @@ public class PrescriptionTest {
 	}
 
 	@Test
-	public void prescriptionValidationInvalidTextNull() {
+	public void prescriptionValidationInvalidDesciptionNull() {
 		
 		prescription.setDescription(null);
 		
