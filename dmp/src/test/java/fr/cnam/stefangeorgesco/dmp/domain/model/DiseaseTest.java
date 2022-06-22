@@ -42,7 +42,7 @@ public class DiseaseTest {
 	}
 	
 	@Test
-	public void diseaseValidationIdBlank() {
+	public void diseaseValidationInvalidIdBlank() {
 		
 		disease.setId("");
 		
@@ -53,7 +53,7 @@ public class DiseaseTest {
 	}
 
 	@Test
-	public void diseaseValidationDescriptionBlank() {
+	public void diseaseValidationInvalidDescriptionBlank() {
 		
 		disease.setDescription("");
 		
@@ -64,7 +64,7 @@ public class DiseaseTest {
 	}
 
 	@Test
-	public void diseaseValidationIdNull() {
+	public void diseaseValidationInvalidIdNull() {
 		
 		disease.setId(null);
 		
@@ -75,7 +75,7 @@ public class DiseaseTest {
 	}
 
 	@Test
-	public void diseaseValidationDescriptionNull() {
+	public void diseaseValidationInvalidDescriptionNull() {
 		
 		disease.setDescription(null);
 		

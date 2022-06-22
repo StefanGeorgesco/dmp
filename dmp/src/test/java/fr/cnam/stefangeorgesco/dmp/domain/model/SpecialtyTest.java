@@ -42,7 +42,7 @@ public class SpecialtyTest {
 	}
 	
 	@Test
-	public void specialtyValidationIdBlank() {
+	public void specialtyValidationInvalidIdBlank() {
 		
 		specialty.setId("");
 		
@@ -53,7 +53,7 @@ public class SpecialtyTest {
 	}
 
 	@Test
-	public void specialtyValidationDescriptionBlank() {
+	public void specialtyValidationInvalidDescriptionBlank() {
 		
 		specialty.setDescription("");
 		
@@ -64,7 +64,7 @@ public class SpecialtyTest {
 	}
 
 	@Test
-	public void specialtyValidationIdNull() {
+	public void specialtyValidationInvalidIdNull() {
 		
 		specialty.setId(null);
 		
@@ -75,7 +75,7 @@ public class SpecialtyTest {
 	}
 
 	@Test
-	public void specialtyValidationDescriptionNull() {
+	public void specialtyValidationInvalidDescriptionNull() {
 		
 		specialty.setDescription(null);
 		

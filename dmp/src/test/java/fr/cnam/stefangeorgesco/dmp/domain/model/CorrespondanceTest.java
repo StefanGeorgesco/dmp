@@ -48,7 +48,7 @@ public class CorrespondanceTest {
 	}
 
 	@Test
-	public void correspondanceValidationDateNow() {
+	public void correspondanceValidationInvalidDateNow() {
 
 		correspondance.setDateUntil(now);
 
@@ -59,7 +59,7 @@ public class CorrespondanceTest {
 	}
 
 	@Test
-	public void correspondanceValidationDatePast() {
+	public void correspondanceValidationInvalidDatePast() {
 
 		correspondance.setDateUntil(pastDate);
 
@@ -70,7 +70,7 @@ public class CorrespondanceTest {
 	}
 
 	@Test
-	public void correspondanceValidationDateNull() {
+	public void correspondanceValidationInvalidDateNull() {
 
 		correspondance.setDateUntil(null);
 

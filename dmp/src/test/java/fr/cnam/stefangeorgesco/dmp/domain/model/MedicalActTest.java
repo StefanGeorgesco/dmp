@@ -42,7 +42,7 @@ public class MedicalActTest {
 	}
 	
 	@Test
-	public void specialtyValidationIdBlank() {
+	public void specialtyValidationInvalidIdBlank() {
 		
 		medicalAct.setId("");
 		
@@ -53,7 +53,7 @@ public class MedicalActTest {
 	}
 
 	@Test
-	public void specialtyValidationDescriptionBlank() {
+	public void specialtyValidationInvalidDescriptionBlank() {
 		
 		medicalAct.setDescription("");
 		
@@ -64,7 +64,7 @@ public class MedicalActTest {
 	}
 
 	@Test
-	public void specialtyValidationIdNull() {
+	public void specialtyValidationInvalidIdNull() {
 		
 		medicalAct.setId(null);
 		
@@ -75,7 +75,7 @@ public class MedicalActTest {
 	}
 
 	@Test
-	public void specialtyValidationDescriptionNull() {
+	public void specialtyValidationInvalidDescriptionNull() {
 		
 		medicalAct.setDescription(null);
 		
