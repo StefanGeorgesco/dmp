@@ -7,6 +7,7 @@ import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestPropertySource;
@@ -16,34 +17,33 @@ import org.springframework.test.context.TestPropertySource;
 public class UserTest {
 
 	private static Validator validator;
+	private User user;
 
 	@BeforeAll
-	public static void setup() {
+	public static void setupAll() {
 		validator = Validation.buildDefaultValidatorFactory().getValidator();
+	}
+	
+	@BeforeEach
+	public void setupEach() {
+		user = new User();
+		user.setId("A");
+		user.setUsername("a");
+		user.setPassword("1234");
 	}
 
 	@Test
 	public void userValidationUserValid() {
 
-		User user = new User();
-
-		user.setId("A");
-		user.setUsername("a");
-		user.setPassword("1234");
-
 		Set<ConstraintViolation<User>> violations = validator.validate(user);
-
+		
 		assertEquals(0, violations.size());
 	}
 
 	@Test
 	public void userValidationIdInvalidBlank() {
 
-		User user = new User();
-
 		user.setId("");
-		user.setUsername("a");
-		user.setPassword("1234");
 
 		Set<ConstraintViolation<User>> violations = validator.validate(user);
 
@@ -55,11 +55,7 @@ public class UserTest {
 	@Test
 	public void userValidationUsernameInvalidBlank() {
 
-		User user = new User();
-
-		user.setId("A");
 		user.setUsername("");
-		user.setPassword("1234");
 
 		Set<ConstraintViolation<User>> violations = validator.validate(user);
 
@@ -71,10 +67,6 @@ public class UserTest {
 	@Test
 	public void userValidationPasswordInvalidLessThanFourCharacters() {
 
-		User user = new User();
-
-		user.setId("A");
-		user.setUsername("a");
 		user.setPassword("123");
 
 		Set<ConstraintViolation<User>> violations = validator.validate(user);
@@ -87,11 +79,8 @@ public class UserTest {
 	@Test
 	public void userValidationIdInvalidNull() {
 
-		User user = new User();
-
-		user.setUsername("a");
-		user.setPassword("1234");
-
+		user.setId(null);
+		
 		Set<ConstraintViolation<User>> violations = validator.validate(user);
 
 		assertEquals(1, violations.size());
@@ -102,11 +91,8 @@ public class UserTest {
 	@Test
 	public void userValidationUsernameInvalidNull() {
 
-		User user = new User();
-
-		user.setId("A");
-		user.setPassword("1234");
-
+		user.setUsername(null);
+		
 		Set<ConstraintViolation<User>> violations = validator.validate(user);
 
 		assertEquals(1, violations.size());
@@ -117,11 +103,8 @@ public class UserTest {
 	@Test
 	public void userValidationPasswordInvalidNull() {
 
-		User user = new User();
-
-		user.setId("A");
-		user.setUsername("a");
-
+		user.setPassword(null);
+		
 		Set<ConstraintViolation<User>> violations = validator.validate(user);
 
 		assertEquals(1, violations.size());

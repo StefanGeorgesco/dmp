@@ -26,10 +26,6 @@ class DmpApplicationTests {
 	private MockMvc mockMvc;
 
 	@Test
-	void contextLoads() {
-	}
-
-	@Test
 	public void simpleTest() throws Exception {
 		mockMvc.perform(get("/"))
 		.andExpect(status().isOk())

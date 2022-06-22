@@ -1,4 +1,4 @@
-package fr.cnam.stefangeorgesco.dmp.api;
+package fr.cnam.stefangeorgesco.dmp.authentication.api;
 
 import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.web.bind.annotation.GetMapping;

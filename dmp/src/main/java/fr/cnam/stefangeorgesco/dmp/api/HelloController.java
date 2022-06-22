@@ -29,7 +29,6 @@ public class HelloController {
 	
 	@PostMapping("/user")
 	public UserDTO createUser(@Valid @RequestBody UserDTO userDTO) {
-		System.out.println(userDTO);
 		return userDTO;
 	}
 	
