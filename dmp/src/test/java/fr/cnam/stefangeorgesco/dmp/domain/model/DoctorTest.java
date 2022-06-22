@@ -233,6 +233,18 @@ public class DoctorTest {
 	}
 
 	@Test
+	public void doctorValidationSpecialtiesInvalidFirstSpecialtyIdNull() {
+		
+		doctor.getSpecialties().iterator().next().setId(null);
+		
+		Set<ConstraintViolation<Doctor>> violations = validator.validate(doctor);
+		
+		assertEquals(1, violations.size());
+		assertEquals("id is mandatory", violations.iterator().next().getMessage());
+
+	}
+
+	@Test
 	public void doctorValidationAddressInvalidStreet1Null() {
 		
 		doctor.getAddress().setStreet1(null);
