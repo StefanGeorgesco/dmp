@@ -8,9 +8,9 @@ import lombok.Data;
 public class Specialty {
 	
 	@NotBlank(message = "id is mandatory")
-	String id;
+	private String id;
 	
 	@NotBlank(message = "description is mandatory")
-	String description;
+	private String description;
 
 }

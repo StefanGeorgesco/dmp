@@ -8,19 +8,19 @@ import lombok.Data;
 public class Address {
 
 	@NotBlank(message = "invalid street")
-	String street1;
+	private String street1;
 	
-	String street2;
+	private String street2;
 	
 	@NotBlank(message = "invalid city")
-	String city;
+	private String city;
 	
-	String state;
+	private String state;
 	
 	@NotBlank(message = "invalid zipcode")
-	String zipcode;
+	private String zipcode;
 	
 	@NotBlank(message = "invalid country")
-	String country;
+	private String country;
 
 }
