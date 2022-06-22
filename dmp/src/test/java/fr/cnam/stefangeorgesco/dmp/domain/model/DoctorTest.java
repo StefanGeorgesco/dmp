@@ -16,10 +16,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestPropertySource;
 
-import fr.cnam.stefangeorgesco.dmp.domain.model.Address;
-import fr.cnam.stefangeorgesco.dmp.domain.model.Doctor;
-import fr.cnam.stefangeorgesco.dmp.domain.model.Specialty;
-
 @TestPropertySource("/application-test.properties")
 @SpringBootTest
 public class DoctorTest {

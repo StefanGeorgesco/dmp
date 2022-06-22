@@ -14,8 +14,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestPropertySource;
 
-import fr.cnam.stefangeorgesco.dmp.domain.model.Address;
-
 @TestPropertySource("/application-test.properties")
 @SpringBootTest
 public class AddressTest {
