@@ -24,6 +24,8 @@ public class DiagnosisTest {
 	private LocalDate now;
 	private LocalDate futureDate;
 	private LocalDate pastDate;
+	private Doctor authoringDoctor;
+	private PatientFile patientFile;
 	private Disease disease;
 
 	@BeforeAll
@@ -34,6 +36,8 @@ public class DiagnosisTest {
 	@BeforeEach
 	public void setupEach() {
 		disease = new Disease();
+		authoringDoctor = new Doctor();
+		patientFile = new PatientFile();
 		disease.setId("diseaseId");
 		disease.setDescription("A disease");
 		diagnosis = new Diagnosis();
@@ -41,6 +45,8 @@ public class DiagnosisTest {
 		pastDate = now.minusDays(1);
 		futureDate = now.plusDays(1);
 		diagnosis.setDate(now);
+		diagnosis.setAuthoringDoctor(authoringDoctor);
+		diagnosis.setPatientFile(patientFile);
 		diagnosis.setDisease(disease);
 	}
 	
@@ -85,6 +91,28 @@ public class DiagnosisTest {
 	}
 
 	@Test
+	public void actValidationInvalidAuthoringDoctorNull() {
+
+		diagnosis.setAuthoringDoctor(null);
+
+		Set<ConstraintViolation<Diagnosis>> violations = validator.validate(diagnosis);
+
+		assertEquals(1, violations.size());
+		assertEquals("authoring doctor is mandatory", violations.iterator().next().getMessage());
+	}
+
+	@Test
+	public void actValidationInvalidPatientFileNull() {
+
+		diagnosis.setPatientFile(null);
+
+		Set<ConstraintViolation<Diagnosis>> violations = validator.validate(diagnosis);
+
+		assertEquals(1, violations.size());
+		assertEquals("patient file is mandatory", violations.iterator().next().getMessage());
+	}
+
+	@Test
 	public void diagnosisValidationInvalidDiseaseNull() {
 		
 		diagnosis.setDisease(null);
@@ -93,17 +121,6 @@ public class DiagnosisTest {
 
 		assertEquals(1, violations.size());
 		assertEquals("disease is mandatory", violations.iterator().next().getMessage());
-	}
-
-	@Test
-	public void diagnosisValidationInvalidDiseaseInvalid() {
-		
-		diagnosis.getDisease().setId(null);
-		
-		Set<ConstraintViolation<Diagnosis>> violations = validator.validate(diagnosis);
-
-		assertEquals(1, violations.size());
-		assertEquals("id is mandatory", violations.iterator().next().getMessage());
 	}
 
 }

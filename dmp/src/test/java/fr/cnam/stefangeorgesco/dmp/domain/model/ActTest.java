@@ -24,6 +24,8 @@ public class ActTest {
 	private LocalDate now;
 	private LocalDate futureDate;
 	private LocalDate pastDate;
+	private Doctor authoringDoctor;
+	private PatientFile patientFile;
 	private MedicalAct medicalAct;
 
 	@BeforeAll
@@ -34,13 +36,15 @@ public class ActTest {
 	@BeforeEach
 	public void setupEach() {
 		medicalAct = new MedicalAct();
-		medicalAct.setId("diseaseId");
-		medicalAct.setDescription("A disease");
+		authoringDoctor = new Doctor();
+		patientFile = new PatientFile();
 		act = new Act();
 		now = LocalDate.now();
 		pastDate = now.minusDays(1);
 		futureDate = now.plusDays(1);
 		act.setDate(now);
+		act.setAuthoringDoctor(authoringDoctor);
+		act.setPatientFile(patientFile);
 		act.setMedicalAct(medicalAct);
 	}
 	
@@ -85,6 +89,28 @@ public class ActTest {
 	}
 
 	@Test
+	public void actValidationInvalidAuthoringDoctorNull() {
+
+		act.setAuthoringDoctor(null);
+
+		Set<ConstraintViolation<Act>> violations = validator.validate(act);
+
+		assertEquals(1, violations.size());
+		assertEquals("authoring doctor is mandatory", violations.iterator().next().getMessage());
+	}
+
+	@Test
+	public void actValidationInvalidPatientFileNull() {
+
+		act.setPatientFile(null);
+
+		Set<ConstraintViolation<Act>> violations = validator.validate(act);
+
+		assertEquals(1, violations.size());
+		assertEquals("patient file is mandatory", violations.iterator().next().getMessage());
+	}
+
+	@Test
 	public void actValidationInvalidMedicalActNull() {
 		
 		act.setMedicalAct(null);
@@ -93,17 +119,6 @@ public class ActTest {
 
 		assertEquals(1, violations.size());
 		assertEquals("medical act is mandatory", violations.iterator().next().getMessage());
-	}
-
-	@Test
-	public void actValidationInvalidMedicalActInvalid() {
-		
-		act.getMedicalAct().setId(null);
-		
-		Set<ConstraintViolation<Act>> violations = validator.validate(act);
-
-		assertEquals(1, violations.size());
-		assertEquals("id is mandatory", violations.iterator().next().getMessage());
 	}
 
 }

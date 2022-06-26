@@ -17,5 +17,11 @@ public abstract class PatientFileItem {
 	private LocalDate date;
 	
 	private String comments;
+	
+	@NotNull(message = "authoring doctor is mandatory")
+	private Doctor authoringDoctor;
+	
+	@NotNull(message = "patient file is mandatory")
+	private PatientFile patientFile;
 
 }

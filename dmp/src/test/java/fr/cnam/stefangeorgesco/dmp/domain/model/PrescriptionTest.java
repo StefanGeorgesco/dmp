@@ -24,6 +24,8 @@ public class PrescriptionTest {
 	private LocalDate now;
 	private LocalDate futureDate;
 	private LocalDate pastDate;
+	private Doctor authoringDoctor;
+	private PatientFile patientFile;
 
 	@BeforeAll
 	public static void setupAll() {
@@ -32,12 +34,16 @@ public class PrescriptionTest {
 
 	@BeforeEach
 	public void setupEach() {
+		authoringDoctor = new Doctor();
+		patientFile = new PatientFile();
 		prescription = new Prescription();
 		now = LocalDate.now();
 		pastDate = now.minusDays(1);
 		futureDate = now.plusDays(1);
 		prescription.setDate(now);
 		prescription.setDescription("Prescription description");
+		prescription.setAuthoringDoctor(authoringDoctor);
+		prescription.setPatientFile(patientFile);
 	}
 	
 	@Test
@@ -89,6 +95,28 @@ public class PrescriptionTest {
 
 		assertEquals(1, violations.size());
 		assertEquals("patient file date is mandatory", violations.iterator().next().getMessage());
+	}
+
+	@Test
+	public void actValidationInvalidAuthoringDoctorNull() {
+
+		prescription.setAuthoringDoctor(null);
+
+		Set<ConstraintViolation<Prescription>> violations = validator.validate(prescription);
+
+		assertEquals(1, violations.size());
+		assertEquals("authoring doctor is mandatory", violations.iterator().next().getMessage());
+	}
+
+	@Test
+	public void actValidationInvalidPatientFileNull() {
+
+		prescription.setPatientFile(null);
+
+		Set<ConstraintViolation<Prescription>> violations = validator.validate(prescription);
+
+		assertEquals(1, violations.size());
+		assertEquals("patient file is mandatory", violations.iterator().next().getMessage());
 	}
 
 	@Test

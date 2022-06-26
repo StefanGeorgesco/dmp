@@ -24,6 +24,8 @@ public class CorrespondanceTest {
 	private LocalDate now;
 	private LocalDate futureDate;
 	private LocalDate pastDate;
+	private Doctor doctor;
+	private PatientFile patientFile;
 
 	@BeforeAll
 	public static void setupAll() {
@@ -33,10 +35,14 @@ public class CorrespondanceTest {
 	@BeforeEach
 	public void setupEach() {
 		correspondance = new Correspondance();
+		doctor = new Doctor();
+		patientFile = new PatientFile();
 		now = LocalDate.now();
 		pastDate = now.minusDays(1);
 		futureDate = now.plusDays(1);
 		correspondance.setDateUntil(futureDate);
+		correspondance.setDoctor(doctor);
+		correspondance.setPatientFile(patientFile);
 	}
 
 	@Test
@@ -79,5 +85,29 @@ public class CorrespondanceTest {
 		assertEquals(1, violations.size());
 		assertEquals("correspondance date is mandatory", violations.iterator().next().getMessage());
 	}
+	
+	@Test
+	public void correspondanceValidationInvalidDoctorNull() {
+		
+		correspondance.setDoctor(null);
+		
+		Set<ConstraintViolation<Correspondance>> violations = validator.validate(correspondance);
 
+		assertEquals(1, violations.size());
+		assertEquals("doctor is mandatory", violations.iterator().next().getMessage());
+
+	}
+	
+	@Test
+	public void correspondanceValidationInvalidPatientFileNull() {
+		
+		correspondance.setPatientFile(null);
+		
+		Set<ConstraintViolation<Correspondance>> violations = validator.validate(correspondance);
+
+		assertEquals(1, violations.size());
+		assertEquals("patient file is mandatory", violations.iterator().next().getMessage());
+
+	}
+	
 }

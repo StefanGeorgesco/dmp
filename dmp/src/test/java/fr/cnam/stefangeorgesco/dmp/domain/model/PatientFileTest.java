@@ -4,8 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 
 import javax.validation.ConstraintViolation;
@@ -27,10 +25,7 @@ public class PatientFileTest {
 	
 	private static Validator validator;
 	private PatientFile patientFile;
-	private Address patientAddress;
-	private Address doctorAddress;
-	private List<Specialty> specialties;
-	private Specialty specialty;
+	private Address address;
 	private Doctor doctor;
 	private User user;
 
@@ -41,34 +36,13 @@ public class PatientFileTest {
 	
 	@BeforeEach
 	public void setupEach() {
-		specialty = new Specialty();
-		specialty.setId("specialtyId");
-		specialty.setDescription("A specialty");
-		
-		specialties = new ArrayList<>();		
-		specialties.add(specialty);
-		
-		doctorAddress = new Address();
-		doctorAddress.setStreet1("street_doctor");
-		doctorAddress.setCity("city_doctor");
-		doctorAddress.setZipcode("zip_doctor");
-		doctorAddress.setCountry("country_doctor");
-		
-		patientAddress = new Address();
-		patientAddress.setStreet1("street_patient");
-		patientAddress.setCity("city_patient");
-		patientAddress.setZipcode("zip_patient");
-		patientAddress.setCountry("country_patient");
+		address = new Address();
+		address.setStreet1("street_patient");
+		address.setCity("city_patient");
+		address.setZipcode("zip_patient");
+		address.setCountry("country_patient");
 		
 		doctor = new Doctor();
-		doctor.setId("doctorId");
-		doctor.setFirstname("firstname_doctor");
-		doctor.setLastname("lastname_doctor");
-		doctor.setPhone("1111111111");
-		doctor.setEmail("doctor@doctors.com");
-		doctor.setAddress(doctorAddress);
-		doctor.setSpecialties(specialties);
-		doctor.setSecurityCode("99999999");
 		
 		patientFile = new PatientFile();
 		patientFile.setId("id");
@@ -76,7 +50,7 @@ public class PatientFileTest {
 		patientFile.setLastname("lastname");
 		patientFile.setPhone("0123456789");
 		patientFile.setEmail("patient@mail.com");
-		patientFile.setAddress(patientAddress);
+		patientFile.setAddress(address);
 		patientFile.setSecurityCode("12345678");
 		patientFile.setReferringDoctor(doctor);
 		
@@ -235,18 +209,6 @@ public class PatientFileTest {
 		
 		assertEquals(1, violations.size());
 		assertEquals("referring doctor is mandatory", violations.iterator().next().getMessage());
-
-	}
-
-	@Test
-	public void patientFileValidationReferringDoctorInvalidIdNull() {
-		
-		patientFile.getReferringDoctor().setId(null);
-		
-		Set<ConstraintViolation<PatientFile>> violations = validator.validate(patientFile);
-		
-		assertEquals(1, violations.size());
-		assertEquals("id is mandatory", violations.iterator().next().getMessage());
 
 	}
 

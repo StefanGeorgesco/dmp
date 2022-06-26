@@ -9,11 +9,17 @@ import lombok.Data;
 
 @Data
 public class Correspondance {
-	
+
 	private String id;
-	
+
 	@NotNull(message = "correspondance date is mandatory")
 	@Future(message = "correpondance date must be in the future")
 	private LocalDate dateUntil;
+
+	@NotNull(message = "doctor is mandatory")
+	Doctor doctor;
+
+	@NotNull(message = "patient file is mandatory")
+	PatientFile patientFile;
 
 }

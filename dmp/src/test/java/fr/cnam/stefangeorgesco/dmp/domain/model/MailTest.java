@@ -3,8 +3,6 @@ package fr.cnam.stefangeorgesco.dmp.domain.model;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 
 import javax.validation.ConstraintViolation;
@@ -26,10 +24,9 @@ public class MailTest {
 	private LocalDate now;
 	private LocalDate futureDate;
 	private LocalDate pastDate;
-	private Address doctorAddress;
-	private List<Specialty> specialties;
-	private Specialty specialty;
-	private Doctor doctor;
+	private Doctor authoringDoctor;
+	private PatientFile patientFile;
+	private Doctor recipientDoctor;
 
 	@BeforeAll
 	public static void setupAll() {
@@ -38,36 +35,18 @@ public class MailTest {
 
 	@BeforeEach
 	public void setupEach() {
-		specialty = new Specialty();
-		specialty.setId("specialtyId");
-		specialty.setDescription("A specialty");
-		
-		specialties = new ArrayList<>();		
-		specialties.add(specialty);
-		
-		doctorAddress = new Address();
-		doctorAddress.setStreet1("street_doctor");
-		doctorAddress.setCity("city_doctor");
-		doctorAddress.setZipcode("zip_doctor");
-		doctorAddress.setCountry("country_doctor");
-		
-		doctor = new Doctor();
-		doctor.setId("doctorId");
-		doctor.setFirstname("firstname_doctor");
-		doctor.setLastname("lastname_doctor");
-		doctor.setPhone("1111111111");
-		doctor.setEmail("doctor@doctors.com");
-		doctor.setAddress(doctorAddress);
-		doctor.setSpecialties(specialties);
-		doctor.setSecurityCode("99999999");
-		
+		recipientDoctor = new Doctor();
+		authoringDoctor = new Doctor();
+		patientFile = new PatientFile();
 		mail = new Mail();
 		now = LocalDate.now();
 		pastDate = now.minusDays(1);
 		futureDate = now.plusDays(1);
 		mail.setDate(now);
+		mail.setAuthoringDoctor(authoringDoctor);
+		mail.setPatientFile(patientFile);
 		mail.setText("mail text");
-		mail.setTo(doctor);
+		mail.setRecipientDoctor(recipientDoctor);
 	}
 
 	@Test
@@ -122,6 +101,28 @@ public class MailTest {
 	}
 
 	@Test
+	public void actValidationInvalidAuthoringDoctorNull() {
+
+		mail.setAuthoringDoctor(null);
+
+		Set<ConstraintViolation<Mail>> violations = validator.validate(mail);
+
+		assertEquals(1, violations.size());
+		assertEquals("authoring doctor is mandatory", violations.iterator().next().getMessage());
+	}
+
+	@Test
+	public void actValidationInvalidPatientFileNull() {
+
+		mail.setPatientFile(null);
+
+		Set<ConstraintViolation<Mail>> violations = validator.validate(mail);
+
+		assertEquals(1, violations.size());
+		assertEquals("patient file is mandatory", violations.iterator().next().getMessage());
+	}
+
+	@Test
 	public void mailValidationInvalidTextNull() {
 
 		mail.setText(null);
@@ -135,23 +136,12 @@ public class MailTest {
 	@Test
 	public void mailValidationInvalidRecipientDoctorNull() {
 
-		mail.setTo(null);
+		mail.setRecipientDoctor(null);
 
 		Set<ConstraintViolation<Mail>> violations = validator.validate(mail);
 
 		assertEquals(1, violations.size());
 		assertEquals("recipient doctor is mandatory", violations.iterator().next().getMessage());
-	}
-
-	@Test
-	public void mailValidationInvalidRecipientDoctorIdNull() {
-
-		mail.getTo().setId(null);
-
-		Set<ConstraintViolation<Mail>> violations = validator.validate(mail);
-
-		assertEquals(1, violations.size());
-		assertEquals("id is mandatory", violations.iterator().next().getMessage());
 	}
 
 }

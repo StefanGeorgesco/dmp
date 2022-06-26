@@ -1,6 +1,5 @@
 package fr.cnam.stefangeorgesco.dmp.domain.model;
 
-import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
@@ -10,8 +9,7 @@ public class Mail extends PatientFileItem {
 	String text;
 
 	@NotNull(message = "recipient doctor is mandatory")
-	@Valid
-	private Doctor to;
+	private Doctor recipientDoctor;
 
 	public String getText() {
 		return text;
@@ -21,12 +19,12 @@ public class Mail extends PatientFileItem {
 		this.text = text;
 	}
 
-	public Doctor getTo() {
-		return to;
+	public Doctor getRecipientDoctor() {
+		return recipientDoctor;
 	}
 
-	public void setTo(Doctor to) {
-		this.to = to;
+	public void setRecipientDoctor(Doctor recipientDoctor) {
+		this.recipientDoctor = recipientDoctor;
 	}
 
 }
