@@ -1,0 +1,1 @@
+insert into t_user (id, username, role, password, security_code) values ('1', 'user', 'ROLE_USER', '1234', '')

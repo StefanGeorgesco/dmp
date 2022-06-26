@@ -1,9 +1,11 @@
 package fr.cnam.stefangeorgesco.dmp.domain.model;
 
+import javax.persistence.Embeddable;
 import javax.validation.constraints.NotBlank;
 
 import lombok.Data;
 
+@Embeddable
 @Data
 public class Address {
 

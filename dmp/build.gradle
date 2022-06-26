@@ -41,3 +41,20 @@ dependencies {
 tasks.named('test') {
 	useJUnitPlatform()
 }
+
+ext {
+  dbHost = "${dbHost}"
+  dbPort = "${dbPort}"
+  dbSid = "${dbSid}"
+  dbDriver = "com.mysql.cj.jdbc.Driver"
+  dbUrl = "jdbc:mysql://${dbHost}:${dbPort}/${dbSid}?useSSL=false&serverTimezone=Europe/Paris"
+  dbUser = "${dbUser}"
+  dbPassword = "${dbPassword}"
+}
+
+flyway {
+    url = dbUrl
+    user = dbUser
+    password = dbPassword
+}
+
