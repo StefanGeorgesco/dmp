@@ -1,7 +1,6 @@
 package fr.cnam.stefangeorgesco.dmp.authentication.domain.dto;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import lombok.Data;
@@ -21,7 +20,7 @@ public class UserDTO {
 	
 	private String role;
 	
-	@NotNull(message = "password is mandatory")
+	@NotBlank(message = "password is mandatory")
 	@Size(min=4, message = "password should at least be 4 characters long")
 	private String password;
 	

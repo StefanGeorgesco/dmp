@@ -16,7 +16,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @Entity
 @Table(name = "t_user")
-public class User {
+public class User implements IUser {
 
 	@Id
 	@NotBlank(message = "id is mandatory")
