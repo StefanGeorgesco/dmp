@@ -10,8 +10,12 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
 @Entity
 @Table(name = "t_doctor")
+@OnDelete(action = OnDeleteAction.CASCADE)
 public class Doctor extends File {
 
 	@ManyToMany

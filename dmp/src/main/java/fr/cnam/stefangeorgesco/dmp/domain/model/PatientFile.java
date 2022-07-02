@@ -6,8 +6,12 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
 @Entity
 @Table(name = "t_patient_file")
+@OnDelete(action = OnDeleteAction.CASCADE)
 public class PatientFile extends File {
 
 	@ManyToOne
