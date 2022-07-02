@@ -2,6 +2,7 @@ package fr.cnam.stefangeorgesco.dmp.authentication.domain.service;
 
 import java.util.Optional;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -26,6 +27,9 @@ public class UserService {
 	
 	@Autowired
 	private DoctorDAO doctorDAO;
+	
+	@Autowired
+	ModelMapper commonModelMapper;
 
 	@Autowired
 	private BCryptPasswordEncoder bCryptPasswordEncoder;
@@ -44,11 +48,7 @@ public class UserService {
 		
 		Doctor doctor = optionalDoctor.get();
 		
-		User user = new User();
-		user.setId(userDTO.getId());
-		user.setUsername(userDTO.getUsername());
-		user.setPassword(userDTO.getPassword());
-		user.setSecurityCode(userDTO.getSecurityCode());
+		User user = commonModelMapper.map(userDTO, User.class);
 		
 		doctor.checkUserData(user);
 		
