@@ -18,8 +18,6 @@ public class UserDTO {
 	@NotBlank(message = "username is mandatory")
 	private String username;
 	
-	private String role;
-	
 	@NotBlank(message = "password is mandatory")
 	@Size(min=4, message = "password should at least be 4 characters long")
 	private String password;

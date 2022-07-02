@@ -27,8 +27,9 @@ import fr.cnam.stefangeorgesco.dmp.authentication.domain.dao.UserDAO;
 import fr.cnam.stefangeorgesco.dmp.authentication.domain.dto.UserDTO;
 import fr.cnam.stefangeorgesco.dmp.authentication.domain.model.IUser;
 import fr.cnam.stefangeorgesco.dmp.authentication.domain.model.User;
-import fr.cnam.stefangeorgesco.dmp.domain.dao.DoctorDAO;
+import fr.cnam.stefangeorgesco.dmp.domain.dao.FileDAO;
 import fr.cnam.stefangeorgesco.dmp.domain.model.Doctor;
+import fr.cnam.stefangeorgesco.dmp.domain.model.PatientFile;
 import fr.cnam.stefangeorgesco.dmp.exception.domain.CheckException;
 import fr.cnam.stefangeorgesco.dmp.exception.domain.DuplicateKeyException;
 import fr.cnam.stefangeorgesco.dmp.exception.domain.FinderException;
@@ -41,10 +42,13 @@ public class UserServiceTest {
 	private UserDAO userDAO;
 	
 	@MockBean
-	private DoctorDAO doctorDAO;
+	private FileDAO fileDAO;
 	
 	@MockBean
 	private Doctor doctor;
+	
+	@MockBean
+	private PatientFile patientFile;
 	
 	@Autowired
 	private UserService userService;
@@ -73,13 +77,13 @@ public class UserServiceTest {
 		
 		doNothing().when(doctor).checkUserData(any(User.class));
 		when(userDAO.existsById(userDTO.getId())).thenReturn(false);
-		when(doctorDAO.findById(userDTO.getId())).thenReturn(Optional.of(doctor));
+		when(fileDAO.findById(userDTO.getId())).thenReturn(Optional.of(doctor));
 		when(userDAO.save(userCaptor.capture())).thenAnswer(invocation -> invocation.getArguments()[0]);
 		
-		assertDoesNotThrow(() -> userService.createDoctorAccount(userDTO));
+		assertDoesNotThrow(() -> userService.createAccount(userDTO));
 		
 		verify(userDAO, times(1)).existsById(userDTO.getId());
-		verify(doctorDAO, times(1)).findById(userDTO.getId());
+		verify(fileDAO, times(1)).findById(userDTO.getId());
 		verify(doctor, times(1)).checkUserData(any(User.class));
 		verify(userDAO, times(1)).save(any(User.class));
 		
@@ -93,24 +97,52 @@ public class UserServiceTest {
 	}
 	
 	@Test
-	public void testCreateDoctorAccountFailureUserAccountAlreadyExists() {
+	public void testCreatePatientAccountSuccess() throws CheckException {
 		
-		when(userDAO.existsById(userDTO.getId())).thenReturn(true);
+		ArgumentCaptor<User> userCaptor = ArgumentCaptor.forClass(User.class);
 		
-		DuplicateKeyException ex = assertThrows(DuplicateKeyException.class, () -> userService.createDoctorAccount(userDTO));
+		doNothing().when(patientFile).checkUserData(any(User.class));
+		when(userDAO.existsById(userDTO.getId())).thenReturn(false);
+		when(fileDAO.findById(userDTO.getId())).thenReturn(Optional.of(patientFile));
+		when(userDAO.save(userCaptor.capture())).thenAnswer(invocation -> invocation.getArguments()[0]);
 		
-		assertEquals("user account already exists", ex.getMessage());
+		assertDoesNotThrow(() -> userService.createAccount(userDTO));
+		
+		verify(userDAO, times(1)).existsById(userDTO.getId());
+		verify(fileDAO, times(1)).findById(userDTO.getId());
+		verify(patientFile, times(1)).checkUserData(any(User.class));
+		verify(userDAO, times(1)).save(any(User.class));
+		
+		user = userCaptor.getValue();
+		
+		assertEquals(userDTO.getId(), user.getId());
+		assertEquals(userDTO.getUsername(), user.getUsername());
+		assertEquals(IUser.ROLE_PATIENT, user.getRole());
+		assertTrue(bCryptPasswordEncoder.matches(userDTO.getPassword(), user.getPassword()));
+		assertTrue(bCryptPasswordEncoder.matches(userDTO.getSecurityCode(), user.getSecurityCode()));
 	}
 	
 	@Test
-	public void testCreateDoctorAccountFailureDoctorAccountDoesNotExist() {
+	public void testCreateAccountFailureUserAccountAlreadyExists() {
+		
+		when(userDAO.existsById(userDTO.getId())).thenReturn(true);
+		
+		DuplicateKeyException ex = assertThrows(DuplicateKeyException.class, () -> userService.createAccount(userDTO));
+		
+		assertEquals("user account already exists", ex.getMessage());
+		verify(userDAO, times(0)).save(any(User.class));
+	}
+	
+	@Test
+	public void testCreateAccountFailureFileDoesNotExist() {
 		
 		when(userDAO.existsById(userDTO.getId())).thenReturn(false);
-		when(doctorDAO.findById(userDTO.getId())).thenReturn(Optional.ofNullable(null));
+		when(fileDAO.findById(userDTO.getId())).thenReturn(Optional.ofNullable(null));
 		
-		FinderException ex = assertThrows(FinderException.class, () -> userService.createDoctorAccount(userDTO));
+		FinderException ex = assertThrows(FinderException.class, () -> userService.createAccount(userDTO));
 		
-		assertEquals("doctor account does not exist", ex.getMessage());
+		assertEquals("file does not exist", ex.getMessage());
+		verify(userDAO, times(0)).save(any(User.class));
 	}
 	
 	@Test
@@ -120,15 +152,41 @@ public class UserServiceTest {
 		
 		doThrow(new CheckException("data did not match")).when(doctor).checkUserData(userCaptor.capture());
 		when(userDAO.existsById(userDTO.getId())).thenReturn(false);
-		when(doctorDAO.findById(userDTO.getId())).thenReturn(Optional.of(doctor));
+		when(fileDAO.findById(userDTO.getId())).thenReturn(Optional.of(doctor));
 		
-		CheckException ex = assertThrows(CheckException.class, () -> userService.createDoctorAccount(userDTO));
+		CheckException ex = assertThrows(CheckException.class, () -> userService.createAccount(userDTO));
 		
 		assertEquals("data did not match", ex.getMessage());
 		
 		verify(userDAO, times(1)).existsById(userDTO.getId());
-		verify(doctorDAO, times(1)).findById(userDTO.getId());
+		verify(fileDAO, times(1)).findById(userDTO.getId());
 		verify(doctor, times(1)).checkUserData(any(User.class));
+		verify(userDAO, times(0)).save(any(User.class));
+		
+		user = userCaptor.getValue();
+		
+		assertEquals(userDTO.getId(), user.getId());
+		assertEquals(userDTO.getUsername(), user.getUsername());
+		assertEquals(userDTO.getSecurityCode(), user.getSecurityCode());
+	}
+
+	@Test
+	public void testCreatePatientAccountFailureCheckUserDataError() throws CheckException {
+		
+		ArgumentCaptor<User> userCaptor = ArgumentCaptor.forClass(User.class);
+		
+		doThrow(new CheckException("data did not match")).when(patientFile).checkUserData(userCaptor.capture());
+		when(userDAO.existsById(userDTO.getId())).thenReturn(false);
+		when(fileDAO.findById(userDTO.getId())).thenReturn(Optional.of(patientFile));
+		
+		CheckException ex = assertThrows(CheckException.class, () -> userService.createAccount(userDTO));
+		
+		assertEquals("data did not match", ex.getMessage());
+		
+		verify(userDAO, times(1)).existsById(userDTO.getId());
+		verify(fileDAO, times(1)).findById(userDTO.getId());
+		verify(patientFile, times(1)).checkUserData(any(User.class));
+		verify(userDAO, times(0)).save(any(User.class));
 		
 		user = userCaptor.getValue();
 		

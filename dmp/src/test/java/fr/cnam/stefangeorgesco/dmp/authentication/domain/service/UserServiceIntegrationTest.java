@@ -18,7 +18,7 @@ import org.springframework.test.context.TestPropertySource;
 import fr.cnam.stefangeorgesco.dmp.authentication.domain.dao.UserDAO;
 import fr.cnam.stefangeorgesco.dmp.authentication.domain.dto.UserDTO;
 import fr.cnam.stefangeorgesco.dmp.authentication.domain.model.User;
-import fr.cnam.stefangeorgesco.dmp.domain.dao.DoctorDAO;
+import fr.cnam.stefangeorgesco.dmp.domain.dao.FileDAO;
 import fr.cnam.stefangeorgesco.dmp.domain.dao.SpecialtyDAO;
 import fr.cnam.stefangeorgesco.dmp.domain.model.Address;
 import fr.cnam.stefangeorgesco.dmp.domain.model.Doctor;
@@ -41,7 +41,7 @@ public class UserServiceIntegrationTest {
 	private UserDAO userDAO;
 
 	@Autowired
-	private DoctorDAO doctorDAO;
+	private FileDAO fileDAO;
 
 	@Autowired
 	SpecialtyDAO specialtyDAO;
@@ -87,7 +87,7 @@ public class UserServiceIntegrationTest {
 		doctor.setSpecialties(specialties);
 		doctor.setSecurityCode(bCryptPasswordEncoder.encode("12345678"));
 
-		doctorDAO.save(doctor);
+		fileDAO.save(doctor);
 
 		userDTO.setId("id");
 		userDTO.setUsername("username");
@@ -97,7 +97,7 @@ public class UserServiceIntegrationTest {
 
 	@AfterEach
 	public void tearDown() {
-		doctorDAO.delete(doctor);
+		fileDAO.delete(doctor);
 		specialtyDAO.delete(specialty);
 		if (userDAO.existsById("id")) {
 			userDAO.deleteById("id");
@@ -105,17 +105,17 @@ public class UserServiceIntegrationTest {
 	}
 
 	@Test
-	public void testCreateDoctorAccountSuccess() {
+	public void testCreateAccountSuccess() {
 
 		assertFalse(userDAO.existsById("id"));
 
-		assertDoesNotThrow(() -> userService.createDoctorAccount(userDTO));
+		assertDoesNotThrow(() -> userService.createAccount(userDTO));
 
 		assertTrue(userDAO.existsById("id"));
 	}
 
 	@Test
-	public void testCreateDoctorAccountFailureUserAccountAlreadyExists() {
+	public void testCreateAccountFailureUserAccountAlreadyExists() {
 
 		user.setId("id");
 		user.setUsername("John");
@@ -124,25 +124,25 @@ public class UserServiceIntegrationTest {
 		user.setSecurityCode("0000");
 		userDAO.save(user);
 
-		assertThrows(DuplicateKeyException.class, () -> userService.createDoctorAccount(userDTO));
+		assertThrows(DuplicateKeyException.class, () -> userService.createAccount(userDTO));
 	}
 
 	@Test
-	public void testCreateDoctorAccountFailureDoctorAccountDoesNotExist() {
+	public void testCreateAccountFailureFileDoesNotExist() {
 
-		doctorDAO.delete(doctor);
+		fileDAO.delete(doctor);
 
-		assertThrows(FinderException.class, () -> userService.createDoctorAccount(userDTO));
+		assertThrows(FinderException.class, () -> userService.createAccount(userDTO));
 
 		assertFalse(userDAO.existsById("id"));
 	}
 	
 	@Test
-	public void testCreateDoctorAccountFailureCheckUserDataError() {
+	public void testCreateAccountFailureCheckUserDataError() {
 		
 		userDTO.setSecurityCode("1111");
 		
-		assertThrows(CheckException.class, () -> userService.createDoctorAccount(userDTO));
+		assertThrows(CheckException.class, () -> userService.createAccount(userDTO));
 
 		assertFalse(userDAO.existsById("id"));
 	}
