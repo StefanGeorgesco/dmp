@@ -17,6 +17,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.context.TestPropertySource;
 
 import fr.cnam.stefangeorgesco.dmp.authentication.domain.model.User;
@@ -42,6 +43,9 @@ public class DoctorTest {
 	@Autowired
 	private User user;
 
+	@Autowired
+	private BCryptPasswordEncoder bCryptPasswordEncoder;
+	
 	@BeforeAll
 	public static void setupAll() {
 		validator = Validation.buildDefaultValidatorFactory().getValidator();
@@ -67,10 +71,10 @@ public class DoctorTest {
 		doctor.setEmail("doctor@doctors.com");
 		doctor.setAddress(address);
 		doctor.setSpecialties(specialties);
-		doctor.setSecurityCode("12345678");
+		doctor.setSecurityCode(bCryptPasswordEncoder.encode("12345678"));
 		
-		user.setId(doctor.getId());
-		user.setSecurityCode(doctor.getSecurityCode());
+		user.setId("id");
+		user.setSecurityCode("12345678");
 		
 	}
 	
