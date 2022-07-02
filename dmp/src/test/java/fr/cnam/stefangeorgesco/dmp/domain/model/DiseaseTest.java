@@ -11,6 +11,7 @@ import javax.validation.Validator;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestPropertySource;
 
@@ -19,6 +20,8 @@ import org.springframework.test.context.TestPropertySource;
 public class DiseaseTest {
 	
 	private static Validator validator;
+	
+	@Autowired
 	public Disease disease;
 	
 	@BeforeAll
@@ -28,7 +31,6 @@ public class DiseaseTest {
 	
 	@BeforeEach
 	public void setupEach() {
-		disease = new Disease();
 		disease.setId("id");
 		disease.setDescription("A disease");
 	}

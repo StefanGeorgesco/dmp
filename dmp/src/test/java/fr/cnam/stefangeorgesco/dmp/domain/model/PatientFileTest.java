@@ -13,6 +13,7 @@ import javax.validation.Validator;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestPropertySource;
 
@@ -24,9 +25,17 @@ import fr.cnam.stefangeorgesco.dmp.exception.domain.CheckException;
 public class PatientFileTest {
 	
 	private static Validator validator;
+	
+	@Autowired
 	private PatientFile patientFile;
+	
+	@Autowired
 	private Address address;
+	
+	@Autowired
 	private Doctor doctor;
+	
+	@Autowired
 	private User user;
 
 	@BeforeAll
@@ -36,15 +45,11 @@ public class PatientFileTest {
 	
 	@BeforeEach
 	public void setupEach() {
-		address = new Address();
 		address.setStreet1("street_patient");
 		address.setCity("city_patient");
 		address.setZipcode("zip_patient");
 		address.setCountry("country_patient");
 		
-		doctor = new Doctor();
-		
-		patientFile = new PatientFile();
 		patientFile.setId("id");
 		patientFile.setFirstname("firstname");
 		patientFile.setLastname("lastname");
@@ -54,7 +59,6 @@ public class PatientFileTest {
 		patientFile.setSecurityCode("12345678");
 		patientFile.setReferringDoctor(doctor);
 		
-		user = new User();
 		user.setId(patientFile.getId());
 		user.setSecurityCode(patientFile.getSecurityCode());
 		

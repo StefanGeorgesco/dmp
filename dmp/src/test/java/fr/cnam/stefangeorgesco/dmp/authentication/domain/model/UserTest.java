@@ -9,6 +9,7 @@ import javax.validation.Validator;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestPropertySource;
 
@@ -17,6 +18,8 @@ import org.springframework.test.context.TestPropertySource;
 public class UserTest {
 
 	private static Validator validator;
+	
+	@Autowired
 	private User user;
 
 	@BeforeAll
@@ -26,7 +29,6 @@ public class UserTest {
 	
 	@BeforeEach
 	public void setupEach() {
-		user = new User();
 		user.setId("A");
 		user.setUsername("a");
 		user.setPassword("1234");

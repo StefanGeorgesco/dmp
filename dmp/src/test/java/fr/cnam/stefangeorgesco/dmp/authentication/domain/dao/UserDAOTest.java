@@ -21,7 +21,10 @@ import fr.cnam.stefangeorgesco.dmp.authentication.domain.model.User;
 public class UserDAOTest {
 	
 	@Autowired
-	UserDAO userDAO;
+	private UserDAO userDAO;
+	
+	@Autowired
+	private User user;
 	
 	@Test
 	public void testUserDAOExistsById() {
@@ -33,7 +36,6 @@ public class UserDAOTest {
 	public void testUserDAOSave() {
 		assertFalse(userDAO.existsById("0"));
 		
-		User user = new User();
 		user.setId("0");
 		user.setUsername("user0");
 		user.setRole("ROLE");

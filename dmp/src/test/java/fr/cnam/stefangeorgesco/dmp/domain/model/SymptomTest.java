@@ -12,6 +12,7 @@ import javax.validation.Validator;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestPropertySource;
 
@@ -20,11 +21,17 @@ import org.springframework.test.context.TestPropertySource;
 public class SymptomTest {
 
 	private static Validator validator;
-	private Symptom symptom;
 	private LocalDate now;
 	private LocalDate futureDate;
 	private LocalDate pastDate;
+	
+	@Autowired
+	private Symptom symptom;
+	
+	@Autowired
 	private Doctor authoringDoctor;
+	
+	@Autowired
 	private PatientFile patientFile;
 
 	@BeforeAll
@@ -34,9 +41,6 @@ public class SymptomTest {
 
 	@BeforeEach
 	public void setupEach() {
-		authoringDoctor = new Doctor();
-		patientFile = new PatientFile();
-		symptom = new Symptom();
 		now = LocalDate.now();
 		pastDate = now.minusDays(1);
 		futureDate = now.plusDays(1);

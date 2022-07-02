@@ -15,6 +15,7 @@ import javax.validation.Validator;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestPropertySource;
 
@@ -26,10 +27,19 @@ import fr.cnam.stefangeorgesco.dmp.exception.domain.CheckException;
 public class DoctorTest {
 
 	private static Validator validator;
+	
+	@Autowired
 	private Doctor doctor;
+	
+	@Autowired
 	private Address address;
+	
 	private List<Specialty> specialties;
+	
+	@Autowired
 	private Specialty specialty;
+	
+	@Autowired
 	private User user;
 
 	@BeforeAll
@@ -39,20 +49,17 @@ public class DoctorTest {
 	
 	@BeforeEach
 	public void setupEach() {
-		specialty = new Specialty();
 		specialty.setId("specialtyId");
 		specialty.setDescription("A specialty");
 		
 		specialties = new ArrayList<>();		
 		specialties.add(specialty);
 		
-		address = new Address();
 		address.setStreet1("street");
 		address.setCity("city");
 		address.setZipcode("zip");
 		address.setCountry("country");
 		
-		doctor = new Doctor();
 		doctor.setId("id");
 		doctor.setFirstname("firstname");
 		doctor.setLastname("lastname");
@@ -62,7 +69,6 @@ public class DoctorTest {
 		doctor.setSpecialties(specialties);
 		doctor.setSecurityCode("12345678");
 		
-		user = new User();
 		user.setId(doctor.getId());
 		user.setSecurityCode(doctor.getSecurityCode());
 		

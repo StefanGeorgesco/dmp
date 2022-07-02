@@ -31,19 +31,19 @@ import fr.cnam.stefangeorgesco.dmp.domain.model.Doctor;
 public class UserServiceTest {
 	
 	@MockBean
-	UserDAO userDAO;
+	private UserDAO userDAO;
 	
 	@MockBean
-	DoctorDAO doctorDAO;
+	private DoctorDAO doctorDAO;
 	
 	@Autowired
-	UserService userService;
+	private UserService userService;
 	
 	@Autowired
-	UserDTO userDTO;
+	private UserDTO userDTO;
 	
 	@Autowired
-	Doctor doctor;
+	private Doctor doctor;
 	
 	@Autowired
 	private BCryptPasswordEncoder bCryptPasswordEncoder;

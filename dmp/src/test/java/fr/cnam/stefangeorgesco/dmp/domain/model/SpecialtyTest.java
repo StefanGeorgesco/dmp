@@ -11,6 +11,7 @@ import javax.validation.Validator;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestPropertySource;
 
@@ -19,6 +20,8 @@ import org.springframework.test.context.TestPropertySource;
 public class SpecialtyTest {
 	
 	private static Validator validator;
+	
+	@Autowired
 	public Specialty specialty;
 	
 	@BeforeAll
@@ -28,7 +31,6 @@ public class SpecialtyTest {
 	
 	@BeforeEach
 	public void setupEach() {
-		specialty = new Specialty();
 		specialty.setId("id");
 		specialty.setDescription("A specialty");
 	}

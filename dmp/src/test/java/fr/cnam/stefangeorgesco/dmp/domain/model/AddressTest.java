@@ -11,6 +11,7 @@ import javax.validation.Validator;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestPropertySource;
 
@@ -19,6 +20,8 @@ import org.springframework.test.context.TestPropertySource;
 public class AddressTest {
 
 	private static Validator validator;
+	
+	@Autowired
 	private Address address;
 
 	@BeforeAll
@@ -28,7 +31,6 @@ public class AddressTest {
 
 	@BeforeEach
 	public void setupEach() {
-		address = new Address();
 		address.setStreet1("street");
 		address.setCity("city");
 		address.setZipcode("zip");

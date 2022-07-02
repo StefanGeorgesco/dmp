@@ -16,13 +16,13 @@ import fr.cnam.stefangeorgesco.dmp.domain.dao.DoctorDAO;
 public class UserService {
 	
 	@Autowired
-	UserDAO userDAO;
+	private UserDAO userDAO;
 	
 	@Autowired
-	DoctorDAO doctorDAO;
+	private DoctorDAO doctorDAO;
 
 	@Autowired
-	BCryptPasswordEncoder bCryptPasswordEncoder;
+	private BCryptPasswordEncoder bCryptPasswordEncoder;
 	
 	public void createDoctorAccount(UserDTO userDTO) {
 		
