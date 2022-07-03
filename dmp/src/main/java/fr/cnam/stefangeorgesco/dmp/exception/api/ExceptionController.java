@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import fr.cnam.stefangeorgesco.dmp.exception.domain.ApplicationException;
 import lombok.Data;
 
 import org.springframework.http.HttpStatus;
@@ -18,7 +19,7 @@ import org.springframework.validation.FieldError;
 @RestController
 public class ExceptionController {
 	
-	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	@ResponseStatus(HttpStatus.NOT_ACCEPTABLE)
 	@ExceptionHandler(MethodArgumentNotValidException.class)
 	public Map<String, String> handleValidationExceptions(
 	  MethodArgumentNotValidException ex) {
@@ -31,14 +32,24 @@ public class ExceptionController {
 	    return errors;
 	}
 	
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	@ExceptionHandler(ApplicationException.class)
+	public ExceptionResponse handleApplicationException(ApplicationException ex) {
+		ExceptionResponse exceptionResponse = new ExceptionResponse();
+		exceptionResponse.setStatus(HttpStatus.BAD_REQUEST.value());
+		exceptionResponse.setMessage(ex.getMessage());
+		
+		return exceptionResponse;
+	}
+	
 	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
 	@ExceptionHandler(Exception.class)
 	public ExceptionResponse handleUnknownException(Exception ex) {
-		ExceptionResponse errorResponse = new ExceptionResponse();
-		errorResponse.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-		errorResponse.setMessage(ex.getMessage());
+		ExceptionResponse exceptionResponse = new ExceptionResponse();
+		exceptionResponse.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+		exceptionResponse.setMessage(ex.getMessage());
 		
-		return errorResponse;
+		return exceptionResponse;
 	}
 	
 	@Data
