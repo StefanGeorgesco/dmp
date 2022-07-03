@@ -9,8 +9,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import fr.cnam.stefangeorgesco.dmp.api.RestResponse;
 import fr.cnam.stefangeorgesco.dmp.exception.domain.ApplicationException;
-import lombok.Data;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.FieldError;
@@ -34,29 +34,22 @@ public class ExceptionController {
 	
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
 	@ExceptionHandler(ApplicationException.class)
-	public ExceptionResponse handleApplicationException(ApplicationException ex) {
-		ExceptionResponse exceptionResponse = new ExceptionResponse();
-		exceptionResponse.setStatus(HttpStatus.BAD_REQUEST.value());
-		exceptionResponse.setMessage(ex.getMessage());
+	public RestResponse handleApplicationException(ApplicationException ex) {
+		RestResponse response = new RestResponse();
+		response.setStatus(HttpStatus.BAD_REQUEST.value());
+		response.setMessage(ex.getMessage());
 		
-		return exceptionResponse;
+		return response;
 	}
 	
 	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
 	@ExceptionHandler(Exception.class)
-	public ExceptionResponse handleUnknownException(Exception ex) {
-		ExceptionResponse exceptionResponse = new ExceptionResponse();
-		exceptionResponse.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-		exceptionResponse.setMessage(ex.getMessage());
+	public RestResponse handleUnknownException(Exception ex) {
+		RestResponse response = new RestResponse();
+		response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+		response.setMessage(ex.getMessage());
 		
-		return exceptionResponse;
+		return response;
 	}
 	
-	@Data
-	private class ExceptionResponse {
-		
-	    private int status;
-	    private String message;
-
-	}	
 }

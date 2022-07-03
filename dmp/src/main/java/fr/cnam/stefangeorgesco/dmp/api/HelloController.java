@@ -1,10 +1,9 @@
 package fr.cnam.stefangeorgesco.dmp.api;
 
-import javax.validation.Valid;
-
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 import fr.cnam.stefangeorgesco.dmp.authentication.domain.dto.UserDTO;
@@ -14,9 +13,17 @@ import lombok.Data;
 @RestController
 public class HelloController {
 	
+	@Autowired
+	BCryptPasswordEncoder encoder;
+	
 	@GetMapping("/")
 	public Hello hello() {
 		return new Hello("Hello World!");
+	}
+	
+	@GetMapping("/encrypt/{code}")
+	public String encode(@PathVariable String code) {
+		return encoder.encode(code);
 	}
 	
 	@GetMapping("/user")
@@ -25,11 +32,6 @@ public class HelloController {
 		userDTO.setId("05234");
 		userDTO.setUsername("user");
 		
-		return userDTO;
-	}
-	
-	@PostMapping("/user")
-	public UserDTO createUser(@Valid @RequestBody UserDTO userDTO) {
 		return userDTO;
 	}
 	
