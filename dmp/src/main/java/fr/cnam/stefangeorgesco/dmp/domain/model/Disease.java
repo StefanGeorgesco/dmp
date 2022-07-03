@@ -2,9 +2,11 @@ package fr.cnam.stefangeorgesco.dmp.domain.model;
 
 import javax.validation.constraints.NotBlank;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 public class Disease {
 	
 	@NotBlank(message = "id is mandatory")

@@ -17,15 +17,16 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import fr.cnam.stefangeorgesco.dmp.authentication.domain.model.User;
 import fr.cnam.stefangeorgesco.dmp.exception.domain.CheckException;
+
 import lombok.AccessLevel;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
 @Entity
 @Table(name = "t_file")
 @Inheritance(strategy = InheritanceType.JOINED)
-@Data
+@Getter
+@Setter
 public abstract class File {
 
 	@Id

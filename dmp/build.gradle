@@ -3,6 +3,7 @@ plugins {
 	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
 	id "org.flywaydb.flyway" version "7.10.0"
 	id 'java'
+	id 'jacoco'
 }
 
 group = 'fr.cnam.stefangeorgesco'
@@ -60,3 +61,10 @@ flyway {
     password = dbPassword
 }
 
+test {
+    finalizedBy jacocoTestReport
+}
+
+jacocoTestReport {
+    dependsOn test
+}

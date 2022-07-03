@@ -3,13 +3,11 @@ package fr.cnam.stefangeorgesco.dmp.authentication.domain.dto;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
-@ToString
-@NoArgsConstructor
+@Getter
+@Setter
 public class UserDTO {
 
 	@NotBlank(message = "id is mandatory")

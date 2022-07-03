@@ -3,10 +3,12 @@ package fr.cnam.stefangeorgesco.dmp.domain.model;
 import javax.persistence.Embeddable;
 import javax.validation.constraints.NotBlank;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 @Embeddable
-@Data
+@Getter
+@Setter
 public class Address {
 
 	@NotBlank(message = "invalid street")

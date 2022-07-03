@@ -5,9 +5,11 @@ import java.time.LocalDate;
 import javax.validation.constraints.Future;
 import javax.validation.constraints.NotNull;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 public class Correspondance {
 
 	private String id;
