@@ -13,43 +13,55 @@ import fr.cnam.stefangeorgesco.dmp.api.RestResponse;
 import fr.cnam.stefangeorgesco.dmp.exception.domain.ApplicationException;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.validation.FieldError;
 
 @ControllerAdvice
 @RestController
 public class ExceptionController {
-	
+
 	@ResponseStatus(HttpStatus.NOT_ACCEPTABLE)
 	@ExceptionHandler(MethodArgumentNotValidException.class)
-	public Map<String, String> handleValidationExceptions(
-	  MethodArgumentNotValidException ex) {
-	    Map<String, String> errors = new HashMap<>();
-	    ex.getBindingResult().getAllErrors().forEach((error) -> {
-	        String fieldName = ((FieldError) error).getField();
-	        String errorMessage = error.getDefaultMessage();
-	        errors.put(fieldName, errorMessage);
-	    });
-	    return errors;
+	public Map<String, String> handleValidationExceptions(MethodArgumentNotValidException ex) {
+		Map<String, String> errors = new HashMap<>();
+		ex.getBindingResult().getAllErrors().forEach((error) -> {
+			String fieldName = ((FieldError) error).getField();
+			String errorMessage = error.getDefaultMessage();
+			errors.put(fieldName, errorMessage);
+		});
+		return errors;
 	}
-	
+
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
 	@ExceptionHandler(ApplicationException.class)
 	public RestResponse handleApplicationException(ApplicationException ex) {
 		RestResponse response = new RestResponse();
 		response.setStatus(HttpStatus.BAD_REQUEST.value());
 		response.setMessage(ex.getMessage());
-		
+
 		return response;
 	}
-	
+
+	@ResponseStatus(HttpStatus.UNAUTHORIZED)
+	@ExceptionHandler({BadCredentialsException.class, UsernameNotFoundException.class})
+	public RestResponse handleBadCredentialsException(BadCredentialsException ex) {
+		RestResponse response = new RestResponse();
+		response.setStatus(HttpStatus.UNAUTHORIZED.value());
+		response.setMessage(ex.getMessage());
+
+		return response;
+
+	}
+
 	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
 	@ExceptionHandler(Exception.class)
 	public RestResponse handleUnknownException(Exception ex) {
 		RestResponse response = new RestResponse();
 		response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
 		response.setMessage(ex.getMessage());
-		
+
 		return response;
 	}
-	
+
 }
