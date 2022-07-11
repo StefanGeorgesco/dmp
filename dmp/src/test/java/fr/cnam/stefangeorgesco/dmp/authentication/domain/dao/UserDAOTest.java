@@ -1,5 +1,6 @@
 package fr.cnam.stefangeorgesco.dmp.authentication.domain.dao;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -46,5 +47,14 @@ public class UserDAOTest {
 		
 		assertTrue(userDAO.existsById("0"));
 		
+	}
+	
+	@Test
+	public void testUserDAOFindByUserName() {
+		
+		assertTrue(userDAO.findByUsername("user").isPresent());
+		assertEquals("1", userDAO.findByUsername("user").get().getId());
+		assertEquals("ROLE_USER", userDAO.findByUsername("user").get().getRole());
+		assertFalse(userDAO.findByUsername("username").isPresent());
 	}
 }

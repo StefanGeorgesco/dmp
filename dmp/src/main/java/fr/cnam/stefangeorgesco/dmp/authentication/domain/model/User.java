@@ -22,6 +22,7 @@ public class User implements IUser {
 	@NotBlank(message = "id is mandatory")
 	private String id;
 	
+	@Column(unique=true)
 	@NotBlank(message = "username is mandatory")
 	private String username;
 	

@@ -28,7 +28,7 @@ class HelloControllerTest {
 	private MockMvc mockMvc;
 
 	@Test
-	@WithUserDetails("1")
+	@WithUserDetails("user")
 	@Sql(scripts = "/sql/create-users.sql")
 	public void simpleTest() throws Exception {
 		mockMvc.perform(get("/"))

@@ -36,7 +36,7 @@ public class JWTTokenGeneratorFilter extends OncePerRequestFilter {
 						.claim("username", authentication.getName())
 					  .claim("authorities", populateAuthorities(authentication.getAuthorities()))
 					  .setIssuedAt(new Date())
-					.setExpiration(new Date((new Date()).getTime() + 300000000))
+					.setExpiration(new Date((new Date()).getTime() + SecurityConstants.JWT_VALIDITY_PERIOD))
 					.signWith(key).compact();
 			response.setHeader(SecurityConstants.JWT_HEADER, jwt);
 		}
@@ -46,7 +46,7 @@ public class JWTTokenGeneratorFilter extends OncePerRequestFilter {
 
 	@Override
 	protected boolean shouldNotFilter(HttpServletRequest request) {
-		return !request.getServletPath().equals("/login");
+		return !request.getMethod().equals("POST") || !request.getServletPath().equals("/login");
 	}
 	
 	private String populateAuthorities(Collection<? extends GrantedAuthority> collection) {

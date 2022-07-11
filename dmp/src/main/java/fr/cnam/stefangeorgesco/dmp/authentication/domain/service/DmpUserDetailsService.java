@@ -1,4 +1,4 @@
-package fr.cnam.stefangeorgesco.dmp.configuration;
+package fr.cnam.stefangeorgesco.dmp.authentication.domain.service;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +23,7 @@ public class DmpUserDetailsService implements UserDetailsService {
 
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		Optional<User> optionalUser = userDAO.findById(username);
+		Optional<User> optionalUser = userDAO.findByUsername(username);
 		if (optionalUser.isEmpty()) {
 			throw new UsernameNotFoundException("User details not found for the user : " + username);
 		}

@@ -154,7 +154,7 @@ public class UserControllerIntegrationTest {
 		
 		mockMvc.perform(
 				post("/user")
-				.with(csrf()).contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(userDTO)))
+				.contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(userDTO)))
 				.andExpect(status().isCreated()).andExpect(content().contentType(MediaType.APPLICATION_JSON))
 				.andExpect(jsonPath("$.message", is("user account was created")));
 		
@@ -172,7 +172,7 @@ public class UserControllerIntegrationTest {
 		
 		mockMvc.perform(
 				post("/user")
-				.with(csrf()).contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(userDTO)))
+				.contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(userDTO)))
 				.andExpect(status().isCreated()).andExpect(content().contentType(MediaType.APPLICATION_JSON))
 				.andExpect(jsonPath("$.message", is("user account was created")));
 		
@@ -188,7 +188,7 @@ public class UserControllerIntegrationTest {
 		
 		mockMvc.perform(
 				post("/user")
-				.with(csrf()).contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(userDTO)))
+				.contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(userDTO)))
 				.andExpect(status().isNotAcceptable()).andExpect(content().contentType(MediaType.APPLICATION_JSON))
 				.andExpect(jsonPath("$.id", is("id is mandatory")))
 				.andExpect(jsonPath("$.username", is("username is mandatory")))
@@ -209,7 +209,7 @@ public class UserControllerIntegrationTest {
 		
 		mockMvc.perform(
 				post("/user")
-				.with(csrf()).contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(userDTO)))
+				.contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(userDTO)))
 				.andExpect(status().isBadRequest()).andExpect(content().contentType(MediaType.APPLICATION_JSON))
 				.andExpect(jsonPath("$.message", is("user account already exists")));
 		
@@ -225,7 +225,7 @@ public class UserControllerIntegrationTest {
 		
 		mockMvc.perform(
 				post("/user")
-				.with(csrf()).contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(userDTO)))
+				.contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(userDTO)))
 				.andExpect(status().isBadRequest()).andExpect(content().contentType(MediaType.APPLICATION_JSON))
 				.andExpect(jsonPath("$.message", is("file does not exist")));
 		
@@ -239,7 +239,7 @@ public class UserControllerIntegrationTest {
 		
 		mockMvc.perform(
 				post("/user")
-				.with(csrf()).contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(userDTO)))
+				.contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(userDTO)))
 				.andExpect(status().isBadRequest()).andExpect(content().contentType(MediaType.APPLICATION_JSON))
 				.andExpect(jsonPath("$.message", is("data did not match")));
 		
