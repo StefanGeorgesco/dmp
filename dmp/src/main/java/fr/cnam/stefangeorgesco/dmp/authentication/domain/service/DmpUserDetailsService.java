@@ -32,7 +32,7 @@ public class DmpUserDetailsService implements UserDetailsService {
 		List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
 		grantedAuthorities.add(new SimpleGrantedAuthority(user.getRole()));
 
-		return new org.springframework.security.core.userdetails.User(user.getId(), user.getPassword(),
+		return new org.springframework.security.core.userdetails.User(username, user.getPassword(),
 				grantedAuthorities);
 	}
 

@@ -51,7 +51,7 @@ public class HelloController {
 	
 	@PostMapping("/login")
 	public UserDTO login(Principal principal) throws FinderException {
-		Optional<User> optionalUser = userDAO.findById(principal.getName());
+		Optional<User> optionalUser = userDAO.findByUsername(principal.getName());
 		
 		if (!optionalUser.isPresent()) {
 			throw new FinderException("user is not found");
