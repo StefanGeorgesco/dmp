@@ -1,4 +1,4 @@
-package fr.cnam.stefangeorgesco.dmp.configuration;
+package fr.cnam.stefangeorgesco.dmp.utils;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
