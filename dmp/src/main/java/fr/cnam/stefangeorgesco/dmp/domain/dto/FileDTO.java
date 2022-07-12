@@ -5,6 +5,8 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -30,6 +32,7 @@ public class FileDTO {
 
 	@NotNull(message = "address is mandatory")
 	@Valid
+	@JsonProperty("address")
 	protected AddressDTO addressDTO;
 
 	protected String securityCode;

@@ -30,7 +30,7 @@ public class UserDAOTest {
 	
 	@BeforeEach
 	public void setupBeforeEach() {
-		user.setId("0");
+		user.setId("D000");
 		user.setUsername("user0");
 		user.setRole("ROLE");
 		user.setPassword("passwd");
@@ -39,17 +39,17 @@ public class UserDAOTest {
 	
 	@Test
 	public void testUserDAOExistsById() {
-		assertTrue(userDAO.existsById("1"));
-		assertFalse(userDAO.existsById("0"));
+		assertTrue(userDAO.existsById("D001"));
+		assertFalse(userDAO.existsById("D000"));
 	}
 	
 	@Test
 	public void testUserDAOSave() {
-		assertFalse(userDAO.existsById("0"));
+		assertFalse(userDAO.existsById("D000"));
 		
 		userDAO.save(user);
 		
-		assertTrue(userDAO.existsById("0"));
+		assertTrue(userDAO.existsById("D000"));
 	}
 	
 	@Test
@@ -57,13 +57,13 @@ public class UserDAOTest {
 		user.setPassword("pwd");
 		
 		assertThrows(RuntimeException.class, () -> userDAO.save(user));
-		assertFalse(userDAO.existsById("0"));
+		assertFalse(userDAO.existsById("D000"));
 	}
 	
 	@Test
 	public void testUserDAOFindByUserName() {
 		assertTrue(userDAO.findByUsername("user").isPresent());
-		assertEquals("1", userDAO.findByUsername("user").get().getId());
+		assertEquals("D001", userDAO.findByUsername("user").get().getId());
 		assertFalse(userDAO.findByUsername("username").isPresent());
 	}
 }
