@@ -78,6 +78,24 @@ public class DoctorServiceIntegrationTest {
 		doctorDTO.setEmail("pierre.martin@docteurs.fr");
 		doctorDTO.setSpecialtyDTOs(specialtyDTOs);
 		doctorDTO.setAddressDTO(addressDTO);
+		
+		specialty.setId("s001");
+		specialty.setDescription("A specialty");
+		specilatyDAO.save(specialty);
+		specialties = new ArrayList<Specialty>();
+		specialties.add(specialty);
+		address.setStreet1("1 Rue Lecourbe");
+		address.setZipcode("75015");
+		address.setCity("Paris");
+		address.setCountry("France");
+		doctor.setId("D001");
+		doctor.setFirstname("Pierre");
+		doctor.setLastname("Martin");
+		doctor.setPhone("012345679");
+		doctor.setEmail("pierre.martin@docteurs.fr");
+		doctor.setSpecialties(specialties);
+		doctor.setAddress(address);
+		doctor.setSecurityCode("code");
 	}
 	
 	@AfterEach
@@ -102,23 +120,6 @@ public class DoctorServiceIntegrationTest {
 	
 	@Test
 	public void testCreateDoctorFailureDoctorAlreadyExists() {
-		specialty.setId("s001");
-		specialty.setDescription("A specialty");
-		specilatyDAO.save(specialty);
-		specialties = new ArrayList<Specialty>();
-		specialties.add(specialty);
-		address.setStreet1("1 Rue Lecourbe");
-		address.setZipcode("75015");
-		address.setCity("Paris");
-		address.setCountry("France");
-		doctor.setId("D001");
-		doctor.setFirstname("Pierre");
-		doctor.setLastname("Martin");
-		doctor.setPhone("012345679");
-		doctor.setEmail("pierre.martin@docteurs.fr");
-		doctor.setSpecialties(specialties);
-		doctor.setAddress(address);
-		doctor.setSecurityCode("code");
 		doctorDAO.save(doctor);
 		
 		DuplicateKeyException ex = assertThrows(DuplicateKeyException.class, () -> doctorService.createDoctor(doctorDTO));
