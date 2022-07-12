@@ -19,6 +19,9 @@ import org.springframework.security.web.authentication.www.BasicAuthenticationFi
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 
+import fr.cnam.stefangeorgesco.dmp.utils.JWTTokenGeneratorFilter;
+import fr.cnam.stefangeorgesco.dmp.utils.JWTTokenValidatorFilter;
+
 @Configuration
 @EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true, jsr250Enabled = true)
 public class WebSecurityConfig {
