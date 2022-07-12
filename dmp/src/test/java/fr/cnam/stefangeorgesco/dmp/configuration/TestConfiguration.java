@@ -6,6 +6,9 @@ import org.springframework.context.annotation.Scope;
 
 import fr.cnam.stefangeorgesco.dmp.authentication.domain.dto.UserDTO;
 import fr.cnam.stefangeorgesco.dmp.authentication.domain.model.User;
+import fr.cnam.stefangeorgesco.dmp.domain.dto.AddressDTO;
+import fr.cnam.stefangeorgesco.dmp.domain.dto.DoctorDTO;
+import fr.cnam.stefangeorgesco.dmp.domain.dto.SpecialtyDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.model.Act;
 import fr.cnam.stefangeorgesco.dmp.domain.model.Address;
 import fr.cnam.stefangeorgesco.dmp.domain.model.Correspondance;
@@ -26,12 +29,6 @@ public class TestConfiguration {
 	@Scope(value = "prototype")
 	User getUser() {
 		return new User();
-	}
-	
-	@Bean(name = "userDTO")
-	@Scope(value = "prototype")
-	UserDTO getUserDTO() {
-		return new UserDTO();
 	}
 	
 	@Bean(name = "doctor")
@@ -104,6 +101,30 @@ public class TestConfiguration {
 	@Scope(value = "prototype")
 	Symptom getSymptom() {
 		return new Symptom();
+	}
+	
+	@Bean(name = "userDTO")
+	@Scope(value = "prototype")
+	UserDTO getUserDTO() {
+		return new UserDTO();
+	}
+	
+	@Bean(name = "doctorDTO")
+	@Scope(value = "prototype")
+	DoctorDTO getDoctorDTO() {
+		return new DoctorDTO();
+	}
+	
+	@Bean(name = "addressDTO")
+	@Scope(value = "prototype")
+	AddressDTO getAddressDTO() {
+		return new AddressDTO();
+	}
+	
+	@Bean(name = "specialtyDTO")
+	@Scope(value = "prototype")
+	SpecialtyDTO getSpecialtyDTO() {
+		return new SpecialtyDTO();
 	}
 	
 }
