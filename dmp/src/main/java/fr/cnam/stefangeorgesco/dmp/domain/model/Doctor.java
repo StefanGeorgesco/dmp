@@ -13,9 +13,14 @@ import javax.validation.constraints.Size;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
+import lombok.Getter;
+import lombok.Setter;
+
 @Entity
 @Table(name = "t_doctor")
 @OnDelete(action = OnDeleteAction.CASCADE)
+@Getter
+@Setter
 public class Doctor extends File {
 
 	@ManyToMany
@@ -23,13 +28,5 @@ public class Doctor extends File {
 	@NotNull(message = "specialties are mandatory")
 	@Size(min = 1, message = "doctor must have at least one specialty")
 	private Collection<Specialty> specialties;
-
-	public Collection<Specialty> getSpecialties() {
-		return specialties;
-	}
-
-	public void setSpecialties(Collection<Specialty> specialties) {
-		this.specialties = specialties;
-	}
 
 }
