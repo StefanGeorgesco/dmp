@@ -2,12 +2,14 @@ package fr.cnam.stefangeorgesco.dmp.domain.dao;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -43,6 +45,27 @@ public class DoctorDAOTest {
 	private Doctor doctor;
 	
 	private List<Specialty> specialties;
+	
+	@BeforeEach
+	public void setup() {
+		specialty.setId("s001");
+		specialty.setDescription("A specialty");
+		specialtyDAO.save(specialty);
+		specialties = new ArrayList<>();
+		specialties.add(specialty);
+		doctorAddress.setStreet1("street");
+		doctorAddress.setCity("city");
+		doctorAddress.setZipcode("zip");
+		doctorAddress.setCountry("country");
+		doctor.setId("doctorId");
+		doctor.setFirstname("firstname");
+		doctor.setLastname("lastname");
+		doctor.setPhone("0123456789");
+		doctor.setEmail("doctor@doctors.com");
+		doctor.setAddress(doctorAddress);
+		doctor.setSpecialties(specialties);
+		doctor.setSecurityCode("12345678");
+	}
 
 	@Test
 	public void testDoctorDAOExistsById() {
@@ -53,7 +76,6 @@ public class DoctorDAOTest {
 	
 	@Test
 	public void testDoctorDAOFindById() {
-		
 		Optional<Doctor> optionalDoctor = doctorDAO.findById("1");
 		
 		assertTrue(optionalDoctor.isPresent());
@@ -62,40 +84,23 @@ public class DoctorDAOTest {
 		
 		assertEquals(doctor.getFirstname(), "John");
 		assertEquals(doctor.getLastname(), "Smith");
-		
 	}
 	
 	@Test
 	public void testDoctorDAOSave() {
-		
 		assertFalse(doctorDAO.existsById("doctorId"));
-		
-		specialty.setId("s001");
-		specialty.setDescription("A specialty");
-
-		specialtyDAO.save(specialty);
-
-		specialties = new ArrayList<>();
-		specialties.add(specialty);
-
-		doctorAddress.setStreet1("street");
-		doctorAddress.setCity("city");
-		doctorAddress.setZipcode("zip");
-		doctorAddress.setCountry("country");
-
-		doctor.setId("doctorId");
-		doctor.setFirstname("firstname");
-		doctor.setLastname("lastname");
-		doctor.setPhone("0123456789");
-		doctor.setEmail("doctor@doctors.com");
-		doctor.setAddress(doctorAddress);
-		doctor.setSpecialties(specialties);
-		doctor.setSecurityCode("12345678");
-		
+				
 		doctorDAO.save(doctor);
 		
 		assertTrue(doctorDAO.existsById("doctorId"));
+	}
+	
+	@Test
+	public void testDoctorDAOSaveFailureInvalidData() {
+		doctor.getSpecialties().clear();
 		
+		assertThrows(RuntimeException.class, () -> doctorDAO.save(doctor));
+		assertFalse(doctorDAO.existsById("doctorId"));
 	}
 	
 }
