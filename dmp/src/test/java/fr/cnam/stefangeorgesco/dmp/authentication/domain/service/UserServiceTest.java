@@ -62,6 +62,8 @@ public class UserServiceTest {
 	@Autowired
 	private BCryptPasswordEncoder bCryptPasswordEncoder;
 	
+	private ArgumentCaptor<User> userCaptor = ArgumentCaptor.forClass(User.class);
+	
 	@BeforeEach
 	public void setup() {
 		userDTO.setId("1");
@@ -72,9 +74,6 @@ public class UserServiceTest {
 	
 	@Test
 	public void testCreateDoctorAccountSuccess() throws CheckException {
-		
-		ArgumentCaptor<User> userCaptor = ArgumentCaptor.forClass(User.class);
-		
 		doNothing().when(doctor).checkUserData(any(User.class));
 		when(userDAO.existsById(userDTO.getId())).thenReturn(false);
 		when(fileDAO.findById(userDTO.getId())).thenReturn(Optional.of(doctor));
@@ -98,9 +97,6 @@ public class UserServiceTest {
 	
 	@Test
 	public void testCreatePatientAccountSuccess() throws CheckException {
-		
-		ArgumentCaptor<User> userCaptor = ArgumentCaptor.forClass(User.class);
-		
 		doNothing().when(patientFile).checkUserData(any(User.class));
 		when(userDAO.existsById(userDTO.getId())).thenReturn(false);
 		when(fileDAO.findById(userDTO.getId())).thenReturn(Optional.of(patientFile));
@@ -124,7 +120,6 @@ public class UserServiceTest {
 	
 	@Test
 	public void testCreateAccountFailureUserAccountAlreadyExists() {
-		
 		when(userDAO.existsById(userDTO.getId())).thenReturn(true);
 		
 		DuplicateKeyException ex = assertThrows(DuplicateKeyException.class, () -> userService.createAccount(userDTO));
@@ -135,7 +130,6 @@ public class UserServiceTest {
 	
 	@Test
 	public void testCreateAccountFailureFileDoesNotExist() {
-		
 		when(userDAO.existsById(userDTO.getId())).thenReturn(false);
 		when(fileDAO.findById(userDTO.getId())).thenReturn(Optional.ofNullable(null));
 		
@@ -147,9 +141,6 @@ public class UserServiceTest {
 	
 	@Test
 	public void testCreateDoctorAccountFailureCheckUserDataError() throws CheckException {
-		
-		ArgumentCaptor<User> userCaptor = ArgumentCaptor.forClass(User.class);
-		
 		doThrow(new CheckException("data did not match")).when(doctor).checkUserData(userCaptor.capture());
 		when(userDAO.existsById(userDTO.getId())).thenReturn(false);
 		when(fileDAO.findById(userDTO.getId())).thenReturn(Optional.of(doctor));
@@ -172,9 +163,6 @@ public class UserServiceTest {
 
 	@Test
 	public void testCreatePatientAccountFailureCheckUserDataError() throws CheckException {
-		
-		ArgumentCaptor<User> userCaptor = ArgumentCaptor.forClass(User.class);
-		
 		doThrow(new CheckException("data did not match")).when(patientFile).checkUserData(userCaptor.capture());
 		when(userDAO.existsById(userDTO.getId())).thenReturn(false);
 		when(fileDAO.findById(userDTO.getId())).thenReturn(Optional.of(patientFile));
