@@ -94,7 +94,7 @@ public class DoctorControllerIntegrationTest {
 		doctorDTO.setLastname("Martin");
 		doctorDTO.setPhone("012345679");
 		doctorDTO.setEmail("pierre.martin@docteurs.fr");
-		doctorDTO.setSpecialtyDTOs(specialtyDTOs);
+		doctorDTO.setSpecialtiesDTO(specialtyDTOs);
 		doctorDTO.setAddressDTO(addressDTO);
 		
 		specialty.setId("S001");
@@ -128,7 +128,7 @@ public class DoctorControllerIntegrationTest {
 	
 	@Test
 	@WithUserDetails("admin")
-	public void testCreateDoctorSuccess() throws Exception, Exception {
+	public void testCreateDoctorSuccess() throws Exception {
 		
 		assertFalse(doctorDAO.existsById("D003"));
 		
@@ -145,10 +145,50 @@ public class DoctorControllerIntegrationTest {
 	
 	@Test
 	@WithUserDetails("admin")
-	public void testCreateDoctorFailureDoctorAlreadyExists() {
+	public void testCreateDoctorFailureDoctorAlreadyExists() throws Exception {
 		doctorDAO.save(doctor);
 		
+		mockMvc.perform(
+				post("/doctor")
+				.contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(doctorDTO)))
+				.andExpect(status().isBadRequest()).andExpect(content().contentType(MediaType.APPLICATION_JSON))
+				.andExpect(jsonPath("$.message", is("doctor already exists")));
+	}
+	
+	@Test
+	@WithUserDetails("admin")
+	public void testCreateDoctorFailureDoctorDTONonValidFirstname() throws Exception {
+		doctorDTO.setFirstname(null);
 		
+		mockMvc.perform(
+				post("/doctor")
+				.contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(doctorDTO)))
+				.andExpect(status().isNotAcceptable()).andExpect(content().contentType(MediaType.APPLICATION_JSON))
+				.andExpect(jsonPath("$.firstname", is("firstname is mandatory")));
+	}
+		
+	@Test
+	@WithUserDetails("admin")
+	public void testCreateDoctorFailureDoctorDTONonValidAddressStreet1() throws Exception {
+		doctorDTO.getAddressDTO().setStreet1("");
+		
+		mockMvc.perform(
+				post("/doctor")
+				.contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(doctorDTO)))
+				.andExpect(status().isNotAcceptable()).andExpect(content().contentType(MediaType.APPLICATION_JSON))
+				.andExpect(jsonPath("$.address_street1", is("invalid street")));
+	}
+		
+	@Test
+	@WithUserDetails("admin")
+	public void testCreateDoctorFailureDoctorDTONonValidSpecialtyId() throws Exception {
+		doctorDTO.getSpecialtiesDTO().iterator().next().setId("");
+		
+		mockMvc.perform(
+				post("/doctor")
+				.contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(doctorDTO)))
+				.andExpect(status().isNotAcceptable()).andExpect(content().contentType(MediaType.APPLICATION_JSON))
+				.andExpect(jsonPath("$.specialties0_id", is("id is mandatory")));
 	}
 		
 }

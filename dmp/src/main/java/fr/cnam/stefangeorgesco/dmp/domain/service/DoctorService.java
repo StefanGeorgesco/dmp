@@ -40,7 +40,7 @@ public class DoctorService {
 
 		doctorDTO.setSecurityCode(PasswordGenerator.generatePassword());
 
-		Iterator<SpecialtyDTO> it = doctorDTO.getSpecialtyDTOs().iterator();
+		Iterator<SpecialtyDTO> it = doctorDTO.getSpecialtiesDTO().iterator();
 
 		while (it.hasNext()) {
 			SpecialtyDTO specialtyDTO = it.next();

@@ -91,7 +91,7 @@ public class DoctorServiceTest {
 		doctorDTO.setLastname("Martin");
 		doctorDTO.setPhone("012345679");
 		doctorDTO.setEmail("pierre.martin@docteurs.fr");
-		doctorDTO.setSpecialtyDTOs(specialtyDTOs);
+		doctorDTO.setSpecialtiesDTO(specialtyDTOs);
 		doctorDTO.setAddressDTO(addressDTO);
 		
 		specialty1.setId("S001");
@@ -119,16 +119,16 @@ public class DoctorServiceTest {
 		assertEquals(doctorDTO.getFirstname(), doctor.getFirstname());
 		assertEquals(doctorDTO.getPhone(), doctor.getPhone());
 		assertEquals(doctorDTO.getEmail(), doctor.getEmail());
-		assertEquals(doctorDTO.getSpecialtyDTOs().size(), doctor.getSpecialties().size());
-		assertEquals(doctorDTO.getSpecialtyDTOs().iterator().next().getDescription(),
+		assertEquals(doctorDTO.getSpecialtiesDTO().size(), doctor.getSpecialties().size());
+		assertEquals(doctorDTO.getSpecialtiesDTO().iterator().next().getDescription(),
 				doctor.getSpecialties().iterator().next().getDescription());
 		assertEquals(doctorDTO.getAddressDTO().getZipcode(), doctor.getAddress().getZipcode());
 		assertTrue(bCryptPasswordEncoder.matches(doctorDTO.getSecurityCode(), doctor.getSecurityCode()));
 		
 		assertNotNull(doctorDTO.getSecurityCode());
 		assertTrue(doctorDTO.getSecurityCode().length() >= 10);
-		assertEquals(2, doctorDTO.getSpecialtyDTOs().size());
-		Iterator<SpecialtyDTO> it = doctorDTO.getSpecialtyDTOs().iterator();
+		assertEquals(2, doctorDTO.getSpecialtiesDTO().size());
+		Iterator<SpecialtyDTO> it = doctorDTO.getSpecialtiesDTO().iterator();
 		SpecialtyDTO specialtyDTO = it.next();
 		assertTrue("S001".equals(specialtyDTO.getId()) && "First specialty".equals(specialtyDTO.getDescription()) ||
 				"S002".equals(specialtyDTO.getId()) && "Second specialty".equals(specialtyDTO.getDescription()));

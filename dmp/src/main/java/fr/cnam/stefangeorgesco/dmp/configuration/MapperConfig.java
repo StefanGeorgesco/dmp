@@ -22,7 +22,7 @@ public class MapperConfig {
 	public ModelMapper doctorDTOModelMapper() {
 		ModelMapper modelMapper = new ModelMapper();
 		TypeMap<DoctorDTO, Doctor> typeMap = modelMapper.createTypeMap(DoctorDTO.class, Doctor.class);
-		typeMap.addMapping(src -> src.getSpecialtyDTOs(), Doctor::setSpecialties);
+		typeMap.addMapping(src -> src.getSpecialtiesDTO(), Doctor::setSpecialties);
 		typeMap.addMapping(src -> src.getAddressDTO(), Doctor::setAddress);
 		
 		return modelMapper;

@@ -76,7 +76,7 @@ public class DoctorServiceIntegrationTest {
 		doctorDTO.setLastname("Martin");
 		doctorDTO.setPhone("012345679");
 		doctorDTO.setEmail("pierre.martin@docteurs.fr");
-		doctorDTO.setSpecialtyDTOs(specialtyDTOs);
+		doctorDTO.setSpecialtiesDTO(specialtyDTOs);
 		doctorDTO.setAddressDTO(addressDTO);
 		
 		specialty.setId("S001");

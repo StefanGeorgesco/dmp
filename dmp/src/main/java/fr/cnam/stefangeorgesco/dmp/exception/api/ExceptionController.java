@@ -26,7 +26,8 @@ public class ExceptionController {
 	public Map<String, String> handleValidationExceptions(MethodArgumentNotValidException ex) {
 		Map<String, String> errors = new HashMap<>();
 		ex.getBindingResult().getAllErrors().forEach((error) -> {
-			String fieldName = ((FieldError) error).getField();
+			String fieldName = ((FieldError) error).getField()
+					.replaceAll("(DTO|\\[|\\])", "").replaceAll("[.]", "_");
 			String errorMessage = error.getDefaultMessage();
 			errors.put(fieldName, errorMessage);
 		});
@@ -44,7 +45,7 @@ public class ExceptionController {
 	}
 
 	@ResponseStatus(HttpStatus.UNAUTHORIZED)
-	@ExceptionHandler({BadCredentialsException.class, UsernameNotFoundException.class})
+	@ExceptionHandler({ BadCredentialsException.class, UsernameNotFoundException.class })
 	public RestResponse handleBadCredentialsException(BadCredentialsException ex) {
 		RestResponse response = new RestResponse();
 		response.setStatus(HttpStatus.UNAUTHORIZED.value());

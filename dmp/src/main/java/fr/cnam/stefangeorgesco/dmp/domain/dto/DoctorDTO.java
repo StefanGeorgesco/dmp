@@ -2,6 +2,7 @@ package fr.cnam.stefangeorgesco.dmp.domain.dto;
 
 import java.util.Collection;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -17,6 +18,6 @@ public class DoctorDTO extends FileDTO {
 	@NotNull(message = "specialties are mandatory")
 	@Size(min = 1, message = "doctor must have at least one specialty")
 	@JsonProperty("specialties")
-	private Collection<SpecialtyDTO> specialtyDTOs;
+	private Collection<@Valid SpecialtyDTO> specialtiesDTO;
 
 }
