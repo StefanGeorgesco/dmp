@@ -77,8 +77,8 @@ public class DoctorServiceTest {
 
 	@BeforeEach
 	public void setupBeforeEach() {
-		specialtyDTO1.setId("s001");
-		specialtyDTO2.setId("s002");
+		specialtyDTO1.setId("S001");
+		specialtyDTO2.setId("S002");
 		specialtyDTOs = new HashSet<SpecialtyDTO>();
 		specialtyDTOs.add(specialtyDTO1);
 		specialtyDTOs.add(specialtyDTO2);
@@ -94,9 +94,9 @@ public class DoctorServiceTest {
 		doctorDTO.setSpecialtyDTOs(specialtyDTOs);
 		doctorDTO.setAddressDTO(addressDTO);
 		
-		specialty1.setId("s001");
+		specialty1.setId("S001");
 		specialty1.setDescription("First specialty");
-		specialty2.setId("s002");
+		specialty2.setId("S002");
 		specialty2.setDescription("Second specialty");
 	}
 
@@ -130,11 +130,11 @@ public class DoctorServiceTest {
 		assertEquals(2, doctorDTO.getSpecialtyDTOs().size());
 		Iterator<SpecialtyDTO> it = doctorDTO.getSpecialtyDTOs().iterator();
 		SpecialtyDTO specialtyDTO = it.next();
-		assertTrue("s001".equals(specialtyDTO.getId()) && "First specialty".equals(specialtyDTO.getDescription()) ||
-				"s002".equals(specialtyDTO.getId()) && "Second specialty".equals(specialtyDTO.getDescription()));
+		assertTrue("S001".equals(specialtyDTO.getId()) && "First specialty".equals(specialtyDTO.getDescription()) ||
+				"S002".equals(specialtyDTO.getId()) && "Second specialty".equals(specialtyDTO.getDescription()));
 		specialtyDTO = it.next();
-		assertTrue("s001".equals(specialtyDTO.getId()) && "First specialty".equals(specialtyDTO.getDescription()) ||
-				"s002".equals(specialtyDTO.getId()) && "Second specialty".equals(specialtyDTO.getDescription()));
+		assertTrue("S001".equals(specialtyDTO.getId()) && "First specialty".equals(specialtyDTO.getDescription()) ||
+				"S002".equals(specialtyDTO.getId()) && "Second specialty".equals(specialtyDTO.getDescription()));
 	}
 
 	@Test

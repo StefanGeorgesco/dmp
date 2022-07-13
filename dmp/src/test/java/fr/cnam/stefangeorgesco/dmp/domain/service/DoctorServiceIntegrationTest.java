@@ -63,7 +63,7 @@ public class DoctorServiceIntegrationTest {
 
 	@BeforeEach
 	public void setupBeforeEach() {
-		specialtyDTO.setId("s001");
+		specialtyDTO.setId("S001");
 		specialtyDTO.setDescription("A specialty");
 		specialtyDTOs = new ArrayList<SpecialtyDTO>();
 		specialtyDTOs.add(specialtyDTO);
@@ -79,7 +79,7 @@ public class DoctorServiceIntegrationTest {
 		doctorDTO.setSpecialtyDTOs(specialtyDTOs);
 		doctorDTO.setAddressDTO(addressDTO);
 		
-		specialty.setId("s001");
+		specialty.setId("S001");
 		specialty.setDescription("A specialty");
 		specilatyDAO.save(specialty);
 		specialties = new ArrayList<Specialty>();
@@ -103,8 +103,8 @@ public class DoctorServiceIntegrationTest {
 		if (doctorDAO.existsById("D001")) {
 			doctorDAO.deleteById("D001");
 		}
-		if (specilatyDAO.existsById("s001")) {
-			specilatyDAO.deleteById("s001");
+		if (specilatyDAO.existsById("S001")) {
+			specilatyDAO.deleteById("S001");
 		}
 	}
 	

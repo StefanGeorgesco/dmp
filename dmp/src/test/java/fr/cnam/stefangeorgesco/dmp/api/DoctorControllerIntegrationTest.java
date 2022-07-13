@@ -81,7 +81,7 @@ public class DoctorControllerIntegrationTest {
 
 	@BeforeEach
 	public void setupBeforeEach() {
-		specialtyDTO.setId("s001");
+		specialtyDTO.setId("S001");
 		specialtyDTO.setDescription("A specialty");
 		specialtyDTOs = new ArrayList<SpecialtyDTO>();
 		specialtyDTOs.add(specialtyDTO);
@@ -89,7 +89,7 @@ public class DoctorControllerIntegrationTest {
 		addressDTO.setZipcode("75015");
 		addressDTO.setCity("Paris");
 		addressDTO.setCountry("France");
-		doctorDTO.setId("D001");
+		doctorDTO.setId("D003");
 		doctorDTO.setFirstname("Pierre");
 		doctorDTO.setLastname("Martin");
 		doctorDTO.setPhone("012345679");
@@ -97,7 +97,7 @@ public class DoctorControllerIntegrationTest {
 		doctorDTO.setSpecialtyDTOs(specialtyDTOs);
 		doctorDTO.setAddressDTO(addressDTO);
 		
-		specialty.setId("s001");
+		specialty.setId("S001");
 		specialty.setDescription("A specialty");
 		specilatyDAO.save(specialty);
 		specialties = new ArrayList<Specialty>();
@@ -106,7 +106,7 @@ public class DoctorControllerIntegrationTest {
 		address.setZipcode("75015");
 		address.setCity("Paris");
 		address.setCountry("France");
-		doctor.setId("D001");
+		doctor.setId("D003");
 		doctor.setFirstname("Pierre");
 		doctor.setLastname("Martin");
 		doctor.setPhone("012345679");
@@ -118,11 +118,11 @@ public class DoctorControllerIntegrationTest {
 	
 	@AfterEach
 	public void tearDown() {
-		if (doctorDAO.existsById("D001")) {
-			doctorDAO.deleteById("D001");
+		if (doctorDAO.existsById("D003")) {
+			doctorDAO.deleteById("D003");
 		}
-		if (specilatyDAO.existsById("s001")) {
-			specilatyDAO.deleteById("s001");
+		if (specilatyDAO.existsById("S001")) {
+			specilatyDAO.deleteById("S001");
 		}
 	}
 	
@@ -130,7 +130,7 @@ public class DoctorControllerIntegrationTest {
 	@WithUserDetails("admin")
 	public void testCreateDoctorSuccess() throws Exception, Exception {
 		
-		assertFalse(doctorDAO.existsById("D001"));
+		assertFalse(doctorDAO.existsById("D003"));
 		
 		mockMvc.perform(
 				post("/doctor")
@@ -140,7 +140,7 @@ public class DoctorControllerIntegrationTest {
 				.andExpect(jsonPath("$.address.street1", is("1 Rue Lecourbe")))
 				.andExpect(jsonPath("$.specialties", hasSize(1)));
 		
-		assertTrue(doctorDAO.existsById("D001"));
+		assertTrue(doctorDAO.existsById("D003"));
 	}
 	
 	@Test

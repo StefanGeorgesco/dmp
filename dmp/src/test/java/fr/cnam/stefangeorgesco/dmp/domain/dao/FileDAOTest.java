@@ -29,15 +29,15 @@ public class FileDAOTest {
 	
 	@Test
 	public void testFileDAOExistsById() {
-		assertTrue(fileDAO.existsById("1"));
-		assertTrue(fileDAO.existsById("2"));
-		assertFalse(fileDAO.existsById("0"));
+		assertTrue(fileDAO.existsById("D001"));
+		assertTrue(fileDAO.existsById("P001"));
+		assertFalse(fileDAO.existsById("P002"));
 	}
 	
 	@Test
 	public void testFileDAOFindById() {
 		
-		Optional<File> optionalFile = fileDAO.findById("1");
+		Optional<File> optionalFile = fileDAO.findById("D001");
 		
 		assertTrue(optionalFile.isPresent());
 		

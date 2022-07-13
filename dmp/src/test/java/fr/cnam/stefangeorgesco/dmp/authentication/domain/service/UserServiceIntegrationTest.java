@@ -72,7 +72,7 @@ public class UserServiceIntegrationTest {
 
 	@BeforeEach
 	public void setup() {
-		specialty.setId("s001");
+		specialty.setId("S001");
 		specialty.setDescription("A specialty");
 
 		specialtyDAO.save(specialty);

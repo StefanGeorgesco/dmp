@@ -28,15 +28,15 @@ public class PatientFileDAOTest {
 	
 	@Test
 	public void testPatientFileDAOExistsById() {
-		assertFalse(patientFileDAO.existsById("1"));
-		assertFalse(patientFileDAO.existsById("0"));
-		assertTrue(patientFileDAO.existsById("2"));
+		assertFalse(patientFileDAO.existsById("P002"));
+		assertFalse(patientFileDAO.existsById("P003"));
+		assertTrue(patientFileDAO.existsById("P001"));
 	}
 	
 	@Test
 	public void testPatientFileDAOFindById() {
 		
-		Optional<PatientFile> optionalPatientFile = patientFileDAO.findById("2");
+		Optional<PatientFile> optionalPatientFile = patientFileDAO.findById("P001");
 		
 		assertTrue(optionalPatientFile.isPresent());
 		
