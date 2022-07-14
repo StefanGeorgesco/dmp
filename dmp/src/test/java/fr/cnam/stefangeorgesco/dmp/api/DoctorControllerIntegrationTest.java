@@ -39,26 +39,27 @@ import fr.cnam.stefangeorgesco.dmp.domain.model.Specialty;
 @TestPropertySource("/application-test.properties")
 @AutoConfigureMockMvc
 @SpringBootTest
-@SqlGroup({
-    @Sql(scripts = "/sql/create-users.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
-    @Sql(scripts = "/sql/delete-users.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-})
+@SqlGroup({ @Sql(scripts = "/sql/create-users.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
+		@Sql(scripts = "/sql/delete-users.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD) })
 public class DoctorControllerIntegrationTest {
-	
+
 	@Autowired
 	private MockMvc mockMvc;
-	
+
 	@Autowired
 	ObjectMapper objectMapper;
-	
+
 	@Autowired
 	private SpecialtyDAO specilatyDAO;
-	
+
 	@Autowired
 	private DoctorDAO doctorDAO;
 
 	@Autowired
-	private SpecialtyDTO specialtyDTO;
+	private SpecialtyDTO specialtyDTO1;
+
+	@Autowired
+	private SpecialtyDTO specialtyDTO2;
 
 	@Autowired
 	private AddressDTO addressDTO;
@@ -67,7 +68,10 @@ public class DoctorControllerIntegrationTest {
 	private DoctorDTO doctorDTO;
 
 	@Autowired
-	private Specialty specialty;
+	private Specialty specialty1;
+
+	@Autowired
+	private Specialty specialty2;
 
 	@Autowired
 	private Address address;
@@ -81,14 +85,20 @@ public class DoctorControllerIntegrationTest {
 
 	@BeforeEach
 	public void setupBeforeEach() {
-		specialtyDTO.setId("S001");
-		specialtyDTO.setDescription("A specialty");
-		specialtyDTOs = new ArrayList<SpecialtyDTO>();
-		specialtyDTOs.add(specialtyDTO);
+		specialtyDTO1.setId("S001");
+		specialtyDTO1.setDescription("any");
+		specialtyDTO2.setId("S002");
+		specialtyDTO2.setDescription("any");
+
+		specialtyDTOs = new ArrayList<>();
+		specialtyDTOs.add(specialtyDTO1);
+		specialtyDTOs.add(specialtyDTO2);
+
 		addressDTO.setStreet1("1 Rue Lecourbe");
 		addressDTO.setZipcode("75015");
 		addressDTO.setCity("Paris");
 		addressDTO.setCountry("France");
+
 		doctorDTO.setId("D003");
 		doctorDTO.setFirstname("Pierre");
 		doctorDTO.setLastname("Martin");
@@ -96,16 +106,23 @@ public class DoctorControllerIntegrationTest {
 		doctorDTO.setEmail("pierre.martin@docteurs.fr");
 		doctorDTO.setSpecialtiesDTO(specialtyDTOs);
 		doctorDTO.setAddressDTO(addressDTO);
-		
-		specialty.setId("S001");
-		specialty.setDescription("A specialty");
-		specilatyDAO.save(specialty);
-		specialties = new ArrayList<Specialty>();
-		specialties.add(specialty);
+
+		specialty1.setId("S001");
+		specialty1.setDescription("First specialty");
+		specilatyDAO.save(specialty1);
+		specialty2.setId("S002");
+		specialty2.setDescription("Second specialty");
+		specilatyDAO.save(specialty2);
+
+		specialties = new ArrayList<>();
+		specialties.add(specialty1);
+		specialties.add(specialty2);
+
 		address.setStreet1("1 Rue Lecourbe");
 		address.setZipcode("75015");
 		address.setCity("Paris");
 		address.setCountry("France");
+
 		doctor.setId("D003");
 		doctor.setFirstname("Pierre");
 		doctor.setLastname("Martin");
@@ -115,7 +132,7 @@ public class DoctorControllerIntegrationTest {
 		doctor.setAddress(address);
 		doctor.setSecurityCode("code");
 	}
-	
+
 	@AfterEach
 	public void tearDown() {
 		if (doctorDAO.existsById("D003")) {
@@ -124,71 +141,82 @@ public class DoctorControllerIntegrationTest {
 		if (specilatyDAO.existsById("S001")) {
 			specilatyDAO.deleteById("S001");
 		}
+		if (specilatyDAO.existsById("S002")) {
+			specilatyDAO.deleteById("S002");
+		}
 	}
-	
+
 	@Test
 	@WithUserDetails("admin")
 	public void testCreateDoctorSuccess() throws Exception {
-		
+
 		assertFalse(doctorDAO.existsById("D003"));
-		
-		mockMvc.perform(
-				post("/doctor")
-				.contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(doctorDTO)))
-				.andExpect(status().isCreated()).andExpect(content().contentType(MediaType.APPLICATION_JSON))
+
+		mockMvc.perform(post("/doctor").contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(doctorDTO))).andExpect(status().isCreated())
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
 				.andExpect(jsonPath("$.firstname", is("Pierre")))
 				.andExpect(jsonPath("$.address.street1", is("1 Rue Lecourbe")))
-				.andExpect(jsonPath("$.specialties", hasSize(1)));
-		
+				.andExpect(jsonPath("$.specialties", hasSize(2)))
+				.andExpect(jsonPath("$.specialties[0].description", is("First specialty")))
+				.andExpect(jsonPath("$.specialties[0].description", is("First specialty")));
+
 		assertTrue(doctorDAO.existsById("D003"));
 	}
-	
+
 	@Test
 	@WithUserDetails("admin")
 	public void testCreateDoctorFailureDoctorAlreadyExists() throws Exception {
 		doctorDAO.save(doctor);
-		
-		mockMvc.perform(
-				post("/doctor")
-				.contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(doctorDTO)))
-				.andExpect(status().isBadRequest()).andExpect(content().contentType(MediaType.APPLICATION_JSON))
+
+		mockMvc.perform(post("/doctor").contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(doctorDTO))).andExpect(status().isBadRequest())
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
 				.andExpect(jsonPath("$.message", is("doctor already exists")));
 	}
-	
+
 	@Test
 	@WithUserDetails("admin")
 	public void testCreateDoctorFailureDoctorDTONonValidFirstname() throws Exception {
 		doctorDTO.setFirstname(null);
-		
-		mockMvc.perform(
-				post("/doctor")
-				.contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(doctorDTO)))
-				.andExpect(status().isNotAcceptable()).andExpect(content().contentType(MediaType.APPLICATION_JSON))
+
+		mockMvc.perform(post("/doctor").contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(doctorDTO))).andExpect(status().isNotAcceptable())
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
 				.andExpect(jsonPath("$.firstname", is("firstname is mandatory")));
 	}
-		
+
 	@Test
 	@WithUserDetails("admin")
 	public void testCreateDoctorFailureDoctorDTONonValidAddressStreet1() throws Exception {
 		doctorDTO.getAddressDTO().setStreet1("");
-		
-		mockMvc.perform(
-				post("/doctor")
-				.contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(doctorDTO)))
-				.andExpect(status().isNotAcceptable()).andExpect(content().contentType(MediaType.APPLICATION_JSON))
+
+		mockMvc.perform(post("/doctor").contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(doctorDTO))).andExpect(status().isNotAcceptable())
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
 				.andExpect(jsonPath("$.address_street1", is("invalid street")));
 	}
-		
+
+	@Test
+	@WithUserDetails("admin")
+	public void testCreateDoctorFailureDoctorDTONoSpecialty() throws Exception {
+		doctorDTO.getSpecialtiesDTO().clear();
+
+		mockMvc.perform(post("/doctor").contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(doctorDTO))).andExpect(status().isNotAcceptable())
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+				.andExpect(jsonPath("$.specialties", is("doctor must have at least one specialty")));
+	}
+
 	@Test
 	@WithUserDetails("admin")
 	public void testCreateDoctorFailureDoctorDTONonValidSpecialtyId() throws Exception {
 		doctorDTO.getSpecialtiesDTO().iterator().next().setId("");
-		
-		mockMvc.perform(
-				post("/doctor")
-				.contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(doctorDTO)))
-				.andExpect(status().isNotAcceptable()).andExpect(content().contentType(MediaType.APPLICATION_JSON))
+
+		mockMvc.perform(post("/doctor").contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(doctorDTO))).andExpect(status().isNotAcceptable())
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
 				.andExpect(jsonPath("$.specialties0_id", is("id is mandatory")));
 	}
-		
+
 }
