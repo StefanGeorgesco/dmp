@@ -43,7 +43,10 @@ public class DoctorDAOTest {
 	private Address doctorAddress;
 
 	@Autowired
-	private Specialty specialty;
+	private Specialty specialty1;
+
+	@Autowired
+	private Specialty specialty2;
 
 	@Autowired
 	private Doctor doctor;
@@ -52,11 +55,11 @@ public class DoctorDAOTest {
 
 	@BeforeEach
 	public void setup() {
-		specialty.setId("S001");
-		specialty.setDescription("A specialty");
-		specialtyDAO.save(specialty);
+		specialty1.setId("S001");
+		specialty2.setId("S002");
 		specialties = new ArrayList<>();
-		specialties.add(specialty);
+		specialties.add(specialty1);
+		specialties.add(specialty2);
 		doctorAddress.setStreet1("street");
 		doctorAddress.setCity("city");
 		doctorAddress.setZipcode("zip");
@@ -104,6 +107,16 @@ public class DoctorDAOTest {
 		doctor.getSpecialties().clear();
 
 		assertThrows(RuntimeException.class, () -> doctorDAO.save(doctor));
+		
+		assertFalse(doctorDAO.existsById("D003"));
+	}
+	
+	@Test
+	public void testDoctorDAOSaveFailureSpecialtyDoesNotExist() {
+		((List<Specialty>) doctor.getSpecialties()).get(1).setId("S003");
+		
+		assertThrows(RuntimeException.class, () -> doctorDAO.save(doctor));
+		
 		assertFalse(doctorDAO.existsById("D003"));
 	}
 

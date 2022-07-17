@@ -159,7 +159,7 @@ public class DoctorControllerIntegrationTest {
 				.andExpect(jsonPath("$.address.street1", is("1 Rue Lecourbe")))
 				.andExpect(jsonPath("$.specialties", hasSize(2)))
 				.andExpect(jsonPath("$.specialties[0].description", is("First specialty")))
-				.andExpect(jsonPath("$.specialties[0].description", is("First specialty")));
+				.andExpect(jsonPath("$.specialties[1].description", is("Second specialty")));
 
 		assertTrue(doctorDAO.existsById("D003"));
 	}
@@ -184,6 +184,8 @@ public class DoctorControllerIntegrationTest {
 				.content(objectMapper.writeValueAsString(doctorDTO))).andExpect(status().isNotAcceptable())
 				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
 				.andExpect(jsonPath("$.firstname", is("firstname is mandatory")));
+		
+		assertFalse(doctorDAO.existsById("D003"));
 	}
 
 	@Test
@@ -195,6 +197,8 @@ public class DoctorControllerIntegrationTest {
 				.content(objectMapper.writeValueAsString(doctorDTO))).andExpect(status().isNotAcceptable())
 				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
 				.andExpect(jsonPath("$.address_street1", is("invalid street")));
+		
+		assertFalse(doctorDAO.existsById("D003"));
 	}
 
 	@Test
@@ -206,6 +210,8 @@ public class DoctorControllerIntegrationTest {
 				.content(objectMapper.writeValueAsString(doctorDTO))).andExpect(status().isNotAcceptable())
 				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
 				.andExpect(jsonPath("$.specialties", is("doctor must have at least one specialty")));
+		
+		assertFalse(doctorDAO.existsById("D003"));
 	}
 
 	@Test
@@ -217,6 +223,22 @@ public class DoctorControllerIntegrationTest {
 				.content(objectMapper.writeValueAsString(doctorDTO))).andExpect(status().isNotAcceptable())
 				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
 				.andExpect(jsonPath("$.specialties0_id", is("id is mandatory")));
+		
+		assertFalse(doctorDAO.existsById("D003"));
+	}
+	
+	@Test
+	@WithUserDetails("admin")
+	public void testCreateDoctorFailureSpecialtyDoesNotExist() throws Exception {
+		
+		((List<SpecialtyDTO>) doctorDTO.getSpecialtiesDTO()).get(1).setId("S003");
+		
+		mockMvc.perform(post("/doctor").contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(doctorDTO))).andExpect(status().isBadRequest())
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+				.andExpect(jsonPath("$.message", is("specialty does not exist")));
+		
+		assertFalse(doctorDAO.existsById("D003"));
 	}
 
 }

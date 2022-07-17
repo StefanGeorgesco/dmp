@@ -1,6 +1,5 @@
 package fr.cnam.stefangeorgesco.dmp.domain.service;
 
-import java.util.Iterator;
 import java.util.Optional;
 
 import org.modelmapper.ModelMapper;
@@ -15,6 +14,7 @@ import fr.cnam.stefangeorgesco.dmp.domain.dto.SpecialtyDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.model.Doctor;
 import fr.cnam.stefangeorgesco.dmp.domain.model.Specialty;
 import fr.cnam.stefangeorgesco.dmp.exception.domain.DuplicateKeyException;
+import fr.cnam.stefangeorgesco.dmp.exception.domain.FinderException;
 import fr.cnam.stefangeorgesco.dmp.utils.PasswordGenerator;
 
 @Service
@@ -32,7 +32,7 @@ public class DoctorService {
 	@Autowired
 	private BCryptPasswordEncoder bCryptPasswordEncoder;
 
-	public DoctorDTO createDoctor(DoctorDTO doctorDTO) throws DuplicateKeyException {
+	public DoctorDTO createDoctor(DoctorDTO doctorDTO) throws DuplicateKeyException, FinderException {
 
 		if (doctorDAO.existsById(doctorDTO.getId())) {
 			throw new DuplicateKeyException("doctor already exists");
@@ -40,17 +40,13 @@ public class DoctorService {
 
 		doctorDTO.setSecurityCode(PasswordGenerator.generatePassword());
 
-		Iterator<SpecialtyDTO> it = doctorDTO.getSpecialtiesDTO().iterator();
-
-		while (it.hasNext()) {
-			SpecialtyDTO specialtyDTO = it.next();
-
+		for (SpecialtyDTO specialtyDTO: doctorDTO.getSpecialtiesDTO()) {
 			Optional<Specialty> optionalSpecialty = specialtyDAO.findById(specialtyDTO.getId());
 
 			if (optionalSpecialty.isPresent()) {
 				specialtyDTO.setDescription(optionalSpecialty.get().getDescription());
 			} else {
-				it.remove();
+				throw new FinderException("specialty does not exist");
 			}
 		}
 

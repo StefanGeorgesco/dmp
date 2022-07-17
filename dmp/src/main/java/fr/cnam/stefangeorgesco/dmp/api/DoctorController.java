@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.DoctorDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.service.DoctorService;
 import fr.cnam.stefangeorgesco.dmp.exception.domain.DuplicateKeyException;
+import fr.cnam.stefangeorgesco.dmp.exception.domain.FinderException;
 
 @RestController
 public class DoctorController {
@@ -21,7 +22,7 @@ public class DoctorController {
 
 	@PostMapping("/doctor")
 	public ResponseEntity<DoctorDTO> createDoctor(@Valid @RequestBody DoctorDTO doctorDTO)
-			throws DuplicateKeyException {
+			throws DuplicateKeyException, FinderException {
 
 		return ResponseEntity.status(HttpStatus.CREATED).body(doctorService.createDoctor(doctorDTO));
 	}
