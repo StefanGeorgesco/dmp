@@ -19,12 +19,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlGroup;
 import org.springframework.test.web.servlet.MockMvc;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import fr.cnam.stefangeorgesco.dmp.domain.dao.DoctorDAO;
@@ -237,6 +239,24 @@ public class DoctorControllerIntegrationTest {
 				.content(objectMapper.writeValueAsString(doctorDTO))).andExpect(status().isBadRequest())
 				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
 				.andExpect(jsonPath("$.message", is("specialty does not exist")));
+		
+		assertFalse(doctorDAO.existsById("D003"));
+	}
+	
+	@Test
+	@WithUserDetails("user")
+	public void testCreateDoctorFailureBadRole() throws Exception {
+		mockMvc.perform(post("/doctor").contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(doctorDTO))).andExpect(status().isForbidden());
+		
+		assertFalse(doctorDAO.existsById("D003"));
+	}
+
+	@Test
+	@WithAnonymousUser
+	public void testCreateDoctorFailureUnauthenticatedUser() throws Exception {
+		mockMvc.perform(post("/doctor").contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(doctorDTO))).andExpect(status().isUnauthorized());
 		
 		assertFalse(doctorDAO.existsById("D003"));
 	}
