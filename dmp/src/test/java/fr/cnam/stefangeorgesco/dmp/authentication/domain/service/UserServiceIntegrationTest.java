@@ -1,7 +1,9 @@
 package fr.cnam.stefangeorgesco.dmp.authentication.domain.service;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -15,6 +17,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.context.jdbc.SqlGroup;
+
 import fr.cnam.stefangeorgesco.dmp.authentication.domain.dao.UserDAO;
 import fr.cnam.stefangeorgesco.dmp.authentication.domain.dto.UserDTO;
 import fr.cnam.stefangeorgesco.dmp.authentication.domain.model.User;
@@ -30,6 +35,8 @@ import fr.cnam.stefangeorgesco.dmp.exception.domain.FinderException;
 
 @TestPropertySource("/application-test.properties")
 @SpringBootTest
+@SqlGroup({ @Sql(scripts = "/sql/create-users.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
+	@Sql(scripts = "/sql/delete-users.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD) })
 public class UserServiceIntegrationTest {
 
 	@Autowired
@@ -226,6 +233,22 @@ public class UserServiceIntegrationTest {
 		assertThrows(CheckException.class, () -> userService.createAccount(userDTO));
 
 		assertFalse(userDAO.existsById("patientFileId"));
+	}
+	
+	@Test
+	public void testFindUserByUsernameSuccess() {
+		UserDTO userDTO = assertDoesNotThrow(() -> userService.findUserByUsername("user"));
+		
+		assertEquals("D001", userDTO.getId());
+		assertNull(userDTO.getPassword());
+		assertNull(userDTO.getSecurityCode());
+	}
+
+	@Test
+	public void testFindUserByUsernameFailureUserDoesNotExist() {
+		FinderException ex = assertThrows(FinderException.class, () -> userService.findUserByUsername("user0"));
+		
+		assertEquals("user not found", ex.getMessage());
 	}
 
 }

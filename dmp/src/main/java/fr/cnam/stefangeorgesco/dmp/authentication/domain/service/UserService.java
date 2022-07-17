@@ -31,6 +31,9 @@ public class UserService {
 
 	@Autowired
 	ModelMapper commonModelMapper;
+	
+	@Autowired
+	ModelMapper userModelMapper;
 
 	@Autowired
 	private BCryptPasswordEncoder bCryptPasswordEncoder;
@@ -62,6 +65,17 @@ public class UserService {
 		}
 
 		userDAO.save(user);
+	}
+
+	public UserDTO findUserByUsername(String username) throws FinderException {
+		Optional<User> optionalUser = userDAO.findByUsername(username);
+		
+		if (optionalUser.isPresent()) {
+			return userModelMapper.map(optionalUser.get(), UserDTO.class);
+		} else {
+			throw new FinderException("user not found");
+		}
+		
 	}
 
 }
