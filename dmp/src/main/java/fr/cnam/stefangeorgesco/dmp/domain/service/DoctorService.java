@@ -25,6 +25,9 @@ public class DoctorService {
 
 	@Autowired
 	ModelMapper doctorDTOModelMapper;
+	
+	@Autowired
+	ModelMapper doctorModelMapper;
 
 	@Autowired
 	SpecialtyDAO specialtyDAO;
@@ -57,6 +60,18 @@ public class DoctorService {
 		doctorDAO.save(doctor);
 
 		return doctorDTO;
+	}
+
+	public DoctorDTO findDoctor(String id) throws FinderException {
+		
+		Optional<Doctor> optionalDoctor = doctorDAO.findById(id);
+		
+		if (optionalDoctor.isPresent()) {
+			return doctorModelMapper.map(optionalDoctor.get(), DoctorDTO.class);
+		} else {
+			throw new FinderException("doctor not found");
+		}
+
 	}
 
 }

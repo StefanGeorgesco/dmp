@@ -25,10 +25,20 @@ public class MapperConfig {
 		typeMap.addMapping(src -> src.getSpecialtiesDTO(), Doctor::setSpecialties);
 		typeMap.addMapping(src -> src.getAddressDTO(), Doctor::setAddress);
 		
-		return modelMapper;
-		
+		return modelMapper;	
 	}
 	
+	@Bean
+	public ModelMapper doctorModelMapper() {
+		ModelMapper modelMapper = new ModelMapper();
+		TypeMap<Doctor, DoctorDTO> typeMap = modelMapper.createTypeMap(Doctor.class, DoctorDTO.class);
+		modelMapper.getConfiguration().setSkipNullEnabled(true);
+		typeMap.addMapping(src -> src.getSpecialties(), DoctorDTO::setSpecialtiesDTO);
+		typeMap.addMapping(src -> src.getAddress(), DoctorDTO::setAddressDTO);
+		typeMap.addMappings(mapper -> mapper.skip(DoctorDTO::setSecurityCode));
+		return modelMapper;
+	}
+
 	@Bean
 	public ModelMapper userModelMapper() {
 		ModelMapper modelMapper = new ModelMapper();
@@ -36,7 +46,8 @@ public class MapperConfig {
 		modelMapper.getConfiguration().setSkipNullEnabled(true);
 		typeMap.addMappings(mapper -> mapper.skip(UserDTO::setPassword));
 		typeMap.addMappings(mapper -> mapper.skip(UserDTO::setSecurityCode));
+		
 		return modelMapper;
 	}
-
+	
 }

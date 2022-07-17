@@ -3,6 +3,7 @@ package fr.cnam.stefangeorgesco.dmp.domain.model;
 import java.util.Collection;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
@@ -23,7 +24,7 @@ import lombok.Setter;
 @Setter
 public class Doctor extends File {
 
-	@ManyToMany
+	@ManyToMany(fetch = FetchType.EAGER)
 	@JoinTable(name = "t_doctor_specialty", joinColumns = @JoinColumn(name = "doctor_id"), inverseJoinColumns = @JoinColumn(name = "specialty_id"))
 	@NotNull(message = "specialties are mandatory")
 	@Size(min = 1, message = "doctor must have at least one specialty")

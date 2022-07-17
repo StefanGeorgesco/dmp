@@ -3,6 +3,7 @@ package fr.cnam.stefangeorgesco.dmp.domain.dao;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -91,6 +92,9 @@ public class DoctorDAOTest {
 
 		assertEquals(doctor.getFirstname(), "John");
 		assertEquals(doctor.getLastname(), "Smith");
+		assertNotNull(doctor.getSpecialties());
+		assertEquals(2, doctor.getSpecialties().size());
+		assertEquals("S001", ((List<Specialty>) doctor.getSpecialties()).get(0).getId());
 	}
 
 	@Test

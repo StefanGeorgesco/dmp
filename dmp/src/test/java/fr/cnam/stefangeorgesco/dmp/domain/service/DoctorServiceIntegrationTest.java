@@ -3,6 +3,7 @@ package fr.cnam.stefangeorgesco.dmp.domain.service;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -25,6 +26,7 @@ import fr.cnam.stefangeorgesco.dmp.domain.model.Address;
 import fr.cnam.stefangeorgesco.dmp.domain.model.Doctor;
 import fr.cnam.stefangeorgesco.dmp.domain.model.Specialty;
 import fr.cnam.stefangeorgesco.dmp.exception.domain.DuplicateKeyException;
+import fr.cnam.stefangeorgesco.dmp.exception.domain.FinderException;
 
 @TestPropertySource("/application-test.properties")
 @SpringBootTest
@@ -125,6 +127,26 @@ public class DoctorServiceIntegrationTest {
 		DuplicateKeyException ex = assertThrows(DuplicateKeyException.class, () -> doctorService.createDoctor(doctorDTO));
 		
 		assertEquals("doctor already exists", ex.getMessage());	
+	}
+	
+	@Test
+	public void testFindDoctorSuccess() {
+		doctorDAO.save(doctor);
+		
+		DoctorDTO doctorDTO = assertDoesNotThrow(() -> doctorService.findDoctor("D001"));
+		
+		assertEquals("D001", doctorDTO.getId());
+		assertEquals("1 Rue Lecourbe", doctorDTO.getAddressDTO().getStreet1());
+		assertEquals("S001", ((List<SpecialtyDTO>) doctorDTO.getSpecialtiesDTO()).get(0).getId());
+		assertNull(doctorDTO.getSecurityCode());
+	}
+	
+	@Test
+	public void testFindDoctorFailureDoctorDoesNotExist() {
+		
+		FinderException ex = assertThrows(FinderException.class, () -> doctorService.findDoctor("D001"));
+		
+		assertEquals("doctor not found", ex.getMessage());
 	}
 	
 }
