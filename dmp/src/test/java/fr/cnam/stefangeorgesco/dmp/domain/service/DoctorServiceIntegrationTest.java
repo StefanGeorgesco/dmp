@@ -137,6 +137,7 @@ public class DoctorServiceIntegrationTest {
 		
 		assertEquals("D001", doctorDTO.getId());
 		assertEquals("1 Rue Lecourbe", doctorDTO.getAddressDTO().getStreet1());
+		assertEquals(1, ((List<SpecialtyDTO>) doctorDTO.getSpecialtiesDTO()).size());
 		assertEquals("S001", ((List<SpecialtyDTO>) doctorDTO.getSpecialtiesDTO()).get(0).getId());
 		assertNull(doctorDTO.getSecurityCode());
 	}
