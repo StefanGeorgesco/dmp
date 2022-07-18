@@ -6,6 +6,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Optional;
 
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -13,6 +15,8 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlGroup;
 
+import fr.cnam.stefangeorgesco.dmp.domain.model.Address;
+import fr.cnam.stefangeorgesco.dmp.domain.model.Doctor;
 import fr.cnam.stefangeorgesco.dmp.domain.model.PatientFile;
 
 @TestPropertySource("/application-test.properties")
@@ -26,6 +30,39 @@ public class PatientFileDAOTest {
 	@Autowired
 	private PatientFileDAO patientFileDAO;
 	
+	@Autowired
+	private Address address;
+
+	@Autowired
+	private Doctor doctor;
+	
+	@Autowired
+	private PatientFile patientFile;
+
+	@BeforeEach
+	public void setup() {
+		address.setStreet1("1 Rue Lecourbe");
+		address.setZipcode("75015");
+		address.setCity("Paris");
+		address.setCountry("France");
+		doctor.setId("D001");
+		patientFile.setId("P002");
+		patientFile.setFirstname("Patrick");
+		patientFile.setLastname("Dubois");
+		patientFile.setPhone("9876543210");
+		patientFile.setEmail("patrick.dubois@mail.fr");
+		patientFile.setAddress(address);
+		patientFile.setSecurityCode("code");
+		patientFile.setReferringDoctor(doctor);
+	}
+	
+	@AfterEach
+	public void teardown() {
+		if (patientFileDAO.existsById("P002")) {
+			patientFileDAO.deleteById("P002");
+		}
+	}
+
 	@Test
 	public void testPatientFileDAOExistsById() {
 		assertFalse(patientFileDAO.existsById("P002"));
@@ -44,7 +81,16 @@ public class PatientFileDAOTest {
 		
 		assertEquals(patientFile.getFirstname(), "Eric");
 		assertEquals(patientFile.getLastname(), "Martin");
+		assertEquals("D001", patientFile.getReferringDoctor().getId());
+	}
+	
+	@Test
+	public void testPatientFileDAOSaveSuccess() {
+		assertFalse(patientFileDAO.existsById("P002"));
 		
+		patientFileDAO.save(patientFile);
+		
+		assertTrue(patientFileDAO.existsById("P002"));
 	}
 	
 }

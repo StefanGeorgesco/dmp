@@ -95,6 +95,7 @@ public class DoctorDAOTest {
 		assertNotNull(doctor.getSpecialties());
 		assertEquals(2, doctor.getSpecialties().size());
 		assertEquals("S001", ((List<Specialty>) doctor.getSpecialties()).get(0).getId());
+		assertEquals("S002", ((List<Specialty>) doctor.getSpecialties()).get(1).getId());
 	}
 
 	@Test
