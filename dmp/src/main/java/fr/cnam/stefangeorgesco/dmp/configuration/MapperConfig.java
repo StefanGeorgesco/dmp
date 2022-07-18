@@ -8,7 +8,9 @@ import org.springframework.context.annotation.Configuration;
 import fr.cnam.stefangeorgesco.dmp.authentication.domain.dto.UserDTO;
 import fr.cnam.stefangeorgesco.dmp.authentication.domain.model.User;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.DoctorDTO;
+import fr.cnam.stefangeorgesco.dmp.domain.dto.PatientFileDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.model.Doctor;
+import fr.cnam.stefangeorgesco.dmp.domain.model.PatientFile;
 
 @Configuration
 public class MapperConfig {
@@ -36,6 +38,26 @@ public class MapperConfig {
 		typeMap.addMapping(src -> src.getSpecialties(), DoctorDTO::setSpecialtiesDTO);
 		typeMap.addMapping(src -> src.getAddress(), DoctorDTO::setAddressDTO);
 		typeMap.addMappings(mapper -> mapper.skip(DoctorDTO::setSecurityCode));
+		
+		return modelMapper;
+	}
+	
+	@Bean
+	public ModelMapper patientFileDTOModelMapper() {
+		ModelMapper modelMapper = new ModelMapper();
+		TypeMap<PatientFileDTO, PatientFile> typeMap = modelMapper.createTypeMap(PatientFileDTO.class, PatientFile.class);
+		typeMap.addMapping(src -> src.getReferringDoctorDTO(), PatientFile::setReferringDoctor);
+		
+		return modelMapper;
+	}
+	
+	@Bean
+	public ModelMapper patientFileModelMapper() {
+		ModelMapper modelMapper = new ModelMapper();
+		TypeMap<PatientFile, PatientFileDTO> typeMap = modelMapper.createTypeMap(PatientFile.class, PatientFileDTO.class);
+		typeMap.addMapping(src -> src.getReferringDoctor(), PatientFileDTO::setReferringDoctorDTO);
+		typeMap.addMappings(mapper -> mapper.skip(PatientFileDTO::setSecurityCode));
+		
 		return modelMapper;
 	}
 

@@ -8,6 +8,7 @@ import fr.cnam.stefangeorgesco.dmp.authentication.domain.dto.UserDTO;
 import fr.cnam.stefangeorgesco.dmp.authentication.domain.model.User;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.AddressDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.DoctorDTO;
+import fr.cnam.stefangeorgesco.dmp.domain.dto.PatientFileDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.SpecialtyDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.model.Act;
 import fr.cnam.stefangeorgesco.dmp.domain.model.Address;
@@ -113,6 +114,12 @@ public class TestConfiguration {
 	@Scope(value = "prototype")
 	DoctorDTO getDoctorDTO() {
 		return new DoctorDTO();
+	}
+	
+	@Bean(name = "patientFileDTO")
+	@Scope(value = "prototype")
+	PatientFileDTO getPatientFileDTO() {
+		return new PatientFileDTO();
 	}
 	
 	@Bean(name = "addressDTO")
