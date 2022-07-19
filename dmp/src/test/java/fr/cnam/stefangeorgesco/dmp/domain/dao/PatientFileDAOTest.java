@@ -112,4 +112,18 @@ public class PatientFileDAOTest {
 		assertFalse(patientFileDAO.existsById("P002"));
 	}
 	
+	@Test
+	public void testPatientFileDAOSaveUpdateSuccess() {
+		
+		PatientFile patientFile = patientFileDAO.findById("P001").get();
+		
+		patientFile.setEmail("mail@mail.com");
+		
+		patientFileDAO.save(patientFile);
+		
+		patientFile = patientFileDAO.findById("P001").get();
+		
+		assertEquals("mail@mail.com", patientFile.getEmail());	
+	}
+	
 }
