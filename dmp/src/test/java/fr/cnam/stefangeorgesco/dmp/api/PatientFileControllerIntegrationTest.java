@@ -20,6 +20,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.jdbc.Sql;
@@ -84,7 +85,7 @@ public class PatientFileControllerIntegrationTest {
 		patientFileDTO.setPhone("9876543210");
 		patientFileDTO.setEmail("patrick.dubois@mail.fr");
 		patientFileDTO.setAddressDTO(addressDTO);
-		
+
 		address.setStreet1("street 1");
 		address.setZipcode("zipcode");
 		address.setCity("City");
@@ -106,14 +107,14 @@ public class PatientFileControllerIntegrationTest {
 			patientFileDAO.deleteById("P002");
 		}
 	}
-	
+
 	@Test
 	@WithUserDetails("user") // user <-> doctor D001
 	public void testCreatePatientFileSuccess() throws Exception {
 		doNothing().when(rnippService).checkPatientData(patientFileDTO);
-		
+
 		assertFalse(patientFileDAO.existsById("P002"));
-		
+
 		mockMvc.perform(post("/patient-file").contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(patientFileDTO))).andExpect(status().isCreated())
 				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -125,8 +126,66 @@ public class PatientFileControllerIntegrationTest {
 				.andExpect(jsonPath("$.referringDoctor.specialties", hasSize(2)))
 				.andExpect(jsonPath("$.referringDoctor.specialties[0].description", containsString("Specialty")))
 				.andExpect(jsonPath("$.referringDoctor.specialties[1].description", containsString("Specialty")));
-		
+
 		assertTrue(patientFileDAO.existsById("P002"));
+	}
+
+	@Test
+	@WithUserDetails("user")
+	public void testCreatePatientFileFailurePatientFileAlreadyExist() throws Exception {
+		patientFileDAO.save(patientFile);
+
+		doNothing().when(rnippService).checkPatientData(patientFileDTO);
+
+		mockMvc.perform(post("/patient-file").contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(patientFileDTO))).andExpect(status().isBadRequest())
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+				.andExpect(jsonPath("$.message", is("patient file already exists")));
+	}
+
+	@Test
+	@WithUserDetails("user")
+	public void testCreatePatientFileFailurePatientFileDTONonValidLastname() throws Exception {
+		patientFileDTO.setLastname("");
+
+		doNothing().when(rnippService).checkPatientData(patientFileDTO);
+
+		mockMvc.perform(post("/patient-file").contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(patientFileDTO))).andExpect(status().isNotAcceptable())
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+				.andExpect(jsonPath("$.lastname", is("lastname is mandatory")));
+
+		assertFalse(patientFileDAO.existsById("P002"));
+	}
+
+	@Test
+	@WithUserDetails("user")
+	public void testCreatePatientFileFailurePatientFileDTONonValidAddressCountry() throws Exception {
+		patientFileDTO.getAddressDTO().setCountry(null);
+
+		doNothing().when(rnippService).checkPatientData(patientFileDTO);
+
+		mockMvc.perform(post("/patient-file").contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(patientFileDTO))).andExpect(status().isNotAcceptable())
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+				.andExpect(jsonPath("$.address_country", is("invalid country")));
+	}
+
+	@Test
+	@WithUserDetails("admin")
+	public void testCreatePatientFileFailureBadRole() throws Exception {
+		mockMvc.perform(post("/patient-file").contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(patientFileDTO))).andExpect(status().isForbidden());
+
+		assertFalse(patientFileDAO.existsById("P002"));
+	}
+
+	@Test
+	@WithAnonymousUser
+	public void testCreatePatientFileFailureUnauthenticatedUser() throws Exception {
+		mockMvc.perform(post("/patient-file").contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(patientFileDTO))).andExpect(status().isUnauthorized());
+
 	}
 
 }

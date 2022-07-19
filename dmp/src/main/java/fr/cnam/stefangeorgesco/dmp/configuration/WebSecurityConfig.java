@@ -52,6 +52,7 @@ public class WebSecurityConfig {
 						.antMatchers(HttpMethod.POST, "/user").permitAll()
 						.antMatchers(HttpMethod.POST, "/login").permitAll()
 						.antMatchers(HttpMethod.POST, "/doctor").hasRole("ADMIN")
+						.antMatchers(HttpMethod.POST, "/patient-file").hasRole("DOCTOR")
 						.antMatchers("/encrypt/**").permitAll()
 						.anyRequest().authenticated())
 				.httpBasic(Customizer.withDefaults());
