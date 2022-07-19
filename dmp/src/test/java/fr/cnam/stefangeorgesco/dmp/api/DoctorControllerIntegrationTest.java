@@ -1,7 +1,7 @@
 package fr.cnam.stefangeorgesco.dmp.api;
 
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.anything;
+import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -162,7 +162,7 @@ public class DoctorControllerIntegrationTest {
 				.andExpect(jsonPath("$.specialties", hasSize(2)))
 				.andExpect(jsonPath("$.specialties[0].description", is("First specialty")))
 				.andExpect(jsonPath("$.specialties[1].description", is("Second specialty")))
-				.andExpect(jsonPath("$.securityCode", anything()));
+				.andExpect(jsonPath("$.securityCode", notNullValue()));
 
 		assertTrue(doctorDAO.existsById("D003"));
 	}
