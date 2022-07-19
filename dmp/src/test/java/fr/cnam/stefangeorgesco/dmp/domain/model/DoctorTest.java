@@ -257,7 +257,7 @@ public class DoctorTest {
 	@Test
 	public void checkUserDataMatchDoesNotThrowException() {
 		
-		assertDoesNotThrow(() -> doctor.checkUserData(user));
+		assertDoesNotThrow(() -> doctor.checkUserData(user, bCryptPasswordEncoder));
 		
 	}
 
@@ -266,7 +266,7 @@ public class DoctorTest {
 		
 		user = null;
 		
-		CheckException exception = assertThrows(CheckException.class,() -> doctor.checkUserData(user));
+		CheckException exception = assertThrows(CheckException.class,() -> doctor.checkUserData(user, bCryptPasswordEncoder));
 		assertEquals("tried to check null user", exception.getMessage());
 		
 	}
@@ -276,7 +276,7 @@ public class DoctorTest {
 		
 		user.setId(null);
 		
-		CheckException exception = assertThrows(CheckException.class,() -> doctor.checkUserData(user));
+		CheckException exception = assertThrows(CheckException.class,() -> doctor.checkUserData(user, bCryptPasswordEncoder));
 		assertEquals("tried to check user with null id", exception.getMessage());
 		
 	}
@@ -286,7 +286,7 @@ public class DoctorTest {
 		
 		user.setSecurityCode(null);
 		
-		CheckException exception = assertThrows(CheckException.class,() -> doctor.checkUserData(user));
+		CheckException exception = assertThrows(CheckException.class,() -> doctor.checkUserData(user, bCryptPasswordEncoder));
 		assertEquals("tried to check user with null security code", exception.getMessage());
 		
 	}
@@ -296,7 +296,7 @@ public class DoctorTest {
 		
 		user.setId("userId");
 		
-		CheckException exception = assertThrows(CheckException.class,() -> doctor.checkUserData(user));
+		CheckException exception = assertThrows(CheckException.class,() -> doctor.checkUserData(user, bCryptPasswordEncoder));
 		assertEquals("data did not match", exception.getMessage());
 		
 	}
@@ -306,7 +306,7 @@ public class DoctorTest {
 		
 		user.setSecurityCode("01234567");
 		
-		CheckException exception = assertThrows(CheckException.class,() -> doctor.checkUserData(user));
+		CheckException exception = assertThrows(CheckException.class,() -> doctor.checkUserData(user, bCryptPasswordEncoder));
 		assertEquals("data did not match", exception.getMessage());
 		
 	}

@@ -54,7 +54,7 @@ public class UserService {
 
 		User user = commonModelMapper.map(userDTO, User.class);
 
-		file.checkUserData(user);
+		file.checkUserData(user, bCryptPasswordEncoder);
 
 		user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
 		user.setSecurityCode(bCryptPasswordEncoder.encode(user.getSecurityCode()));

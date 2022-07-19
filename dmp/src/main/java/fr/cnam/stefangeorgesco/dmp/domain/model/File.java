@@ -7,18 +7,16 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 import javax.validation.Valid;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import fr.cnam.stefangeorgesco.dmp.authentication.domain.model.User;
 import fr.cnam.stefangeorgesco.dmp.exception.domain.CheckException;
 
-import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -54,12 +52,7 @@ public abstract class File {
 	@Column(name = "security_code", nullable = false)
 	protected String securityCode;
 	
-	@Getter(value=AccessLevel.NONE)
-	@Setter(value=AccessLevel.NONE)
-	@Transient
-	BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
-	
-	public void checkUserData(User user) throws CheckException {
+	public void checkUserData(User user, PasswordEncoder passwordEncoder) throws CheckException {
 		
 		if (user == null) {
 			throw new CheckException("tried to check null user");
@@ -73,7 +66,7 @@ public abstract class File {
 			throw new CheckException("tried to check user with null security code");
 		}
 
-		if (!user.getId().equals(this.id) || !bCryptPasswordEncoder.matches(user.getSecurityCode(), this.securityCode)) {
+		if (!user.getId().equals(this.id) || !passwordEncoder.matches(user.getSecurityCode(), this.securityCode)) {
 			throw new CheckException("data did not match");
 		}
 

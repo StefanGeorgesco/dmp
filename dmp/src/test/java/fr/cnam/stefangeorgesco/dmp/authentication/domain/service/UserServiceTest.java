@@ -22,6 +22,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.TestPropertySource;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import fr.cnam.stefangeorgesco.dmp.authentication.domain.dao.UserDAO;
 import fr.cnam.stefangeorgesco.dmp.authentication.domain.dto.UserDTO;
@@ -74,7 +75,7 @@ public class UserServiceTest {
 	
 	@Test
 	public void testCreateDoctorAccountSuccess() throws CheckException {
-		doNothing().when(doctor).checkUserData(any(User.class));
+		doNothing().when(doctor).checkUserData(any(User.class), any(PasswordEncoder.class));
 		when(userDAO.existsById(userDTO.getId())).thenReturn(false);
 		when(fileDAO.findById(userDTO.getId())).thenReturn(Optional.of(doctor));
 		when(userDAO.save(userCaptor.capture())).thenAnswer(invocation -> invocation.getArguments()[0]);
@@ -83,7 +84,7 @@ public class UserServiceTest {
 		
 		verify(userDAO, times(1)).existsById(userDTO.getId());
 		verify(fileDAO, times(1)).findById(userDTO.getId());
-		verify(doctor, times(1)).checkUserData(any(User.class));
+		verify(doctor, times(1)).checkUserData(any(User.class), any(PasswordEncoder.class));
 		verify(userDAO, times(1)).save(any(User.class));
 		
 		user = userCaptor.getValue();
@@ -97,7 +98,7 @@ public class UserServiceTest {
 	
 	@Test
 	public void testCreatePatientAccountSuccess() throws CheckException {
-		doNothing().when(patientFile).checkUserData(any(User.class));
+		doNothing().when(patientFile).checkUserData(any(User.class), any(PasswordEncoder.class));
 		when(userDAO.existsById(userDTO.getId())).thenReturn(false);
 		when(fileDAO.findById(userDTO.getId())).thenReturn(Optional.of(patientFile));
 		when(userDAO.save(userCaptor.capture())).thenAnswer(invocation -> invocation.getArguments()[0]);
@@ -106,7 +107,7 @@ public class UserServiceTest {
 		
 		verify(userDAO, times(1)).existsById(userDTO.getId());
 		verify(fileDAO, times(1)).findById(userDTO.getId());
-		verify(patientFile, times(1)).checkUserData(any(User.class));
+		verify(patientFile, times(1)).checkUserData(any(User.class), any(PasswordEncoder.class));
 		verify(userDAO, times(1)).save(any(User.class));
 		
 		user = userCaptor.getValue();
@@ -141,7 +142,7 @@ public class UserServiceTest {
 	
 	@Test
 	public void testCreateDoctorAccountFailureCheckUserDataError() throws CheckException {
-		doThrow(new CheckException("data did not match")).when(doctor).checkUserData(userCaptor.capture());
+		doThrow(new CheckException("data did not match")).when(doctor).checkUserData(userCaptor.capture(), any(PasswordEncoder.class));
 		when(userDAO.existsById(userDTO.getId())).thenReturn(false);
 		when(fileDAO.findById(userDTO.getId())).thenReturn(Optional.of(doctor));
 		
@@ -151,7 +152,7 @@ public class UserServiceTest {
 		
 		verify(userDAO, times(1)).existsById(userDTO.getId());
 		verify(fileDAO, times(1)).findById(userDTO.getId());
-		verify(doctor, times(1)).checkUserData(any(User.class));
+		verify(doctor, times(1)).checkUserData(any(User.class), any(PasswordEncoder.class));
 		verify(userDAO, times(0)).save(any(User.class));
 		
 		user = userCaptor.getValue();
@@ -163,7 +164,7 @@ public class UserServiceTest {
 
 	@Test
 	public void testCreatePatientAccountFailureCheckUserDataError() throws CheckException {
-		doThrow(new CheckException("data did not match")).when(patientFile).checkUserData(userCaptor.capture());
+		doThrow(new CheckException("data did not match")).when(patientFile).checkUserData(userCaptor.capture(), any(PasswordEncoder.class));
 		when(userDAO.existsById(userDTO.getId())).thenReturn(false);
 		when(fileDAO.findById(userDTO.getId())).thenReturn(Optional.of(patientFile));
 		
@@ -173,7 +174,7 @@ public class UserServiceTest {
 		
 		verify(userDAO, times(1)).existsById(userDTO.getId());
 		verify(fileDAO, times(1)).findById(userDTO.getId());
-		verify(patientFile, times(1)).checkUserData(any(User.class));
+		verify(patientFile, times(1)).checkUserData(any(User.class), any(PasswordEncoder.class));
 		verify(userDAO, times(0)).save(any(User.class));
 		
 		user = userCaptor.getValue();

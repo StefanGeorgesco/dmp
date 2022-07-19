@@ -235,7 +235,7 @@ public class PatientFileTest {
 	@Test
 	public void checkUserDataMatchDoesNotThrowException() {
 		
-		assertDoesNotThrow(() -> patientFile.checkUserData(user));
+		assertDoesNotThrow(() -> patientFile.checkUserData(user, bCryptPasswordEncoder));
 		
 	}
 
@@ -244,7 +244,7 @@ public class PatientFileTest {
 		
 		user = null;
 		
-		CheckException exception = assertThrows(CheckException.class,() -> patientFile.checkUserData(user));
+		CheckException exception = assertThrows(CheckException.class,() -> patientFile.checkUserData(user, bCryptPasswordEncoder));
 		assertEquals("tried to check null user", exception.getMessage());
 		
 	}
@@ -254,7 +254,7 @@ public class PatientFileTest {
 		
 		user.setId(null);
 		
-		CheckException exception = assertThrows(CheckException.class,() -> patientFile.checkUserData(user));
+		CheckException exception = assertThrows(CheckException.class,() -> patientFile.checkUserData(user, bCryptPasswordEncoder));
 		assertEquals("tried to check user with null id", exception.getMessage());
 		
 	}
@@ -264,7 +264,7 @@ public class PatientFileTest {
 		
 		user.setSecurityCode(null);
 		
-		CheckException exception = assertThrows(CheckException.class,() -> patientFile.checkUserData(user));
+		CheckException exception = assertThrows(CheckException.class,() -> patientFile.checkUserData(user, bCryptPasswordEncoder));
 		assertEquals("tried to check user with null security code", exception.getMessage());
 		
 	}
@@ -274,7 +274,7 @@ public class PatientFileTest {
 		
 		user.setId("userId");
 		
-		CheckException exception = assertThrows(CheckException.class,() -> patientFile.checkUserData(user));
+		CheckException exception = assertThrows(CheckException.class,() -> patientFile.checkUserData(user, bCryptPasswordEncoder));
 		assertEquals("data did not match", exception.getMessage());
 		
 	}
@@ -284,7 +284,7 @@ public class PatientFileTest {
 		
 		user.setSecurityCode("01234567");
 		
-		CheckException exception = assertThrows(CheckException.class,() -> patientFile.checkUserData(user));
+		CheckException exception = assertThrows(CheckException.class,() -> patientFile.checkUserData(user, bCryptPasswordEncoder));
 		assertEquals("data did not match", exception.getMessage());
 		
 	}
