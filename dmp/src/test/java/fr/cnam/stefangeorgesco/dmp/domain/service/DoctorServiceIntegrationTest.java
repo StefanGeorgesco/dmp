@@ -105,9 +105,6 @@ public class DoctorServiceIntegrationTest {
 		if (doctorDAO.existsById("D001")) {
 			doctorDAO.deleteById("D001");
 		}
-		if (specilatyDAO.existsById("S001")) {
-			specilatyDAO.deleteById("S001");
-		}
 	}
 	
 	@Test
