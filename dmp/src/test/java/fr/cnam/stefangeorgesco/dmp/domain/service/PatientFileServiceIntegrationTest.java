@@ -128,6 +128,7 @@ public class PatientFileServiceIntegrationTest {
 	@Test
 	public void testUpdatePatientFileSuccess() {
 		doctorDTO.setId("D002"); // try to change doctor
+		patientFileDTO.setReferringDoctorDTO(doctorDTO);
 		patientFileDTO.setId("P001"); // file exists
 		
 		assertTrue(patientFileDAO.existsById("P001"));
@@ -159,8 +160,8 @@ public class PatientFileServiceIntegrationTest {
 		assertEquals(null, response.getSecurityCode());
 		assertEquals("D001", response.getReferringDoctorDTO().getId());
 		
-		// changes in returned object
 		assertEquals(patientFileDTO.getId(), response.getId());
+		// changes in returned object
 		assertEquals(patientFileDTO.getPhone(), response.getPhone());
 		assertEquals(patientFileDTO.getEmail(), response.getEmail());
 		assertEquals(patientFileDTO.getAddressDTO().getStreet1(), response.getAddressDTO().getStreet1());
