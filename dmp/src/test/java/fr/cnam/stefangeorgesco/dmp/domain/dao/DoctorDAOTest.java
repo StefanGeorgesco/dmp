@@ -99,7 +99,7 @@ public class DoctorDAOTest {
 	}
 
 	@Test
-	public void testDoctorDAOSave() {
+	public void testDoctorDAOSaveCreateSuccess() {
 		assertFalse(doctorDAO.existsById("D003"));
 
 		doctorDAO.save(doctor);
@@ -108,7 +108,7 @@ public class DoctorDAOTest {
 	}
 
 	@Test
-	public void testDoctorDAOSaveFailureInvalidData() {
+	public void testDoctorDAOSaveCreateFailureInvalidData() {
 		doctor.getSpecialties().clear();
 
 		assertThrows(RuntimeException.class, () -> doctorDAO.save(doctor));
@@ -117,7 +117,7 @@ public class DoctorDAOTest {
 	}
 	
 	@Test
-	public void testDoctorDAOSaveFailureSpecialtyDoesNotExist() {
+	public void testDoctorDAOSaveCreateFailureSpecialtyDoesNotExist() {
 		((List<Specialty>) doctor.getSpecialties()).get(1).setId("S003");
 		
 		assertThrows(RuntimeException.class, () -> doctorDAO.save(doctor));

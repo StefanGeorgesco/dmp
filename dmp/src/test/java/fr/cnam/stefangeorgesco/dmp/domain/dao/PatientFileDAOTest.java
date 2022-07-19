@@ -2,6 +2,7 @@ package fr.cnam.stefangeorgesco.dmp.domain.dao;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Optional;
@@ -85,12 +86,30 @@ public class PatientFileDAOTest {
 	}
 	
 	@Test
-	public void testPatientFileDAOSaveSuccess() {
+	public void testPatientFileDAOSaveCreateSuccess() {
 		assertFalse(patientFileDAO.existsById("P002"));
 		
 		patientFileDAO.save(patientFile);
 		
 		assertTrue(patientFileDAO.existsById("P002"));
+	}
+	
+	@Test
+	public void testPatientFileDAOSaveCreateFailureInvalidData() {
+		patientFile.getAddress().setCity(null);
+		
+		assertThrows(RuntimeException.class, () -> patientFileDAO.save(patientFile));
+		
+		assertFalse(patientFileDAO.existsById("P002"));
+	}
+	
+	@Test
+	public void testPatientFileDAOSaveCreateFailureDoctorDoesNotExist() {
+		patientFile.getReferringDoctor().setId("D003");
+		
+		assertThrows(RuntimeException.class, () -> patientFileDAO.save(patientFile));
+		
+		assertFalse(patientFileDAO.existsById("P002"));
 	}
 	
 }
