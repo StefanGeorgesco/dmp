@@ -49,11 +49,11 @@ public class WebSecurityConfig {
 				.addFilterBefore(new JWTTokenValidatorFilter(), BasicAuthenticationFilter.class)
 				.addFilterAfter(new JWTTokenGeneratorFilter(), BasicAuthenticationFilter.class)
 				.authorizeHttpRequests((auth) -> auth
-						.antMatchers(HttpMethod.POST, "/user").permitAll()
 						.antMatchers(HttpMethod.POST, "/login").permitAll()
+						.antMatchers(HttpMethod.POST, "/user").permitAll()
 						.antMatchers(HttpMethod.POST, "/doctor").hasRole("ADMIN")
 						.antMatchers(HttpMethod.POST, "/patient-file").hasRole("DOCTOR")
-						.antMatchers("/encrypt/**").permitAll()
+						.antMatchers(HttpMethod.PUT, "/patient-file/details").hasRole("PATIENT")
 						.anyRequest().authenticated())
 				.httpBasic(Customizer.withDefaults());
 		return http.build();

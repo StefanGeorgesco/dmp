@@ -6,6 +6,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import fr.cnam.stefangeorgesco.dmp.domain.dao.PatientFileDAO;
+import fr.cnam.stefangeorgesco.dmp.domain.dto.DoctorDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.PatientFileDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.model.PatientFile;
 import fr.cnam.stefangeorgesco.dmp.exception.domain.CheckException;
@@ -23,14 +24,18 @@ public class PatientFileService {
 
 	@Autowired
 	private ModelMapper patientFileDTOModelMapper;
-	
+
 	@Autowired
 	private ModelMapper patientFileModelMapper;
 
 	@Autowired
+	private ModelMapper doctorModelMapper;
+
+	@Autowired
 	private BCryptPasswordEncoder bCryptPasswordEncoder;
 
-	public PatientFileDTO createPatientFile(PatientFileDTO patientFileDTO) throws DuplicateKeyException, CheckException {
+	public PatientFileDTO createPatientFile(PatientFileDTO patientFileDTO)
+			throws DuplicateKeyException, CheckException {
 
 		rnippService.checkPatientData(patientFileDTO);
 
@@ -50,19 +55,23 @@ public class PatientFileService {
 	}
 
 	public PatientFileDTO updatePatientFile(PatientFileDTO patientFileDTO) {
-		
+
 		PatientFile patientFile = patientFileDAO.findById(patientFileDTO.getId()).get();
-		
+
 		patientFile.setPhone(patientFileDTO.getPhone());
 		patientFile.setEmail(patientFileDTO.getEmail());
-		
+
 		PatientFile mappedPatientFile = patientFileDTOModelMapper.map(patientFileDTO, PatientFile.class);
-		
+
 		patientFile.setAddress(mappedPatientFile.getAddress());
-		
+
 		patientFile = patientFileDAO.save(patientFile);
-		
-		return patientFileModelMapper.map(patientFile, PatientFileDTO.class);
+
+		PatientFileDTO response = patientFileModelMapper.map(patientFile, PatientFileDTO.class);
+
+		response.setReferringDoctorDTO(doctorModelMapper.map(patientFile.getReferringDoctor(), DoctorDTO.class));
+
+		return response;
 	}
 
 }

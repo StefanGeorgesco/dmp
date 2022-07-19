@@ -1,5 +1,6 @@
 package fr.cnam.stefangeorgesco.dmp.api;
 
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.hasSize;
@@ -8,6 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.doNothing;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -31,6 +33,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import fr.cnam.stefangeorgesco.dmp.domain.dao.PatientFileDAO;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.AddressDTO;
+import fr.cnam.stefangeorgesco.dmp.domain.dto.DoctorDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.PatientFileDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.model.Address;
 import fr.cnam.stefangeorgesco.dmp.domain.model.Doctor;
@@ -60,6 +63,9 @@ public class PatientFileControllerIntegrationTest {
 
 	@Autowired
 	private AddressDTO addressDTO;
+	
+	@Autowired
+	private DoctorDTO doctorDTO;
 
 	@Autowired
 	private PatientFileDTO patientFileDTO;
@@ -77,8 +83,8 @@ public class PatientFileControllerIntegrationTest {
 	public void setup() {
 		addressDTO.setStreet1("1 Rue Lecourbe");
 		addressDTO.setZipcode("75015");
-		addressDTO.setCity("Paris");
-		addressDTO.setCountry("France");
+		addressDTO.setCity("Paris Cedex 15");
+		addressDTO.setCountry("France-");
 		patientFileDTO.setId("P002");
 		patientFileDTO.setFirstname("Patrick");
 		patientFileDTO.setLastname("Dubois");
@@ -109,7 +115,7 @@ public class PatientFileControllerIntegrationTest {
 	}
 
 	@Test
-	@WithUserDetails("user") // user <-> doctor D001
+	@WithUserDetails("user") // D001, ROLE_DOCTOR
 	public void testCreatePatientFileSuccess() throws Exception {
 		doNothing().when(rnippService).checkPatientData(patientFileDTO);
 
@@ -187,5 +193,50 @@ public class PatientFileControllerIntegrationTest {
 				.content(objectMapper.writeValueAsString(patientFileDTO))).andExpect(status().isUnauthorized());
 
 	}
+	
+	@Test
+	@WithUserDetails("eric") // P001, ROLE_PATIENT
+	public void testUpdatePatientFileSuccess() throws Exception {
+		doctorDTO.setId("D002"); // try to change doctor
+		patientFileDTO.setReferringDoctorDTO(doctorDTO);
+		
+		assertTrue(patientFileDAO.existsById("P001"));
+		
+		mockMvc.perform(put("/patient-file/details").contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(patientFileDTO))).andExpect(status().isOk())
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+				// no change (except null securityCode)
+				.andExpect(jsonPath("$.id", is("P001")))
+				.andExpect(jsonPath("$.firstname", is("Eric")))
+				.andExpect(jsonPath("$.lastname", is("Martin")))
+				.andExpect(jsonPath("$.securityCode", nullValue()))
+				.andExpect(jsonPath("$.referringDoctor.id", is("D001")))
+				.andExpect(jsonPath("$.referringDoctor.address", notNullValue()))
+				.andExpect(jsonPath("$.referringDoctor.address.street1", is("1 baker street")))
+				.andExpect(jsonPath("$.referringDoctor.specialties", notNullValue()))
+				.andExpect(jsonPath("$.referringDoctor.specialties", hasSize(2)))
+				// changes
+				.andExpect(jsonPath("$.phone", is(patientFileDTO.getPhone())))
+				.andExpect(jsonPath("$.email", is(patientFileDTO.getEmail())))
+				.andExpect(jsonPath("$.address.street1", is(patientFileDTO.getAddressDTO().getStreet1())))
+				.andExpect(jsonPath("$.address.zipcode", is(patientFileDTO.getAddressDTO().getZipcode())))
+				.andExpect(jsonPath("$.address.city", is(patientFileDTO.getAddressDTO().getCity())))
+				.andExpect(jsonPath("$.address.country", is(patientFileDTO.getAddressDTO().getCountry())));
+	}
+	
+	@Test
+	@WithUserDetails("user")
+	public void testUpdatePatientFileFailureBadRole() throws Exception {
+		mockMvc.perform(put("/patient-file/details").contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(patientFileDTO))).andExpect(status().isForbidden());
+	}
+		
+	@Test
+	@WithAnonymousUser
+	public void testUpdatePatientFileFailureUnauthenticatedUser() throws Exception {
+		mockMvc.perform(put("/patient-file/details").contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(patientFileDTO))).andExpect(status().isUnauthorized());
 
+	}
+	
 }

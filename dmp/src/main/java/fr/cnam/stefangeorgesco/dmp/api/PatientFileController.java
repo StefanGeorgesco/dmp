@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -44,6 +45,17 @@ public class PatientFileController {
 		patientFileDTO.setReferringDoctorDTO(doctorDTO);
 
 		return ResponseEntity.status(HttpStatus.CREATED).body(patientFileService.createPatientFile(patientFileDTO));
+	}
+
+	@PutMapping("/patient-file/details")
+	public ResponseEntity<PatientFileDTO> updatePatientFile(@Valid @RequestBody PatientFileDTO patientFileDTO,
+			Principal principal) throws FinderException {
+		
+		UserDTO userDTO = userService.findUserByUsername(principal.getName());
+		
+		patientFileDTO.setId(userDTO.getId());
+		
+		return ResponseEntity.status(HttpStatus.OK).body(patientFileService.updatePatientFile(patientFileDTO));
 	}
 
 }
