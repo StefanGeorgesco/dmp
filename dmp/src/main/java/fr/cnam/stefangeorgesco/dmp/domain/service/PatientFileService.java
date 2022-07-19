@@ -23,6 +23,9 @@ public class PatientFileService {
 
 	@Autowired
 	private ModelMapper patientFileDTOModelMapper;
+	
+	@Autowired
+	private ModelMapper patientFileModelMapper;
 
 	@Autowired
 	private BCryptPasswordEncoder bCryptPasswordEncoder;
@@ -44,6 +47,22 @@ public class PatientFileService {
 		patientFileDAO.save(patientFile);
 
 		return patientFileDTO;
+	}
+
+	public PatientFileDTO updatePatientFile(PatientFileDTO patientFileDTO) {
+		
+		PatientFile patientFile = patientFileDAO.findById(patientFileDTO.getId()).get();
+		
+		patientFile.setPhone(patientFileDTO.getPhone());
+		patientFile.setEmail(patientFileDTO.getEmail());
+		
+		PatientFile mappedPatientFile = patientFileDTOModelMapper.map(patientFileDTO, PatientFile.class);
+		
+		patientFile.setAddress(mappedPatientFile.getAddress());
+		
+		patientFile = patientFileDAO.save(patientFile);
+		
+		return patientFileModelMapper.map(patientFile, PatientFileDTO.class);
 	}
 
 }

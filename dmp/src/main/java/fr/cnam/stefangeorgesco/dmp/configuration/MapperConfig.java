@@ -47,6 +47,7 @@ public class MapperConfig {
 		ModelMapper modelMapper = new ModelMapper();
 		TypeMap<PatientFileDTO, PatientFile> typeMap = modelMapper.createTypeMap(PatientFileDTO.class, PatientFile.class);
 		typeMap.addMapping(src -> src.getReferringDoctorDTO(), PatientFile::setReferringDoctor);
+		typeMap.addMapping(src -> src.getAddressDTO(), PatientFile::setAddress);
 		
 		return modelMapper;
 	}
@@ -57,6 +58,7 @@ public class MapperConfig {
 		TypeMap<PatientFile, PatientFileDTO> typeMap = modelMapper.createTypeMap(PatientFile.class, PatientFileDTO.class);
 		typeMap.addMapping(src -> src.getReferringDoctor(), PatientFileDTO::setReferringDoctorDTO);
 		typeMap.addMappings(mapper -> mapper.skip(PatientFileDTO::setSecurityCode));
+		typeMap.addMapping(src -> src.getAddress(), PatientFileDTO::setAddressDTO);
 		
 		return modelMapper;
 	}
