@@ -109,9 +109,11 @@ public class PatientFileServiceIntegrationTest {
 	}
 	
 	@Test
-	public void testCreatePatientFileFailurePatientFileAlreadyExist() {
+	public void testCreatePatientFileFailurePatientFileAlreadyExist() throws CheckException {
 		patientFileDAO.save(patientFile);
 		
+		doNothing().when(rnippService).checkPatientData(patientFileDTO);
+
 		DuplicateKeyException ex = assertThrows(DuplicateKeyException.class, () -> patientFileService.createPatientFile(patientFileDTO));
 		
 		assertEquals("patient file already exists", ex.getMessage());
