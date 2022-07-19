@@ -203,6 +203,19 @@ public class DoctorControllerIntegrationTest {
 		
 		assertFalse(doctorDAO.existsById("D003"));
 	}
+	
+	@Test
+	@WithUserDetails("admin")
+	public void testCreateDoctorFailureDoctorDTOSpecialtiesNull() throws Exception {
+		doctorDTO.setSpecialtiesDTO(null);
+		
+		mockMvc.perform(post("/doctor").contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(doctorDTO))).andExpect(status().isNotAcceptable())
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+				.andExpect(jsonPath("$.specialties", is("specialties are mandatory")));
+		
+		assertFalse(doctorDAO.existsById("D003"));
+	}
 
 	@Test
 	@WithUserDetails("admin")
