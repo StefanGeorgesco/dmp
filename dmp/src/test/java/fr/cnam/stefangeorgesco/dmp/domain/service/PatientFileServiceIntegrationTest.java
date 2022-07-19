@@ -52,6 +52,9 @@ public class PatientFileServiceIntegrationTest {
 	private PatientFileDTO patientFileDTO;
 
 	@Autowired
+	private PatientFileDTO response;
+
+	@Autowired
 	private Address address;
 
 	@Autowired
@@ -59,13 +62,16 @@ public class PatientFileServiceIntegrationTest {
 
 	@Autowired
 	private PatientFile patientFile;
+	
+	@Autowired
+	private PatientFile savedPatientFile;
 
 	@BeforeEach
 	public void setup() {
 		addressDTO.setStreet1("1 Rue Lecourbe");
 		addressDTO.setZipcode("75015");
-		addressDTO.setCity("Paris");
-		addressDTO.setCountry("France");
+		addressDTO.setCity("Paris Cedex 15");
+		addressDTO.setCountry("France-");
 		doctorDTO.setId("D001");
 		patientFileDTO.setId("P002");
 		patientFileDTO.setFirstname("Patrick");
@@ -77,8 +83,8 @@ public class PatientFileServiceIntegrationTest {
 
 		address.setStreet1("1 Rue Lecourbe");
 		address.setZipcode("75015");
-		address.setCity("Paris");
-		address.setCountry("France");
+		address.setCity("Paris Cedex 15");
+		address.setCountry("France-");
 		doctor.setId("D001");
 		patientFile.setId("P002");
 		patientFile.setFirstname("Patrick");
@@ -117,6 +123,50 @@ public class PatientFileServiceIntegrationTest {
 		DuplicateKeyException ex = assertThrows(DuplicateKeyException.class, () -> patientFileService.createPatientFile(patientFileDTO));
 		
 		assertEquals("patient file already exists", ex.getMessage());
+	}
+	
+	@Test
+	public void testUpdatePatientFileSuccess() {
+		doctorDTO.setId("D002"); // try to change doctor
+		patientFileDTO.setId("P001"); // file exists
+		
+		assertTrue(patientFileDAO.existsById("P001"));
+		
+		response = assertDoesNotThrow(() -> patientFileService.updatePatientFile(patientFileDTO));
+		
+		savedPatientFile = patientFileDAO.findById("P001").get();
+		
+		// no change in saved object
+		assertEquals("P001", savedPatientFile.getId());
+		assertEquals("Eric", savedPatientFile.getFirstname());
+		assertEquals("Martin", savedPatientFile.getLastname());
+		assertEquals("0000", savedPatientFile.getSecurityCode());
+		assertEquals("D001", savedPatientFile.getReferringDoctor().getId());
+		
+		assertEquals(patientFileDTO.getId(), savedPatientFile.getId());
+		// changes in saved object
+		assertEquals(patientFileDTO.getPhone(), savedPatientFile.getPhone());
+		assertEquals(patientFileDTO.getEmail(), savedPatientFile.getEmail());
+		assertEquals(patientFileDTO.getAddressDTO().getStreet1(), savedPatientFile.getAddress().getStreet1());
+		assertEquals(patientFileDTO.getAddressDTO().getZipcode(), savedPatientFile.getAddress().getZipcode());
+		assertEquals(patientFileDTO.getAddressDTO().getCity(), savedPatientFile.getAddress().getCity());
+		assertEquals(patientFileDTO.getAddressDTO().getCountry(), savedPatientFile.getAddress().getCountry());
+		
+		// no change in returned object (except null securityCode)
+		assertEquals("P001", response.getId());
+		assertEquals("Eric", response.getFirstname());
+		assertEquals("Martin", response.getLastname());
+		assertEquals(null, response.getSecurityCode());
+		assertEquals("D001", response.getReferringDoctorDTO().getId());
+		
+		// changes in returned object
+		assertEquals(patientFileDTO.getId(), response.getId());
+		assertEquals(patientFileDTO.getPhone(), response.getPhone());
+		assertEquals(patientFileDTO.getEmail(), response.getEmail());
+		assertEquals(patientFileDTO.getAddressDTO().getStreet1(), response.getAddressDTO().getStreet1());
+		assertEquals(patientFileDTO.getAddressDTO().getZipcode(), response.getAddressDTO().getZipcode());
+		assertEquals(patientFileDTO.getAddressDTO().getCity(), response.getAddressDTO().getCity());
+		assertEquals(patientFileDTO.getAddressDTO().getCountry(), response.getAddressDTO().getCountry());
 	}
 
 }
