@@ -1,9 +1,7 @@
 package fr.cnam.stefangeorgesco.dmp.api;
 
 import static org.hamcrest.CoreMatchers.nullValue;
-import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.notNullValue;
-import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -33,7 +31,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import fr.cnam.stefangeorgesco.dmp.domain.dao.PatientFileDAO;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.AddressDTO;
-import fr.cnam.stefangeorgesco.dmp.domain.dto.DoctorDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.PatientFileDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.model.Address;
 import fr.cnam.stefangeorgesco.dmp.domain.model.Doctor;
@@ -64,9 +61,6 @@ public class PatientFileControllerIntegrationTest {
 	@Autowired
 	private AddressDTO addressDTO;
 	
-	@Autowired
-	private DoctorDTO doctorDTO;
-
 	@Autowired
 	private PatientFileDTO patientFileDTO;
 
@@ -127,11 +121,7 @@ public class PatientFileControllerIntegrationTest {
 				.andExpect(jsonPath("$.firstname", is("Patrick")))
 				.andExpect(jsonPath("$.address.street1", is("1 Rue Lecourbe")))
 				.andExpect(jsonPath("$.securityCode", notNullValue()))
-				.andExpect(jsonPath("$.referringDoctor.id", is("D001")))
-				.andExpect(jsonPath("$.referringDoctor.firstname", is("John")))
-				.andExpect(jsonPath("$.referringDoctor.specialties", hasSize(2)))
-				.andExpect(jsonPath("$.referringDoctor.specialties[0].description", containsString("Specialty")))
-				.andExpect(jsonPath("$.referringDoctor.specialties[1].description", containsString("Specialty")));
+				.andExpect(jsonPath("$.referringDoctorId", is("D001")));
 
 		assertTrue(patientFileDAO.existsById("P002"));
 	}
@@ -197,8 +187,7 @@ public class PatientFileControllerIntegrationTest {
 	@Test
 	@WithUserDetails("eric") // P001, ROLE_PATIENT
 	public void testUpdatePatientFileSuccess() throws Exception {
-		doctorDTO.setId("D002"); // try to change doctor
-		patientFileDTO.setReferringDoctorDTO(doctorDTO);
+		patientFileDTO.setReferringDoctorId("D002"); // try to change doctor
 		
 		assertTrue(patientFileDAO.existsById("P001"));
 		
@@ -210,11 +199,7 @@ public class PatientFileControllerIntegrationTest {
 				.andExpect(jsonPath("$.firstname", is("Eric")))
 				.andExpect(jsonPath("$.lastname", is("Martin")))
 				.andExpect(jsonPath("$.securityCode", nullValue()))
-				.andExpect(jsonPath("$.referringDoctor.id", is("D001")))
-				.andExpect(jsonPath("$.referringDoctor.address", notNullValue()))
-				.andExpect(jsonPath("$.referringDoctor.address.street1", is("1 baker street")))
-				.andExpect(jsonPath("$.referringDoctor.specialties", notNullValue()))
-				.andExpect(jsonPath("$.referringDoctor.specialties", hasSize(2)))
+				.andExpect(jsonPath("$.referringDoctorId", is("D001")))
 				// changes
 				.andExpect(jsonPath("$.phone", is(patientFileDTO.getPhone())))
 				.andExpect(jsonPath("$.email", is(patientFileDTO.getEmail())))

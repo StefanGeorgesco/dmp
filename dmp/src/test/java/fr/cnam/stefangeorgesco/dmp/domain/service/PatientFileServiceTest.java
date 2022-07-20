@@ -28,7 +28,6 @@ import org.springframework.test.context.TestPropertySource;
 
 import fr.cnam.stefangeorgesco.dmp.domain.dao.PatientFileDAO;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.AddressDTO;
-import fr.cnam.stefangeorgesco.dmp.domain.dto.DoctorDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.PatientFileDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.model.Doctor;
 import fr.cnam.stefangeorgesco.dmp.domain.model.PatientFile;
@@ -58,9 +57,6 @@ public class PatientFileServiceTest {
 	private PatientFileDTO response;
 
 	@Autowired
-	private DoctorDTO doctorDTO;
-
-	@Autowired
 	private Doctor doctor;
 
 	@Autowired
@@ -80,15 +76,13 @@ public class PatientFileServiceTest {
 		addressDTO.setZipcode("75015");
 		addressDTO.setCity("Paris");
 		addressDTO.setCountry("France");
-		doctorDTO.setId("D001");
-		doctorDTO.setLastname("Smith");
 		patientFileDTO.setId("P001");
 		patientFileDTO.setFirstname("Patrick");
 		patientFileDTO.setLastname("Dubois");
 		patientFileDTO.setPhone("9876543210");
 		patientFileDTO.setEmail("patrick.dubois@mail.fr");
 		patientFileDTO.setAddressDTO(addressDTO);
-		patientFileDTO.setReferringDoctorDTO(doctorDTO);
+		patientFileDTO.setReferringDoctorId("D001");
 
 		doctor.setId("D001");
 		persistentPatientFile.setId(patientFileDTO.getId());
@@ -119,9 +113,7 @@ public class PatientFileServiceTest {
 		assertEquals(patientFileDTO.getEmail(), savedPatientFile.getEmail());
 		assertEquals(patientFileDTO.getAddressDTO().getStreet1(), savedPatientFile.getAddress().getStreet1());
 		assertEquals(patientFileDTO.getAddressDTO().getCountry(), savedPatientFile.getAddress().getCountry());
-		assertEquals(patientFileDTO.getReferringDoctorDTO().getId(), savedPatientFile.getReferringDoctor().getId());
-		assertEquals(patientFileDTO.getReferringDoctorDTO().getLastname(),
-				savedPatientFile.getReferringDoctor().getLastname());
+		assertEquals(patientFileDTO.getReferringDoctorId(), savedPatientFile.getReferringDoctor().getId());
 
 		assertNotNull(response.getSecurityCode());
 		assertTrue(response.getSecurityCode().length() >= 10);
@@ -185,7 +177,7 @@ public class PatientFileServiceTest {
 		assertEquals(persistentPatientFile.getLastname(), response.getLastname());
 		assertEquals(null, response.getSecurityCode());
 		assertEquals(persistentPatientFile.getReferringDoctor().getId(),
-				response.getReferringDoctorDTO().getId());
+				response.getReferringDoctorId());
 		
 		assertEquals(patientFileDTO.getId(), response.getId());
 		assertEquals(patientFileDTO.getPhone(), response.getPhone());

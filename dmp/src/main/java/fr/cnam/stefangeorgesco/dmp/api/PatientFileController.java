@@ -14,9 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import fr.cnam.stefangeorgesco.dmp.authentication.domain.dto.UserDTO;
 import fr.cnam.stefangeorgesco.dmp.authentication.domain.service.UserService;
-import fr.cnam.stefangeorgesco.dmp.domain.dto.DoctorDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.PatientFileDTO;
-import fr.cnam.stefangeorgesco.dmp.domain.service.DoctorService;
 import fr.cnam.stefangeorgesco.dmp.domain.service.PatientFileService;
 import fr.cnam.stefangeorgesco.dmp.exception.domain.CheckException;
 import fr.cnam.stefangeorgesco.dmp.exception.domain.DuplicateKeyException;
@@ -29,9 +27,6 @@ public class PatientFileController {
 	UserService userService;
 
 	@Autowired
-	DoctorService doctorService;
-
-	@Autowired
 	private PatientFileService patientFileService;
 
 	@PostMapping("/patient-file")
@@ -40,9 +35,7 @@ public class PatientFileController {
 
 		UserDTO userDTO = userService.findUserByUsername(principal.getName());
 
-		DoctorDTO doctorDTO = doctorService.findDoctor(userDTO.getId());
-
-		patientFileDTO.setReferringDoctorDTO(doctorDTO);
+		patientFileDTO.setReferringDoctorId(userDTO.getId());
 
 		return ResponseEntity.status(HttpStatus.CREATED).body(patientFileService.createPatientFile(patientFileDTO));
 	}

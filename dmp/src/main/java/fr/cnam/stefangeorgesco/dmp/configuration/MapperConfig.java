@@ -1,6 +1,7 @@
 package fr.cnam.stefangeorgesco.dmp.configuration;
 
 import org.modelmapper.ModelMapper;
+import org.modelmapper.Provider;
 import org.modelmapper.TypeMap;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,52 +15,64 @@ import fr.cnam.stefangeorgesco.dmp.domain.model.PatientFile;
 
 @Configuration
 public class MapperConfig {
-	
+
 	@Bean
 	public ModelMapper commonModelMapper() {
 		return new ModelMapper();
 	}
-	
+
 	@Bean
 	public ModelMapper doctorDTOModelMapper() {
 		ModelMapper modelMapper = new ModelMapper();
 		TypeMap<DoctorDTO, Doctor> typeMap = modelMapper.createTypeMap(DoctorDTO.class, Doctor.class);
 		typeMap.addMapping(src -> src.getSpecialtiesDTO(), Doctor::setSpecialties);
 		typeMap.addMapping(src -> src.getAddressDTO(), Doctor::setAddress);
-		
-		return modelMapper;	
+
+		return modelMapper;
 	}
-	
+
 	@Bean
 	public ModelMapper doctorModelMapper() {
 		ModelMapper modelMapper = new ModelMapper();
 		TypeMap<Doctor, DoctorDTO> typeMap = modelMapper.createTypeMap(Doctor.class, DoctorDTO.class);
 		modelMapper.getConfiguration().setSkipNullEnabled(true);
+		typeMap.addMappings(mapper -> mapper.skip(DoctorDTO::setSecurityCode));
 		typeMap.addMapping(src -> src.getSpecialties(), DoctorDTO::setSpecialtiesDTO);
 		typeMap.addMapping(src -> src.getAddress(), DoctorDTO::setAddressDTO);
-		typeMap.addMappings(mapper -> mapper.skip(DoctorDTO::setSecurityCode));
-		
+
 		return modelMapper;
 	}
-	
+
 	@Bean
 	public ModelMapper patientFileDTOModelMapper() {
 		ModelMapper modelMapper = new ModelMapper();
-		TypeMap<PatientFileDTO, PatientFile> typeMap = modelMapper.createTypeMap(PatientFileDTO.class, PatientFile.class);
-		typeMap.addMapping(src -> src.getReferringDoctorDTO(), PatientFile::setReferringDoctor);
-		typeMap.addMapping(src -> src.getAddressDTO(), PatientFile::setAddress);
 		
+		TypeMap<PatientFileDTO, PatientFile> typeMap = modelMapper.createTypeMap(PatientFileDTO.class,
+				PatientFile.class);
+		
+		typeMap.addMappings(mapper -> mapper.with(new Provider<Object>() {
+			public Object get(ProvisionRequest<Object> request) {
+				Doctor doctor = new Doctor();
+				doctor.setId(((String) request.getSource()));
+				return doctor;
+			}
+		}).map(PatientFileDTO::getReferringDoctorId, PatientFile::setReferringDoctor));
+		
+		typeMap.addMapping(src -> src.getAddressDTO(), PatientFile::setAddress);
+
 		return modelMapper;
 	}
-	
+
 	@Bean
 	public ModelMapper patientFileModelMapper() {
 		ModelMapper modelMapper = new ModelMapper();
-		TypeMap<PatientFile, PatientFileDTO> typeMap = modelMapper.createTypeMap(PatientFile.class, PatientFileDTO.class);
-		typeMap.addMapping(src -> src.getReferringDoctor(), PatientFileDTO::setReferringDoctorDTO);
+		TypeMap<PatientFile, PatientFileDTO> typeMap = modelMapper.createTypeMap(PatientFile.class,
+				PatientFileDTO.class);
+		modelMapper.getConfiguration().setSkipNullEnabled(true);
 		typeMap.addMappings(mapper -> mapper.skip(PatientFileDTO::setSecurityCode));
+		typeMap.addMapping(src -> src.getReferringDoctor().getId(), PatientFileDTO::setReferringDoctorId);
 		typeMap.addMapping(src -> src.getAddress(), PatientFileDTO::setAddressDTO);
-		
+
 		return modelMapper;
 	}
 
@@ -70,8 +83,8 @@ public class MapperConfig {
 		modelMapper.getConfiguration().setSkipNullEnabled(true);
 		typeMap.addMappings(mapper -> mapper.skip(UserDTO::setPassword));
 		typeMap.addMappings(mapper -> mapper.skip(UserDTO::setSecurityCode));
-		
+
 		return modelMapper;
 	}
-	
+
 }

@@ -6,7 +6,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import fr.cnam.stefangeorgesco.dmp.domain.dao.PatientFileDAO;
-import fr.cnam.stefangeorgesco.dmp.domain.dto.DoctorDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.PatientFileDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.model.PatientFile;
 import fr.cnam.stefangeorgesco.dmp.exception.domain.CheckException;
@@ -27,9 +26,6 @@ public class PatientFileService {
 
 	@Autowired
 	private ModelMapper patientFileModelMapper;
-
-	@Autowired
-	private ModelMapper doctorModelMapper;
 
 	@Autowired
 	private BCryptPasswordEncoder bCryptPasswordEncoder;
@@ -68,8 +64,6 @@ public class PatientFileService {
 		patientFile = patientFileDAO.save(patientFile);
 
 		PatientFileDTO response = patientFileModelMapper.map(patientFile, PatientFileDTO.class);
-
-		response.setReferringDoctorDTO(doctorModelMapper.map(patientFile.getReferringDoctor(), DoctorDTO.class));
 
 		return response;
 	}

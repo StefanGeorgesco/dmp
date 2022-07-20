@@ -19,7 +19,6 @@ import org.springframework.test.context.jdbc.SqlGroup;
 
 import fr.cnam.stefangeorgesco.dmp.domain.dao.PatientFileDAO;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.AddressDTO;
-import fr.cnam.stefangeorgesco.dmp.domain.dto.DoctorDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.PatientFileDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.model.Address;
 import fr.cnam.stefangeorgesco.dmp.domain.model.Doctor;
@@ -46,9 +45,6 @@ public class PatientFileServiceIntegrationTest {
 	private AddressDTO addressDTO;
 
 	@Autowired
-	private DoctorDTO doctorDTO;
-
-	@Autowired
 	private PatientFileDTO patientFileDTO;
 
 	@Autowired
@@ -72,14 +68,13 @@ public class PatientFileServiceIntegrationTest {
 		addressDTO.setZipcode("75015");
 		addressDTO.setCity("Paris Cedex 15");
 		addressDTO.setCountry("France-");
-		doctorDTO.setId("D001");
 		patientFileDTO.setId("P002");
 		patientFileDTO.setFirstname("Patrick");
 		patientFileDTO.setLastname("Dubois");
 		patientFileDTO.setPhone("9876543210");
 		patientFileDTO.setEmail("patrick.dubois@mail.fr");
 		patientFileDTO.setAddressDTO(addressDTO);
-		patientFileDTO.setReferringDoctorDTO(doctorDTO);
+		patientFileDTO.setReferringDoctorId("D001");
 
 		address.setStreet1("1 Rue Lecourbe");
 		address.setZipcode("75015");
@@ -127,8 +122,7 @@ public class PatientFileServiceIntegrationTest {
 	
 	@Test
 	public void testUpdatePatientFileSuccess() {
-		doctorDTO.setId("D002"); // try to change doctor
-		patientFileDTO.setReferringDoctorDTO(doctorDTO);
+		patientFileDTO.setReferringDoctorId("D002"); // try to change doctor
 		patientFileDTO.setId("P001"); // file exists
 		
 		assertTrue(patientFileDAO.existsById("P001"));
@@ -158,7 +152,7 @@ public class PatientFileServiceIntegrationTest {
 		assertEquals("Eric", response.getFirstname());
 		assertEquals("Martin", response.getLastname());
 		assertEquals(null, response.getSecurityCode());
-		assertEquals("D001", response.getReferringDoctorDTO().getId());
+		assertEquals("D001", response.getReferringDoctorId());
 		
 		assertEquals(patientFileDTO.getId(), response.getId());
 		// changes in returned object
