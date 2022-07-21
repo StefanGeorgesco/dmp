@@ -1,5 +1,7 @@
 package fr.cnam.stefangeorgesco.dmp.configuration;
 
+
+
 import org.modelmapper.ModelMapper;
 import org.modelmapper.Provider;
 import org.modelmapper.TypeMap;
@@ -15,6 +17,17 @@ import fr.cnam.stefangeorgesco.dmp.domain.model.PatientFile;
 
 @Configuration
 public class MapperConfig {
+	
+	@Bean
+	public Provider<Doctor> doctorProvider() {
+		return new Provider<Doctor>() {
+			public Doctor get(ProvisionRequest<Doctor> request) {
+				Doctor doctor = new Doctor();
+				doctor.setId(((String) request.getSource()));
+				return doctor;
+			}
+		};
+	}
 
 	@Bean
 	public ModelMapper commonModelMapper() {
@@ -46,18 +59,9 @@ public class MapperConfig {
 	@Bean
 	public ModelMapper patientFileDTOModelMapper() {
 		ModelMapper modelMapper = new ModelMapper();
-		
 		TypeMap<PatientFileDTO, PatientFile> typeMap = modelMapper.createTypeMap(PatientFileDTO.class,
 				PatientFile.class);
-		
-		typeMap.addMappings(mapper -> mapper.with(new Provider<Object>() {
-			public Object get(ProvisionRequest<Object> request) {
-				Doctor doctor = new Doctor();
-				doctor.setId(((String) request.getSource()));
-				return doctor;
-			}
-		}).map(PatientFileDTO::getReferringDoctorId, PatientFile::setReferringDoctor));
-		
+		typeMap.addMappings(mapper -> mapper.with(doctorProvider()).map(PatientFileDTO::getReferringDoctorId, PatientFile::setReferringDoctor));
 		typeMap.addMapping(src -> src.getAddressDTO(), PatientFile::setAddress);
 
 		return modelMapper;
