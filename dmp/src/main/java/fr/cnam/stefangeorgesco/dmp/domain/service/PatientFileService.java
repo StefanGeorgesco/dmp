@@ -22,7 +22,7 @@ public class PatientFileService {
 	private PatientFileDAO patientFileDAO;
 
 	@Autowired
-	private ModelMapper patientFileDTOModelMapper;
+	private ModelMapper commonModelMapper;
 
 	@Autowired
 	private ModelMapper patientFileModelMapper;
@@ -41,7 +41,7 @@ public class PatientFileService {
 
 		patientFileDTO.setSecurityCode(PasswordGenerator.generatePassword());
 
-		PatientFile patientFile = patientFileDTOModelMapper.map(patientFileDTO, PatientFile.class);
+		PatientFile patientFile = commonModelMapper.map(patientFileDTO, PatientFile.class);
 
 		patientFile.setSecurityCode(bCryptPasswordEncoder.encode(patientFile.getSecurityCode()));
 
@@ -57,7 +57,7 @@ public class PatientFileService {
 		patientFile.setPhone(patientFileDTO.getPhone());
 		patientFile.setEmail(patientFileDTO.getEmail());
 
-		PatientFile mappedPatientFile = patientFileDTOModelMapper.map(patientFileDTO, PatientFile.class);
+		PatientFile mappedPatientFile = commonModelMapper.map(patientFileDTO, PatientFile.class);
 
 		patientFile.setAddress(mappedPatientFile.getAddress());
 

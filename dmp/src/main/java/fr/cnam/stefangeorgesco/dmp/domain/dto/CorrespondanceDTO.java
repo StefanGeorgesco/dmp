@@ -1,8 +1,9 @@
-package fr.cnam.stefangeorgesco.dmp.domain.model;
+package fr.cnam.stefangeorgesco.dmp.domain.dto;
 
 import java.time.LocalDate;
 
 import javax.validation.constraints.Future;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 import lombok.Getter;
@@ -10,18 +11,18 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class Correspondance {
-
+public class CorrespondanceDTO {
+	
 	private long id;
 
 	@NotNull(message = "correspondance date is mandatory")
 	@Future(message = "correpondance date must be in the future")
 	private LocalDate dateUntil;
 
-	@NotNull(message = "doctor is mandatory")
-	Doctor doctor;
+	@NotBlank(message = "doctor is mandatory")
+	String doctorId;
 
-	@NotNull(message = "patient file is mandatory")
-	PatientFile patientFile;
+	@NotBlank(message = "patient file is mandatory")
+	String patientFileId;
 
 }

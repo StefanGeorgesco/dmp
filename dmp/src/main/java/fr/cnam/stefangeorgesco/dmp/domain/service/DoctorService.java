@@ -24,7 +24,7 @@ public class DoctorService {
 	DoctorDAO doctorDAO;
 
 	@Autowired
-	ModelMapper doctorDTOModelMapper;
+	ModelMapper commonModelMapper;
 	
 	@Autowired
 	ModelMapper doctorModelMapper;
@@ -53,7 +53,7 @@ public class DoctorService {
 			}
 		}
 
-		Doctor doctor = doctorDTOModelMapper.map(doctorDTO, Doctor.class);
+		Doctor doctor = commonModelMapper.map(doctorDTO, Doctor.class);
 
 		doctor.setSecurityCode(bCryptPasswordEncoder.encode(doctorDTO.getSecurityCode()));
 

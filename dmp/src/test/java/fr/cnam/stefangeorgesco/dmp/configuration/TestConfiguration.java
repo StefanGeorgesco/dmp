@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Scope;
 import fr.cnam.stefangeorgesco.dmp.authentication.domain.dto.UserDTO;
 import fr.cnam.stefangeorgesco.dmp.authentication.domain.model.User;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.AddressDTO;
+import fr.cnam.stefangeorgesco.dmp.domain.dto.CorrespondanceDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.DoctorDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.PatientFileDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.SpecialtyDTO;
@@ -120,6 +121,12 @@ public class TestConfiguration {
 	@Scope(value = "prototype")
 	PatientFileDTO getPatientFileDTO() {
 		return new PatientFileDTO();
+	}
+	
+	@Bean(name = "correspondanceDTO")
+	@Scope(value = "prototype")
+	CorrespondanceDTO getCorrespondanceDTO() {
+		return new CorrespondanceDTO();
 	}
 	
 	@Bean(name = "addressDTO")
