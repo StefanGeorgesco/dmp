@@ -157,6 +157,7 @@ public class PatientFileServiceTest {
 
 		savedPatientFile = patientFileCaptor.getValue();
 		
+		// unchanged - compared to captured saved object
 		assertEquals(persistentPatientFile.getId(), savedPatientFile.getId());
 		assertEquals(persistentPatientFile.getFirstname(), savedPatientFile.getFirstname());
 		assertEquals(persistentPatientFile.getLastname(), savedPatientFile.getLastname());
@@ -164,6 +165,7 @@ public class PatientFileServiceTest {
 		assertEquals(persistentPatientFile.getReferringDoctor().getId(),
 				savedPatientFile.getReferringDoctor().getId());
 		
+		// updated - compared to captured saved object
 		assertEquals(patientFileDTO.getId(), savedPatientFile.getId());
 		assertEquals(patientFileDTO.getPhone(), savedPatientFile.getPhone());
 		assertEquals(patientFileDTO.getEmail(), savedPatientFile.getEmail());
@@ -172,6 +174,7 @@ public class PatientFileServiceTest {
 		assertEquals(patientFileDTO.getAddressDTO().getCity(), savedPatientFile.getAddress().getCity());
 		assertEquals(patientFileDTO.getAddressDTO().getCountry(), savedPatientFile.getAddress().getCountry());
 		
+		// unchanged - compared to response DTO object (except null security code)
 		assertEquals(persistentPatientFile.getId(), response.getId());
 		assertEquals(persistentPatientFile.getFirstname(), response.getFirstname());
 		assertEquals(persistentPatientFile.getLastname(), response.getLastname());
@@ -179,6 +182,7 @@ public class PatientFileServiceTest {
 		assertEquals(persistentPatientFile.getReferringDoctor().getId(),
 				response.getReferringDoctorId());
 		
+		// updated - compared to response DTO object
 		assertEquals(patientFileDTO.getId(), response.getId());
 		assertEquals(patientFileDTO.getPhone(), response.getPhone());
 		assertEquals(patientFileDTO.getEmail(), response.getEmail());

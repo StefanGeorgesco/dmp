@@ -2,10 +2,12 @@ package fr.cnam.stefangeorgesco.dmp.api;
 
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -30,7 +32,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import fr.cnam.stefangeorgesco.dmp.domain.dao.DoctorDAO;
-import fr.cnam.stefangeorgesco.dmp.domain.dao.SpecialtyDAO;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.AddressDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.DoctorDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.SpecialtyDTO;
@@ -42,7 +43,9 @@ import fr.cnam.stefangeorgesco.dmp.domain.model.Specialty;
 @AutoConfigureMockMvc
 @SpringBootTest
 @SqlGroup({ @Sql(scripts = "/sql/create-users.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
-		@Sql(scripts = "/sql/delete-users.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD) })
+		@Sql(scripts = "/sql/delete-users.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD),
+		@Sql(scripts = "/sql/create-files.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
+		@Sql(scripts = "/sql/delete-files.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD) })
 public class DoctorControllerIntegrationTest {
 
 	@Autowired
@@ -50,9 +53,6 @@ public class DoctorControllerIntegrationTest {
 
 	@Autowired
 	ObjectMapper objectMapper;
-
-	@Autowired
-	private SpecialtyDAO specilatyDAO;
 
 	@Autowired
 	private DoctorDAO doctorDAO;
@@ -110,11 +110,7 @@ public class DoctorControllerIntegrationTest {
 		doctorDTO.setAddressDTO(addressDTO);
 
 		specialty1.setId("S001");
-		specialty1.setDescription("First specialty");
-		specilatyDAO.save(specialty1);
 		specialty2.setId("S002");
-		specialty2.setDescription("Second specialty");
-		specilatyDAO.save(specialty2);
 
 		specialties = new ArrayList<>();
 		specialties.add(specialty1);
@@ -140,12 +136,6 @@ public class DoctorControllerIntegrationTest {
 		if (doctorDAO.existsById("D003")) {
 			doctorDAO.deleteById("D003");
 		}
-		if (specilatyDAO.existsById("S001")) {
-			specilatyDAO.deleteById("S001");
-		}
-		if (specilatyDAO.existsById("S002")) {
-			specilatyDAO.deleteById("S002");
-		}
 	}
 
 	@Test
@@ -160,8 +150,8 @@ public class DoctorControllerIntegrationTest {
 				.andExpect(jsonPath("$.firstname", is("Pierre")))
 				.andExpect(jsonPath("$.address.street1", is("1 Rue Lecourbe")))
 				.andExpect(jsonPath("$.specialties", hasSize(2)))
-				.andExpect(jsonPath("$.specialties[0].description", is("First specialty")))
-				.andExpect(jsonPath("$.specialties[1].description", is("Second specialty")))
+				.andExpect(jsonPath("$.specialties[0].description", is("Specialty 1")))
+				.andExpect(jsonPath("$.specialties[1].description", is("Specialty 2")))
 				.andExpect(jsonPath("$.securityCode", notNullValue()));
 
 		assertTrue(doctorDAO.existsById("D003"));
@@ -274,5 +264,47 @@ public class DoctorControllerIntegrationTest {
 		
 		assertFalse(doctorDAO.existsById("D003"));
 	}
+	
+	@Test
+	@WithUserDetails("user") // D001, ROLE_DOCTOR
+	public void testUpdateDoctorSuccess() throws Exception {
+		assertTrue(doctorDAO.existsById("D001"));
+		
+		mockMvc.perform(put("/doctor/details").contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(doctorDTO))).andExpect(status().isOk())
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+				// no change (except null securityCode)
+				.andExpect(jsonPath("$.id", is("D001")))
+				.andExpect(jsonPath("$.firstname", is("John")))
+				.andExpect(jsonPath("$.lastname", is("Smith")))
+				.andExpect(jsonPath("$.securityCode", nullValue()))
+				.andExpect(jsonPath("$.specialties", hasSize(2)))
+				.andExpect(jsonPath("$.specialties[0].id", is("S001")))
+				.andExpect(jsonPath("$.specialties[0].description", is("Specialty 1")))
+				.andExpect(jsonPath("$.specialties[1].id", is("S002")))
+				.andExpect(jsonPath("$.specialties[1].description", is("Specialty 2")))
+				// changes
+				.andExpect(jsonPath("$.phone", is(doctorDTO.getPhone())))
+				.andExpect(jsonPath("$.email", is(doctorDTO.getEmail())))
+				.andExpect(jsonPath("$.address.street1", is(doctorDTO.getAddressDTO().getStreet1())))
+				.andExpect(jsonPath("$.address.zipcode", is(doctorDTO.getAddressDTO().getZipcode())))
+				.andExpect(jsonPath("$.address.city", is(doctorDTO.getAddressDTO().getCity())))
+				.andExpect(jsonPath("$.address.country", is(doctorDTO.getAddressDTO().getCountry())));
+	}
+	
+	@Test
+	@WithUserDetails("eric")
+	public void testUpdateDoctorFailureBadRole() throws Exception {
+		mockMvc.perform(put("/doctor/details").contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(doctorDTO))).andExpect(status().isForbidden());
+	}
+		
+	@Test
+	@WithAnonymousUser
+	public void testUpdateDoctorFailureUnauthenticatedUser() throws Exception {
+		mockMvc.perform(put("/doctor/details").contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(doctorDTO))).andExpect(status().isUnauthorized());
 
+	}
+	
 }

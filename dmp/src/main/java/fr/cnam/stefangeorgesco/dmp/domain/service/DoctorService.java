@@ -74,4 +74,22 @@ public class DoctorService {
 
 	}
 
+	public DoctorDTO updateDoctor(DoctorDTO doctorDTO) {
+		
+		Doctor doctor = doctorDAO.findById(doctorDTO.getId()).get();
+		
+		doctor.setPhone(doctorDTO.getPhone());
+		doctor.setEmail(doctorDTO.getEmail());
+		
+		Doctor mappedDoctor = commonModelMapper.map(doctorDTO, Doctor.class);
+		
+		doctor.setAddress(mappedDoctor.getAddress());
+		
+		doctor = doctorDAO.save(doctor);
+		
+		DoctorDTO response = doctorModelMapper.map(doctor, DoctorDTO.class);
+		
+		return response;
+	}
+
 }
