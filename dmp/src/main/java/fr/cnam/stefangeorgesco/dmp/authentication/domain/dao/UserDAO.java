@@ -8,6 +8,8 @@ import fr.cnam.stefangeorgesco.dmp.authentication.domain.model.User;
 
 public interface UserDAO extends CrudRepository<User, String> {
 
-	Optional<User> findByUsername(String string);
+	Optional<User> findByUsername(String username);
+	
+	boolean existsByUsername(String username);
 	
 }

@@ -143,6 +143,9 @@ public class UserControllerIntegrationTest {
 		if (userDAO.existsById("patientFileId")) {
 			userDAO.deleteById("patientFileId");
 		}
+		if (userDAO.existsByUsername("username")) {
+			userDAO.deleteById(userDAO.findByUsername("username").get().getId());
+		}
 	}
 
 	@Test
@@ -196,7 +199,7 @@ public class UserControllerIntegrationTest {
 	}
 	
 	@Test
-	public void testCreateDoctorAccountFailureUserAccountAlreadyExists() throws Exception {
+	public void testCreateDoctorAccountFailureUserAccountAlreadyExistsById() throws Exception {
 		
 		user.setId("doctorId");
 		user.setUsername("John");
@@ -210,6 +213,24 @@ public class UserControllerIntegrationTest {
 				.contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(userDTO)))
 				.andExpect(status().isBadRequest()).andExpect(content().contentType(MediaType.APPLICATION_JSON))
 				.andExpect(jsonPath("$.message", is("user account already exists")));
+		
+	}
+	
+	@Test
+	public void testCreateDoctorAccountFailureUserAccountAlreadyExistsByUsername() throws Exception {
+		
+		user.setId("id");
+		user.setUsername("username");
+		user.setRole("USER");
+		user.setPassword("0123");
+		user.setSecurityCode("0000");
+		userDAO.save(user);
+		
+		mockMvc.perform(
+				post("/user")
+				.contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(userDTO)))
+				.andExpect(status().isBadRequest()).andExpect(content().contentType(MediaType.APPLICATION_JSON))
+				.andExpect(jsonPath("$.message", is("username already exists")));
 		
 	}
 	

@@ -77,12 +77,14 @@ public class UserServiceTest {
 	public void testCreateDoctorAccountSuccess() throws CheckException {
 		doNothing().when(doctor).checkUserData(any(User.class), any(PasswordEncoder.class));
 		when(userDAO.existsById(userDTO.getId())).thenReturn(false);
+		when(userDAO.existsByUsername(userDTO.getUsername())).thenReturn(false);
 		when(fileDAO.findById(userDTO.getId())).thenReturn(Optional.of(doctor));
 		when(userDAO.save(userCaptor.capture())).thenAnswer(invocation -> invocation.getArguments()[0]);
 		
 		assertDoesNotThrow(() -> userService.createAccount(userDTO));
 		
 		verify(userDAO, times(1)).existsById(userDTO.getId());
+		verify(userDAO, times(1)).existsByUsername(userDTO.getUsername());
 		verify(fileDAO, times(1)).findById(userDTO.getId());
 		verify(doctor, times(1)).checkUserData(any(User.class), any(PasswordEncoder.class));
 		verify(userDAO, times(1)).save(any(User.class));
@@ -100,12 +102,14 @@ public class UserServiceTest {
 	public void testCreatePatientAccountSuccess() throws CheckException {
 		doNothing().when(patientFile).checkUserData(any(User.class), any(PasswordEncoder.class));
 		when(userDAO.existsById(userDTO.getId())).thenReturn(false);
+		when(userDAO.existsByUsername(userDTO.getUsername())).thenReturn(false);
 		when(fileDAO.findById(userDTO.getId())).thenReturn(Optional.of(patientFile));
 		when(userDAO.save(userCaptor.capture())).thenAnswer(invocation -> invocation.getArguments()[0]);
 		
 		assertDoesNotThrow(() -> userService.createAccount(userDTO));
 		
 		verify(userDAO, times(1)).existsById(userDTO.getId());
+		verify(userDAO, times(1)).existsByUsername(userDTO.getUsername());
 		verify(fileDAO, times(1)).findById(userDTO.getId());
 		verify(patientFile, times(1)).checkUserData(any(User.class), any(PasswordEncoder.class));
 		verify(userDAO, times(1)).save(any(User.class));
@@ -120,12 +124,22 @@ public class UserServiceTest {
 	}
 	
 	@Test
-	public void testCreateAccountFailureUserAccountAlreadyExists() {
+	public void testCreateAccountFailureUserAccountAlreadyExistsById() {
 		when(userDAO.existsById(userDTO.getId())).thenReturn(true);
 		
 		DuplicateKeyException ex = assertThrows(DuplicateKeyException.class, () -> userService.createAccount(userDTO));
 		
 		assertEquals("user account already exists", ex.getMessage());
+		verify(userDAO, times(0)).save(any(User.class));
+	}
+	
+	@Test
+	public void testCreateAccountFailureUserAccountAlreadyExistsByUsername() {
+		when(userDAO.existsByUsername(userDTO.getUsername())).thenReturn(true);
+		
+		DuplicateKeyException ex = assertThrows(DuplicateKeyException.class, () -> userService.createAccount(userDTO));
+		
+		assertEquals("username already exists", ex.getMessage());
 		verify(userDAO, times(0)).save(any(User.class));
 	}
 	

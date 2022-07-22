@@ -36,7 +36,7 @@ import fr.cnam.stefangeorgesco.dmp.exception.domain.FinderException;
 @TestPropertySource("/application-test.properties")
 @SpringBootTest
 @SqlGroup({ @Sql(scripts = "/sql/create-users.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
-	@Sql(scripts = "/sql/delete-users.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD) })
+		@Sql(scripts = "/sql/delete-users.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD) })
 public class UserServiceIntegrationTest {
 
 	@Autowired
@@ -56,7 +56,7 @@ public class UserServiceIntegrationTest {
 
 	@Autowired
 	private Address doctorAddress;
-	
+
 	@Autowired
 	private Address patientFileAddress;
 
@@ -65,7 +65,7 @@ public class UserServiceIntegrationTest {
 
 	@Autowired
 	private Doctor doctor;
-	
+
 	@Autowired
 	private PatientFile patientFile;
 
@@ -102,12 +102,12 @@ public class UserServiceIntegrationTest {
 		doctor.setSecurityCode(bCryptPasswordEncoder.encode("12345678"));
 
 		fileDAO.save(doctor);
-		
+
 		patientFileAddress.setStreet1("1 rue de la Paix");
 		patientFileAddress.setCity("Paris");
 		patientFileAddress.setZipcode("75001");
 		patientFileAddress.setCountry("France");
-		
+
 		patientFile.setId("patientFileId");
 		patientFile.setFirstname("Eric");
 		patientFile.setLastname("Martin");
@@ -118,7 +118,7 @@ public class UserServiceIntegrationTest {
 		patientFile.setSecurityCode(bCryptPasswordEncoder.encode("7890"));
 
 		fileDAO.save(patientFile);
-		
+
 		userDTO.setId("doctorId");
 		userDTO.setUsername("username");
 		userDTO.setPassword("password");
@@ -152,7 +152,7 @@ public class UserServiceIntegrationTest {
 	public void testCreatePatientAccountSuccess() {
 
 		assertFalse(userDAO.existsById("patientFileId"));
-		
+
 		userDTO.setId("patientFileId");
 		userDTO.setSecurityCode("7890");
 
@@ -162,7 +162,7 @@ public class UserServiceIntegrationTest {
 	}
 
 	@Test
-	public void testCreateDoctorAccountFailureUserAccountAlreadyExists() {
+	public void testCreateDoctorAccountFailureUserAccountAlreadyExistsById() {
 
 		user.setId("doctorId");
 		user.setUsername("John");
@@ -171,11 +171,12 @@ public class UserServiceIntegrationTest {
 		user.setSecurityCode("0000");
 		userDAO.save(user);
 
-		assertThrows(DuplicateKeyException.class, () -> userService.createAccount(userDTO));
+		DuplicateKeyException ex = assertThrows(DuplicateKeyException.class, () -> userService.createAccount(userDTO));
+		assertEquals("user account already exists", ex.getMessage());
 	}
 
 	@Test
-	public void testCreatePatientAccountFailureUserAccountAlreadyExists() {
+	public void testCreatePatientAccountFailureUserAccountAlreadyExistsById() {
 
 		user.setId("patientFileId");
 		user.setUsername("John");
@@ -183,11 +184,43 @@ public class UserServiceIntegrationTest {
 		user.setPassword("0123");
 		user.setSecurityCode("0000");
 		userDAO.save(user);
-		
+
 		userDTO.setId("patientFileId");
 		userDTO.setSecurityCode("7890");
 
-		assertThrows(DuplicateKeyException.class, () -> userService.createAccount(userDTO));
+		DuplicateKeyException ex = assertThrows(DuplicateKeyException.class, () -> userService.createAccount(userDTO));
+		assertEquals("user account already exists", ex.getMessage());
+	}
+
+	@Test
+	public void testCreateDoctorAccountFailureUserAccountAlreadyExistsByUsername() {
+
+		user.setId("id");
+		user.setUsername("username");
+		user.setRole("USER");
+		user.setPassword("0123");
+		user.setSecurityCode("0000");
+		userDAO.save(user);
+
+		DuplicateKeyException ex = assertThrows(DuplicateKeyException.class, () -> userService.createAccount(userDTO));
+		assertEquals("username already exists", ex.getMessage());
+	}
+
+	@Test
+	public void testCreatePatientAccountFailureUserAccountAlreadyExistsByUsername() {
+
+		user.setId("id");
+		user.setUsername("username");
+		user.setRole("USER");
+		user.setPassword("0123");
+		user.setSecurityCode("0000");
+		userDAO.save(user);
+
+		userDTO.setId("patientFileId");
+		userDTO.setSecurityCode("7890");
+
+		DuplicateKeyException ex = assertThrows(DuplicateKeyException.class, () -> userService.createAccount(userDTO));
+		assertEquals("username already exists", ex.getMessage());
 	}
 
 	@Test
@@ -200,7 +233,7 @@ public class UserServiceIntegrationTest {
 
 		assertFalse(userDAO.existsById("doctorId"));
 	}
-	
+
 	@Test
 	public void testCreatePatientAccountFailureFileDoesNotExist() {
 
@@ -208,17 +241,17 @@ public class UserServiceIntegrationTest {
 
 		userDTO.setId("patientFileId");
 		userDTO.setSecurityCode("7890");
-		
+
 		assertThrows(FinderException.class, () -> userService.createAccount(userDTO));
 
 		assertFalse(userDAO.existsById("patientFileId"));
 	}
-	
+
 	@Test
 	public void testCreateDoctorAccountFailureCheckUserDataError() {
-		
+
 		userDTO.setSecurityCode("1111");
-		
+
 		assertThrows(CheckException.class, () -> userService.createAccount(userDTO));
 
 		assertFalse(userDAO.existsById("doctorId"));
@@ -226,19 +259,19 @@ public class UserServiceIntegrationTest {
 
 	@Test
 	public void testCreatePatientAccountFailureCheckUserDataError() {
-		
+
 		userDTO.setId("patientFileId");
 		userDTO.setSecurityCode("1111");
-		
+
 		assertThrows(CheckException.class, () -> userService.createAccount(userDTO));
 
 		assertFalse(userDAO.existsById("patientFileId"));
 	}
-	
+
 	@Test
 	public void testFindUserByUsernameSuccess() {
 		UserDTO userDTO = assertDoesNotThrow(() -> userService.findUserByUsername("user"));
-		
+
 		assertEquals("D001", userDTO.getId());
 		assertNull(userDTO.getPassword());
 		assertNull(userDTO.getSecurityCode());
@@ -247,7 +280,7 @@ public class UserServiceIntegrationTest {
 	@Test
 	public void testFindUserByUsernameFailureUserDoesNotExist() {
 		FinderException ex = assertThrows(FinderException.class, () -> userService.findUserByUsername("user0"));
-		
+
 		assertEquals("user not found", ex.getMessage());
 	}
 

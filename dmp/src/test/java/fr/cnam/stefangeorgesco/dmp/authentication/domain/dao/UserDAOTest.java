@@ -61,6 +61,12 @@ public class UserDAOTest {
 	}
 	
 	@Test
+	public void testUserDAOExistsByUserName() {
+		assertTrue(userDAO.existsByUsername("user"));
+		assertFalse(userDAO.existsByUsername("username"));
+	}
+	
+	@Test
 	public void testUserDAOFindByUserName() {
 		assertTrue(userDAO.findByUsername("user").isPresent());
 		assertEquals("D001", userDAO.findByUsername("user").get().getId());

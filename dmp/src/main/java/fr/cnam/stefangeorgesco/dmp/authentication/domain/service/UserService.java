@@ -43,6 +43,10 @@ public class UserService {
 		if (userDAO.existsById(userDTO.getId())) {
 			throw new DuplicateKeyException("user account already exists");
 		}
+		
+		if (userDAO.existsByUsername(userDTO.getUsername())) {
+			throw new DuplicateKeyException("username already exists");
+		};
 
 		Optional<File> optionalFile = fileDAO.findById(userDTO.getId());
 
