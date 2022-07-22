@@ -1,7 +1,5 @@
 package fr.cnam.stefangeorgesco.dmp.configuration;
 
-
-
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeMap;
 import org.springframework.context.annotation.Bean;
@@ -9,14 +7,18 @@ import org.springframework.context.annotation.Configuration;
 
 import fr.cnam.stefangeorgesco.dmp.authentication.domain.dto.UserDTO;
 import fr.cnam.stefangeorgesco.dmp.authentication.domain.model.User;
+import fr.cnam.stefangeorgesco.dmp.domain.dto.ActDTO;
+import fr.cnam.stefangeorgesco.dmp.domain.dto.DiagnosisDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.DoctorDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.PatientFileDTO;
+import fr.cnam.stefangeorgesco.dmp.domain.model.Act;
+import fr.cnam.stefangeorgesco.dmp.domain.model.Diagnosis;
 import fr.cnam.stefangeorgesco.dmp.domain.model.Doctor;
 import fr.cnam.stefangeorgesco.dmp.domain.model.PatientFile;
 
 @Configuration
 public class MapperConfig {
-	
+
 	@Bean
 	public ModelMapper commonModelMapper() {
 		return new ModelMapper();
@@ -45,7 +47,25 @@ public class MapperConfig {
 
 		return modelMapper;
 	}
-	
+
+	@Bean
+	public ModelMapper diagnosisModelMapper() {
+		ModelMapper modelMapper = new ModelMapper();
+		TypeMap<Diagnosis, DiagnosisDTO> typeMap = modelMapper.createTypeMap(Diagnosis.class, DiagnosisDTO.class);
+		typeMap.addMapping(src -> src.getDisease(), DiagnosisDTO::setDiseaseDTO);
+		
+		return modelMapper;
+	}
+
+	@Bean
+	public ModelMapper actModelMapper() {
+		ModelMapper modelMapper = new ModelMapper();
+		TypeMap<Act, ActDTO> typeMap = modelMapper.createTypeMap(Act.class, ActDTO.class);
+		typeMap.addMapping(src -> src.getMedicalAct(), ActDTO::setMedicalActDTO);
+		
+		return modelMapper;
+	}
+
 	@Bean
 	public ModelMapper userModelMapper() {
 		ModelMapper modelMapper = new ModelMapper();

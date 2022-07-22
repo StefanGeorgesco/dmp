@@ -6,11 +6,18 @@ import org.springframework.context.annotation.Scope;
 
 import fr.cnam.stefangeorgesco.dmp.authentication.domain.dto.UserDTO;
 import fr.cnam.stefangeorgesco.dmp.authentication.domain.model.User;
+import fr.cnam.stefangeorgesco.dmp.domain.dto.ActDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.AddressDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.CorrespondanceDTO;
+import fr.cnam.stefangeorgesco.dmp.domain.dto.DiagnosisDTO;
+import fr.cnam.stefangeorgesco.dmp.domain.dto.DiseaseDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.DoctorDTO;
+import fr.cnam.stefangeorgesco.dmp.domain.dto.MailDTO;
+import fr.cnam.stefangeorgesco.dmp.domain.dto.MedicalActDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.PatientFileDTO;
+import fr.cnam.stefangeorgesco.dmp.domain.dto.PrescriptionDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.SpecialtyDTO;
+import fr.cnam.stefangeorgesco.dmp.domain.dto.SymptomDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.model.Act;
 import fr.cnam.stefangeorgesco.dmp.domain.model.Address;
 import fr.cnam.stefangeorgesco.dmp.domain.model.Correspondance;
@@ -141,4 +148,46 @@ public class TestConfiguration {
 		return new SpecialtyDTO();
 	}
 	
+	@Bean(name = "actDTO")
+	@Scope(value = "prototype")
+	ActDTO getActDTO() {
+		return new ActDTO();
+	}
+	
+	@Bean(name = "diagnosisDTO")
+	@Scope(value = "prototype")
+	DiagnosisDTO getDiagnosisDTO() {
+		return new DiagnosisDTO();
+	}
+	
+	@Bean(name = "diseaseDTO")
+	@Scope(value = "prototype")
+	DiseaseDTO getDiseaseDTO() {
+		return new DiseaseDTO();
+	}
+	
+	@Bean(name = "mailDTO")
+	@Scope(value = "prototype")
+	MailDTO getMailDTO() {
+		return new MailDTO();
+	}
+	
+	@Bean(name = "medicalActDTO")
+	@Scope(value = "prototype")
+	MedicalActDTO getMedicalActDTO() {
+		return new MedicalActDTO();
+	}
+	
+	@Bean(name = "prescriptionDTO")
+	@Scope(value = "prototype")
+	PrescriptionDTO getPrescriptionDTO() {
+		return new PrescriptionDTO();
+	}
+	
+	@Bean(name = "symptomDTO")
+	@Scope(value = "prototype")
+	SymptomDTO getSymptomDTO() {
+		return new SymptomDTO();
+	}
+		
 }

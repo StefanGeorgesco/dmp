@@ -1,7 +1,8 @@
-package fr.cnam.stefangeorgesco.dmp.domain.model;
+package fr.cnam.stefangeorgesco.dmp.domain.dto;
 
 import java.time.LocalDate;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PastOrPresent;
 
@@ -10,7 +11,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public abstract class PatientFileItem {
+public abstract class PatientFileItemDTO {
 
 	private long id;
 
@@ -20,10 +21,10 @@ public abstract class PatientFileItem {
 	
 	private String comments;
 	
-	@NotNull(message = "authoring doctor is mandatory")
-	private Doctor authoringDoctor;
+	@NotBlank(message = "authoring doctor id is mandatory")
+	private String authoringDoctorId;
 	
-	@NotNull(message = "patient file is mandatory")
-	private PatientFile patientFile;
+	@NotBlank(message = "patient file id is mandatory")
+	private String patientFileId;
 
 }
