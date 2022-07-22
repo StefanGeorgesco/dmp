@@ -2,6 +2,7 @@ package fr.cnam.stefangeorgesco.dmp.domain.dao;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -115,7 +116,9 @@ public class PatientFileDAOTest {
 	@Test
 	public void testPatientFileDAOSaveUpdateSuccess() {
 		
-		PatientFile patientFile = patientFileDAO.findById("P001").get();
+		patientFile = patientFileDAO.findById("P001").get();
+		
+		assertNotEquals("mail@mail.com", patientFile.getEmail());
 		
 		patientFile.setEmail("mail@mail.com");
 		
@@ -123,7 +126,7 @@ public class PatientFileDAOTest {
 		
 		patientFile = patientFileDAO.findById("P001").get();
 		
-		assertEquals("mail@mail.com", patientFile.getEmail());	
+		assertEquals("mail@mail.com", patientFile.getEmail());
 	}
 	
 }

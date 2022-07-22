@@ -3,6 +3,7 @@ package fr.cnam.stefangeorgesco.dmp.domain.dao;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -124,6 +125,22 @@ public class DoctorDAOTest {
 		
 		assertFalse(doctorDAO.existsById("D003"));
 	}
+	
+	@Test
+	public void testDoctorDAOSaveUpdateSuccess() {
+		
+		doctor = doctorDAO.findById("D001").get();
+		
+		assertNotEquals("mail@mail.com", doctor.getEmail());
+		
+		doctor.setEmail("mail@mail.com");
+		
+		doctorDAO.save(doctor);
+		
+		doctor = doctorDAO.findById("D001").get();
+		
+		assertEquals("mail@mail.com", doctor.getEmail());
+	}
 
 	@Test
 	void testDoctorDAODeleteSuccess() {
@@ -143,7 +160,7 @@ public class DoctorDAOTest {
 	}
 	
 	@Test
-	public void testDoctorDAODeleteFailureDoctorReferringDoctor() {
+	public void testDoctorDAODeleteFailureDoctorIsReferringDoctor() {
 		assertTrue(doctorDAO.existsById("D001"));
 		
 		doctor.setId("D001");
