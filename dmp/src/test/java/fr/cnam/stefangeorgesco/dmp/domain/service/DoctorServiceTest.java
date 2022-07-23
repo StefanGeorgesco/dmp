@@ -34,6 +34,7 @@ import fr.cnam.stefangeorgesco.dmp.domain.dto.SpecialtyDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.model.Doctor;
 import fr.cnam.stefangeorgesco.dmp.domain.model.Specialty;
 import fr.cnam.stefangeorgesco.dmp.exception.domain.DuplicateKeyException;
+import fr.cnam.stefangeorgesco.dmp.exception.domain.FinderException;
 
 @TestPropertySource("/application-test.properties")
 @SpringBootTest
@@ -226,6 +227,39 @@ public class DoctorServiceTest {
 		assertEquals(doctorDTO.getAddressDTO().getZipcode(), response.getAddressDTO().getZipcode());
 		assertEquals(doctorDTO.getAddressDTO().getCity(), response.getAddressDTO().getCity());
 		assertEquals(doctorDTO.getAddressDTO().getCountry(), response.getAddressDTO().getCountry());
+	}
+	
+	@Test
+	public void testFindDoctorSuccess() {
+		when(doctorDAO.findById("D001")).thenReturn(Optional.of(persistentDoctor));
+		
+		response = assertDoesNotThrow(() -> doctorService.findDoctor("D001"));
+		
+		verify(doctorDAO, times(1)).findById("D001");
+		
+		assertEquals("D001", response.getId());
+		assertEquals("firstname", response.getFirstname());
+		assertEquals("lastname", response.getLastname());
+		assertEquals(null, response.getSecurityCode());
+		assertEquals(2, response.getSpecialtiesDTO().size());
+		Iterator<SpecialtyDTO> itSpDTO = response.getSpecialtiesDTO().iterator();
+		SpecialtyDTO spDTO = itSpDTO.next();
+		assertEquals("S001", spDTO.getId());
+		assertEquals("First specialty", spDTO.getDescription());
+		spDTO = itSpDTO.next();
+		assertEquals("S002", spDTO.getId());
+		assertEquals("Second specialty", spDTO.getDescription());
+	}
+
+	@Test
+	public void testFindDoctorFailureDoctorDoesNotExist() throws FinderException {
+		when(doctorDAO.findById("D003")).thenReturn(Optional.ofNullable(null));
+		
+		FinderException ex = assertThrows(FinderException.class, () -> doctorService.findDoctor("D001"));
+		
+		verify(doctorDAO, times(1)).findById("D001");
+		
+		assertEquals("doctor not found", ex.getMessage());
 	}
 
 }
