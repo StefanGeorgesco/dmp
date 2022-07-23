@@ -250,7 +250,7 @@ public class DoctorTest {
 		Set<ConstraintViolation<Doctor>> violations = validator.validate(doctor);
 		
 		assertEquals(1, violations.size());
-		assertEquals("invalid street", violations.iterator().next().getMessage());
+		assertEquals("invalid street1", violations.iterator().next().getMessage());
 
 	}
 	

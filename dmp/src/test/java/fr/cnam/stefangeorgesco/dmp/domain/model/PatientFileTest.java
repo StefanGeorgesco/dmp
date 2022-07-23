@@ -228,7 +228,7 @@ public class PatientFileTest {
 		Set<ConstraintViolation<PatientFile>> violations = validator.validate(patientFile);
 		
 		assertEquals(1, violations.size());
-		assertEquals("invalid street", violations.iterator().next().getMessage());
+		assertEquals("invalid street1", violations.iterator().next().getMessage());
 
 	}
 	

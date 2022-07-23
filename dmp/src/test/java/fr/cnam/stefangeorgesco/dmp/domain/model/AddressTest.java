@@ -54,7 +54,7 @@ public class AddressTest {
 		Set<ConstraintViolation<Address>> violations = validator.validate(address);
 
 		assertEquals(1, violations.size());
-		assertEquals("invalid street", violations.iterator().next().getMessage());
+		assertEquals("invalid street1", violations.iterator().next().getMessage());
 
 	}
 
@@ -102,7 +102,19 @@ public class AddressTest {
 		Set<ConstraintViolation<Address>> violations = validator.validate(address);
 
 		assertEquals(1, violations.size());
-		assertEquals("invalid street", violations.iterator().next().getMessage());
+		assertEquals("invalid street1", violations.iterator().next().getMessage());
+
+	}
+
+	@Test
+	public void AddressValidationStreet2InvalidNull() {
+
+		address.setStreet2(null);
+		
+		Set<ConstraintViolation<Address>> violations = validator.validate(address);
+
+		assertEquals(1, violations.size());
+		assertEquals("street2 should not be null", violations.iterator().next().getMessage());
 
 	}
 
@@ -115,6 +127,17 @@ public class AddressTest {
 
 		assertEquals(1, violations.size());
 		assertEquals("invalid city", violations.iterator().next().getMessage());
+	}
+
+	@Test
+	public void AddressValidationStateInvalidNull() {
+
+		address.setState(null);
+		
+		Set<ConstraintViolation<Address>> violations = validator.validate(address);
+
+		assertEquals(1, violations.size());
+		assertEquals("state should not be null", violations.iterator().next().getMessage());
 	}
 
 	@Test

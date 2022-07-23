@@ -189,7 +189,7 @@ public class DoctorControllerIntegrationTest {
 		mockMvc.perform(post("/doctor").contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(doctorDTO))).andExpect(status().isNotAcceptable())
 				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
-				.andExpect(jsonPath("$.address_street1", is("invalid street")));
+				.andExpect(jsonPath("$.address_street1", is("invalid street1")));
 
 		assertFalse(doctorDAO.existsById("D003"));
 	}
