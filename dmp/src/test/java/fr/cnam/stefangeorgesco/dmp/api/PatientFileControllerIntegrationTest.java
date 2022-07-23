@@ -1,6 +1,5 @@
 package fr.cnam.stefangeorgesco.dmp.api;
 
-import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -198,7 +197,6 @@ public class PatientFileControllerIntegrationTest {
 				.andExpect(jsonPath("$.id", is("P001")))
 				.andExpect(jsonPath("$.firstname", is("Eric")))
 				.andExpect(jsonPath("$.lastname", is("Martin")))
-				.andExpect(jsonPath("$.securityCode", nullValue()))
 				.andExpect(jsonPath("$.referringDoctorId", is("D001")))
 				// changes
 				.andExpect(jsonPath("$.phone", is(patientFileDTO.getPhone())))
@@ -206,7 +204,9 @@ public class PatientFileControllerIntegrationTest {
 				.andExpect(jsonPath("$.address.street1", is(patientFileDTO.getAddressDTO().getStreet1())))
 				.andExpect(jsonPath("$.address.zipcode", is(patientFileDTO.getAddressDTO().getZipcode())))
 				.andExpect(jsonPath("$.address.city", is(patientFileDTO.getAddressDTO().getCity())))
-				.andExpect(jsonPath("$.address.country", is(patientFileDTO.getAddressDTO().getCountry())));
+				.andExpect(jsonPath("$.address.country", is(patientFileDTO.getAddressDTO().getCountry())))
+				// absent
+				.andExpect(jsonPath("$.securityCode").doesNotExist());
 	}
 	
 	@Test

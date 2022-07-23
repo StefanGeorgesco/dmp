@@ -2,7 +2,6 @@ package fr.cnam.stefangeorgesco.dmp.api;
 
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
-import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -276,7 +275,7 @@ public class DoctorControllerIntegrationTest {
 				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
 				// no change (except null securityCode)
 				.andExpect(jsonPath("$.id", is("D001"))).andExpect(jsonPath("$.firstname", is("John")))
-				.andExpect(jsonPath("$.lastname", is("Smith"))).andExpect(jsonPath("$.securityCode", nullValue()))
+				.andExpect(jsonPath("$.lastname", is("Smith")))
 				.andExpect(jsonPath("$.specialties", hasSize(2))).andExpect(jsonPath("$.specialties[0].id", is("S001")))
 				.andExpect(jsonPath("$.specialties[0].description", is("Specialty 1")))
 				.andExpect(jsonPath("$.specialties[1].id", is("S002")))
@@ -287,7 +286,9 @@ public class DoctorControllerIntegrationTest {
 				.andExpect(jsonPath("$.address.street1", is(doctorDTO.getAddressDTO().getStreet1())))
 				.andExpect(jsonPath("$.address.zipcode", is(doctorDTO.getAddressDTO().getZipcode())))
 				.andExpect(jsonPath("$.address.city", is(doctorDTO.getAddressDTO().getCity())))
-				.andExpect(jsonPath("$.address.country", is(doctorDTO.getAddressDTO().getCountry())));
+				.andExpect(jsonPath("$.address.country", is(doctorDTO.getAddressDTO().getCountry())))
+				// absent
+				.andExpect(jsonPath("$.securityCode").doesNotExist());
 	}
 
 	@Test
@@ -320,7 +321,7 @@ public class DoctorControllerIntegrationTest {
 				.andExpect(jsonPath("$.specialties", hasSize(2)))
 				.andExpect(jsonPath("$.specialties[0].description", is("Specialty 1")))
 				.andExpect(jsonPath("$.specialties[1].description", is("Specialty 2")))
-				.andExpect(jsonPath("$.securityCode", nullValue()));
+				.andExpect(jsonPath("$.securityCode").doesNotExist());
 	}
 
 }
