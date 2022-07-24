@@ -324,4 +324,18 @@ public class DoctorControllerIntegrationTest {
 				.andExpect(jsonPath("$.securityCode").doesNotExist());
 	}
 
+	@Test
+	@WithUserDetails("eric") // ROLE_PATIENT
+	public void testGetDoctorDetailsFailureBadRole() throws Exception {
+
+		mockMvc.perform(get("/doctor/details")).andExpect(status().isForbidden());
+	}
+
+	@Test
+	@WithAnonymousUser
+	public void testGetDoctorDetailsFailureUnauthenticatedUser() throws Exception {
+
+		mockMvc.perform(get("/doctor/details")).andExpect(status().isUnauthorized());
+	}
+
 }
