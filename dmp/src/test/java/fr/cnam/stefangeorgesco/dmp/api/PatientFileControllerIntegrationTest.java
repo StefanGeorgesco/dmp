@@ -262,4 +262,52 @@ public class PatientFileControllerIntegrationTest {
 		mockMvc.perform(get("/patient-file/details")).andExpect(status().isUnauthorized());
 	}
 
+	@Test
+	@WithUserDetails("user") // ROLE_DOCTOR
+	public void testGetPatientFileByIdUserIsDoctorSuccess() throws Exception {
+
+		patientFileDTO.setId("P001");
+
+		assertTrue(patientFileDAO.existsById("P001"));
+
+		mockMvc.perform(get("/patient-file/P001")).andExpect(status().isOk())
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+				.andExpect(jsonPath("$.firstname", is("Eric")))
+				.andExpect(jsonPath("$.address.street1", is("1 rue de la Paix")))
+				.andExpect(jsonPath("$.referringDoctorId", is("D001")))
+				.andExpect(jsonPath("$.dateOfBirth", is("1995-05-15")))
+				.andExpect(jsonPath("$.securityCode").doesNotExist());
+	}
+
+	@Test
+	@WithUserDetails("admin") // ROLE_ADMIN
+	public void testGetPatientFileByIdUserIsAdminSuccess() throws Exception {
+
+		patientFileDTO.setId("P001");
+
+		assertTrue(patientFileDAO.existsById("P001"));
+
+		mockMvc.perform(get("/patient-file/P001")).andExpect(status().isOk())
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+				.andExpect(jsonPath("$.firstname", is("Eric")))
+				.andExpect(jsonPath("$.address.street1", is("1 rue de la Paix")))
+				.andExpect(jsonPath("$.referringDoctorId", is("D001")))
+				.andExpect(jsonPath("$.dateOfBirth", is("1995-05-15")))
+				.andExpect(jsonPath("$.securityCode").doesNotExist());
+	}
+
+	@Test
+	@WithUserDetails("eric") // ROLE_PATIENT
+	public void testGetPatientFileByIdFailureUserIsPatient() throws Exception {
+
+		mockMvc.perform(get("/patient-file/P001")).andExpect(status().isForbidden());
+	}
+
+	@Test
+	@WithAnonymousUser
+	public void testGetPatientFileByIdFailureUnauthenticatedUser() throws Exception {
+
+		mockMvc.perform(get("/patient-file/P001")).andExpect(status().isUnauthorized());
+	}
+
 }
