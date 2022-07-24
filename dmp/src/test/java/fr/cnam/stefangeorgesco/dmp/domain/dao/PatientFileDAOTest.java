@@ -116,7 +116,7 @@ public class PatientFileDAOTest {
 	}
 	
 	@Test
-	public void testPatientFileDAOSaveUpdateSuccess() {
+	public void testPatientFileDAOSaveUpdateEmailSuccess() {
 		
 		patientFile = patientFileDAO.findById("P001").get();
 		
@@ -129,6 +129,25 @@ public class PatientFileDAOTest {
 		patientFile = patientFileDAO.findById("P001").get();
 		
 		assertEquals("mail@mail.com", patientFile.getEmail());
+	}
+	
+	@Test
+	public void testPatientFileDAOSaveUpdateReferringDoctorSuccess() {
+		
+		patientFile = patientFileDAO.findById("P001").get();
+		
+		assertEquals("D001", patientFile.getReferringDoctor().getId());
+		assertEquals("Smith", patientFile.getReferringDoctor().getLastname());
+		
+		doctor.setId("D002");
+		patientFile.setReferringDoctor(doctor);
+		
+		patientFileDAO.save(patientFile);
+		
+		patientFile = patientFileDAO.findById("P001").get();
+		
+		assertEquals("D002", patientFile.getReferringDoctor().getId());
+		assertEquals("Dupont", patientFile.getReferringDoctor().getLastname());
 	}
 	
 }

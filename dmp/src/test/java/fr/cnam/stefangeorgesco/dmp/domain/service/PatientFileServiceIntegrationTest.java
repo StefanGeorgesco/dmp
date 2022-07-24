@@ -64,6 +64,9 @@ public class PatientFileServiceIntegrationTest {
 	
 	@Autowired
 	private PatientFile savedPatientFile;
+	
+	@Autowired
+	private PatientFile persistentPatientFile;
 
 	@BeforeEach
 	public void setup() {
@@ -171,13 +174,13 @@ public class PatientFileServiceIntegrationTest {
 
 	@Test
 	public void testFindPatientFileSuccess() {
-		PatientFileDTO patientFileDTO = assertDoesNotThrow(() -> patientFileService.findPatientFile("P001"));
+		response = assertDoesNotThrow(() -> patientFileService.findPatientFile("P001"));
 		
-		assertEquals("P001", patientFileDTO.getId());
-		assertEquals("1 rue de la Paix", patientFileDTO.getAddressDTO().getStreet1());
-		assertEquals("D001", patientFileDTO.getReferringDoctorId());
-		assertNull(patientFileDTO.getSecurityCode());
-		assertEquals("1995-05-15", patientFileDTO.getDateOfBirth().toString());
+		assertEquals("P001", response.getId());
+		assertEquals("1 rue de la Paix", response.getAddressDTO().getStreet1());
+		assertEquals("D001", response.getReferringDoctorId());
+		assertNull(response.getSecurityCode());
+		assertEquals("1995-05-15", response.getDateOfBirth().toString());
 	}
 	
 	@Test
@@ -185,7 +188,46 @@ public class PatientFileServiceIntegrationTest {
 		
 		FinderException ex = assertThrows(FinderException.class, () -> patientFileService.findPatientFile("P002"));
 		
-		assertEquals("patientFile not found", ex.getMessage());
+		assertEquals("patient file not found", ex.getMessage());
+	}
+	
+	@Test
+	public void testUpdateReferringDoctorSuccess() {
+		patientFileDTO.setId("P001");
+		
+		persistentPatientFile = patientFileDAO.findById("P001").get();
+		assertEquals("D001", persistentPatientFile.getReferringDoctor().getId());
+		
+		patientFileDTO.setReferringDoctorId("D002");
+		
+		response = assertDoesNotThrow(() -> patientFileService.updateReferringDoctor(patientFileDTO));
+		
+		savedPatientFile = patientFileDAO.findById("P001").get();
+		
+		assertEquals("D002", savedPatientFile.getReferringDoctor().getId());
+		assertEquals("D002", response.getReferringDoctorId());
+	}
+	
+	@Test
+	public void testUpdateReferringDoctorFailurePatientFileDoesNotExist() {
+		patientFileDTO.setId("P002");
+		
+		FinderException ex = assertThrows(FinderException.class, () -> patientFileService.updateReferringDoctor(patientFileDTO));
+		
+		assertEquals("patient file not found", ex.getMessage());
+	}
+	
+	@Test
+	public void testUpdateReferringDoctorFailureNewDoctorDoesNotExist() {
+		patientFileDTO.setId("P001");
+		
+		assertTrue(patientFileDAO.existsById("P001"));
+		
+		patientFileDTO.setReferringDoctorId("D003");
+		
+		FinderException ex = assertThrows(FinderException.class, () -> patientFileService.updateReferringDoctor(patientFileDTO));
+		
+		assertEquals("doctor not found", ex.getMessage());
 	}
 	
 }

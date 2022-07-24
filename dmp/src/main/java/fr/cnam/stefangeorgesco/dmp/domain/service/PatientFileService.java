@@ -7,8 +7,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import fr.cnam.stefangeorgesco.dmp.domain.dao.DoctorDAO;
 import fr.cnam.stefangeorgesco.dmp.domain.dao.PatientFileDAO;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.PatientFileDTO;
+import fr.cnam.stefangeorgesco.dmp.domain.model.Doctor;
 import fr.cnam.stefangeorgesco.dmp.domain.model.PatientFile;
 import fr.cnam.stefangeorgesco.dmp.exception.domain.CheckException;
 import fr.cnam.stefangeorgesco.dmp.exception.domain.DuplicateKeyException;
@@ -23,6 +25,9 @@ public class PatientFileService {
 
 	@Autowired
 	private PatientFileDAO patientFileDAO;
+
+	@Autowired
+	private DoctorDAO doctorDAO;
 
 	@Autowired
 	private ModelMapper commonModelMapper;
@@ -73,12 +78,39 @@ public class PatientFileService {
 
 	public PatientFileDTO findPatientFile(String id) throws FinderException {
 		Optional<PatientFile> optionalPatientFile = patientFileDAO.findById(id);
-		
+
 		if (optionalPatientFile.isPresent()) {
 			return patientFileModelMapper.map(optionalPatientFile.get(), PatientFileDTO.class);
 		} else {
-			throw new FinderException("patientFile not found");
+			throw new FinderException("patient file not found");
 		}
+	}
+
+	public PatientFileDTO updateReferringDoctor(PatientFileDTO patientFileDTO) throws FinderException {
+
+		Optional<PatientFile> optionalPatientFile = patientFileDAO.findById(patientFileDTO.getId());
+		
+		if (optionalPatientFile.isEmpty()) {
+			throw new FinderException("patient file not found");
+		}
+		
+		PatientFile patientFile = optionalPatientFile.get();
+		
+		Optional<Doctor> optionalDoctor = doctorDAO.findById(patientFileDTO.getReferringDoctorId());
+		
+		if (optionalDoctor.isEmpty()) {
+			throw new FinderException("doctor not found");
+		}
+		
+		Doctor doctor = optionalDoctor.get();
+		
+		patientFile.setReferringDoctor(doctor);
+		
+		patientFile = patientFileDAO.save(patientFile);
+
+		PatientFileDTO response = patientFileModelMapper.map(patientFile, PatientFileDTO.class);
+
+		return response;
 	}
 
 }
