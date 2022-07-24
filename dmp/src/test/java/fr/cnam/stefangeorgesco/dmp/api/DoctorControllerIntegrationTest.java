@@ -308,7 +308,7 @@ public class DoctorControllerIntegrationTest {
 
 	@Test
 	@WithUserDetails("user") // "D001", ROLE_DOCTOR
-	public void testgetDoctorDetailsSuccess() throws Exception {
+	public void testGetDoctorDetailsSuccess() throws Exception {
 
 		doctorDTO.setId("D001");
 

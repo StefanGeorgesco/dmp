@@ -1,5 +1,7 @@
 package fr.cnam.stefangeorgesco.dmp.domain.service;
 
+import java.util.Optional;
+
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -10,6 +12,7 @@ import fr.cnam.stefangeorgesco.dmp.domain.dto.PatientFileDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.model.PatientFile;
 import fr.cnam.stefangeorgesco.dmp.exception.domain.CheckException;
 import fr.cnam.stefangeorgesco.dmp.exception.domain.DuplicateKeyException;
+import fr.cnam.stefangeorgesco.dmp.exception.domain.FinderException;
 import fr.cnam.stefangeorgesco.dmp.utils.PasswordGenerator;
 
 @Service
@@ -66,6 +69,16 @@ public class PatientFileService {
 		PatientFileDTO response = patientFileModelMapper.map(patientFile, PatientFileDTO.class);
 
 		return response;
+	}
+
+	public PatientFileDTO findPatientFile(String id) throws FinderException {
+		Optional<PatientFile> optionalPatientFile = patientFileDAO.findById(id);
+		
+		if (optionalPatientFile.isPresent()) {
+			return patientFileModelMapper.map(optionalPatientFile.get(), PatientFileDTO.class);
+		} else {
+			throw new FinderException("patientFile not found");
+		}
 	}
 
 }

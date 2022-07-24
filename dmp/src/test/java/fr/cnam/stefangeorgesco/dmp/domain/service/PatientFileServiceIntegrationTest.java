@@ -3,12 +3,12 @@ package fr.cnam.stefangeorgesco.dmp.domain.service;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.doNothing;
 
 import java.time.LocalDate;
-
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -27,6 +27,7 @@ import fr.cnam.stefangeorgesco.dmp.domain.model.Doctor;
 import fr.cnam.stefangeorgesco.dmp.domain.model.PatientFile;
 import fr.cnam.stefangeorgesco.dmp.exception.domain.CheckException;
 import fr.cnam.stefangeorgesco.dmp.exception.domain.DuplicateKeyException;
+import fr.cnam.stefangeorgesco.dmp.exception.domain.FinderException;
 
 @TestPropertySource("/application-test.properties")
 @SpringBootTest
@@ -168,4 +169,23 @@ public class PatientFileServiceIntegrationTest {
 		assertEquals(patientFileDTO.getAddressDTO().getCountry(), response.getAddressDTO().getCountry());
 	}
 
+	@Test
+	public void testFindPatientFileSuccess() {
+		PatientFileDTO patientFileDTO = assertDoesNotThrow(() -> patientFileService.findPatientFile("P001"));
+		
+		assertEquals("P001", patientFileDTO.getId());
+		assertEquals("1 rue de la Paix", patientFileDTO.getAddressDTO().getStreet1());
+		assertEquals("D001", patientFileDTO.getReferringDoctorId());
+		assertNull(patientFileDTO.getSecurityCode());
+		assertEquals("1995-05-15", patientFileDTO.getDateOfBirth().toString());
+	}
+	
+	@Test
+	public void testFindPatientFileFailurePatientFileDoesNotExist() {
+		
+		FinderException ex = assertThrows(FinderException.class, () -> patientFileService.findPatientFile("P002"));
+		
+		assertEquals("patientFile not found", ex.getMessage());
+	}
+	
 }

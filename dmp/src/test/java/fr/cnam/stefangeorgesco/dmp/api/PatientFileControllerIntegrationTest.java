@@ -5,6 +5,7 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.doNothing;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -230,4 +231,21 @@ public class PatientFileControllerIntegrationTest {
 
 	}
 	
+	@Test
+	@WithUserDetails("eric") // P001, ROLE_PATIENT
+	public void testGetPatientFileDetailsSuccess() throws Exception {
+
+		patientFileDTO.setId("P001");
+
+		assertTrue(patientFileDAO.existsById("P001"));
+
+		mockMvc.perform(get("/patient-file/details")).andExpect(status().isOk())
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+				.andExpect(jsonPath("$.firstname", is("Eric")))
+				.andExpect(jsonPath("$.address.street1", is("1 rue de la Paix")))
+				.andExpect(jsonPath("$.referringDoctorId", is("D001")))
+				.andExpect(jsonPath("$.dateOfBirth", is("1995-05-15")))
+				.andExpect(jsonPath("$.securityCode").doesNotExist());
+	}
+
 }

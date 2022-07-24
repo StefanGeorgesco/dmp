@@ -34,6 +34,7 @@ import fr.cnam.stefangeorgesco.dmp.domain.model.Doctor;
 import fr.cnam.stefangeorgesco.dmp.domain.model.PatientFile;
 import fr.cnam.stefangeorgesco.dmp.exception.domain.CheckException;
 import fr.cnam.stefangeorgesco.dmp.exception.domain.DuplicateKeyException;
+import fr.cnam.stefangeorgesco.dmp.exception.domain.FinderException;
 
 @TestPropertySource("/application-test.properties")
 @SpringBootTest
@@ -193,6 +194,33 @@ public class PatientFileServiceTest {
 		assertEquals(patientFileDTO.getAddressDTO().getZipcode(), response.getAddressDTO().getZipcode());
 		assertEquals(patientFileDTO.getAddressDTO().getCity(), response.getAddressDTO().getCity());
 		assertEquals(patientFileDTO.getAddressDTO().getCountry(), response.getAddressDTO().getCountry());
+	}
+
+	@Test
+	public void testFindPatientFileSuccess() {
+		when(patientFileDAO.findById("P001")).thenReturn(Optional.of(persistentPatientFile));
+		
+		response = assertDoesNotThrow(() -> patientFileService.findPatientFile("P001"));
+		
+		verify(patientFileDAO, times(1)).findById("P001");
+		
+		assertEquals("P001", response.getId());
+		assertEquals("firstname", response.getFirstname());
+		assertEquals("lastname", response.getLastname());
+		assertEquals(null, response.getSecurityCode());
+		assertEquals("D001", response.getReferringDoctorId());
+		assertEquals("2000-02-13", response.getDateOfBirth().toString());
+	}
+
+	@Test
+	public void testFindPatientFileFailurePatientFileDoesNotExist() throws FinderException {
+		when(patientFileDAO.findById("P003")).thenReturn(Optional.ofNullable(null));
+		
+		FinderException ex = assertThrows(FinderException.class, () -> patientFileService.findPatientFile("P003"));
+		
+		verify(patientFileDAO, times(1)).findById("P003");
+		
+		assertEquals("patientFile not found", ex.getMessage());
 	}
 
 }

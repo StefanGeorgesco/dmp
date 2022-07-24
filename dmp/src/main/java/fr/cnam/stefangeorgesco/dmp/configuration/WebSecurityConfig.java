@@ -55,6 +55,7 @@ public class WebSecurityConfig {
 						.antMatchers(HttpMethod.POST, "/patient-file").hasRole("DOCTOR")
 						.antMatchers(HttpMethod.GET, "/doctor/details").hasRole("DOCTOR")
 						.antMatchers(HttpMethod.PUT, "/doctor/details").hasRole("DOCTOR")
+						.antMatchers(HttpMethod.GET, "/patient-file/details").hasRole("PATIENT")
 						.antMatchers(HttpMethod.PUT, "/patient-file/details").hasRole("PATIENT")
 						.anyRequest().authenticated())
 				.httpBasic(Customizer.withDefaults());

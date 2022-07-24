@@ -7,6 +7,7 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -43,12 +44,20 @@ public class PatientFileController {
 	@PutMapping("/patient-file/details")
 	public ResponseEntity<PatientFileDTO> updatePatientFile(@Valid @RequestBody PatientFileDTO patientFileDTO,
 			Principal principal) throws FinderException {
-		
+
 		UserDTO userDTO = userService.findUserByUsername(principal.getName());
-		
+
 		patientFileDTO.setId(userDTO.getId());
-		
+
 		return ResponseEntity.status(HttpStatus.OK).body(patientFileService.updatePatientFile(patientFileDTO));
+	}
+
+	@GetMapping("/patient-file/details")
+	public ResponseEntity<PatientFileDTO> getPatientFileDetails(Principal principal) throws FinderException {
+
+		UserDTO userDTO = userService.findUserByUsername(principal.getName());
+
+		return ResponseEntity.status(HttpStatus.OK).body(patientFileService.findPatientFile(userDTO.getId()));
 	}
 
 }
