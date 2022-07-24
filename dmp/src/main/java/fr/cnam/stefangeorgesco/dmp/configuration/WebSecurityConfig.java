@@ -49,15 +49,17 @@ public class WebSecurityConfig {
 				.addFilterBefore(new JWTTokenValidatorFilter(), BasicAuthenticationFilter.class)
 				.addFilterAfter(new JWTTokenGeneratorFilter(), BasicAuthenticationFilter.class)
 				.authorizeHttpRequests((auth) -> auth
-						.antMatchers(HttpMethod.POST, "/login").permitAll()
-						.antMatchers(HttpMethod.POST, "/user").permitAll()
-						.antMatchers(HttpMethod.POST, "/doctor").hasRole("ADMIN")
-						.antMatchers(HttpMethod.POST, "/patient-file").hasRole("DOCTOR")
-						.antMatchers(HttpMethod.GET, "/doctor/details").hasRole("DOCTOR")
-						.antMatchers(HttpMethod.PUT, "/doctor/details").hasRole("DOCTOR")
-						.antMatchers(HttpMethod.GET, "/patient-file/details").hasRole("PATIENT")
-						.antMatchers(HttpMethod.PUT, "/patient-file/details").hasRole("PATIENT")
-						.anyRequest().authenticated())
+						.mvcMatchers(HttpMethod.POST, "/login").permitAll()
+						.mvcMatchers(HttpMethod.POST, "/user").permitAll()
+						.mvcMatchers(HttpMethod.POST, "/doctor").hasRole("ADMIN")
+						.mvcMatchers(HttpMethod.POST, "/patient-file").hasRole("DOCTOR")
+						.mvcMatchers(HttpMethod.GET, "/doctor/details").hasRole("DOCTOR")
+						.mvcMatchers(HttpMethod.PUT, "/doctor/details").hasRole("DOCTOR")
+						.mvcMatchers(HttpMethod.GET, "/patient-file/details").hasRole("PATIENT")
+						.mvcMatchers(HttpMethod.PUT, "/patient-file/details").hasRole("PATIENT")
+						.mvcMatchers(HttpMethod.GET, "/doctor/{id}").authenticated()
+						.mvcMatchers(HttpMethod.GET, "/patient-file/{id}").hasAnyRole("ADMIN", "DOCTOR")
+						.anyRequest().denyAll())
 				.httpBasic(Customizer.withDefaults());
 		return http.build();
 

@@ -338,4 +338,59 @@ public class DoctorControllerIntegrationTest {
 		mockMvc.perform(get("/doctor/details")).andExpect(status().isUnauthorized());
 	}
 
+	@Test
+	@WithUserDetails("user") // ROLE_DOCTOR
+	public void testGetDoctorByIdUserIsDoctorSuccess() throws Exception {
+
+		assertTrue(doctorDAO.existsById("D002"));
+
+		mockMvc.perform(get("/doctor/D002")).andExpect(status().isOk())
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+				.andExpect(jsonPath("$.firstname", is("Jean")))
+				.andExpect(jsonPath("$.address.street1", is("15 rue de Vaugirard")))
+				.andExpect(jsonPath("$.specialties", hasSize(2)))
+				.andExpect(jsonPath("$.specialties[0].description", is("Specialty 1")))
+				.andExpect(jsonPath("$.specialties[1].description", is("Specialty 2")))
+				.andExpect(jsonPath("$.securityCode").doesNotExist());
+	}
+
+	@Test
+	@WithUserDetails("admin") // ROLE_ADMIN
+	public void testGetDoctorByIdUserIsAdminSuccess() throws Exception {
+
+		assertTrue(doctorDAO.existsById("D002"));
+
+		mockMvc.perform(get("/doctor/D002")).andExpect(status().isOk())
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+				.andExpect(jsonPath("$.firstname", is("Jean")))
+				.andExpect(jsonPath("$.address.street1", is("15 rue de Vaugirard")))
+				.andExpect(jsonPath("$.specialties", hasSize(2)))
+				.andExpect(jsonPath("$.specialties[0].description", is("Specialty 1")))
+				.andExpect(jsonPath("$.specialties[1].description", is("Specialty 2")))
+				.andExpect(jsonPath("$.securityCode").doesNotExist());
+	}
+
+	@Test
+	@WithUserDetails("eric") // ROLE_PATIENT
+	public void testGetDoctorByIdUserIsPatientSuccess() throws Exception {
+
+		assertTrue(doctorDAO.existsById("D002"));
+
+		mockMvc.perform(get("/doctor/D002")).andExpect(status().isOk())
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+				.andExpect(jsonPath("$.firstname", is("Jean")))
+				.andExpect(jsonPath("$.address.street1", is("15 rue de Vaugirard")))
+				.andExpect(jsonPath("$.specialties", hasSize(2)))
+				.andExpect(jsonPath("$.specialties[0].description", is("Specialty 1")))
+				.andExpect(jsonPath("$.specialties[1].description", is("Specialty 2")))
+				.andExpect(jsonPath("$.securityCode").doesNotExist());
+	}
+
+	@Test
+	@WithAnonymousUser
+	public void testGetDoctorByIdFailureUnauthenticatedUser() throws Exception {
+
+		mockMvc.perform(get("/doctor/D002")).andExpect(status().isUnauthorized());
+	}
+
 }
