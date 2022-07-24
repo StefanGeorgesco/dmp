@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import fr.cnam.stefangeorgesco.dmp.authentication.domain.dto.UserDTO;
 import fr.cnam.stefangeorgesco.dmp.authentication.domain.service.UserService;
+import fr.cnam.stefangeorgesco.dmp.domain.dto.DoctorDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.PatientFileDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.service.PatientFileService;
 import fr.cnam.stefangeorgesco.dmp.exception.domain.CheckException;
@@ -26,11 +27,11 @@ import fr.cnam.stefangeorgesco.dmp.exception.domain.FinderException;
 public class PatientFileController {
 
 	@Autowired
-	UserService userService;
+	private UserService userService;
 
 	@Autowired
 	private PatientFileService patientFileService;
-
+	
 	@PostMapping("/patient-file")
 	public ResponseEntity<PatientFileDTO> createPatientFile(@Valid @RequestBody PatientFileDTO patientFileDTO,
 			Principal principal) throws CheckException, DuplicateKeyException, FinderException {
@@ -65,6 +66,16 @@ public class PatientFileController {
 	 public ResponseEntity<PatientFileDTO> getPatientFileDetails(@PathVariable String id, Principal principal) throws FinderException {
 		 
 		 return ResponseEntity.status(HttpStatus.OK).body(patientFileService.findPatientFile(id));
+	 }
+
+	 @PutMapping("/patient-file/{id}/referring-doctor")
+	 public ResponseEntity<PatientFileDTO> updateReferringDoctor(@PathVariable String id, @Valid @RequestBody DoctorDTO doctorDTO) throws FinderException {
+		 
+		 PatientFileDTO patientFileDTO = patientFileService.findPatientFile(id);
+		 
+		 patientFileDTO.setReferringDoctorId(doctorDTO.getId());
+		 
+		 return ResponseEntity.status(HttpStatus.OK).body(patientFileService.updateReferringDoctor(patientFileDTO));
 	 }
 
 }
