@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.time.LocalDate;
 import java.util.Optional;
 
 import org.junit.jupiter.api.AfterEach;
@@ -51,6 +52,7 @@ public class PatientFileDAOTest {
 		patientFile.setId("P002");
 		patientFile.setFirstname("Patrick");
 		patientFile.setLastname("Dubois");
+		patientFile.setDateOfBirth(LocalDate.of(2000, 2, 13));
 		patientFile.setPhone("9876543210");
 		patientFile.setEmail("patrick.dubois@mail.fr");
 		patientFile.setAddress(address);

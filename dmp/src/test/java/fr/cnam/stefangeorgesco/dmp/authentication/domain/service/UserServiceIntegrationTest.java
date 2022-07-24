@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -111,6 +112,7 @@ public class UserServiceIntegrationTest {
 		patientFile.setId("patientFileId");
 		patientFile.setFirstname("Eric");
 		patientFile.setLastname("Martin");
+		patientFile.setDateOfBirth(LocalDate.of(2000, 2, 13));
 		patientFile.setPhone("1111111111");
 		patientFile.setEmail("eric.martin@free.fr");
 		patientFile.setAddress(patientFileAddress);

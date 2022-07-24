@@ -7,7 +7,7 @@ insert into t_file(id, firstname, lastname, phone, email, street1, street2, city
 
 insert into t_doctor(id) values ('D001')
 insert into t_doctor(id) values ('D002')
-insert into t_patient_file(id, referring_doctor_id) values ('P001', 'D001')
+insert into t_patient_file(id, date_of_birth, referring_doctor_id) values ('P001', '1995-05-15', 'D001')
 
 insert into t_doctor_specialty(doctor_id, specialty_id) values ('D001', 'S001')
 insert into t_doctor_specialty(doctor_id, specialty_id) values ('D001', 'S002')

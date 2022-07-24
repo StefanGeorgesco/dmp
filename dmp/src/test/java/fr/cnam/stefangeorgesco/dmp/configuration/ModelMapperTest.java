@@ -233,6 +233,7 @@ public class ModelMapperTest {
 		patientFileDTO.setId("P001");
 		patientFileDTO.setFirstname("Patrick");
 		patientFileDTO.setLastname("Dubois");
+		patientFileDTO.setDateOfBirth(LocalDate.of(2000, 2, 13));
 		patientFileDTO.setPhone("9876543210");
 		patientFileDTO.setEmail("patrick.dubois@mail.fr");
 		patientFileDTO.setAddressDTO(addressDTO);
@@ -244,6 +245,7 @@ public class ModelMapperTest {
 		assertEquals(patientFileDTO.getId(), patientFile.getId());
 		assertEquals(patientFileDTO.getFirstname(), patientFile.getFirstname());
 		assertEquals(patientFileDTO.getLastname(), patientFile.getLastname());
+		assertEquals(patientFileDTO.getDateOfBirth(), patientFile.getDateOfBirth());
 		assertEquals(patientFileDTO.getPhone(), patientFile.getPhone());
 		assertEquals(patientFileDTO.getEmail(), patientFile.getEmail());
 		assertEquals(patientFileDTO.getAddressDTO().getStreet1(), patientFile.getAddress().getStreet1());
@@ -264,6 +266,7 @@ public class ModelMapperTest {
 		patientFile.setId("P001");
 		patientFile.setFirstname("Patrick");
 		patientFile.setLastname("Dubois");
+		patientFile.setDateOfBirth(LocalDate.of(2000, 2, 13));
 		patientFile.setPhone("9876543210");
 		patientFile.setEmail("patrick.dubois@mail.fr");
 		patientFile.setAddress(address);
@@ -275,6 +278,7 @@ public class ModelMapperTest {
 		assertEquals(patientFile.getId(), patientFileDTO.getId());
 		assertEquals(patientFile.getFirstname(), patientFileDTO.getFirstname());
 		assertEquals(patientFile.getLastname(), patientFileDTO.getLastname());
+		assertEquals(patientFile.getDateOfBirth(), patientFileDTO.getDateOfBirth());
 		assertEquals(patientFile.getPhone(), patientFileDTO.getPhone());
 		assertEquals(patientFile.getEmail(), patientFileDTO.getEmail());
 		assertEquals(patientFile.getAddress().getStreet1(), patientFileDTO.getAddressDTO().getStreet1());

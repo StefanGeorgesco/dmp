@@ -11,6 +11,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.time.LocalDate;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -81,6 +83,7 @@ public class PatientFileControllerIntegrationTest {
 		patientFileDTO.setId("P002");
 		patientFileDTO.setFirstname("Patrick");
 		patientFileDTO.setLastname("Dubois");
+		patientFileDTO.setDateOfBirth(LocalDate.of(2000, 2, 13));
 		patientFileDTO.setPhone("9876543210");
 		patientFileDTO.setEmail("patrick.dubois@mail.fr");
 		patientFileDTO.setAddressDTO(addressDTO);
@@ -93,6 +96,7 @@ public class PatientFileControllerIntegrationTest {
 		patientFile.setId("P002");
 		patientFile.setFirstname("Firstname");
 		patientFile.setLastname("Lastname");
+		patientFile.setDateOfBirth(LocalDate.of(2000, 2, 13));
 		patientFile.setPhone("phone");
 		patientFile.setEmail("email@email.com");
 		patientFile.setAddress(address);
@@ -120,7 +124,8 @@ public class PatientFileControllerIntegrationTest {
 				.andExpect(jsonPath("$.firstname", is("Patrick")))
 				.andExpect(jsonPath("$.address.street1", is("1 Rue Lecourbe")))
 				.andExpect(jsonPath("$.securityCode", notNullValue()))
-				.andExpect(jsonPath("$.referringDoctorId", is("D001")));
+				.andExpect(jsonPath("$.referringDoctorId", is("D001")))
+				.andExpect(jsonPath("$.dateOfBirth", is("2000-02-13")));
 
 		assertTrue(patientFileDAO.existsById("P002"));
 	}
@@ -198,6 +203,7 @@ public class PatientFileControllerIntegrationTest {
 				.andExpect(jsonPath("$.firstname", is("Eric")))
 				.andExpect(jsonPath("$.lastname", is("Martin")))
 				.andExpect(jsonPath("$.referringDoctorId", is("D001")))
+				.andExpect(jsonPath("$.dateOfBirth", is("1995-05-15")))
 				// changes
 				.andExpect(jsonPath("$.phone", is(patientFileDTO.getPhone())))
 				.andExpect(jsonPath("$.email", is(patientFileDTO.getEmail())))

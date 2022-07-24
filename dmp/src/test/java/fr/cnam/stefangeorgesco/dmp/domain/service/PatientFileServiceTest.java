@@ -7,6 +7,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.time.LocalDate;
 import java.util.Optional;
 
 import org.mockito.ArgumentCaptor;
@@ -79,6 +80,7 @@ public class PatientFileServiceTest {
 		patientFileDTO.setId("P001");
 		patientFileDTO.setFirstname("Patrick");
 		patientFileDTO.setLastname("Dubois");
+		patientFileDTO.setDateOfBirth(LocalDate.of(2000, 2, 13));
 		patientFileDTO.setPhone("9876543210");
 		patientFileDTO.setEmail("patrick.dubois@mail.fr");
 		patientFileDTO.setAddressDTO(addressDTO);
@@ -88,6 +90,7 @@ public class PatientFileServiceTest {
 		persistentPatientFile.setId(patientFileDTO.getId());
 		persistentPatientFile.setFirstname("firstname");
 		persistentPatientFile.setLastname("lastname");
+		persistentPatientFile.setDateOfBirth(LocalDate.of(2000, 2, 13));
 		persistentPatientFile.setSecurityCode("securityCode");
 		persistentPatientFile.setReferringDoctor(doctor);
 	}

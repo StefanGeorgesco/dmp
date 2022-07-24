@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import java.time.LocalDate;
 import java.util.Set;
 
 import javax.validation.ConstraintViolation;
@@ -26,6 +27,9 @@ import fr.cnam.stefangeorgesco.dmp.exception.domain.CheckException;
 public class PatientFileTest {
 	
 	private static Validator validator;
+	private LocalDate now;
+	private LocalDate futureDate;
+	private LocalDate pastDate;
 	
 	@Autowired
 	private PatientFile patientFile;
@@ -49,6 +53,10 @@ public class PatientFileTest {
 	
 	@BeforeEach
 	public void setupEach() {
+		now = LocalDate.now();
+		pastDate = now.minusDays(1);
+		futureDate = now.plusDays(1);
+		
 		address.setStreet1("street_patient");
 		address.setCity("city_patient");
 		address.setZipcode("zip_patient");
@@ -57,6 +65,7 @@ public class PatientFileTest {
 		patientFile.setId("id");
 		patientFile.setFirstname("firstname");
 		patientFile.setLastname("lastname");
+		patientFile.setDateOfBirth(now);
 		patientFile.setPhone("0123456789");
 		patientFile.setEmail("patient@mail.com");
 		patientFile.setAddress(address);
@@ -230,6 +239,47 @@ public class PatientFileTest {
 		assertEquals(1, violations.size());
 		assertEquals("invalid street1", violations.iterator().next().getMessage());
 
+	}
+	
+	@Test
+	public void patientFileValidationDateOfBirthInvalidNull() {
+		
+		patientFile.setDateOfBirth(null);
+		
+		Set<ConstraintViolation<PatientFile>> violations = validator.validate(patientFile);
+		
+		assertEquals(1, violations.size());
+		assertEquals("date of birth is mandatory", violations.iterator().next().getMessage());
+
+	}
+
+	@Test
+	public void patientFileValidationValidDateNow() {
+		
+		Set<ConstraintViolation<PatientFile>> violations = validator.validate(patientFile);
+		
+		assertEquals(0, violations.size());
+	}
+	
+	@Test
+	public void patientFileValidationValidDatePast() {
+
+		patientFile.setDateOfBirth(pastDate);
+
+		Set<ConstraintViolation<PatientFile>> violations = validator.validate(patientFile);
+
+		assertEquals(0, violations.size());
+	}
+
+	@Test
+	public void patientFileValidationInvalidDateFuture() {
+
+		patientFile.setDateOfBirth(futureDate);
+
+		Set<ConstraintViolation<PatientFile>> violations = validator.validate(patientFile);
+
+		assertEquals(1, violations.size());
+		assertEquals("date of birth must be in the past or today", violations.iterator().next().getMessage());
 	}
 	
 	@Test

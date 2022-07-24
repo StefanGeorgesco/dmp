@@ -7,6 +7,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.doNothing;
 
+import java.time.LocalDate;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -71,6 +73,7 @@ public class PatientFileServiceIntegrationTest {
 		patientFileDTO.setId("P002");
 		patientFileDTO.setFirstname("Patrick");
 		patientFileDTO.setLastname("Dubois");
+		patientFileDTO.setDateOfBirth(LocalDate.of(2000, 2, 13));
 		patientFileDTO.setPhone("9876543210");
 		patientFileDTO.setEmail("patrick.dubois@mail.fr");
 		patientFileDTO.setAddressDTO(addressDTO);
@@ -84,6 +87,7 @@ public class PatientFileServiceIntegrationTest {
 		patientFile.setId("P002");
 		patientFile.setFirstname("Patrick");
 		patientFile.setLastname("Dubois");
+		patientFile.setDateOfBirth(LocalDate.of(2000, 2, 13));
 		patientFile.setPhone("9876543210");
 		patientFile.setEmail("patrick.dubois@mail.fr");
 		patientFile.setAddress(address);

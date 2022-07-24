@@ -56,7 +56,7 @@ public class DiagnosisTest {
 	}
 	
 	@Test
-	public void diagnosisValidationSymptomValidDateNow() {
+	public void diagnosisValidationValidDateNow() {
 
 		Set<ConstraintViolation<Diagnosis>> violations = validator.validate(diagnosis);
 
@@ -64,7 +64,7 @@ public class DiagnosisTest {
 	}
 
 	@Test
-	public void diagnosisValidationSymptomValidDatePast() {
+	public void diagnosisValidationValidDatePast() {
 
 		diagnosis.setDate(pastDate);
 
