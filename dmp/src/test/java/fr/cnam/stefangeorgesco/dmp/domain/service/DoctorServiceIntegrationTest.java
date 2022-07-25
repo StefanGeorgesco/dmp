@@ -224,6 +224,16 @@ public class DoctorServiceIntegrationTest {
 	}
 
 	@Test
+	public void testDeleteDoctorFailureDoctorDoesNotExist() {
+
+		assertFalse(doctorDAO.existsById("D003"));
+
+		DeleteException ex = assertThrows(DeleteException.class, () -> doctorService.deleteDoctor("D003"));
+
+		assertTrue(ex.getMessage().startsWith("doctor could not be deleted: "));
+	}
+
+	@Test
 	public void testDeleteDoctorFailureDoctorIsReferringDoctor() {
 
 		assertTrue(doctorDAO.existsById("D001"));
