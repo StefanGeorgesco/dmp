@@ -26,8 +26,7 @@ import org.springframework.validation.FieldError;
 @RestController
 public class ExceptionController {
 	
-	@SuppressWarnings("rawtypes")
-	private static Map<Class, HttpStatus> map = new HashMap<>();
+	private static Map<Class<? extends Throwable>, HttpStatus> map = new HashMap<>();
 	
 	static {
 		map.put(DuplicateKeyException.class, HttpStatus.CONFLICT);
