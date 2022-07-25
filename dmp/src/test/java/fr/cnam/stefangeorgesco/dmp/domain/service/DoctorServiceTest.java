@@ -2,6 +2,7 @@ package fr.cnam.stefangeorgesco.dmp.domain.service;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -27,6 +28,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.context.TestPropertySource;
 
+import fr.cnam.stefangeorgesco.dmp.authentication.domain.service.UserService;
 import fr.cnam.stefangeorgesco.dmp.domain.dao.DoctorDAO;
 import fr.cnam.stefangeorgesco.dmp.domain.dao.SpecialtyDAO;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.AddressDTO;
@@ -34,6 +36,7 @@ import fr.cnam.stefangeorgesco.dmp.domain.dto.DoctorDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.SpecialtyDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.model.Doctor;
 import fr.cnam.stefangeorgesco.dmp.domain.model.Specialty;
+import fr.cnam.stefangeorgesco.dmp.exception.domain.DeleteException;
 import fr.cnam.stefangeorgesco.dmp.exception.domain.DuplicateKeyException;
 import fr.cnam.stefangeorgesco.dmp.exception.domain.FinderException;
 
@@ -46,6 +49,9 @@ public class DoctorServiceTest {
 
 	@MockBean
 	private SpecialtyDAO specialtyDAO;
+	
+	@MockBean
+	private UserService userService;
 
 	@Autowired
 	private DoctorService doctorService;
@@ -264,12 +270,25 @@ public class DoctorServiceTest {
 	}
 	
 	@Test
-	public void testDeleteDoctorSuccess() {
+	public void testDeleteDoctorSuccessNoUser() throws DeleteException {
+		doNothing().when(doctorDAO).deleteById("D002");
+		doThrow(new DeleteException("doctor could not be deleted")).when(userService).deleteUser("D002");
+		
+		assertDoesNotThrow(() -> doctorService.deleteDoctor("D002"));
+		
+		verify(doctorDAO, times(1)).deleteById("D002");
+		verify(userService, times(1)).deleteUser("D002");
+	}
+
+	@Test
+	public void testDeleteDoctorSuccessUserPresent() throws DeleteException {
 		doNothing().when(doctorDAO).deleteById("D001");
+		doNothing().when(userService).deleteUser("D001");
 		
 		assertDoesNotThrow(() -> doctorService.deleteDoctor("D001"));
 		
 		verify(doctorDAO, times(1)).deleteById("D001");
+		verify(userService, times(1)).deleteUser("D001");
 	}
 
 }

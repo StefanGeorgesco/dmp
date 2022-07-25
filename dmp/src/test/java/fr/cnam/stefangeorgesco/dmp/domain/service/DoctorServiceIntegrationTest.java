@@ -20,6 +20,8 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlGroup;
 
+import fr.cnam.stefangeorgesco.dmp.authentication.domain.dao.UserDAO;
+import fr.cnam.stefangeorgesco.dmp.authentication.domain.model.User;
 import fr.cnam.stefangeorgesco.dmp.domain.dao.DoctorDAO;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.AddressDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.DoctorDTO;
@@ -34,11 +36,16 @@ import fr.cnam.stefangeorgesco.dmp.exception.domain.FinderException;
 @TestPropertySource("/application-test.properties")
 @SpringBootTest
 @SqlGroup({ @Sql(scripts = "/sql/create-files.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
-		@Sql(scripts = "/sql/delete-files.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD) })
+		@Sql(scripts = "/sql/delete-files.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD),
+		@Sql(scripts = "/sql/create-users.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
+		@Sql(scripts = "/sql/delete-users.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD) })
 public class DoctorServiceIntegrationTest {
 
 	@Autowired
 	private DoctorDAO doctorDAO;
+
+	@Autowired
+	private UserDAO userDAO;
 
 	@Autowired
 	private DoctorService doctorService;
@@ -66,6 +73,9 @@ public class DoctorServiceIntegrationTest {
 
 	@Autowired
 	private Doctor savedDoctor;
+	
+	@Autowired
+	private User user;
 
 	private List<SpecialtyDTO> specialtyDTOs;
 
@@ -105,6 +115,12 @@ public class DoctorServiceIntegrationTest {
 		doctor.setSpecialties(specialties);
 		doctor.setAddress(address);
 		doctor.setSecurityCode("code");
+		
+		user.setId("D002");
+		user.setUsername("username");
+		user.setPassword("password");
+		user.setSecurityCode("code");
+		user.setRole("ROLE_DOCTOR");
 	}
 
 	@AfterEach
@@ -214,13 +230,31 @@ public class DoctorServiceIntegrationTest {
 	}
 
 	@Test
-	public void testDeleteDoctorSuccess() {
+	public void testDeleteDoctorSuccessNoUser() {
+
+		assertFalse(userDAO.existsById("D002"));
 
 		assertTrue(doctorDAO.existsById("D002"));
 
 		assertDoesNotThrow(() -> doctorService.deleteDoctor("D002"));
 
 		assertFalse(doctorDAO.existsById("D002"));
+	}
+
+	@Test
+	public void testDeleteDoctorSuccessUserPresent() {
+
+		userDAO.save(user);
+		
+		assertTrue(userDAO.existsById("D002"));
+
+		assertTrue(doctorDAO.existsById("D002"));
+
+		assertDoesNotThrow(() -> doctorService.deleteDoctor("D002"));
+
+		assertFalse(doctorDAO.existsById("D002"));
+
+		assertFalse(userDAO.existsById("D002"));
 	}
 
 	@Test
@@ -241,7 +275,7 @@ public class DoctorServiceIntegrationTest {
 		DeleteException ex = assertThrows(DeleteException.class, () -> doctorService.deleteDoctor("D001"));
 
 		assertTrue(ex.getMessage().startsWith("doctor could not be deleted: "));
-		
+
 		assertTrue(doctorDAO.existsById("D001"));
 	}
 

@@ -32,6 +32,8 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import fr.cnam.stefangeorgesco.dmp.authentication.domain.dao.UserDAO;
+import fr.cnam.stefangeorgesco.dmp.authentication.domain.model.User;
 import fr.cnam.stefangeorgesco.dmp.domain.dao.DoctorDAO;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.AddressDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.DoctorDTO;
@@ -57,6 +59,9 @@ public class DoctorControllerIntegrationTest {
 
 	@Autowired
 	private DoctorDAO doctorDAO;
+	
+	@Autowired
+	private UserDAO userDAO;
 
 	@Autowired
 	private SpecialtyDTO specialtyDTO1;
@@ -81,6 +86,9 @@ public class DoctorControllerIntegrationTest {
 
 	@Autowired
 	private Doctor doctor;
+
+	@Autowired
+	private User user;
 
 	private List<SpecialtyDTO> specialtyDTOs;
 
@@ -130,6 +138,12 @@ public class DoctorControllerIntegrationTest {
 		doctor.setSpecialties(specialties);
 		doctor.setAddress(address);
 		doctor.setSecurityCode("code");
+		
+		user.setId("D002");
+		user.setUsername("username");
+		user.setPassword("password");
+		user.setSecurityCode("code");
+		user.setRole("ROLE_DOCTOR");
 	}
 
 	@AfterEach
@@ -396,8 +410,10 @@ public class DoctorControllerIntegrationTest {
 
 	@Test
 	@WithUserDetails("admin") // ROLE_ADMIN
-	public void testDeleteDoctorSuccess() throws Exception {
+	public void testDeleteDoctorSuccessNoUser() throws Exception {
 
+		assertFalse(userDAO.existsById("D002"));
+		
 		assertTrue(doctorDAO.existsById("D002"));
 
 		mockMvc.perform(delete("/doctor/D002")).andExpect(status().isOk())
@@ -406,6 +422,47 @@ public class DoctorControllerIntegrationTest {
 				.andExpect(jsonPath("$.message", is("doctor was deleted")));
 		
 		assertFalse(doctorDAO.existsById("D002"));
+	}
+
+	@Test
+	@WithUserDetails("admin") // ROLE_ADMIN
+	public void testDeleteDoctorSuccessUserPresent() throws Exception {
+
+		userDAO.save(user);
+		
+		assertTrue(userDAO.existsById("D002"));
+		
+		assertTrue(doctorDAO.existsById("D002"));
+
+		mockMvc.perform(delete("/doctor/D002")).andExpect(status().isOk())
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+				.andExpect(jsonPath("$.status", is(200)))
+				.andExpect(jsonPath("$.message", is("doctor was deleted")));
+		
+		assertFalse(doctorDAO.existsById("D002"));
+
+		assertFalse(userDAO.existsById("D002"));
+}
+
+	@Test
+	@WithUserDetails("user") // ROLE_DOCTOR
+	public void testDeleteDoctorFailureBadRoleDoctor() throws Exception {
+
+		mockMvc.perform(delete("/doctor/D002")).andExpect(status().isForbidden());
+	}
+
+	@Test
+	@WithUserDetails("eric") // ROLE_PATIENT
+	public void testDeleteDoctorFailureBadRolePatient() throws Exception {
+
+		mockMvc.perform(delete("/doctor/D002")).andExpect(status().isForbidden());
+	}
+
+	@Test
+	@WithAnonymousUser
+	public void testDeleteDoctorFailureUnauthenticatedUser() throws Exception {
+
+		mockMvc.perform(delete("/doctor/D002")).andExpect(status().isUnauthorized());
 	}
 
 }

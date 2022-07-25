@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import fr.cnam.stefangeorgesco.dmp.authentication.domain.service.UserService;
 import fr.cnam.stefangeorgesco.dmp.domain.dao.DoctorDAO;
 import fr.cnam.stefangeorgesco.dmp.domain.dao.SpecialtyDAO;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.DoctorDTO;
@@ -25,16 +26,19 @@ import fr.cnam.stefangeorgesco.dmp.utils.PasswordGenerator;
 public class DoctorService {
 
 	@Autowired
-	DoctorDAO doctorDAO;
-
-	@Autowired
-	ModelMapper commonModelMapper;
+	private UserService userService;
 	
 	@Autowired
-	ModelMapper doctorModelMapper;
+	private DoctorDAO doctorDAO;
 
 	@Autowired
-	SpecialtyDAO specialtyDAO;
+	private ModelMapper commonModelMapper;
+	
+	@Autowired
+	private ModelMapper doctorModelMapper;
+
+	@Autowired
+	private SpecialtyDAO specialtyDAO;
 
 	@Autowired
 	private BCryptPasswordEncoder bCryptPasswordEncoder;
@@ -110,6 +114,12 @@ public class DoctorService {
 			doctorDAO.deleteById(id);
 		} catch (Exception e) {
 			throw new DeleteException("doctor could not be deleted: " + e.getMessage());
+		}
+		
+		try {
+			userService.deleteUser(id);
+		} catch (DeleteException e) {
+			System.out.println("no user associated to deleted doctor");
 		}
 		
 	}
