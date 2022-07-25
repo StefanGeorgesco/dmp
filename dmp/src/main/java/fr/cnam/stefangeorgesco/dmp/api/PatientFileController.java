@@ -19,8 +19,7 @@ import fr.cnam.stefangeorgesco.dmp.authentication.domain.service.UserService;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.DoctorDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.PatientFileDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.service.PatientFileService;
-import fr.cnam.stefangeorgesco.dmp.exception.domain.CheckException;
-import fr.cnam.stefangeorgesco.dmp.exception.domain.DuplicateKeyException;
+import fr.cnam.stefangeorgesco.dmp.exception.domain.ApplicationException;
 import fr.cnam.stefangeorgesco.dmp.exception.domain.FinderException;
 
 @RestController
@@ -31,10 +30,10 @@ public class PatientFileController {
 
 	@Autowired
 	private PatientFileService patientFileService;
-	
+
 	@PostMapping("/patient-file")
 	public ResponseEntity<PatientFileDTO> createPatientFile(@Valid @RequestBody PatientFileDTO patientFileDTO,
-			Principal principal) throws CheckException, DuplicateKeyException, FinderException {
+			Principal principal) throws ApplicationException {
 
 		UserDTO userDTO = userService.findUserByUsername(principal.getName());
 
@@ -45,7 +44,7 @@ public class PatientFileController {
 
 	@PutMapping("/patient-file/details")
 	public ResponseEntity<PatientFileDTO> updatePatientFile(@Valid @RequestBody PatientFileDTO patientFileDTO,
-			Principal principal) throws FinderException {
+			Principal principal) throws ApplicationException {
 
 		UserDTO userDTO = userService.findUserByUsername(principal.getName());
 
@@ -62,20 +61,22 @@ public class PatientFileController {
 		return ResponseEntity.status(HttpStatus.OK).body(patientFileService.findPatientFile(userDTO.getId()));
 	}
 
-	 @GetMapping("/patient-file/{id}")
-	 public ResponseEntity<PatientFileDTO> getPatientFileDetails(@PathVariable String id, Principal principal) throws FinderException {
-		 
-		 return ResponseEntity.status(HttpStatus.OK).body(patientFileService.findPatientFile(id));
-	 }
+	@GetMapping("/patient-file/{id}")
+	public ResponseEntity<PatientFileDTO> getPatientFileDetails(@PathVariable String id, Principal principal)
+			throws ApplicationException {
 
-	 @PutMapping("/patient-file/{id}/referring-doctor")
-	 public ResponseEntity<PatientFileDTO> updateReferringDoctor(@PathVariable String id, @Valid @RequestBody DoctorDTO doctorDTO) throws FinderException {
-		 
-		 PatientFileDTO patientFileDTO = patientFileService.findPatientFile(id);
-		 
-		 patientFileDTO.setReferringDoctorId(doctorDTO.getId());
-		 
-		 return ResponseEntity.status(HttpStatus.OK).body(patientFileService.updateReferringDoctor(patientFileDTO));
-	 }
+		return ResponseEntity.status(HttpStatus.OK).body(patientFileService.findPatientFile(id));
+	}
+
+	@PutMapping("/patient-file/{id}/referring-doctor")
+	public ResponseEntity<PatientFileDTO> updateReferringDoctor(@PathVariable String id,
+			@Valid @RequestBody DoctorDTO doctorDTO) throws ApplicationException {
+
+		PatientFileDTO patientFileDTO = patientFileService.findPatientFile(id);
+
+		patientFileDTO.setReferringDoctorId(doctorDTO.getId());
+
+		return ResponseEntity.status(HttpStatus.OK).body(patientFileService.updateReferringDoctor(patientFileDTO));
+	}
 
 }

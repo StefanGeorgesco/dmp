@@ -12,9 +12,11 @@ import fr.cnam.stefangeorgesco.dmp.domain.dao.PatientFileDAO;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.PatientFileDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.model.Doctor;
 import fr.cnam.stefangeorgesco.dmp.domain.model.PatientFile;
-import fr.cnam.stefangeorgesco.dmp.exception.domain.CheckException;
+import fr.cnam.stefangeorgesco.dmp.exception.domain.ApplicationException;
+import fr.cnam.stefangeorgesco.dmp.exception.domain.CreateException;
 import fr.cnam.stefangeorgesco.dmp.exception.domain.DuplicateKeyException;
 import fr.cnam.stefangeorgesco.dmp.exception.domain.FinderException;
+import fr.cnam.stefangeorgesco.dmp.exception.domain.UpdateException;
 import fr.cnam.stefangeorgesco.dmp.utils.PasswordGenerator;
 
 @Service
@@ -39,7 +41,7 @@ public class PatientFileService {
 	private BCryptPasswordEncoder bCryptPasswordEncoder;
 
 	public PatientFileDTO createPatientFile(PatientFileDTO patientFileDTO)
-			throws DuplicateKeyException, CheckException {
+			throws ApplicationException {
 
 		rnippService.checkPatientData(patientFileDTO);
 
@@ -53,12 +55,16 @@ public class PatientFileService {
 
 		patientFile.setSecurityCode(bCryptPasswordEncoder.encode(patientFile.getSecurityCode()));
 
-		patientFileDAO.save(patientFile);
+		try {
+			patientFileDAO.save(patientFile);
+		} catch (Exception e) {
+			throw new CreateException("patient file could not be created: " + e.getMessage());
+		}
 
 		return patientFileDTO;
 	}
 
-	public PatientFileDTO updatePatientFile(PatientFileDTO patientFileDTO) {
+	public PatientFileDTO updatePatientFile(PatientFileDTO patientFileDTO) throws UpdateException {
 
 		PatientFile patientFile = patientFileDAO.findById(patientFileDTO.getId()).get();
 
@@ -69,7 +75,11 @@ public class PatientFileService {
 
 		patientFile.setAddress(mappedPatientFile.getAddress());
 
-		patientFile = patientFileDAO.save(patientFile);
+		try {
+			patientFile = patientFileDAO.save(patientFile);
+		} catch (Exception e) {
+			throw new UpdateException("patient file could not be updated: " + e.getMessage());
+		}
 
 		PatientFileDTO response = patientFileModelMapper.map(patientFile, PatientFileDTO.class);
 
@@ -86,7 +96,7 @@ public class PatientFileService {
 		}
 	}
 
-	public PatientFileDTO updateReferringDoctor(PatientFileDTO patientFileDTO) throws FinderException {
+	public PatientFileDTO updateReferringDoctor(PatientFileDTO patientFileDTO) throws ApplicationException {
 
 		Optional<PatientFile> optionalPatientFile = patientFileDAO.findById(patientFileDTO.getId());
 		
@@ -106,7 +116,11 @@ public class PatientFileService {
 		
 		patientFile.setReferringDoctor(doctor);
 		
-		patientFile = patientFileDAO.save(patientFile);
+		try {
+			patientFile = patientFileDAO.save(patientFile);
+		} catch (Exception e) {
+			throw new UpdateException("patient file could not be updated (referring docotor): " + e.getMessage());
+		}
 
 		PatientFileDTO response = patientFileModelMapper.map(patientFile, PatientFileDTO.class);
 

@@ -163,7 +163,7 @@ public class DoctorControllerIntegrationTest {
 		doctorDAO.save(doctor);
 
 		mockMvc.perform(post("/doctor").contentType(MediaType.APPLICATION_JSON)
-				.content(objectMapper.writeValueAsString(doctorDTO))).andExpect(status().isBadRequest())
+				.content(objectMapper.writeValueAsString(doctorDTO))).andExpect(status().isConflict())
 				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
 				.andExpect(jsonPath("$.message", is("doctor already exists")));
 	}
@@ -240,7 +240,7 @@ public class DoctorControllerIntegrationTest {
 		((List<SpecialtyDTO>) doctorDTO.getSpecialtiesDTO()).get(1).setId("S003");
 
 		mockMvc.perform(post("/doctor").contentType(MediaType.APPLICATION_JSON)
-				.content(objectMapper.writeValueAsString(doctorDTO))).andExpect(status().isBadRequest())
+				.content(objectMapper.writeValueAsString(doctorDTO))).andExpect(status().isNotFound())
 				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
 				.andExpect(jsonPath("$.message", is("specialty does not exist")));
 

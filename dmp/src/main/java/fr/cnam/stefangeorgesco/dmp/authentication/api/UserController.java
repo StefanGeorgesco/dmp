@@ -12,9 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import fr.cnam.stefangeorgesco.dmp.api.RestResponse;
 import fr.cnam.stefangeorgesco.dmp.authentication.domain.dto.UserDTO;
 import fr.cnam.stefangeorgesco.dmp.authentication.domain.service.UserService;
-import fr.cnam.stefangeorgesco.dmp.exception.domain.CheckException;
-import fr.cnam.stefangeorgesco.dmp.exception.domain.DuplicateKeyException;
-import fr.cnam.stefangeorgesco.dmp.exception.domain.FinderException;
+import fr.cnam.stefangeorgesco.dmp.exception.domain.ApplicationException;
 
 @RestController
 public class UserController {
@@ -23,7 +21,7 @@ public class UserController {
 	UserService userService;
 	
 	@PostMapping("/user")
-	public ResponseEntity<RestResponse> createAccount(@Valid @RequestBody UserDTO userDTO) throws DuplicateKeyException, FinderException, CheckException {
+	public ResponseEntity<RestResponse> createAccount(@Valid @RequestBody UserDTO userDTO) throws ApplicationException {
 		
 		userService.createAccount(userDTO);
 		

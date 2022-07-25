@@ -213,7 +213,7 @@ public class UserControllerIntegrationTest {
 		mockMvc.perform(
 				post("/user")
 				.contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(userDTO)))
-				.andExpect(status().isBadRequest()).andExpect(content().contentType(MediaType.APPLICATION_JSON))
+				.andExpect(status().isConflict()).andExpect(content().contentType(MediaType.APPLICATION_JSON))
 				.andExpect(jsonPath("$.message", is("user account already exists")));
 		
 	}
@@ -231,7 +231,7 @@ public class UserControllerIntegrationTest {
 		mockMvc.perform(
 				post("/user")
 				.contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(userDTO)))
-				.andExpect(status().isBadRequest()).andExpect(content().contentType(MediaType.APPLICATION_JSON))
+				.andExpect(status().isConflict()).andExpect(content().contentType(MediaType.APPLICATION_JSON))
 				.andExpect(jsonPath("$.message", is("username already exists")));
 		
 	}
@@ -247,7 +247,7 @@ public class UserControllerIntegrationTest {
 		mockMvc.perform(
 				post("/user")
 				.contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(userDTO)))
-				.andExpect(status().isBadRequest()).andExpect(content().contentType(MediaType.APPLICATION_JSON))
+				.andExpect(status().isNotFound()).andExpect(content().contentType(MediaType.APPLICATION_JSON))
 				.andExpect(jsonPath("$.message", is("file does not exist")));
 		
 		assertFalse(userDAO.existsById("patientFileId"));

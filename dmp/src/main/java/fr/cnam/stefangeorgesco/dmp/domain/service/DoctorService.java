@@ -13,8 +13,11 @@ import fr.cnam.stefangeorgesco.dmp.domain.dto.DoctorDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.SpecialtyDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.model.Doctor;
 import fr.cnam.stefangeorgesco.dmp.domain.model.Specialty;
+import fr.cnam.stefangeorgesco.dmp.exception.domain.ApplicationException;
+import fr.cnam.stefangeorgesco.dmp.exception.domain.CreateException;
 import fr.cnam.stefangeorgesco.dmp.exception.domain.DuplicateKeyException;
 import fr.cnam.stefangeorgesco.dmp.exception.domain.FinderException;
+import fr.cnam.stefangeorgesco.dmp.exception.domain.UpdateException;
 import fr.cnam.stefangeorgesco.dmp.utils.PasswordGenerator;
 
 @Service
@@ -35,7 +38,7 @@ public class DoctorService {
 	@Autowired
 	private BCryptPasswordEncoder bCryptPasswordEncoder;
 
-	public DoctorDTO createDoctor(DoctorDTO doctorDTO) throws DuplicateKeyException, FinderException {
+	public DoctorDTO createDoctor(DoctorDTO doctorDTO) throws ApplicationException {
 
 		if (doctorDAO.existsById(doctorDTO.getId())) {
 			throw new DuplicateKeyException("doctor already exists");
@@ -57,7 +60,11 @@ public class DoctorService {
 
 		doctor.setSecurityCode(bCryptPasswordEncoder.encode(doctorDTO.getSecurityCode()));
 
-		doctorDAO.save(doctor);
+		try {
+			doctorDAO.save(doctor);
+		} catch (Exception e) {
+			throw new CreateException("doctor could not be created:" + e.getMessage());
+		}
 
 		return doctorDTO;
 	}
@@ -74,7 +81,7 @@ public class DoctorService {
 
 	}
 
-	public DoctorDTO updateDoctor(DoctorDTO doctorDTO) {
+	public DoctorDTO updateDoctor(DoctorDTO doctorDTO) throws UpdateException {
 		
 		Doctor doctor = doctorDAO.findById(doctorDTO.getId()).get();
 		
@@ -85,7 +92,11 @@ public class DoctorService {
 		
 		doctor.setAddress(mappedDoctor.getAddress());
 		
-		doctor = doctorDAO.save(doctor);
+		try {
+			doctorDAO.save(doctor);
+		} catch (Exception e) {
+			throw new UpdateException("doctor could not be updated:" + e.getMessage());
+		}
 		
 		DoctorDTO response = doctorModelMapper.map(doctor, DoctorDTO.class);
 		

@@ -165,7 +165,7 @@ public class PatientFileControllerIntegrationTest {
 		doNothing().when(rnippService).checkPatientData(patientFileDTO);
 
 		mockMvc.perform(post("/patient-file").contentType(MediaType.APPLICATION_JSON)
-				.content(objectMapper.writeValueAsString(patientFileDTO))).andExpect(status().isBadRequest())
+				.content(objectMapper.writeValueAsString(patientFileDTO))).andExpect(status().isConflict())
 				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
 				.andExpect(jsonPath("$.message", is("patient file already exists")));
 	}

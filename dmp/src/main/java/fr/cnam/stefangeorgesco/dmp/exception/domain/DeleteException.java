@@ -1,9 +1,9 @@
 package fr.cnam.stefangeorgesco.dmp.exception.domain;
 
 @SuppressWarnings("serial")
-public class RemoveException extends ApplicationException {
+public class DeleteException extends ApplicationException {
 
-	public RemoveException(String message) {
+	public DeleteException(String message) {
 		super(message);
 	}
 

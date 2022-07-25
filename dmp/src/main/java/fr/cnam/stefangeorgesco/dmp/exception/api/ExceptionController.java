@@ -11,8 +11,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 import fr.cnam.stefangeorgesco.dmp.api.RestResponse;
 import fr.cnam.stefangeorgesco.dmp.exception.domain.ApplicationException;
+import fr.cnam.stefangeorgesco.dmp.exception.domain.DeleteException;
+import fr.cnam.stefangeorgesco.dmp.exception.domain.DuplicateKeyException;
+import fr.cnam.stefangeorgesco.dmp.exception.domain.FinderException;
+import fr.cnam.stefangeorgesco.dmp.exception.domain.UpdateException;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.validation.FieldError;
@@ -20,6 +25,16 @@ import org.springframework.validation.FieldError;
 @ControllerAdvice
 @RestController
 public class ExceptionController {
+	
+	@SuppressWarnings("rawtypes")
+	private static Map<Class, HttpStatus> map = new HashMap<>();
+	
+	static {
+		map.put(DuplicateKeyException.class, HttpStatus.CONFLICT);
+		map.put(FinderException.class, HttpStatus.NOT_FOUND);
+		map.put(UpdateException.class, HttpStatus.CONFLICT);
+		map.put(DeleteException.class, HttpStatus.CONFLICT);
+	}
 
 	@ResponseStatus(HttpStatus.NOT_ACCEPTABLE)
 	@ExceptionHandler(MethodArgumentNotValidException.class)
@@ -34,14 +49,19 @@ public class ExceptionController {
 		return errors;
 	}
 
-	@ResponseStatus(HttpStatus.BAD_REQUEST)
 	@ExceptionHandler(ApplicationException.class)
-	public RestResponse handleApplicationException(ApplicationException ex) {
+	public ResponseEntity<RestResponse> handleApplicationException(ApplicationException ex) {
+		HttpStatus status = HttpStatus.BAD_REQUEST;
+		
+		if (map.get(ex.getClass()) != null) {
+			status = map.get(ex.getClass());
+		}
+		
 		RestResponse response = new RestResponse();
-		response.setStatus(HttpStatus.BAD_REQUEST.value());
+		response.setStatus(status.value());
 		response.setMessage(ex.getMessage());
 
-		return response;
+		return ResponseEntity.status(status).body(response);
 	}
 
 	@ResponseStatus(HttpStatus.UNAUTHORIZED)

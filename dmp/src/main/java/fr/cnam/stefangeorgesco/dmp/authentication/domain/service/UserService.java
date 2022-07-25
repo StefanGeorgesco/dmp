@@ -15,7 +15,8 @@ import fr.cnam.stefangeorgesco.dmp.authentication.domain.model.User;
 import fr.cnam.stefangeorgesco.dmp.domain.dao.FileDAO;
 import fr.cnam.stefangeorgesco.dmp.domain.model.Doctor;
 import fr.cnam.stefangeorgesco.dmp.domain.model.File;
-import fr.cnam.stefangeorgesco.dmp.exception.domain.CheckException;
+import fr.cnam.stefangeorgesco.dmp.exception.domain.ApplicationException;
+import fr.cnam.stefangeorgesco.dmp.exception.domain.CreateException;
 import fr.cnam.stefangeorgesco.dmp.exception.domain.DuplicateKeyException;
 import fr.cnam.stefangeorgesco.dmp.exception.domain.FinderException;
 
@@ -38,7 +39,7 @@ public class UserService {
 	@Autowired
 	private BCryptPasswordEncoder bCryptPasswordEncoder;
 
-	public void createAccount(UserDTO userDTO) throws DuplicateKeyException, FinderException, CheckException {
+	public void createAccount(UserDTO userDTO) throws ApplicationException {
 
 		if (userDAO.existsById(userDTO.getId())) {
 			throw new DuplicateKeyException("user account already exists");
@@ -68,7 +69,11 @@ public class UserService {
 			user.setRole(IUser.ROLE_PATIENT);
 		}
 
-		userDAO.save(user);
+		try {
+			userDAO.save(user);
+		} catch (RuntimeException e) {
+			throw new CreateException("user could not be created: " + e.getMessage());
+		}
 	}
 
 	public UserDTO findUserByUsername(String username) throws FinderException {
