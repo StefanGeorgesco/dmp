@@ -31,6 +31,7 @@ import fr.cnam.stefangeorgesco.dmp.domain.model.Doctor;
 import fr.cnam.stefangeorgesco.dmp.domain.model.PatientFile;
 import fr.cnam.stefangeorgesco.dmp.domain.model.Specialty;
 import fr.cnam.stefangeorgesco.dmp.exception.domain.CheckException;
+import fr.cnam.stefangeorgesco.dmp.exception.domain.DeleteException;
 import fr.cnam.stefangeorgesco.dmp.exception.domain.DuplicateKeyException;
 import fr.cnam.stefangeorgesco.dmp.exception.domain.FinderException;
 
@@ -284,6 +285,24 @@ public class UserServiceIntegrationTest {
 		FinderException ex = assertThrows(FinderException.class, () -> userService.findUserByUsername("user0"));
 
 		assertEquals("user not found", ex.getMessage());
+	}
+	
+	@Test
+	public void testDeleteUserSuccess() {
+		assertTrue(userDAO.existsById("D001"));
+		
+		assertDoesNotThrow(() -> userService.deleteUser("D001"));
+		
+		assertFalse(userDAO.existsById("D001"));
+	}
+
+	@Test
+	public void testDeleteUserFailureUserDoesNotExist() {
+		assertFalse(userDAO.existsById("D002"));
+		
+		DeleteException ex = assertThrows(DeleteException.class, () -> userService.deleteUser("D002"));
+		
+		assertTrue(ex.getMessage().startsWith("user could not be deleted: "));
 	}
 
 }

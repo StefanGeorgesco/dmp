@@ -197,6 +197,15 @@ public class UserServiceTest {
 		assertEquals(userDTO.getUsername(), user.getUsername());
 		assertEquals(userDTO.getSecurityCode(), user.getSecurityCode());
 	}
+	
+	@Test
+	public void testDeleteUserSuccess() {
+		doNothing().when(userDAO).deleteById("P001");
+		
+		assertDoesNotThrow(() -> userService.deleteUser("P001"));
+		
+		verify(userDAO, times(1)).deleteById("P001");
+	}
 
 }
 

@@ -1,5 +1,6 @@
 package fr.cnam.stefangeorgesco.dmp.authentication.domain.dao;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -71,5 +72,22 @@ public class UserDAOTest {
 		assertTrue(userDAO.findByUsername("user").isPresent());
 		assertEquals("D001", userDAO.findByUsername("user").get().getId());
 		assertFalse(userDAO.findByUsername("username").isPresent());
+	}
+	
+	@Test
+	public void testUserDAODeleteByIdSuccess() {
+		assertTrue(userDAO.existsById("P001"));
+		
+		assertDoesNotThrow(() -> userDAO.deleteById("P001"));
+		
+		assertFalse(userDAO.existsById("P001"));
+	}
+	
+	@Test
+	public void testUserDAODeleteByIdFailureUserDoesNotExist() {
+		assertFalse(userDAO.existsById("D002"));
+		
+		assertThrows(RuntimeException.class, () -> userDAO.deleteById("D002"));
+		
 	}
 }

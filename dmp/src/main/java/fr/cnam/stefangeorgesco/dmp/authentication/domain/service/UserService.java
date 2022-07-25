@@ -17,6 +17,7 @@ import fr.cnam.stefangeorgesco.dmp.domain.model.Doctor;
 import fr.cnam.stefangeorgesco.dmp.domain.model.File;
 import fr.cnam.stefangeorgesco.dmp.exception.domain.ApplicationException;
 import fr.cnam.stefangeorgesco.dmp.exception.domain.CreateException;
+import fr.cnam.stefangeorgesco.dmp.exception.domain.DeleteException;
 import fr.cnam.stefangeorgesco.dmp.exception.domain.DuplicateKeyException;
 import fr.cnam.stefangeorgesco.dmp.exception.domain.FinderException;
 
@@ -85,6 +86,14 @@ public class UserService {
 			throw new FinderException("user not found");
 		}
 		
+	}
+
+	public void deleteUser(String id) throws DeleteException {
+		try {
+			userDAO.deleteById(id);
+		} catch (Exception e) {
+			throw new DeleteException("user could not be deleted: ");
+		}
 	}
 
 }
