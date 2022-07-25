@@ -15,6 +15,7 @@ import fr.cnam.stefangeorgesco.dmp.domain.model.Doctor;
 import fr.cnam.stefangeorgesco.dmp.domain.model.Specialty;
 import fr.cnam.stefangeorgesco.dmp.exception.domain.ApplicationException;
 import fr.cnam.stefangeorgesco.dmp.exception.domain.CreateException;
+import fr.cnam.stefangeorgesco.dmp.exception.domain.DeleteException;
 import fr.cnam.stefangeorgesco.dmp.exception.domain.DuplicateKeyException;
 import fr.cnam.stefangeorgesco.dmp.exception.domain.FinderException;
 import fr.cnam.stefangeorgesco.dmp.exception.domain.UpdateException;
@@ -101,6 +102,16 @@ public class DoctorService {
 		DoctorDTO response = doctorModelMapper.map(doctor, DoctorDTO.class);
 		
 		return response;
+	}
+
+	public void deleteDoctor(String id) throws DeleteException {
+		
+		try {
+			doctorDAO.deleteById(id);
+		} catch (Exception e) {
+			throw new DeleteException("doctor could not be deleted: " + e.getMessage());
+		}
+		
 	}
 
 }

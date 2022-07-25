@@ -60,6 +60,7 @@ public class WebSecurityConfig {
 						.mvcMatchers(HttpMethod.PUT, "/patient-file/{id}/referring-doctor").hasRole("ADMIN")
 						.mvcMatchers(HttpMethod.GET, "/doctor/{id}").authenticated()
 						.mvcMatchers(HttpMethod.GET, "/patient-file/{id}").hasAnyRole("ADMIN", "DOCTOR")
+						.mvcMatchers(HttpMethod.DELETE, "/doctor/{id}").hasRole("ADMIN")
 						.anyRequest().denyAll())
 				.httpBasic(Customizer.withDefaults());
 		return http.build();

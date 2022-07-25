@@ -1,6 +1,7 @@
 package fr.cnam.stefangeorgesco.dmp.domain.service;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -260,6 +261,15 @@ public class DoctorServiceTest {
 		verify(doctorDAO, times(1)).findById("D001");
 		
 		assertEquals("doctor not found", ex.getMessage());
+	}
+	
+	@Test
+	public void testDeleteDoctorSuccess() {
+		doNothing().when(doctorDAO).deleteById("D001");
+		
+		assertDoesNotThrow(() -> doctorService.deleteDoctor("D001"));
+		
+		verify(doctorDAO, times(1)).deleteById("D001");
 	}
 
 }

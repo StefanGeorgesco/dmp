@@ -27,6 +27,7 @@ import fr.cnam.stefangeorgesco.dmp.domain.dto.SpecialtyDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.model.Address;
 import fr.cnam.stefangeorgesco.dmp.domain.model.Doctor;
 import fr.cnam.stefangeorgesco.dmp.domain.model.Specialty;
+import fr.cnam.stefangeorgesco.dmp.exception.domain.DeleteException;
 import fr.cnam.stefangeorgesco.dmp.exception.domain.DuplicateKeyException;
 import fr.cnam.stefangeorgesco.dmp.exception.domain.FinderException;
 
@@ -210,6 +211,28 @@ public class DoctorServiceIntegrationTest {
 		FinderException ex = assertThrows(FinderException.class, () -> doctorService.findDoctor("D003"));
 
 		assertEquals("doctor not found", ex.getMessage());
+	}
+
+	@Test
+	public void testDeleteDoctorSuccess() {
+
+		assertTrue(doctorDAO.existsById("D002"));
+
+		assertDoesNotThrow(() -> doctorService.deleteDoctor("D002"));
+
+		assertFalse(doctorDAO.existsById("D002"));
+	}
+
+	@Test
+	public void testDeleteDoctorFailureDoctorIsReferringDoctor() {
+
+		assertTrue(doctorDAO.existsById("D001"));
+
+		DeleteException ex = assertThrows(DeleteException.class, () -> doctorService.deleteDoctor("D001"));
+
+		assertTrue(ex.getMessage().startsWith("doctor could not be deleted: "));
+		
+		assertTrue(doctorDAO.existsById("D001"));
 	}
 
 }

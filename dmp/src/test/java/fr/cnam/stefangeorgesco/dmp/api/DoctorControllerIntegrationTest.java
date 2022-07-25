@@ -5,6 +5,7 @@ import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -275,8 +276,8 @@ public class DoctorControllerIntegrationTest {
 				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
 				// no change (except null securityCode)
 				.andExpect(jsonPath("$.id", is("D001"))).andExpect(jsonPath("$.firstname", is("John")))
-				.andExpect(jsonPath("$.lastname", is("Smith")))
-				.andExpect(jsonPath("$.specialties", hasSize(2))).andExpect(jsonPath("$.specialties[0].id", is("S001")))
+				.andExpect(jsonPath("$.lastname", is("Smith"))).andExpect(jsonPath("$.specialties", hasSize(2)))
+				.andExpect(jsonPath("$.specialties[0].id", is("S001")))
 				.andExpect(jsonPath("$.specialties[0].description", is("Specialty 1")))
 				.andExpect(jsonPath("$.specialties[1].id", is("S002")))
 				.andExpect(jsonPath("$.specialties[1].description", is("Specialty 2")))
@@ -391,6 +392,20 @@ public class DoctorControllerIntegrationTest {
 	public void testGetDoctorByIdFailureUnauthenticatedUser() throws Exception {
 
 		mockMvc.perform(get("/doctor/D002")).andExpect(status().isUnauthorized());
+	}
+
+	@Test
+	@WithUserDetails("admin") // ROLE_ADMIN
+	public void testDeleteDoctorSuccess() throws Exception {
+
+		assertTrue(doctorDAO.existsById("D002"));
+
+		mockMvc.perform(delete("/doctor/D002")).andExpect(status().isOk())
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+				.andExpect(jsonPath("$.status", is(200)))
+				.andExpect(jsonPath("$.message", is("doctor was deleted")));
+		
+		assertFalse(doctorDAO.existsById("D002"));
 	}
 
 }

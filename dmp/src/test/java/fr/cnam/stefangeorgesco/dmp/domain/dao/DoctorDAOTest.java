@@ -145,8 +145,10 @@ public class DoctorDAOTest {
 	@Test
 	void testDoctorDAODeleteSuccess() {
 		assertTrue(doctorDAO.existsById("D002"));
+		
 		List<Map<String, Object>> results = jdbc.queryForList(
 						"SELECT * FROM t_doctor_specialty where t_doctor_specialty.doctor_id='D002';");
+		
 		assertEquals(2, results.size());
 
 		doctor.setId("D002");
@@ -154,8 +156,10 @@ public class DoctorDAOTest {
 		assertDoesNotThrow(() -> doctorDAO.delete(doctor));
 
 		assertFalse(doctorDAO.existsById("D002"));
+		
 		results = jdbc.queryForList(
 				"SELECT * FROM t_doctor_specialty where t_doctor_specialty.doctor_id='D002';");
+		
 		assertEquals(0, results.size());
 	}
 	
@@ -166,6 +170,34 @@ public class DoctorDAOTest {
 		doctor.setId("D001");
 		
 		assertThrows(RuntimeException.class, () -> doctorDAO.delete(doctor));
+		
+		assertTrue(doctorDAO.existsById("D001"));
+	}
+
+	@Test
+	void testDoctorDAODeleteByIdSuccess() {
+		assertTrue(doctorDAO.existsById("D002"));
+		
+		List<Map<String, Object>> results = jdbc.queryForList(
+						"SELECT * FROM t_doctor_specialty where t_doctor_specialty.doctor_id='D002';");
+		
+		assertEquals(2, results.size());
+
+		assertDoesNotThrow(() -> doctorDAO.deleteById("D002"));
+
+		assertFalse(doctorDAO.existsById("D002"));
+		
+		results = jdbc.queryForList(
+				"SELECT * FROM t_doctor_specialty where t_doctor_specialty.doctor_id='D002';");
+		
+		assertEquals(0, results.size());
+	}
+	
+	@Test
+	public void testDoctorDAODeleteByIdFailureDoctorIsReferringDoctor() {
+		assertTrue(doctorDAO.existsById("D001"));
+		
+		assertThrows(RuntimeException.class, () -> doctorDAO.deleteById("D001"));
 		
 		assertTrue(doctorDAO.existsById("D001"));
 	}

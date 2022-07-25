@@ -7,6 +7,7 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,6 +20,7 @@ import fr.cnam.stefangeorgesco.dmp.authentication.domain.service.UserService;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.DoctorDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.service.DoctorService;
 import fr.cnam.stefangeorgesco.dmp.exception.domain.ApplicationException;
+import fr.cnam.stefangeorgesco.dmp.exception.domain.DeleteException;
 import fr.cnam.stefangeorgesco.dmp.exception.domain.FinderException;
 
 @RestController
@@ -60,6 +62,16 @@ public class DoctorController {
 	 public ResponseEntity<DoctorDTO> getDoctorDetails(@PathVariable String id, Principal principal) throws FinderException {
 		 
 		 return ResponseEntity.status(HttpStatus.OK).body(doctorService.findDoctor(id));
+	 }
+	 
+	 @DeleteMapping("/doctor/{id}")
+	 public ResponseEntity<RestResponse> deleteDoctor(@PathVariable String id) throws DeleteException {
+		 
+		 doctorService.deleteDoctor(id);
+		 
+		 RestResponse response = new RestResponse(HttpStatus.OK.value(), "doctor was deleted");
+		 
+		 return ResponseEntity.status(HttpStatus.OK).body(response);
 	 }
 
 }
