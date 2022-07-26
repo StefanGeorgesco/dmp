@@ -1,5 +1,6 @@
 package fr.cnam.stefangeorgesco.dmp.domain.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -127,6 +128,10 @@ public class DoctorService {
 	}
 
 	public List<DoctorDTO> findDoctorsByIdOrFirstnameOrLastname(String string) {
+		
+		if ("".equals(string)) {
+			return new ArrayList<DoctorDTO>();
+		}
 		
 		Iterable<Doctor> doctors = doctorDAO.findByIdOrFirstnameOrLastname(string);
 		

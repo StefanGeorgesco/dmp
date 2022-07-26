@@ -370,4 +370,15 @@ public class DoctorServiceTest {
 		assertEquals(0, doctors.size());
 	}
 
+	@Test
+	public void testFindDoctorsByIdOrFirstnameOrLastnameFound0SearchStringIsBlank() {
+		when(doctorDAO.findByIdOrFirstnameOrLastname("")).thenReturn(List.of(foundDoctor1, foundDoctor2));
+		
+		List<DoctorDTO> doctors = doctorService.findDoctorsByIdOrFirstnameOrLastname("");
+		
+		verify(doctorDAO, times(0)).findByIdOrFirstnameOrLastname("la");
+		
+		assertEquals(0, doctors.size());
+	}
+
 }

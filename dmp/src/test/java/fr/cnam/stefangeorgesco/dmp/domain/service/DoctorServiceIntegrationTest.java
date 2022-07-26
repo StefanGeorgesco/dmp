@@ -305,4 +305,12 @@ public class DoctorServiceIntegrationTest {
 		assertEquals(0, doctors.size());
 	}
 
+	@Test
+	public void testFindDoctorsByIdOrFirstnameOrLastnameFound0SearchStringIsBlank() {
+		
+		List<DoctorDTO> doctors = doctorService.findDoctorsByIdOrFirstnameOrLastname("");
+		
+		assertEquals(0, doctors.size());
+	}
+
 }

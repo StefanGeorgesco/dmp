@@ -484,6 +484,14 @@ public class DoctorControllerIntegrationTest {
 	}
 	
 	@Test
+	@WithUserDetails("admin") // ROLE_ADMIN
+	public void testFindDoctorsByIdOrFirstnameOrLastnameSuccessFound0SearchStringIsBlank() throws Exception {
+		mockMvc.perform(get("/doctor?q=")).andExpect(status().isOk())
+		.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+		.andExpect(jsonPath("$", hasSize(0)));
+	}
+	
+	@Test
 	@WithUserDetails("user") // ROLE_DOCTOR
 	public void testFindDoctorsByIdOrFirstnameOrLastnameSuccessFound2UserIsDoctor() throws Exception {
 		mockMvc.perform(get("/doctor?q=el")).andExpect(status().isOk())
