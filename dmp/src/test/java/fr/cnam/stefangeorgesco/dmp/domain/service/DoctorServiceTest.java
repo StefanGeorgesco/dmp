@@ -338,14 +338,14 @@ public class DoctorServiceTest {
 	public void testFindDoctorsByIdOrFirstnameOrLastnameFound2() {
 		when(doctorDAO.findByIdOrFirstnameOrLastname("la")).thenReturn(List.of(foundDoctor1, foundDoctor2));
 		
-		List<DoctorDTO> doctors = doctorService.findDoctorsByIdOrFirstnameOrLastname("la");
+		List<DoctorDTO> doctorsDTO = doctorService.findDoctorsByIdOrFirstnameOrLastname("la");
 		
 		verify(doctorDAO, times(1)).findByIdOrFirstnameOrLastname("la");
 		
-		assertEquals(2, doctors.size());
+		assertEquals(2, doctorsDTO.size());
 		
-		doctorDTO1 = doctors.get(0);
-		doctorDTO2 = doctors.get(1);
+		doctorDTO1 = doctorsDTO.get(0);
+		doctorDTO2 = doctorsDTO.get(1);
 		
 		assertEquals("ID_1", doctorDTO1.getId());
 		assertEquals("street1_1", doctorDTO1.getAddressDTO().getStreet1());
@@ -376,7 +376,7 @@ public class DoctorServiceTest {
 		
 		List<DoctorDTO> doctors = doctorService.findDoctorsByIdOrFirstnameOrLastname("");
 		
-		verify(doctorDAO, times(0)).findByIdOrFirstnameOrLastname("la");
+		verify(doctorDAO, times(0)).findByIdOrFirstnameOrLastname("");
 		
 		assertEquals(0, doctors.size());
 	}

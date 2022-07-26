@@ -77,7 +77,7 @@ public class DoctorController {
 	}
 
 	@GetMapping("/doctor")
-	 public ResponseEntity<List<DoctorDTO>> findDoctorsfindDoctorsByIdOrFirstnameOrLastname(@RequestParam String q) throws FinderException {
+	 public ResponseEntity<List<DoctorDTO>> findDoctorsByIdOrFirstnameOrLastname(@RequestParam String q) throws FinderException {
 		
 		return ResponseEntity.status(HttpStatus.OK).body(doctorService.findDoctorsByIdOrFirstnameOrLastname(q));
 	 }

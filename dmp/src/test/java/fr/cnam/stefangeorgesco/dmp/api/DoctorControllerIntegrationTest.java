@@ -512,14 +512,14 @@ public class DoctorControllerIntegrationTest {
 	@WithUserDetails("eric") // ROLE_PATIENT
 	public void testFindDoctorsByIdOrFirstnameOrLastnameFailureBadRolePatient() throws Exception {
 
-		mockMvc.perform(get("/doctor?question=el")).andExpect(status().isForbidden());
+		mockMvc.perform(get("/doctor?q=el")).andExpect(status().isForbidden());
 	}
 
 	@Test
 	@WithAnonymousUser
 	public void testFindDoctorsByIdOrFirstnameOrLastnameFailureUnauthenticatedUser() throws Exception {
 
-		mockMvc.perform(get("/doctor?question=el")).andExpect(status().isUnauthorized());
+		mockMvc.perform(get("/doctor?q=el")).andExpect(status().isUnauthorized());
 	}
 	
 }
