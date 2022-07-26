@@ -1,6 +1,7 @@
 package fr.cnam.stefangeorgesco.dmp.api;
 
 import java.security.Principal;
+import java.util.List;
 
 import javax.validation.Valid;
 
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import fr.cnam.stefangeorgesco.dmp.authentication.domain.dto.UserDTO;
@@ -78,5 +80,11 @@ public class PatientFileController {
 
 		return ResponseEntity.status(HttpStatus.OK).body(patientFileService.updateReferringDoctor(patientFileDTO));
 	}
+
+	@GetMapping("/patient-file")
+	 public ResponseEntity<List<PatientFileDTO>> findPatientFilesByIdOrFirstnameOrLastname(@RequestParam String q) throws FinderException {
+		
+		return ResponseEntity.status(HttpStatus.OK).body(patientFileService.findPatientFilesByIdOrFirstnameOrLastname(q));
+	 }
 
 }

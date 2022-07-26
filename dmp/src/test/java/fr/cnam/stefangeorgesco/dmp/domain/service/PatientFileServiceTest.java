@@ -8,6 +8,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 import org.mockito.ArgumentCaptor;
@@ -62,6 +63,12 @@ public class PatientFileServiceTest {
 	private PatientFileDTO patientFileDTO;
 
 	@Autowired
+	private PatientFileDTO patientFileDTO1;
+
+	@Autowired
+	private PatientFileDTO patientFileDTO2;
+
+	@Autowired
 	private PatientFileDTO response;
 
 	@Autowired
@@ -78,6 +85,12 @@ public class PatientFileServiceTest {
 
 	@Autowired
 	private PatientFile savedPatientFile;
+	
+	@Autowired
+	private PatientFile patientFile1;
+
+	@Autowired
+	private PatientFile patientFile2;
 
 	@Autowired
 	private BCryptPasswordEncoder bCryptPasswordEncoder;
@@ -111,7 +124,23 @@ public class PatientFileServiceTest {
 		persistentPatientFile.setAddress(address);
 		persistentPatientFile.setSecurityCode("securityCode");
 		persistentPatientFile.setReferringDoctor(doctor);
-	}
+		
+		patientFile1.setId("ID_1");
+		patientFile1.setFirstname("firstname_1");
+		patientFile1.setLastname("lastname_1");
+		patientFile1.setDateOfBirth(LocalDate.of(2000, 2, 13));
+		patientFile1.setAddress(address);
+		patientFile1.setSecurityCode("securityCode_1");
+		patientFile1.setReferringDoctor(doctor);
+
+		patientFile2.setId("ID_2");
+		patientFile2.setFirstname("firstname_2");
+		patientFile2.setLastname("lastname_2");
+		patientFile2.setDateOfBirth(LocalDate.of(1995, 8, 21));
+		patientFile2.setAddress(address);
+		patientFile2.setSecurityCode("securityCode_2");
+		patientFile2.setReferringDoctor(doctor);
+}
 
 	@Test
 	public void testCreatePatientFileSuccess() throws CheckException {
@@ -321,6 +350,51 @@ public class PatientFileServiceTest {
 		verify(patientFileDAO, times(0)).save(any(PatientFile.class));
 		
 		assertEquals("doctor not found", ex.getMessage());
+	}
+	
+	@Test
+	public void testFindPatientFileByIdOrFirstnameOrLastnameFound2() {
+		when(patientFileDAO.findByIdOrFirstnameOrLastname("la")).thenReturn(List.of(patientFile1, patientFile2));
+		
+		List<PatientFileDTO> patientFilesDTO = patientFileService.findPatientFilesByIdOrFirstnameOrLastname("la");
+		
+		verify(patientFileDAO, times(1)).findByIdOrFirstnameOrLastname("la");
+		
+		assertEquals(2, patientFilesDTO.size());
+		
+		patientFileDTO1 = patientFilesDTO.get(0);
+		patientFileDTO2 = patientFilesDTO.get(1);
+		
+		assertEquals("ID_1", patientFileDTO1.getId());
+		assertEquals("2000-02-13", patientFileDTO1.getDateOfBirth().toString());
+		assertEquals("zipcode", patientFileDTO1.getAddressDTO().getZipcode());
+		assertEquals("D001", patientFileDTO1.getReferringDoctorId());
+		assertEquals("ID_2", patientFileDTO2.getId());
+		assertEquals("1995-08-21", patientFileDTO2.getDateOfBirth().toString());
+		assertEquals("zipcode", patientFileDTO2.getAddressDTO().getZipcode());
+		assertEquals("D001", patientFileDTO2.getReferringDoctorId());
+	}
+
+	@Test
+	public void testFindPatientFileByIdOrFirstnameOrLastnameFound0() {
+		when(patientFileDAO.findByIdOrFirstnameOrLastname("za")).thenReturn(List.of());
+		
+		List<PatientFileDTO> patientFilesDTO = patientFileService.findPatientFilesByIdOrFirstnameOrLastname("za");
+		
+		verify(patientFileDAO, times(1)).findByIdOrFirstnameOrLastname("za");
+		
+		assertEquals(0, patientFilesDTO.size());
+	}
+
+	@Test
+	public void testFindPatientFileByIdOrFirstnameOrLastnameFound0SearchStringIsBlank() {
+		when(patientFileDAO.findByIdOrFirstnameOrLastname("")).thenReturn(List.of());
+		
+		List<PatientFileDTO> patientFilesDTO = patientFileService.findPatientFilesByIdOrFirstnameOrLastname("");
+		
+		verify(patientFileDAO, times(0)).findByIdOrFirstnameOrLastname("");
+		
+		assertEquals(0, patientFilesDTO.size());
 	}
 
 }

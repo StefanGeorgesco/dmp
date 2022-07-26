@@ -1,6 +1,7 @@
 package fr.cnam.stefangeorgesco.dmp.api;
 
 import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -372,4 +373,65 @@ public class PatientFileControllerIntegrationTest {
 				.content(objectMapper.writeValueAsString(doctorDTO))).andExpect(status().isUnauthorized());
 	}
 
+	@Test
+	@WithUserDetails("admin") // ROLE_ADMIN
+	public void testFindPatientFilesByIdOrFirstnameOrLastnameSuccessFound4UserIsAdmin() throws Exception {
+		mockMvc.perform(get("/patient-file?q=ma")).andExpect(status().isOk())
+		.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+		.andExpect(jsonPath("$", hasSize(4)))
+		.andExpect(jsonPath("$[0].id", is("P001")))
+		.andExpect(jsonPath("$[1].id", is("P005")))
+		.andExpect(jsonPath("$[2].id", is("P011")))
+		.andExpect(jsonPath("$[3].id", is("P013")));
+	}
+	
+	@Test
+	@WithUserDetails("admin") // ROLE_ADMIN
+	public void testFindPatientFilesByIdOrFirstnameOrLastnameSuccessFound0() throws Exception {
+		mockMvc.perform(get("/patient-file?q=za")).andExpect(status().isOk())
+		.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+		.andExpect(jsonPath("$", hasSize(0)));
+	}
+	
+	@Test
+	@WithUserDetails("admin") // ROLE_ADMIN
+	public void testFindPatientFilesByIdOrFirstnameOrLastnameSuccessFound0SearchStringIsBlank() throws Exception {
+		mockMvc.perform(get("/patient-file?q=")).andExpect(status().isOk())
+		.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+		.andExpect(jsonPath("$", hasSize(0)));
+	}
+	
+	@Test
+	@WithUserDetails("user") // ROLE_DOCTOR
+	public void testFindPatientFilesByIdOrFirstnameOrLastnameSuccessFound4UserIsPatientFile() throws Exception {
+		mockMvc.perform(get("/patient-file?q=ma")).andExpect(status().isOk())
+		.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+		.andExpect(jsonPath("$", hasSize(4)))
+		.andExpect(jsonPath("$[0].id", is("P001")))
+		.andExpect(jsonPath("$[1].id", is("P005")))
+		.andExpect(jsonPath("$[2].id", is("P011")))
+		.andExpect(jsonPath("$[3].id", is("P013")));
+	}
+	
+	@Test
+	@WithUserDetails("admin") // ROLE_ADMIN
+	public void testFindPatientFilesByIdOrFirstnameOrLastnameFailureMissingQParam() throws Exception {
+		mockMvc.perform(get("/patient-file?question=ma")).andExpect(status().isInternalServerError())
+		.andExpect(content().contentType(MediaType.APPLICATION_JSON));
+	}
+	
+	@Test
+	@WithUserDetails("eric") // ROLE_PATIENT
+	public void testFindPatientFilesByIdOrFirstnameOrLastnameFailureBadRolePatient() throws Exception {
+
+		mockMvc.perform(get("/patient-file?q=ma")).andExpect(status().isForbidden());
+	}
+
+	@Test
+	@WithAnonymousUser
+	public void testFindPatientFilesByIdOrFirstnameOrLastnameFailureUnauthenticatedUser() throws Exception {
+
+		mockMvc.perform(get("/patient-file?q=ma")).andExpect(status().isUnauthorized());
+	}
+	
 }

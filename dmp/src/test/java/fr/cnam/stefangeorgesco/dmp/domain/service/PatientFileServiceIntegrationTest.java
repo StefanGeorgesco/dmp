@@ -9,6 +9,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.doNothing;
 
 import java.time.LocalDate;
+import java.util.List;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -230,4 +232,40 @@ public class PatientFileServiceIntegrationTest {
 		assertEquals("doctor not found", ex.getMessage());
 	}
 	
+	@Test
+	public void testFindPatientFilesByIdOrFirstnameOrLastnameFound4() {
+		
+		List<PatientFileDTO> patientFiles = patientFileService.findPatientFilesByIdOrFirstnameOrLastname("ma");
+		
+		assertEquals(4, patientFiles.size());
+		assertEquals("P001", patientFiles.get(0).getId());
+		assertEquals("P005", patientFiles.get(1).getId());
+		assertEquals("P011", patientFiles.get(2).getId());
+		assertEquals("P013", patientFiles.get(3).getId());
+	}
+	
+	@Test
+	public void testFindPatientFilesByIdOrFirstnameOrLastnameFound11() {
+		
+		List<PatientFileDTO> patientFiles = patientFileService.findPatientFilesByIdOrFirstnameOrLastname("P0");
+		
+		assertEquals(11, patientFiles.size());
+	}
+
+	@Test
+	public void testFindPatientFilesByIdOrFirstnameOrLastnameFound0() {
+		
+		List<PatientFileDTO> patientFiles = patientFileService.findPatientFilesByIdOrFirstnameOrLastname("za");
+		
+		assertEquals(0, patientFiles.size());
+	}
+
+	@Test
+	public void testFindPatientFilesByIdOrFirstnameOrLastnameFound0SearchStringIsBlank() {
+		
+		List<PatientFileDTO> patientFiles = patientFileService.findPatientFilesByIdOrFirstnameOrLastname("");
+		
+		assertEquals(0, patientFiles.size());
+	}
+
 }

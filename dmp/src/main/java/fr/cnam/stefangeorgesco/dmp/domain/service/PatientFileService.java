@@ -1,6 +1,9 @@
 package fr.cnam.stefangeorgesco.dmp.domain.service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,8 +43,7 @@ public class PatientFileService {
 	@Autowired
 	private BCryptPasswordEncoder bCryptPasswordEncoder;
 
-	public PatientFileDTO createPatientFile(PatientFileDTO patientFileDTO)
-			throws ApplicationException {
+	public PatientFileDTO createPatientFile(PatientFileDTO patientFileDTO) throws ApplicationException {
 
 		rnippService.checkPatientData(patientFileDTO);
 
@@ -99,23 +101,23 @@ public class PatientFileService {
 	public PatientFileDTO updateReferringDoctor(PatientFileDTO patientFileDTO) throws ApplicationException {
 
 		Optional<PatientFile> optionalPatientFile = patientFileDAO.findById(patientFileDTO.getId());
-		
+
 		if (optionalPatientFile.isEmpty()) {
 			throw new FinderException("patient file not found");
 		}
-		
+
 		PatientFile patientFile = optionalPatientFile.get();
-		
+
 		Optional<Doctor> optionalDoctor = doctorDAO.findById(patientFileDTO.getReferringDoctorId());
-		
+
 		if (optionalDoctor.isEmpty()) {
 			throw new FinderException("doctor not found");
 		}
-		
+
 		Doctor doctor = optionalDoctor.get();
-		
+
 		patientFile.setReferringDoctor(doctor);
-		
+
 		try {
 			patientFile = patientFileDAO.save(patientFile);
 		} catch (Exception e) {
@@ -125,6 +127,22 @@ public class PatientFileService {
 		PatientFileDTO response = patientFileModelMapper.map(patientFile, PatientFileDTO.class);
 
 		return response;
+	}
+
+	public List<PatientFileDTO> findPatientFilesByIdOrFirstnameOrLastname(String string) {
+		
+		if ("".equals(string)) {
+			return new ArrayList<PatientFileDTO>();
+		}
+		
+		Iterable<PatientFile> patientFiles = patientFileDAO.findByIdOrFirstnameOrLastname(string);
+		
+		List<PatientFileDTO> patientFilesDTO = ((List<PatientFile>) patientFiles)
+				.stream()
+				.map(patientFile -> patientFileModelMapper.map(patientFile, PatientFileDTO.class))
+				.collect(Collectors.toList());
+
+		return patientFilesDTO;
 	}
 
 }

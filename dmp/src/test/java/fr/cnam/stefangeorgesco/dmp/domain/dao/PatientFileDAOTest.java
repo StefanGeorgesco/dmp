@@ -7,6 +7,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.AfterEach;
@@ -148,6 +150,46 @@ public class PatientFileDAOTest {
 		
 		assertEquals("D002", patientFile.getReferringDoctor().getId());
 		assertEquals("Dupont", patientFile.getReferringDoctor().getLastname());
+	}
+	
+	@Test
+	public void testPatientFileDAOfindByIdOrFirstnameOrLastnameFound4() {
+		
+		List<PatientFile> patientFilesList = new ArrayList<>();
+		
+		Iterable<PatientFile> patientFiles = patientFileDAO.findByIdOrFirstnameOrLastname("ma");
+		
+		patientFiles.forEach(patientFilesList::add);
+		
+		assertEquals(4, patientFilesList.size());
+		assertEquals("P001", patientFilesList.get(0).getId());
+		assertEquals("P005", patientFilesList.get(1).getId());
+		assertEquals("P011", patientFilesList.get(2).getId());
+		assertEquals("P013", patientFilesList.get(3).getId());
+	}
+	
+	@Test
+	public void testPatientFileDAOfindByIdOrFirstnameOrLastnameFound11() {
+		
+		List<PatientFile> patientFilesList = new ArrayList<>();
+		
+		Iterable<PatientFile> patientFiles = patientFileDAO.findByIdOrFirstnameOrLastname("P0");
+		
+		patientFiles.forEach(patientFilesList::add);
+		
+		assertEquals(11, patientFilesList.size());
+	}
+	
+	@Test
+	public void testPatientFileDAOfindByIdOrFirstnameOrLastnameFound0() {
+		
+		List<PatientFile> patientFilesList = new ArrayList<>();
+		
+		Iterable<PatientFile> patientFiles = patientFileDAO.findByIdOrFirstnameOrLastname("za");
+		
+		patientFiles.forEach(patientFilesList::add);
+		
+		assertEquals(0, patientFilesList.size());
 	}
 	
 }
