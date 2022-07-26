@@ -21,13 +21,16 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlGroup;
 
+import fr.cnam.stefangeorgesco.dmp.domain.dao.CorrespondanceDAO;
 import fr.cnam.stefangeorgesco.dmp.domain.dao.PatientFileDAO;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.AddressDTO;
+import fr.cnam.stefangeorgesco.dmp.domain.dto.CorrespondanceDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.PatientFileDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.model.Address;
 import fr.cnam.stefangeorgesco.dmp.domain.model.Doctor;
 import fr.cnam.stefangeorgesco.dmp.domain.model.PatientFile;
 import fr.cnam.stefangeorgesco.dmp.exception.domain.CheckException;
+import fr.cnam.stefangeorgesco.dmp.exception.domain.CreateException;
 import fr.cnam.stefangeorgesco.dmp.exception.domain.DuplicateKeyException;
 import fr.cnam.stefangeorgesco.dmp.exception.domain.FinderException;
 
@@ -42,6 +45,9 @@ public class PatientFileServiceIntegrationTest {
 
 	@Autowired
 	private PatientFileDAO patientFileDAO;
+	
+	@Autowired
+	private CorrespondanceDAO correspondanceDAO;
 
 	@Autowired
 	private PatientFileService patientFileService;
@@ -53,7 +59,13 @@ public class PatientFileServiceIntegrationTest {
 	private PatientFileDTO patientFileDTO;
 
 	@Autowired
-	private PatientFileDTO response;
+	private PatientFileDTO patientFileDTOResponse;
+	
+	@Autowired
+	private CorrespondanceDTO correspondanceDTO;
+
+	@Autowired
+	private CorrespondanceDTO correspondanceDTOResponse;
 
 	@Autowired
 	private Address address;
@@ -99,13 +111,18 @@ public class PatientFileServiceIntegrationTest {
 		patientFile.setAddress(address);
 		patientFile.setSecurityCode("code");
 		patientFile.setReferringDoctor(doctor);
-	}
+
+		correspondanceDTO.setDateUntil(LocalDate.now().plusDays(1));
+		correspondanceDTO.setDoctorId("D002");
+		correspondanceDTO.setPatientFileId("P001");
+}
 
 	@AfterEach
 	public void teardown() {
 		if (patientFileDAO.existsById("P002")) {
 			patientFileDAO.deleteById("P002");
 		}
+		correspondanceDAO.deleteAll();
 	}
 
 	@Test
@@ -137,7 +154,7 @@ public class PatientFileServiceIntegrationTest {
 		
 		assertTrue(patientFileDAO.existsById("P001"));
 		
-		response = assertDoesNotThrow(() -> patientFileService.updatePatientFile(patientFileDTO));
+		patientFileDTOResponse = assertDoesNotThrow(() -> patientFileService.updatePatientFile(patientFileDTO));
 		
 		savedPatientFile = patientFileDAO.findById("P001").get();
 		
@@ -158,31 +175,31 @@ public class PatientFileServiceIntegrationTest {
 		assertEquals(patientFileDTO.getAddressDTO().getCountry(), savedPatientFile.getAddress().getCountry());
 		
 		// no change in returned object (except null securityCode)
-		assertEquals("P001", response.getId());
-		assertEquals("Eric", response.getFirstname());
-		assertEquals("Martin", response.getLastname());
-		assertEquals(null, response.getSecurityCode());
-		assertEquals("D001", response.getReferringDoctorId());
+		assertEquals("P001", patientFileDTOResponse.getId());
+		assertEquals("Eric", patientFileDTOResponse.getFirstname());
+		assertEquals("Martin", patientFileDTOResponse.getLastname());
+		assertEquals(null, patientFileDTOResponse.getSecurityCode());
+		assertEquals("D001", patientFileDTOResponse.getReferringDoctorId());
 		
-		assertEquals(patientFileDTO.getId(), response.getId());
+		assertEquals(patientFileDTO.getId(), patientFileDTOResponse.getId());
 		// changes in returned object
-		assertEquals(patientFileDTO.getPhone(), response.getPhone());
-		assertEquals(patientFileDTO.getEmail(), response.getEmail());
-		assertEquals(patientFileDTO.getAddressDTO().getStreet1(), response.getAddressDTO().getStreet1());
-		assertEquals(patientFileDTO.getAddressDTO().getZipcode(), response.getAddressDTO().getZipcode());
-		assertEquals(patientFileDTO.getAddressDTO().getCity(), response.getAddressDTO().getCity());
-		assertEquals(patientFileDTO.getAddressDTO().getCountry(), response.getAddressDTO().getCountry());
+		assertEquals(patientFileDTO.getPhone(), patientFileDTOResponse.getPhone());
+		assertEquals(patientFileDTO.getEmail(), patientFileDTOResponse.getEmail());
+		assertEquals(patientFileDTO.getAddressDTO().getStreet1(), patientFileDTOResponse.getAddressDTO().getStreet1());
+		assertEquals(patientFileDTO.getAddressDTO().getZipcode(), patientFileDTOResponse.getAddressDTO().getZipcode());
+		assertEquals(patientFileDTO.getAddressDTO().getCity(), patientFileDTOResponse.getAddressDTO().getCity());
+		assertEquals(patientFileDTO.getAddressDTO().getCountry(), patientFileDTOResponse.getAddressDTO().getCountry());
 	}
 
 	@Test
 	public void testFindPatientFileSuccess() {
-		response = assertDoesNotThrow(() -> patientFileService.findPatientFile("P001"));
+		patientFileDTOResponse = assertDoesNotThrow(() -> patientFileService.findPatientFile("P001"));
 		
-		assertEquals("P001", response.getId());
-		assertEquals("1 rue de la Paix", response.getAddressDTO().getStreet1());
-		assertEquals("D001", response.getReferringDoctorId());
-		assertNull(response.getSecurityCode());
-		assertEquals("1995-05-15", response.getDateOfBirth().toString());
+		assertEquals("P001", patientFileDTOResponse.getId());
+		assertEquals("1 rue de la Paix", patientFileDTOResponse.getAddressDTO().getStreet1());
+		assertEquals("D001", patientFileDTOResponse.getReferringDoctorId());
+		assertNull(patientFileDTOResponse.getSecurityCode());
+		assertEquals("1995-05-15", patientFileDTOResponse.getDateOfBirth().toString());
 	}
 	
 	@Test
@@ -202,12 +219,12 @@ public class PatientFileServiceIntegrationTest {
 		
 		patientFileDTO.setReferringDoctorId("D002");
 		
-		response = assertDoesNotThrow(() -> patientFileService.updateReferringDoctor(patientFileDTO));
+		patientFileDTOResponse = assertDoesNotThrow(() -> patientFileService.updateReferringDoctor(patientFileDTO));
 		
 		savedPatientFile = patientFileDAO.findById("P001").get();
 		
 		assertEquals("D002", savedPatientFile.getReferringDoctor().getId());
-		assertEquals("D002", response.getReferringDoctorId());
+		assertEquals("D002", patientFileDTOResponse.getReferringDoctorId());
 	}
 	
 	@Test
@@ -266,6 +283,52 @@ public class PatientFileServiceIntegrationTest {
 		List<PatientFileDTO> patientFiles = patientFileService.findPatientFilesByIdOrFirstnameOrLastname("");
 		
 		assertEquals(0, patientFiles.size());
+	}
+	
+	@Test
+	public void testCreateCorrespondanceSuccess() {
+		
+		assertEquals(0, correspondanceDAO.count());
+		
+		assertEquals(0L, correspondanceDTO.getId());
+		
+		correspondanceDTOResponse = assertDoesNotThrow(() ->  patientFileService.createCorrespondance(correspondanceDTO));
+		
+		assertEquals(1, correspondanceDAO.count());
+		
+		assertEquals(correspondanceDTO.getDateUntil(), correspondanceDTOResponse.getDateUntil());
+		assertEquals(correspondanceDTO.getDoctorId(), correspondanceDTOResponse.getDoctorId());
+		assertEquals(correspondanceDTO.getPatientFileId(), correspondanceDTOResponse.getPatientFileId());
+
+		assertTrue(correspondanceDTOResponse.getId() >= 1L);
+}
+	
+	@Test
+	public void testCreateCorrespondanceFailurePatientFileDoesNotExist() {
+		
+		correspondanceDTO.setPatientFileId("P002");
+		
+		assertEquals(0,  correspondanceDAO.count());
+		
+		CreateException ex = assertThrows(CreateException.class, () ->  patientFileService.createCorrespondance(correspondanceDTO));
+		
+		assertTrue(ex.getMessage().startsWith("correspondance could not be created: "));
+		
+		assertEquals(0,  correspondanceDAO.count());
+	}
+
+	@Test
+	public void testCreateCorrespondanceFailureDoctorDoesNotExist() {
+		
+		correspondanceDTO.setDoctorId("D003");
+		
+		assertEquals(0,  correspondanceDAO.count());
+		
+		CreateException ex = assertThrows(CreateException.class, () ->  patientFileService.createCorrespondance(correspondanceDTO));
+		
+		assertTrue(ex.getMessage().startsWith("correspondance could not be created: "));
+		
+		assertEquals(0,  correspondanceDAO.count());
 	}
 
 }

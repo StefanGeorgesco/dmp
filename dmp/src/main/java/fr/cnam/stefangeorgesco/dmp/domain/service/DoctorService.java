@@ -103,7 +103,7 @@ public class DoctorService {
 		try {
 			doctorDAO.save(doctor);
 		} catch (Exception e) {
-			throw new UpdateException("doctor could not be updated:" + e.getMessage());
+			throw new UpdateException("doctor could not be updated: " + e.getMessage());
 		}
 		
 		DoctorDTO response = doctorModelMapper.map(doctor, DoctorDTO.class);

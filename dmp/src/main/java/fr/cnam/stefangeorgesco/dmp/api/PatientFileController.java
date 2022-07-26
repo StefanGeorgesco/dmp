@@ -18,10 +18,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import fr.cnam.stefangeorgesco.dmp.authentication.domain.dto.UserDTO;
 import fr.cnam.stefangeorgesco.dmp.authentication.domain.service.UserService;
+import fr.cnam.stefangeorgesco.dmp.domain.dto.CorrespondanceDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.DoctorDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.PatientFileDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.service.PatientFileService;
 import fr.cnam.stefangeorgesco.dmp.exception.domain.ApplicationException;
+import fr.cnam.stefangeorgesco.dmp.exception.domain.CreateException;
 import fr.cnam.stefangeorgesco.dmp.exception.domain.FinderException;
 
 @RestController
@@ -86,5 +88,22 @@ public class PatientFileController {
 		
 		return ResponseEntity.status(HttpStatus.OK).body(patientFileService.findPatientFilesByIdOrFirstnameOrLastname(q));
 	 }
+	
+	@PostMapping("/patient-file/{id}/correspondance")
+	public ResponseEntity<CorrespondanceDTO> createCorrespondance(@Valid @RequestBody CorrespondanceDTO correspondanceDTO, @PathVariable String id, Principal principal) throws ApplicationException {
+		
+		UserDTO userDTO = userService.findUserByUsername(principal.getName());
+		
+		PatientFileDTO patientFileDTO = patientFileService.findPatientFile(id);
+		
+		if (!userDTO.getId().equals(patientFileDTO.getReferringDoctorId())) {
+			throw new CreateException("user is not referring doctor");
+		}
+		
+		correspondanceDTO.setPatientFileId(patientFileDTO.getId());
+		
+		return ResponseEntity.status(HttpStatus.CREATED).body(patientFileService.createCorrespondance(correspondanceDTO));
+		
+	}
 
 }

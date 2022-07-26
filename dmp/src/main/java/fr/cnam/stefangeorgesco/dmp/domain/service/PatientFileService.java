@@ -1,5 +1,7 @@
 package fr.cnam.stefangeorgesco.dmp.domain.service;
 
+
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -10,9 +12,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import fr.cnam.stefangeorgesco.dmp.domain.dao.CorrespondanceDAO;
 import fr.cnam.stefangeorgesco.dmp.domain.dao.DoctorDAO;
 import fr.cnam.stefangeorgesco.dmp.domain.dao.PatientFileDAO;
+import fr.cnam.stefangeorgesco.dmp.domain.dto.CorrespondanceDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.PatientFileDTO;
+import fr.cnam.stefangeorgesco.dmp.domain.model.Correspondance;
 import fr.cnam.stefangeorgesco.dmp.domain.model.Doctor;
 import fr.cnam.stefangeorgesco.dmp.domain.model.PatientFile;
 import fr.cnam.stefangeorgesco.dmp.exception.domain.ApplicationException;
@@ -33,6 +38,9 @@ public class PatientFileService {
 
 	@Autowired
 	private DoctorDAO doctorDAO;
+	
+	@Autowired
+	private CorrespondanceDAO correspondanceDAO;
 
 	@Autowired
 	private ModelMapper commonModelMapper;
@@ -143,6 +151,21 @@ public class PatientFileService {
 				.collect(Collectors.toList());
 
 		return patientFilesDTO;
+	}
+
+	public CorrespondanceDTO createCorrespondance(CorrespondanceDTO correspondanceDTO) throws CreateException {
+		
+		Correspondance correspondance = commonModelMapper.map(correspondanceDTO, Correspondance.class);
+		
+		try {
+			correspondance = correspondanceDAO.save(correspondance);
+		} catch (Exception e) {
+			throw new CreateException("correspondance could not be created: " + e.getMessage());
+		}
+		
+		correspondanceDTO.setId(correspondance.getId());
+
+		return correspondanceDTO;
 	}
 
 }

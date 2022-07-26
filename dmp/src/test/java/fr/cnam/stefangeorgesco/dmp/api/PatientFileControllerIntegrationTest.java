@@ -3,6 +3,7 @@ package fr.cnam.stefangeorgesco.dmp.api;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.doNothing;
@@ -33,8 +34,10 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import fr.cnam.stefangeorgesco.dmp.domain.dao.CorrespondanceDAO;
 import fr.cnam.stefangeorgesco.dmp.domain.dao.PatientFileDAO;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.AddressDTO;
+import fr.cnam.stefangeorgesco.dmp.domain.dto.CorrespondanceDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.DoctorDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.PatientFileDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.SpecialtyDTO;
@@ -65,6 +68,9 @@ public class PatientFileControllerIntegrationTest {
 	private PatientFileDAO patientFileDAO;
 
 	@Autowired
+	private CorrespondanceDAO correspondanceDAO;
+
+	@Autowired
 	private AddressDTO patientAddressDTO;
 
 	@Autowired
@@ -78,6 +84,9 @@ public class PatientFileControllerIntegrationTest {
 
 	@Autowired
 	private DoctorDTO doctorDTO;
+
+	@Autowired
+	private CorrespondanceDTO correspondanceDTO;
 
 	@Autowired
 	private Address address;
@@ -130,6 +139,9 @@ public class PatientFileControllerIntegrationTest {
 		patientFile.setAddress(address);
 		patientFile.setSecurityCode("securityCode");
 		patientFile.setReferringDoctor(doctor);
+		
+		correspondanceDTO.setDateUntil(LocalDate.now().plusDays(1));
+		correspondanceDTO.setDoctorId("D002");
 	}
 
 	@AfterEach
@@ -137,6 +149,7 @@ public class PatientFileControllerIntegrationTest {
 		if (patientFileDAO.existsById("P002")) {
 			patientFileDAO.deleteById("P002");
 		}
+		correspondanceDAO.deleteAll();
 	}
 
 	@Test
@@ -434,4 +447,69 @@ public class PatientFileControllerIntegrationTest {
 		mockMvc.perform(get("/patient-file?q=ma")).andExpect(status().isUnauthorized());
 	}
 	
+	@Test
+	@WithUserDetails("user") // ROLE_DOCTOR, D001
+	public void testCreateCorrespondanceSuccess() throws Exception {
+		
+		assertEquals(0, correspondanceDAO.count());
+
+		mockMvc.perform(post("/patient-file/P001/correspondance").contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(correspondanceDTO))).andExpect(status().isCreated())
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+				.andExpect(jsonPath("$.dateUntil", is(correspondanceDTO.getDateUntil().toString())))
+				.andExpect(jsonPath("$.doctorId", is("D002")))
+				.andExpect(jsonPath("$.patientFileId", is("P001")));
+		
+		assertEquals(1, correspondanceDAO.count());
+	}
+	
+	@Test
+	@WithUserDetails("user") // ROLE_DOCTOR, D001
+	public void testCreateCorrespondanceFailurePatientFileDoesNotExist() throws Exception {
+		
+		assertEquals(0, correspondanceDAO.count());
+
+		mockMvc.perform(post("/patient-file/P002/correspondance").contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(correspondanceDTO))).andExpect(status().isNotFound())
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+				.andExpect(jsonPath("$.message", is("patient file not found")));
+		
+		assertEquals(0, correspondanceDAO.count());
+	}
+	
+	@Test
+	@WithUserDetails("user") // ROLE_DOCTOR, D001
+	public void testCreateCorrespondanceFailureDoctorIsNotReferringDoctor() throws Exception {
+		
+		assertEquals(0, correspondanceDAO.count());
+
+		mockMvc.perform(post("/patient-file/P004/correspondance").contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(correspondanceDTO))).andExpect(status().isBadRequest())
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+				.andExpect(jsonPath("$.message", is("user is not referring doctor")));
+		
+		assertEquals(0, correspondanceDAO.count());
+	}
+	
+	@Test
+	@WithUserDetails("eric") // ROLE_PATIENT
+	public void testCreateCorrespondanceFailureBadRolePatient() throws Exception {
+
+		mockMvc.perform(post("/patient-file/P001/correspondance")).andExpect(status().isForbidden());
+	}
+
+	@Test
+	@WithUserDetails("admin") // ROLE_ADMIN
+	public void testCreateCorrespondanceFailureBadRoleAdmin() throws Exception {
+
+		mockMvc.perform(post("/patient-file/P001/correspondance")).andExpect(status().isForbidden());
+	}
+
+	@Test
+	@WithAnonymousUser
+	public void testCreateCorrespondanceFailureUnauthenticatedUser() throws Exception {
+
+		mockMvc.perform(post("/patient-file/P001/correspondance")).andExpect(status().isUnauthorized());
+	}
+
 }

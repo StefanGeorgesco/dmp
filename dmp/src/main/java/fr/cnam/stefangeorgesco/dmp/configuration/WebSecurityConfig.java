@@ -63,6 +63,7 @@ public class WebSecurityConfig {
 						.mvcMatchers(HttpMethod.DELETE, "/doctor/{id}").hasRole("ADMIN")
 						.mvcMatchers(HttpMethod.GET, "/doctor").hasAnyRole("ADMIN", "DOCTOR")
 						.mvcMatchers(HttpMethod.GET, "/patient-file").hasAnyRole("ADMIN", "DOCTOR")
+						.mvcMatchers(HttpMethod.POST, "/patient-file/{id}/correspondance").hasRole("DOCTOR")
 						.anyRequest().denyAll())
 				.httpBasic(Customizer.withDefaults());
 		return http.build();

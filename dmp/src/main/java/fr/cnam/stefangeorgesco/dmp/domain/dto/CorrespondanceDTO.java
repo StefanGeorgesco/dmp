@@ -22,7 +22,6 @@ public class CorrespondanceDTO {
 	@NotBlank(message = "doctor is mandatory")
 	String doctorId;
 
-	@NotBlank(message = "patient file is mandatory")
 	String patientFileId;
 
 }
