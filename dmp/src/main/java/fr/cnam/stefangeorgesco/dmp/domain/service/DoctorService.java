@@ -1,6 +1,8 @@
 package fr.cnam.stefangeorgesco.dmp.domain.service;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -122,6 +124,18 @@ public class DoctorService {
 			System.out.println("no user associated to deleted doctor");
 		}
 		
+	}
+
+	public List<DoctorDTO> findDoctorsByIdOrFirstnameOrLastname(String string) {
+		
+		Iterable<Doctor> doctors = doctorDAO.findByIdOrFirstnameOrLastname(string);
+		
+		List<DoctorDTO> doctorsDTO = ((List<Doctor>) doctors)
+				.stream()
+				.map(doctor -> doctorModelMapper.map(doctor, DoctorDTO.class))
+				.collect(Collectors.toList());
+
+		return doctorsDTO;
 	}
 
 }

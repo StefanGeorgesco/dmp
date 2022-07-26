@@ -34,6 +34,7 @@ import fr.cnam.stefangeorgesco.dmp.domain.dao.SpecialtyDAO;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.AddressDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.DoctorDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.SpecialtyDTO;
+import fr.cnam.stefangeorgesco.dmp.domain.model.Address;
 import fr.cnam.stefangeorgesco.dmp.domain.model.Doctor;
 import fr.cnam.stefangeorgesco.dmp.domain.model.Specialty;
 import fr.cnam.stefangeorgesco.dmp.exception.domain.DeleteException;
@@ -67,7 +68,13 @@ public class DoctorServiceTest {
 
 	@Autowired
 	private DoctorDTO doctorDTO;
+	
+	@Autowired
+	private DoctorDTO doctorDTO1;
 
+	@Autowired
+	private DoctorDTO doctorDTO2;
+	
 	@Autowired
 	private DoctorDTO response;
 
@@ -82,6 +89,18 @@ public class DoctorServiceTest {
 
 	@Autowired
 	private Doctor persistentDoctor;
+	
+	@Autowired
+	private Address address1;
+	
+	@Autowired
+	private Address address2;
+	
+	@Autowired
+	private Doctor foundDoctor1;
+	
+	@Autowired
+	private Doctor foundDoctor2;
 
 	private Set<SpecialtyDTO> specialtyDTOs;
 
@@ -119,6 +138,30 @@ public class DoctorServiceTest {
 		persistentDoctor.setLastname("lastname");
 		persistentDoctor.setSecurityCode("securityCode");
 		persistentDoctor.setSpecialties(List.of(specialty1, specialty2));
+		
+		address1.setStreet1("street1_1");
+		address1.setZipcode("zipcode_1");
+		address1.setCity("city_1");
+		address1.setCountry("country_1");
+		
+		address2.setStreet1("street1_2");
+		address2.setZipcode("zipcode_2");
+		address2.setCity("city_2");
+		address2.setCountry("country_2");
+		
+		foundDoctor1.setId("ID_1");
+		foundDoctor1.setFirstname("firstname_1");
+		foundDoctor1.setLastname("lastname_1");
+		foundDoctor1.setSecurityCode("securityCode_1");
+		foundDoctor1.setSpecialties(List.of(specialty1, specialty2));
+		foundDoctor1.setAddress(address1);
+		
+		foundDoctor2.setId("ID_2");
+		foundDoctor2.setFirstname("firstname_2");
+		foundDoctor2.setLastname("lastname_2");
+		foundDoctor2.setSecurityCode("securityCode_2");
+		foundDoctor2.setSpecialties(List.of(specialty1, specialty2));
+		foundDoctor2.setAddress(address2);
 }
 
 	@Test
@@ -289,6 +332,42 @@ public class DoctorServiceTest {
 		
 		verify(doctorDAO, times(1)).deleteById("D001");
 		verify(userService, times(1)).deleteUser("D001");
+	}
+	
+	@Test
+	public void testFindDoctorsByIdOrFirstnameOrLastnameFound2() {
+		when(doctorDAO.findByIdOrFirstnameOrLastname("la")).thenReturn(List.of(foundDoctor1, foundDoctor2));
+		
+		List<DoctorDTO> doctors = doctorService.findDoctorsByIdOrFirstnameOrLastname("la");
+		
+		verify(doctorDAO, times(1)).findByIdOrFirstnameOrLastname("la");
+		
+		assertEquals(2, doctors.size());
+		
+		doctorDTO1 = doctors.get(0);
+		doctorDTO2 = doctors.get(1);
+		
+		assertEquals("ID_1", doctorDTO1.getId());
+		assertEquals("street1_1", doctorDTO1.getAddressDTO().getStreet1());
+		assertEquals("S001", doctorDTO1.getSpecialtiesDTO().iterator().next().getId());
+		assertEquals("ID_2", doctorDTO2.getId());
+		assertEquals("street1_2", doctorDTO2.getAddressDTO().getStreet1());
+		
+		Iterator<SpecialtyDTO> itSpDTO = doctorDTO2.getSpecialtiesDTO().iterator();
+		
+		assertEquals("S001", itSpDTO.next().getId());
+		assertEquals("S002", itSpDTO.next().getId());
+	}
+	
+	@Test
+	public void testFindDoctorsByIdOrFirstnameOrLastnameFound0() {
+		when(doctorDAO.findByIdOrFirstnameOrLastname("la")).thenReturn(List.of());
+		
+		List<DoctorDTO> doctors = doctorService.findDoctorsByIdOrFirstnameOrLastname("la");
+		
+		verify(doctorDAO, times(1)).findByIdOrFirstnameOrLastname("la");
+		
+		assertEquals(0, doctors.size());
 	}
 
 }

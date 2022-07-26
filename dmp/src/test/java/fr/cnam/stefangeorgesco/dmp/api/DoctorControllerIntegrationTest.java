@@ -464,5 +464,54 @@ public class DoctorControllerIntegrationTest {
 
 		mockMvc.perform(delete("/doctor/D002")).andExpect(status().isUnauthorized());
 	}
+	
+	@Test
+	@WithUserDetails("admin") // ROLE_ADMIN
+	public void testFindDoctorsByIdOrFirstnameOrLastnameSuccessFound2UserIsAdmin() throws Exception {
+		mockMvc.perform(get("/doctor?q=el")).andExpect(status().isOk())
+		.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+		.andExpect(jsonPath("$", hasSize(2)))
+		.andExpect(jsonPath("$[0].id", is("D010")))
+		.andExpect(jsonPath("$[1].id", is("D012")));
+	}
+	
+	@Test
+	@WithUserDetails("admin") // ROLE_ADMIN
+	public void testFindDoctorsByIdOrFirstnameOrLastnameSuccessFound0() throws Exception {
+		mockMvc.perform(get("/doctor?q=za")).andExpect(status().isOk())
+		.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+		.andExpect(jsonPath("$", hasSize(0)));
+	}
+	
+	@Test
+	@WithUserDetails("user") // ROLE_DOCTOR
+	public void testFindDoctorsByIdOrFirstnameOrLastnameSuccessFound2UserIsDoctor() throws Exception {
+		mockMvc.perform(get("/doctor?q=el")).andExpect(status().isOk())
+		.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+		.andExpect(jsonPath("$", hasSize(2)))
+		.andExpect(jsonPath("$[0].id", is("D010")))
+		.andExpect(jsonPath("$[1].id", is("D012")));
+	}
+	
+	@Test
+	@WithUserDetails("admin") // ROLE_ADMIN
+	public void testFindDoctorsByIdOrFirstnameOrLastnameFailureMissingQParam() throws Exception {
+		mockMvc.perform(get("/doctor?question=el")).andExpect(status().isInternalServerError())
+		.andExpect(content().contentType(MediaType.APPLICATION_JSON));
+	}
+	
+	@Test
+	@WithUserDetails("eric") // ROLE_PATIENT
+	public void testFindDoctorsByIdOrFirstnameOrLastnameFailureBadRolePatient() throws Exception {
 
+		mockMvc.perform(get("/doctor?question=el")).andExpect(status().isForbidden());
+	}
+
+	@Test
+	@WithAnonymousUser
+	public void testFindDoctorsByIdOrFirstnameOrLastnameFailureUnauthenticatedUser() throws Exception {
+
+		mockMvc.perform(get("/doctor?question=el")).andExpect(status().isUnauthorized());
+	}
+	
 }

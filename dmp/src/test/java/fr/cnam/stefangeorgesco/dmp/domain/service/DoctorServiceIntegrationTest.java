@@ -278,5 +278,31 @@ public class DoctorServiceIntegrationTest {
 
 		assertTrue(doctorDAO.existsById("D001"));
 	}
+	
+	@Test
+	public void testFindDoctorsByIdOrFirstnameOrLastnameFound2() {
+		
+		List<DoctorDTO> doctors = doctorService.findDoctorsByIdOrFirstnameOrLastname("el");
+		
+		assertEquals(2, doctors.size());
+		assertEquals("D010", doctors.get(0).getId());
+		assertEquals("D012", doctors.get(1).getId());
+	}
+	
+	@Test
+	public void testFindDoctorsByIdOrFirstnameOrLastnameFound12() {
+		
+		List<DoctorDTO> doctors = doctorService.findDoctorsByIdOrFirstnameOrLastname("D0");
+		
+		assertEquals(12, doctors.size());
+	}
+
+	@Test
+	public void testFindDoctorsByIdOrFirstnameOrLastnameFound0() {
+		
+		List<DoctorDTO> doctors = doctorService.findDoctorsByIdOrFirstnameOrLastname("za");
+		
+		assertEquals(0, doctors.size());
+	}
 
 }

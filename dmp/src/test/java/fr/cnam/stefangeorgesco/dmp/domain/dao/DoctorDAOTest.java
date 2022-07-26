@@ -201,5 +201,43 @@ public class DoctorDAOTest {
 		
 		assertTrue(doctorDAO.existsById("D001"));
 	}
+	
+	@Test
+	public void testDoctorDAOfindByIdOrFirstnameOrLastnameFound2() {
+		
+		List<Doctor> doctorsList = new ArrayList<>();
+		
+		Iterable<Doctor> doctors = doctorDAO.findByIdOrFirstnameOrLastname("el");
+		
+		doctors.forEach(doctorsList::add);
+		
+		assertEquals(2, doctorsList.size());
+		assertEquals("D010", doctorsList.get(0).getId());
+		assertEquals("D012", doctorsList.get(1).getId());
+	}
+
+	@Test
+	public void testDoctorDAOfindByIdOrFirstnameOrLastnameFound12() {
+		
+		List<Doctor> doctorsList = new ArrayList<>();
+		
+		Iterable<Doctor> doctors = doctorDAO.findByIdOrFirstnameOrLastname("D0");
+		
+		doctors.forEach(doctorsList::add);
+		
+		assertEquals(12, doctorsList.size());
+	}
+
+	@Test
+	public void testDoctorDAOfindByIdOrFirstnameOrLastnameFound0() {
+		
+		List<Doctor> doctorsList = new ArrayList<>();
+		
+		Iterable<Doctor> doctors = doctorDAO.findByIdOrFirstnameOrLastname("za");
+		
+		doctors.forEach(doctorsList::add);
+		
+		assertEquals(0, doctorsList.size());
+	}
 
 }

@@ -1,6 +1,7 @@
 package fr.cnam.stefangeorgesco.dmp.api;
 
 import java.security.Principal;
+import java.util.List;
 
 import javax.validation.Valid;
 
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import fr.cnam.stefangeorgesco.dmp.authentication.domain.dto.UserDTO;
@@ -33,45 +35,51 @@ public class DoctorController {
 	DoctorService doctorService;
 
 	@PostMapping("/doctor")
-	public ResponseEntity<DoctorDTO> createDoctor(@Valid @RequestBody DoctorDTO doctorDTO)
-			throws ApplicationException {
+	public ResponseEntity<DoctorDTO> createDoctor(@Valid @RequestBody DoctorDTO doctorDTO) throws ApplicationException {
 
 		return ResponseEntity.status(HttpStatus.CREATED).body(doctorService.createDoctor(doctorDTO));
 	}
 
 	@PutMapping("/doctor/details")
-	public ResponseEntity<DoctorDTO> updateDoctor(@Valid @RequestBody DoctorDTO doctorDTO,
-			Principal principal) throws ApplicationException {
-		
+	public ResponseEntity<DoctorDTO> updateDoctor(@Valid @RequestBody DoctorDTO doctorDTO, Principal principal)
+			throws ApplicationException {
+
 		UserDTO userDTO = userService.findUserByUsername(principal.getName());
-		
+
 		doctorDTO.setId(userDTO.getId());
-		
+
 		return ResponseEntity.status(HttpStatus.OK).body(doctorService.updateDoctor(doctorDTO));
 	}
-	
-	 @GetMapping("/doctor/details")
-	 public ResponseEntity<DoctorDTO> getDoctorDetails(Principal principal) throws FinderException {
-		 
-		 UserDTO userDTO = userService.findUserByUsername(principal.getName());
-		 
-		 return ResponseEntity.status(HttpStatus.OK).body(doctorService.findDoctor(userDTO.getId()));
-	 }
 
-	 @GetMapping("/doctor/{id}")
-	 public ResponseEntity<DoctorDTO> getDoctorDetails(@PathVariable String id, Principal principal) throws FinderException {
-		 
-		 return ResponseEntity.status(HttpStatus.OK).body(doctorService.findDoctor(id));
-	 }
-	 
-	 @DeleteMapping("/doctor/{id}")
-	 public ResponseEntity<RestResponse> deleteDoctor(@PathVariable String id) throws DeleteException {
-		 
-		 doctorService.deleteDoctor(id);
-		 
-		 RestResponse response = new RestResponse(HttpStatus.OK.value(), "doctor was deleted");
-		 
-		 return ResponseEntity.status(HttpStatus.OK).body(response);
+	@GetMapping("/doctor/details")
+	public ResponseEntity<DoctorDTO> getDoctorDetails(Principal principal) throws FinderException {
+
+		UserDTO userDTO = userService.findUserByUsername(principal.getName());
+
+		return ResponseEntity.status(HttpStatus.OK).body(doctorService.findDoctor(userDTO.getId()));
+	}
+
+	@GetMapping("/doctor/{id}")
+	public ResponseEntity<DoctorDTO> getDoctorDetails(@PathVariable String id, Principal principal)
+			throws FinderException {
+
+		return ResponseEntity.status(HttpStatus.OK).body(doctorService.findDoctor(id));
+	}
+
+	@DeleteMapping("/doctor/{id}")
+	public ResponseEntity<RestResponse> deleteDoctor(@PathVariable String id) throws DeleteException {
+
+		doctorService.deleteDoctor(id);
+
+		RestResponse response = new RestResponse(HttpStatus.OK.value(), "doctor was deleted");
+
+		return ResponseEntity.status(HttpStatus.OK).body(response);
+	}
+
+	@GetMapping("/doctor")
+	 public ResponseEntity<List<DoctorDTO>> findDoctorsfindDoctorsByIdOrFirstnameOrLastname(@RequestParam String q) throws FinderException {
+		
+		return ResponseEntity.status(HttpStatus.OK).body(doctorService.findDoctorsByIdOrFirstnameOrLastname(q));
 	 }
 
 }
