@@ -14,6 +14,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestPropertySource;
 
 import fr.cnam.stefangeorgesco.dmp.domain.dto.SymptomDTO;
+import fr.cnam.stefangeorgesco.dmp.authentication.domain.dto.UserDTO;
+import fr.cnam.stefangeorgesco.dmp.authentication.domain.model.User;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.ActDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.AddressDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.CorrespondanceDTO;
@@ -39,101 +41,144 @@ import fr.cnam.stefangeorgesco.dmp.domain.model.Specialty;
 @TestPropertySource("/application-test.properties")
 @SpringBootTest
 public class ModelMapperTest {
-	
+
+	@Autowired
+	private User user;
+
 	@Autowired
 	private Address address;
-	
+
 	@Autowired
 	private Specialty specialty1;
-	
+
 	@Autowired
 	private Specialty specialty2;
-	
+
 	@Autowired
 	private Doctor doctor1;
-	
+
 	@Autowired
 	private Doctor doctor2;
-	
+
 	@Autowired
 	private PatientFile patientFile;
-	
+
 	@Autowired
 	private Correspondance correspondance;
-	
+
 	@Autowired
 	private Mail mail;
-	
+
 	@Autowired
 	private Disease disease;
-	
+
 	@Autowired
 	private Diagnosis diagnosis;
-	
+
 	@Autowired
 	private MedicalAct medicalAct;
-	
+
 	@Autowired
 	private Act act;
-	
+
 	@Autowired
 	private Symptom symptom;
-	
+
+	@Autowired
+	private UserDTO userDTO;
+
 	@Autowired
 	private AddressDTO addressDTO;
-	
+
 	@Autowired
 	private SpecialtyDTO specialtyDTO1;
-	
+
 	@Autowired
 	private SpecialtyDTO specialtyDTO2;
-	
+
 	@Autowired
 	private DoctorDTO doctorDTO;
 
 	@Autowired
 	private PatientFileDTO patientFileDTO;
-	
+
 	@Autowired
 	private CorrespondanceDTO correspondanceDTO;
-	
+
 	@Autowired
 	private MailDTO mailDTO;
-	
+
 	@Autowired
 	private DiseaseDTO diseaseDTO;
-	
+
 	@Autowired
 	private DiagnosisDTO diagnosisDTO;
-	
+
 	@Autowired
 	private MedicalActDTO medicalActDTO;
-	
+
 	@Autowired
 	private ActDTO actDTO;
-	
+
 	@Autowired
 	private SymptomDTO symptomDTO;
-	
+
 	@Autowired
 	private ModelMapper commonModelMapper;
 	
+	@Autowired
+	private ModelMapper userModelMapper;
+
 	@Autowired
 	private ModelMapper doctorModelMapper;
 
 	@Autowired
 	private ModelMapper patientFileModelMapper;
-	
+
 	@Autowired
 	private ModelMapper diagnosisModelMapper;
-	
+
 	@Autowired
 	private ModelMapper actModelMapper;
-	
+
 	private List<Specialty> specialties = new ArrayList<>();
-	
+
 	private List<SpecialtyDTO> specialtiesDTO = new ArrayList<>();
+
+	@Test
+	public void testModelMapperUserDTO2User() {
+		userDTO.setId("userId");
+		userDTO.setUsername("username");
+		userDTO.setPassword("password");
+		userDTO.setRole("role");
+		userDTO.setSecurityCode("code");
+
+		user = commonModelMapper.map(userDTO, User.class);
+
+		assertEquals(userDTO.getId(), user.getId());
+		assertEquals(userDTO.getUsername(), user.getUsername());
+		assertEquals(userDTO.getPassword(), user.getPassword());
+		assertEquals(userDTO.getRole(), user.getRole());
+		assertEquals(userDTO.getSecurityCode(), user.getSecurityCode());
+	}
 	
+	@Test
+	public void testModelMapperUser2UserDTO() {
+		user.setId("userId");
+		user.setUsername("username");
+		user.setPassword("password");
+		user.setRole("role");
+		user.setSecurityCode("code");
+
+		userDTO = userModelMapper.map(user, UserDTO.class);
+
+		assertEquals(user.getId(), userDTO.getId());
+		assertEquals(user.getUsername(), userDTO.getUsername());
+		assertEquals(null, userDTO.getPassword());
+		assertEquals(user.getRole(), userDTO.getRole());
+		assertEquals(null, userDTO.getSecurityCode());
+	}
+
 	@Test
 	public void testModelMapperDoctorDTO2Doctor() {
 		addressDTO.setStreet1("1 Rue Lecourbe");
@@ -154,9 +199,9 @@ public class ModelMapperTest {
 		doctorDTO.setAddressDTO(addressDTO);
 		doctorDTO.setSpecialtiesDTO(specialtiesDTO);
 		doctorDTO.setSecurityCode("code");
-		
+
 		doctor1 = commonModelMapper.map(doctorDTO, Doctor.class);
-		
+
 		assertEquals(doctorDTO.getAddressDTO().getStreet1(), doctor1.getAddress().getStreet1());
 		assertEquals(doctorDTO.getAddressDTO().getZipcode(), doctor1.getAddress().getZipcode());
 		assertEquals(doctorDTO.getAddressDTO().getCity(), doctor1.getAddress().getCity());
@@ -178,7 +223,7 @@ public class ModelMapperTest {
 		assertEquals(spDTO.getDescription(), sp.getDescription());
 		assertEquals(doctorDTO.getSecurityCode(), doctor1.getSecurityCode());
 	}
-	
+
 	@Test
 	public void testModelMapperDoctor2DoctorDTO() {
 		address.setStreet1("1 Rue Lecourbe");
@@ -199,9 +244,9 @@ public class ModelMapperTest {
 		doctor1.setAddress(address);
 		doctor1.setSpecialties(specialties);
 		doctorDTO.setSecurityCode("code");
-		
+
 		doctorDTO = doctorModelMapper.map(doctor1, DoctorDTO.class);
-		
+
 		assertEquals(doctor1.getAddress().getStreet1(), doctorDTO.getAddressDTO().getStreet1());
 		assertEquals(doctor1.getAddress().getZipcode(), doctorDTO.getAddressDTO().getZipcode());
 		assertEquals(doctor1.getAddress().getCity(), doctorDTO.getAddressDTO().getCity());
@@ -223,7 +268,7 @@ public class ModelMapperTest {
 		assertEquals(sp.getDescription(), spDTO.getDescription());
 		assertEquals(null, doctorDTO.getSecurityCode());
 	}
-	
+
 	@Test
 	public void testModelMapperPatientFileDTO2PatientFile() {
 		addressDTO.setStreet1("1 Rue Lecourbe");
@@ -239,9 +284,9 @@ public class ModelMapperTest {
 		patientFileDTO.setAddressDTO(addressDTO);
 		patientFileDTO.setReferringDoctorId("D001");
 		patientFileDTO.setSecurityCode("code");
-		
+
 		patientFile = commonModelMapper.map(patientFileDTO, PatientFile.class);
-		
+
 		assertEquals(patientFileDTO.getId(), patientFile.getId());
 		assertEquals(patientFileDTO.getFirstname(), patientFile.getFirstname());
 		assertEquals(patientFileDTO.getLastname(), patientFile.getLastname());
@@ -255,7 +300,7 @@ public class ModelMapperTest {
 		assertEquals(patientFileDTO.getReferringDoctorId(), patientFile.getReferringDoctor().getId());
 		assertEquals(patientFileDTO.getSecurityCode(), patientFile.getSecurityCode());
 	}
-	
+
 	@Test
 	public void testModelMapperPatientFile2PatientFileDTO() {
 		address.setStreet1("1 Rue Lecourbe");
@@ -272,9 +317,9 @@ public class ModelMapperTest {
 		patientFile.setAddress(address);
 		patientFile.setSecurityCode("code");
 		patientFile.setReferringDoctor(doctor1);
-		
+
 		patientFileDTO = patientFileModelMapper.map(patientFile, PatientFileDTO.class);
-		
+
 		assertEquals(patientFile.getId(), patientFileDTO.getId());
 		assertEquals(patientFile.getFirstname(), patientFileDTO.getFirstname());
 		assertEquals(patientFile.getLastname(), patientFileDTO.getLastname());
@@ -288,22 +333,22 @@ public class ModelMapperTest {
 		assertEquals(patientFile.getReferringDoctor().getId(), patientFileDTO.getReferringDoctorId());
 		assertEquals(null, patientFileDTO.getSecurityCode());
 	}
-	
+
 	@Test
 	public void testModelMapperCorrespondanceDTO2Correspondance() {
 		correspondanceDTO.setId(1L);
 		correspondanceDTO.setDateUntil(LocalDate.of(2022, 7, 21));
 		correspondanceDTO.setDoctorId("D001");
 		correspondanceDTO.setPatientFileId("P001");
-		
+
 		correspondance = commonModelMapper.map(correspondanceDTO, Correspondance.class);
-		
+
 		assertEquals(correspondanceDTO.getId(), correspondance.getId());
 		assertEquals(correspondanceDTO.getDateUntil(), correspondance.getDateUntil());
 		assertEquals(correspondanceDTO.getDoctorId(), correspondance.getDoctor().getId());
 		assertEquals(correspondanceDTO.getPatientFileId(), correspondance.getPatientFile().getId());
 	}
-	
+
 	@Test
 	public void testModelMapperCorrespondance2CorrespondanceDTO() {
 		doctor1.setId("D001");
@@ -312,15 +357,15 @@ public class ModelMapperTest {
 		correspondance.setDateUntil(LocalDate.of(2022, 7, 21));
 		correspondance.setDoctor(doctor1);
 		correspondance.setPatientFile(patientFile);
-		
+
 		correspondanceDTO = commonModelMapper.map(correspondance, CorrespondanceDTO.class);
-		
+
 		assertEquals(correspondance.getId(), correspondanceDTO.getId());
 		assertEquals(correspondance.getDateUntil(), correspondanceDTO.getDateUntil());
 		assertEquals(correspondance.getDoctor().getId(), correspondanceDTO.getDoctorId());
 		assertEquals(correspondance.getPatientFile().getId(), correspondanceDTO.getPatientFileId());
 	}
-	
+
 	@Test
 	public void testModelMapperMailDTO2Mail() {
 		mailDTO.setId(1L);
@@ -330,9 +375,9 @@ public class ModelMapperTest {
 		mailDTO.setPatientFileId("P001");
 		mailDTO.setText("mail text");
 		mailDTO.setRecipientDoctorId("D002");
-		
+
 		mail = commonModelMapper.map(mailDTO, Mail.class);
-		
+
 		assertEquals(mailDTO.getId(), mail.getId());
 		assertEquals(mailDTO.getDate(), mail.getDate());
 		assertEquals(mailDTO.getComments(), mail.getComments());
@@ -341,7 +386,7 @@ public class ModelMapperTest {
 		assertEquals(mailDTO.getText(), mail.getText());
 		assertEquals(mailDTO.getRecipientDoctorId(), mail.getRecipientDoctor().getId());
 	}
-	
+
 	@Test
 	public void testModelMapperMail2MailDTO() {
 		doctor1.setId("D001");
@@ -354,9 +399,9 @@ public class ModelMapperTest {
 		mail.setPatientFile(patientFile);
 		mail.setText("mail text");
 		mail.setRecipientDoctor(doctor2);
-		
+
 		mailDTO = commonModelMapper.map(mail, MailDTO.class);
-		
+
 		assertEquals(mail.getId(), mailDTO.getId());
 		assertEquals(mail.getDate(), mailDTO.getDate());
 		assertEquals(mail.getComments(), mailDTO.getComments());
@@ -365,7 +410,7 @@ public class ModelMapperTest {
 		assertEquals(mail.getText(), mailDTO.getText());
 		assertEquals(mail.getRecipientDoctor().getId(), mailDTO.getRecipientDoctorId());
 	}
-	
+
 	@Test
 	public void testModelMapperDiagnosisDTO2Diagnosis() {
 		diseaseDTO.setId("DIS001");
@@ -376,9 +421,9 @@ public class ModelMapperTest {
 		diagnosisDTO.setAuthoringDoctorId("DOO1");
 		diagnosisDTO.setPatientFileId("P001");
 		diagnosisDTO.setDiseaseDTO(diseaseDTO);
-		
+
 		diagnosis = commonModelMapper.map(diagnosisDTO, Diagnosis.class);
-		
+
 		assertEquals(diagnosisDTO.getId(), diagnosis.getId());
 		assertEquals(diagnosisDTO.getDate(), diagnosis.getDate());
 		assertEquals(diagnosisDTO.getComments(), diagnosis.getComments());
@@ -387,7 +432,7 @@ public class ModelMapperTest {
 		assertEquals(diagnosisDTO.getDiseaseDTO().getId(), diagnosis.getDisease().getId());
 		assertEquals(diagnosisDTO.getDiseaseDTO().getDescription(), diagnosis.getDisease().getDescription());
 	}
-	
+
 	@Test
 	public void testModelMapperDiagnosis2DiagnosisDTO() {
 		disease.setId("DIS001");
@@ -400,9 +445,9 @@ public class ModelMapperTest {
 		diagnosis.setAuthoringDoctor(doctor1);
 		diagnosis.setPatientFile(patientFile);
 		diagnosis.setDisease(disease);
-		
+
 		diagnosisDTO = diagnosisModelMapper.map(diagnosis, DiagnosisDTO.class);
-		
+
 		assertEquals(diagnosis.getId(), diagnosisDTO.getId());
 		assertEquals(diagnosis.getDate(), diagnosisDTO.getDate());
 		assertEquals(diagnosis.getComments(), diagnosisDTO.getComments());
@@ -411,7 +456,7 @@ public class ModelMapperTest {
 		assertEquals(diagnosis.getDisease().getId(), diagnosisDTO.getDiseaseDTO().getId());
 		assertEquals(diagnosis.getDisease().getDescription(), diagnosisDTO.getDiseaseDTO().getDescription());
 	}
-	
+
 	@Test
 	public void testModelMapperActDTO2Act() {
 		medicalActDTO.setId("MA001");
@@ -422,9 +467,9 @@ public class ModelMapperTest {
 		actDTO.setAuthoringDoctorId("DOO1");
 		actDTO.setPatientFileId("P001");
 		actDTO.setMedicalActDTO(medicalActDTO);
-		
+
 		act = commonModelMapper.map(actDTO, Act.class);
-		
+
 		assertEquals(actDTO.getId(), act.getId());
 		assertEquals(actDTO.getDate(), act.getDate());
 		assertEquals(actDTO.getComments(), act.getComments());
@@ -433,7 +478,7 @@ public class ModelMapperTest {
 		assertEquals(actDTO.getMedicalActDTO().getId(), act.getMedicalAct().getId());
 		assertEquals(actDTO.getMedicalActDTO().getDescription(), act.getMedicalAct().getDescription());
 	}
-	
+
 	@Test
 	public void testModelMapperAct2ActDTO() {
 		medicalAct.setId("MA001");
@@ -446,9 +491,9 @@ public class ModelMapperTest {
 		act.setAuthoringDoctor(doctor1);
 		act.setPatientFile(patientFile);
 		act.setMedicalAct(medicalAct);
-		
+
 		actDTO = actModelMapper.map(act, ActDTO.class);
-		
+
 		assertEquals(act.getId(), actDTO.getId());
 		assertEquals(act.getDate(), actDTO.getDate());
 		assertEquals(act.getComments(), actDTO.getComments());
@@ -466,9 +511,9 @@ public class ModelMapperTest {
 		symptomDTO.setAuthoringDoctorId("DOO1");
 		symptomDTO.setPatientFileId("P001");
 		symptomDTO.setDescription("Symptom description");
-		
+
 		symptom = commonModelMapper.map(symptomDTO, Symptom.class);
-		
+
 		assertEquals(symptomDTO.getId(), symptom.getId());
 		assertEquals(symptomDTO.getDate(), symptom.getDate());
 		assertEquals(symptomDTO.getComments(), symptom.getComments());
@@ -476,7 +521,7 @@ public class ModelMapperTest {
 		assertEquals(symptomDTO.getPatientFileId(), symptom.getPatientFile().getId());
 		assertEquals(symptomDTO.getDescription(), symptom.getDescription());
 	}
-	
+
 	@Test
 	public void testModelMapperSymptom2SymptomDTO() {
 		doctor1.setId("D001");
@@ -487,9 +532,9 @@ public class ModelMapperTest {
 		symptom.setAuthoringDoctor(doctor1);
 		symptom.setPatientFile(patientFile);
 		symptom.setDescription("Symptom description");
-		
+
 		symptomDTO = commonModelMapper.map(symptom, SymptomDTO.class);
-		
+
 		assertEquals(symptom.getId(), symptomDTO.getId());
 		assertEquals(symptom.getDate(), symptomDTO.getDate());
 		assertEquals(symptom.getComments(), symptomDTO.getComments());
