@@ -2,6 +2,7 @@ package fr.cnam.stefangeorgesco.dmp.domain.model;
 
 import java.time.LocalDate;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -22,9 +23,10 @@ import lombok.Setter;
 public class Correspondance {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
 
+	@Column(name = "date_until")
 	@NotNull(message = "correspondance date is mandatory")
 	@Future(message = "correpondance date must be in the future")
 	private LocalDate dateUntil;
