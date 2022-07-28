@@ -1,6 +1,7 @@
 package fr.cnam.stefangeorgesco.dmp.domain.dto;
 
 import java.time.LocalDate;
+import java.util.UUID;
 
 import javax.validation.constraints.Future;
 import javax.validation.constraints.NotBlank;
@@ -13,7 +14,7 @@ import lombok.Setter;
 @Setter
 public class CorrespondanceDTO {
 	
-	private long id;
+	private UUID id;
 
 	@NotNull(message = "correspondance date is mandatory")
 	@Future(message = "correpondance date must be in the future")

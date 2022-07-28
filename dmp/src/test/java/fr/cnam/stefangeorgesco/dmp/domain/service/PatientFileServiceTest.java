@@ -10,6 +10,7 @@ import static org.mockito.Mockito.when;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.mockito.ArgumentCaptor;
 
@@ -114,6 +115,8 @@ public class PatientFileServiceTest {
 
 	private ArgumentCaptor<Correspondance> correspondanceCaptor = ArgumentCaptor.forClass(Correspondance.class);
 
+	private UUID uuid;
+	
 	@BeforeEach
 	public void setup() {
 		addressDTO.setStreet1("1 Rue Lecourbe");
@@ -435,6 +438,18 @@ public class PatientFileServiceTest {
 		assertEquals(correspondanceDTO.getDateUntil(), correspondanceDTOResponse.getDateUntil());
 		assertEquals(correspondanceDTO.getDoctorId(), correspondanceDTOResponse.getDoctorId());
 		assertEquals(correspondanceDTO.getPatientFileId(), correspondanceDTOResponse.getPatientFileId());
+	}
+	
+	@Test
+	public void testDeleteCorrespondanceSuccess() {
+		
+		uuid = UUID.randomUUID();
+		
+		doNothing().when(correspondanceDAO).deleteById(uuid);
+		
+		patientFileService.deleteCorrespondance(uuid);
+		
+		verify(correspondanceDAO, times(1)).deleteById(uuid);
 	}
 
 }

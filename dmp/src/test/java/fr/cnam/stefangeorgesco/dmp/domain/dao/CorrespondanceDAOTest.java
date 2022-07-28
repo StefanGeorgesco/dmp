@@ -2,10 +2,13 @@ package fr.cnam.stefangeorgesco.dmp.domain.dao;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.LocalDate;
-import org.junit.jupiter.api.AfterEach;
+import java.util.UUID;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +26,8 @@ import fr.cnam.stefangeorgesco.dmp.domain.model.PatientFile;
 @SpringBootTest
 @SqlGroup({
     @Sql(scripts = "/sql/create-files.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
+    @Sql(scripts = "/sql/create-correspondances.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
+    @Sql(scripts = "/sql/delete-correspondances.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD),
     @Sql(scripts = "/sql/delete-files.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
 })
 public class CorrespondanceDAOTest {
@@ -46,6 +51,10 @@ public class CorrespondanceDAOTest {
 		private Correspondance correspondance;
 
 		private LocalDate date;
+		
+		private long count;
+		
+		private UUID uuid;
 		
 		@BeforeEach
 		public void setup() {
@@ -75,19 +84,14 @@ public class CorrespondanceDAOTest {
 			correspondance.setPatientFile(patientFile);
 		}
 		
-		@AfterEach
-		public void tearDown() {
-			correspondanceDAO.deleteAll();
-		}
-		
 		@Test
 		public void testCorrespondanceDAOSaveCreateSuccess() {
 			
-			assertEquals(0, correspondanceDAO.count());
+			count = correspondanceDAO.count();
 			
 			assertDoesNotThrow(() -> correspondanceDAO.save(correspondance));
 			
-			assertEquals(1, correspondanceDAO.count());
+			assertEquals(count + 1, correspondanceDAO.count());
 		}
 		
 		@Test
@@ -95,11 +99,11 @@ public class CorrespondanceDAOTest {
 			
 			patientFile.setId("P002");
 			
-			assertEquals(0, correspondanceDAO.count());
+			count = correspondanceDAO.count();
 			
 			assertThrows(RuntimeException.class , () -> correspondanceDAO.save(correspondance));
 			
-			assertEquals(0, correspondanceDAO.count());
+			assertEquals(count, correspondanceDAO.count());
 		}
 		
 		@Test
@@ -107,10 +111,26 @@ public class CorrespondanceDAOTest {
 			
 			correspondingDoctor.setId("D003");
 			
-			assertEquals(0, correspondanceDAO.count());
+			count = correspondanceDAO.count();
 			
 			assertThrows(RuntimeException.class , () -> correspondanceDAO.save(correspondance));
 			
-			assertEquals(0, correspondanceDAO.count());
+			assertEquals(count, correspondanceDAO.count());
+		}
+		
+		@Test
+		public void testCorrespondanceDAODeleteByIdSuccess() {
+			
+			uuid = UUID.fromString("3d80bbeb-997e-4354-82d3-68cea80256d6");
+			
+			count = correspondanceDAO.count();
+			
+			assertTrue(correspondanceDAO.existsById(uuid));
+			
+			correspondanceDAO.deleteById(uuid);
+			
+			assertFalse(correspondanceDAO.existsById(uuid));
+			
+			assertEquals(count - 1, correspondanceDAO.count());
 		}
 }

@@ -5,6 +5,7 @@ package fr.cnam.stefangeorgesco.dmp.domain.service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
@@ -166,6 +167,11 @@ public class PatientFileService {
 		correspondanceDTO.setId(correspondance.getId());
 
 		return correspondanceDTO;
+	}
+
+	public void deleteCorrespondance(UUID uuid) {
+		
+		correspondanceDAO.deleteById(uuid);
 	}
 
 }

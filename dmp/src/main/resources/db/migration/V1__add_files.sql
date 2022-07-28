@@ -1,18 +1,18 @@
 DROP TABLE IF EXISTS `t_file`;
 
 CREATE TABLE `t_file` (
-  `id` varchar(255) NOT NULL,
-  `firstname` varchar(255) NOT NULL,
-  `lastname` varchar(255) NOT NULL,
-  `phone` varchar(255) NOT NULL,
-  `email` varchar(255) NOT NULL,
-  `street1` varchar(255) NOT NULL,
-  `street2` varchar(255) NOT NULL,
-  `city` varchar(255) NOT NULL,
-  `state` varchar(255) NOT NULL,
-  `zipcode` varchar(255) NOT NULL,
-  `country` varchar(255) NOT NULL,
-  `security_code` varchar(255) NOT NULL,
+  `id` VARCHAR(255) NOT NULL,
+  `firstname` VARCHAR(255) NOT NULL,
+  `lastname` VARCHAR(255) NOT NULL,
+  `phone` VARCHAR(255) NOT NULL,
+  `email` VARCHAR(255) NOT NULL,
+  `street1` VARCHAR(255) NOT NULL,
+  `street2` VARCHAR(255) NOT NULL,
+  `city` VARCHAR(255) NOT NULL,
+  `state` VARCHAR(255) NOT NULL,
+  `zipcode` VARCHAR(255) NOT NULL,
+  `country` VARCHAR(255) NOT NULL,
+  `security_code` VARCHAR(255) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB;
 
@@ -43,7 +43,7 @@ INSERT INTO `t_file` VALUES ('P013', 'Magnus', 'Jensen', '19776685', 'magnus.jen
 DROP TABLE IF EXISTS `t_doctor`;
 
 CREATE TABLE `t_doctor` (
-  `id` varchar(255) NOT NULL,
+  `id` VARCHAR(255) NOT NULL,
   PRIMARY KEY (`id`),
   CONSTRAINT `FK_file_doctor` FOREIGN KEY (`id`) REFERENCES `t_file` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB;
@@ -64,8 +64,8 @@ INSERT INTO `t_doctor` VALUES ('D013');
 DROP TABLE IF EXISTS `t_specialty`;
 
 CREATE TABLE `t_specialty` (
-  `id` varchar(255) NOT NULL,
-  `description` varchar(255) NOT NULL,
+  `id` VARCHAR(255) NOT NULL,
+  `description` VARCHAR(255) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB;
 
@@ -75,8 +75,8 @@ INSERT INTO `t_specialty` VALUES ('S002', 'Specialty 2');
 DROP TABLE IF EXISTS `t_doctor_specialty`;
 
 CREATE TABLE `t_doctor_specialty` (
-  `doctor_id` varchar(255) NOT NULL,
-  `specialty_id` varchar(255) NOT NULL,
+  `doctor_id` VARCHAR(255) NOT NULL,
+  `specialty_id` VARCHAR(255) NOT NULL,
   KEY `FK_specialty_id` (`specialty_id`),
   KEY `FK_doctor_id` (`doctor_id`),
   CONSTRAINT `FK_doctor_doctor_specialty` FOREIGN KEY (`doctor_id`) REFERENCES `t_doctor` (`id`),
@@ -100,9 +100,9 @@ INSERT INTO `t_doctor_specialty` VALUES ('D013', 'S001');
 DROP TABLE IF EXISTS `t_patient_file`;
 
 CREATE TABLE `t_patient_file` (
-  `id` varchar(255) NOT NULL,
+  `id` VARCHAR(255) NOT NULL,
   `date_of_birth` DATE NOT NULL,
-  `referring_doctor_id` varchar(255) NOT NULL,
+  `referring_doctor_id` VARCHAR(255) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `FK_referring_doctor_id` (`referring_doctor_id`),
   CONSTRAINT `FK_doctor_patient_file` FOREIGN KEY (`referring_doctor_id`) REFERENCES `t_doctor` (`id`),
@@ -124,11 +124,11 @@ INSERT INTO `t_patient_file` VALUES ('P013', '1986-02-27', 'D005');
 DROP TABLE IF EXISTS `t_user`;
 
 CREATE TABLE `t_user` (
-  `id` varchar(255) NOT NULL,
-  `username` varchar(255) NOT NULL,
-  `password` varchar(255) NOT NULL,
-  `role` varchar(255) NOT NULL,
-  `security_code` varchar(255) NOT NULL,
+  `id` VARCHAR(255) NOT NULL,
+  `username` VARCHAR(255) NOT NULL,
+  `password` VARCHAR(255) NOT NULL,
+  `role` VARCHAR(255) NOT NULL,
+  `security_code` VARCHAR(255) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `UK_username_user` (`username`)
 ) ENGINE=InnoDB;

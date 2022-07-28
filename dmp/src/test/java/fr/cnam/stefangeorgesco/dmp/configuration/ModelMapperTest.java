@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -336,7 +337,7 @@ public class ModelMapperTest {
 
 	@Test
 	public void testModelMapperCorrespondanceDTO2Correspondance() {
-		correspondanceDTO.setId(1L);
+		correspondanceDTO.setId(UUID.randomUUID());
 		correspondanceDTO.setDateUntil(LocalDate.of(2022, 7, 21));
 		correspondanceDTO.setDoctorId("D001");
 		correspondanceDTO.setPatientFileId("P001");
@@ -353,7 +354,7 @@ public class ModelMapperTest {
 	public void testModelMapperCorrespondance2CorrespondanceDTO() {
 		doctor1.setId("D001");
 		patientFile.setId("P001");
-		correspondance.setId(1L);
+		correspondance.setId(UUID.randomUUID());
 		correspondance.setDateUntil(LocalDate.of(2022, 7, 21));
 		correspondance.setDoctor(doctor1);
 		correspondance.setPatientFile(patientFile);
