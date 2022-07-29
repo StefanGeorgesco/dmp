@@ -484,6 +484,22 @@ public class PatientFileControllerIntegrationTest {
 	}
 
 	@Test
+	@WithUserDetails("user") // ROLE_DOCTOR, D001
+	public void testCreateCorrespondanceFailureCorrespondingDoctorIsReferringDoctor() throws Exception {
+
+		correspondanceDTO.setDoctorId("D001");
+		
+		count = correspondanceDAO.count();
+
+		mockMvc.perform(post("/patient-file/P001/correspondance").contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(correspondanceDTO))).andExpect(status().isBadRequest())
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+				.andExpect(jsonPath("$.message", is("trying to create correspondance for referring doctor")));
+
+		assertEquals(count, correspondanceDAO.count());
+	}
+
+	@Test
 	@WithUserDetails("eric") // ROLE_PATIENT
 	public void testCreateCorrespondanceFailureBadRolePatient() throws Exception {
 

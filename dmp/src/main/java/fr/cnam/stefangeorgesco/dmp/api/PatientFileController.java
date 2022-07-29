@@ -105,6 +105,10 @@ public class PatientFileController {
 		if (!userDTO.getId().equals(patientFileDTO.getReferringDoctorId())) {
 			throw new CreateException("user is not referring doctor");
 		}
+		
+		if (userDTO.getId().equals(correspondanceDTO.getDoctorId())) {
+			throw new CreateException("trying to create correspondance for referring doctor");
+		}
 
 		correspondanceDTO.setPatientFileId(patientFileDTO.getId());
 
