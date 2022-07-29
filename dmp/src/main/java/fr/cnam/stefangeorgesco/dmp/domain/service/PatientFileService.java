@@ -146,12 +146,12 @@ public class PatientFileService {
 		
 		Iterable<PatientFile> patientFiles = patientFileDAO.findByIdOrFirstnameOrLastname(string);
 		
-		List<PatientFileDTO> patientFilesDTO = ((List<PatientFile>) patientFiles)
+		List<PatientFileDTO> response = ((List<PatientFile>) patientFiles)
 				.stream()
 				.map(patientFile -> patientFileModelMapper.map(patientFile, PatientFileDTO.class))
 				.collect(Collectors.toList());
 
-		return patientFilesDTO;
+		return response;
 	}
 
 	public CorrespondanceDTO createCorrespondance(CorrespondanceDTO correspondanceDTO) throws CreateException {
@@ -172,6 +172,21 @@ public class PatientFileService {
 	public void deleteCorrespondance(UUID uuid) {
 		
 		correspondanceDAO.deleteById(uuid);
+	}
+
+	public CorrespondanceDTO findCorrespondance(String id) throws FinderException {
+		
+		Optional<Correspondance> optionalCorrespondance = correspondanceDAO.findById(UUID.fromString(id));
+				
+		if (optionalCorrespondance.isEmpty()) {
+			throw new FinderException("correspondance not found");
+		}
+		
+		Correspondance correspondance = optionalCorrespondance.get();
+		
+		CorrespondanceDTO response = commonModelMapper.map(correspondance, CorrespondanceDTO.class);
+
+		return response;
 	}
 
 }

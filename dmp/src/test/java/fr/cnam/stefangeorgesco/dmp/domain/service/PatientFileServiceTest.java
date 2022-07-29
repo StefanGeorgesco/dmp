@@ -106,6 +106,9 @@ public class PatientFileServiceTest {
 	private PatientFile patientFile2;
 	
 	@Autowired
+	private Correspondance persistentCorrespondance;
+	
+	@Autowired
 	private Correspondance savedCorrespondance;
 
 	@Autowired
@@ -164,6 +167,10 @@ public class PatientFileServiceTest {
 		correspondanceDTO.setDateUntil(LocalDate.now().plusDays(1));
 		correspondanceDTO.setDoctorId("D002");
 		correspondanceDTO.setPatientFileId("P002");
+		
+		persistentCorrespondance.setDateUntil(LocalDate.of(2022, 07, 29));
+		persistentCorrespondance.setDoctor(doctor);
+		persistentCorrespondance.setPatientFile(patientFile1);
 }
 
 	@Test
@@ -450,6 +457,35 @@ public class PatientFileServiceTest {
 		patientFileService.deleteCorrespondance(uuid);
 		
 		verify(correspondanceDAO, times(1)).deleteById(uuid);
+	}
+	
+	@Test
+	public void testFindCorrespondanceSuccess() {
+		uuid = UUID.randomUUID();
+		
+		when(correspondanceDAO.findById(uuid)).thenReturn(Optional.of(persistentCorrespondance));
+
+		correspondanceDTOResponse = assertDoesNotThrow(() -> patientFileService.findCorrespondance(uuid.toString()));
+
+		verify(correspondanceDAO, times(1)).findById(uuid);
+
+		assertEquals(persistentCorrespondance.getId(), correspondanceDTOResponse.getId());
+		assertEquals(persistentCorrespondance.getDateUntil(), correspondanceDTOResponse.getDateUntil());
+		assertEquals(persistentCorrespondance.getDoctor().getId(), correspondanceDTOResponse.getDoctorId());
+		assertEquals(persistentCorrespondance.getPatientFile().getId(), correspondanceDTOResponse.getPatientFileId());
+	}
+
+	@Test
+	public void testFindCorrespondanceFailureCorrespondanceDoesNotExist() throws FinderException {
+		uuid = UUID.randomUUID();
+		
+		when(correspondanceDAO.findById(uuid)).thenReturn(Optional.ofNullable(null));
+
+		FinderException ex = assertThrows(FinderException.class, () -> patientFileService.findCorrespondance(uuid.toString()));
+
+		verify(correspondanceDAO, times(1)).findById(uuid);
+
+		assertEquals("correspondance not found", ex.getMessage());
 	}
 
 }

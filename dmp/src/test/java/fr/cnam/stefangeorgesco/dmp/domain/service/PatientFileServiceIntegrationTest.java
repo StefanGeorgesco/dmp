@@ -351,5 +351,29 @@ public class PatientFileServiceIntegrationTest {
 		
 		assertEquals(count - 1, correspondanceDAO.count());
 	}
+	
+	@Test
+	public void testFindCorrespondanceSuccess() {
+		
+		uuid = UUID.fromString("3d80bbeb-997e-4354-82d3-68cea80256d6");
+		
+		assertTrue(correspondanceDAO.existsById(uuid));
+		
+		CorrespondanceDTO correspondanceDTO = assertDoesNotThrow(() -> patientFileService.findCorrespondance(uuid.toString()));
+		
+		assertEquals("2023-08-14", correspondanceDTO.getDateUntil().toString());
+	}
+	
+	@Test
+	public void testFindCorrespondanceFailureCorrespondanceDoesNotExist() {
+		
+		uuid = UUID.randomUUID();
+		
+		assertFalse(correspondanceDAO.existsById(uuid));
+		
+		FinderException ex = assertThrows(FinderException.class, () -> patientFileService.findCorrespondance(uuid.toString()));
+		
+		assertEquals("correspondance not found", ex.getMessage());
+	}
 
 }
