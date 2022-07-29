@@ -1,4 +1,4 @@
-insert into t_correspondance(id, date_until, doctor_id, patient_file_id) values('5b17ffa7-81e2-43ac-9246-7cab5b2f0f6b', '2023-05-02', 'D001', 'P001')
+insert into t_correspondance(id, date_until, doctor_id, patient_file_id) values('5b17ffa7-81e2-43ac-9246-7cab5b2f0f6b', '2023-05-02', 'D002', 'P001')
 insert into t_correspondance(id, date_until, doctor_id, patient_file_id) values('a376a45f-17d3-4b75-ad08-6b1da02616b6', '2024-01-05', 'D002', 'P004')
 insert into t_correspondance(id, date_until, doctor_id, patient_file_id) values('531c2161-5507-485f-8a23-de65416b4644', '2022-04-12', 'D004', 'P005')
 insert into t_correspondance(id, date_until, doctor_id, patient_file_id) values('680e2054-b757-4d1e-94dc-1baeb0dbedf8', '2022-11-30', 'D005', 'P006')
