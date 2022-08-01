@@ -7,6 +7,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -132,5 +134,32 @@ public class CorrespondanceDAOTest {
 			assertFalse(correspondanceDAO.existsById(uuid));
 			
 			assertEquals(count - 1, correspondanceDAO.count());
+		}
+		
+		@Test
+		public void testCorrespondanceDAOFindByPatientFileIdFound3() {
+			
+			List<Correspondance> correspondanceList = new ArrayList<>();
+			
+			Iterable<Correspondance> correspondances = correspondanceDAO.findByPatientFileId("P001");
+			
+			correspondances.forEach(correspondanceList::add);
+			
+			assertEquals(3, correspondanceList.size());
+			assertEquals("2023-05-02", correspondanceList.get(0).getDateUntil().toString());
+			assertEquals("e1eb3425-d257-4c5e-8600-b125731c458c", correspondanceList.get(1).getId().toString());
+			assertEquals("D011", correspondanceList.get(2).getDoctor().getId());
+		}
+		
+		@Test
+		public void testCorrespondanceDAOFindByPatientFileIdFound0() {
+			
+			List<Correspondance> correspondanceList = new ArrayList<>();
+			
+			Iterable<Correspondance> correspondances = correspondanceDAO.findByPatientFileId("P055");
+			
+			correspondances.forEach(correspondanceList::add);
+			
+			assertEquals(0, correspondanceList.size());
 		}
 }

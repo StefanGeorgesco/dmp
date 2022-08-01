@@ -102,7 +102,7 @@ public class PatientFileControllerIntegrationTest {
 	private PatientFile patientFile;
 
 	private long count;
-	
+
 	private UUID uuid;
 
 	@BeforeEach
@@ -449,14 +449,12 @@ public class PatientFileControllerIntegrationTest {
 				.content(objectMapper.writeValueAsString(correspondanceDTO))).andExpect(status().isCreated())
 				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
 				.andExpect(jsonPath("$.dateUntil", is(correspondanceDTO.getDateUntil().toString())))
-				.andExpect(jsonPath("$.doctorId", is("D002")))
-				.andExpect(jsonPath("$.doctorFirstName", is("Jean")))
+				.andExpect(jsonPath("$.doctorId", is("D002"))).andExpect(jsonPath("$.doctorFirstName", is("Jean")))
 				.andExpect(jsonPath("$.doctorLastName", is("Dupont")))
 				.andExpect(jsonPath("$.doctorSpecialties", hasSize(2)))
 				.andExpect(jsonPath("$.doctorSpecialties[0]", is("Specialty 1")))
 				.andExpect(jsonPath("$.doctorSpecialties[1]", is("Specialty 2")))
-				.andExpect(jsonPath("$.patientFileId", is("P001")))
-				.andExpect(jsonPath("$.id", hasLength(36)));
+				.andExpect(jsonPath("$.patientFileId", is("P001"))).andExpect(jsonPath("$.id", hasLength(36)));
 
 		assertEquals(count + 1, correspondanceDAO.count());
 	}
@@ -494,7 +492,7 @@ public class PatientFileControllerIntegrationTest {
 	public void testCreateCorrespondanceFailureCorrespondingDoctorIsReferringDoctor() throws Exception {
 
 		correspondanceDTO.setDoctorId("D001");
-		
+
 		count = correspondanceDAO.count();
 
 		mockMvc.perform(post("/patient-file/P001/correspondance").contentType(MediaType.APPLICATION_JSON)
@@ -535,11 +533,9 @@ public class PatientFileControllerIntegrationTest {
 		uuid = UUID.fromString("e1eb3425-d257-4c5e-8600-b125731c458c"); // P001 (referring D001), corresponding D007
 
 		assertTrue(correspondanceDAO.existsById(uuid));
-		
-		mockMvc.perform(delete("/patient-file/P001/correspondance/" + uuid.toString()))
-				.andExpect(status().isOk())
-				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
-				.andExpect(jsonPath("$.status", is(200)))
+
+		mockMvc.perform(delete("/patient-file/P001/correspondance/" + uuid.toString())).andExpect(status().isOk())
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON)).andExpect(jsonPath("$.status", is(200)))
 				.andExpect(jsonPath("$.message", is("correspondance was deleted")));
 
 		assertEquals(count - 1, correspondanceDAO.count());
@@ -555,10 +551,10 @@ public class PatientFileControllerIntegrationTest {
 		uuid = UUID.fromString("a376a45f-17d3-4b75-ad08-6b1da02616b6"); // P004 (referring D004), corresponding D002
 
 		assertTrue(correspondanceDAO.existsById(uuid));
-		
-		mockMvc.perform(delete("/patient-file/P004/correspondance/" + uuid.toString()).contentType(MediaType.APPLICATION_JSON)
-				.content(objectMapper.writeValueAsString(correspondanceDTO))).andExpect(status().isBadRequest())
-				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+
+		mockMvc.perform(delete("/patient-file/P004/correspondance/" + uuid.toString())
+				.contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(correspondanceDTO)))
+				.andExpect(status().isBadRequest()).andExpect(content().contentType(MediaType.APPLICATION_JSON))
 				.andExpect(jsonPath("$.message", is("user is not referring doctor")));
 
 		assertEquals(count, correspondanceDAO.count());
@@ -574,10 +570,10 @@ public class PatientFileControllerIntegrationTest {
 		uuid = UUID.fromString("a376a45f-17d3-4b75-ad08-6b1da02616b6"); // P004 (referring D004), corresponding D002
 
 		assertTrue(correspondanceDAO.existsById(uuid));
-		
-		mockMvc.perform(delete("/patient-file/P001/correspondance/" + uuid.toString()).contentType(MediaType.APPLICATION_JSON)
-				.content(objectMapper.writeValueAsString(correspondanceDTO))).andExpect(status().isNotFound())
-				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+
+		mockMvc.perform(delete("/patient-file/P001/correspondance/" + uuid.toString())
+				.contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(correspondanceDTO)))
+				.andExpect(status().isNotFound()).andExpect(content().contentType(MediaType.APPLICATION_JSON))
 				.andExpect(jsonPath("$.message", is("correspondance not found for patient file 'P001'")));
 
 		assertEquals(count, correspondanceDAO.count());
@@ -593,10 +589,10 @@ public class PatientFileControllerIntegrationTest {
 		uuid = UUID.fromString("e1eb3425-d257-4c5e-8600-b125731c458d"); // does not exist
 
 		assertFalse(correspondanceDAO.existsById(uuid));
-		
-		mockMvc.perform(delete("/patient-file/P001/correspondance/" + uuid.toString()).contentType(MediaType.APPLICATION_JSON)
-				.content(objectMapper.writeValueAsString(correspondanceDTO))).andExpect(status().isNotFound())
-				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+
+		mockMvc.perform(delete("/patient-file/P001/correspondance/" + uuid.toString())
+				.contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(correspondanceDTO)))
+				.andExpect(status().isNotFound()).andExpect(content().contentType(MediaType.APPLICATION_JSON))
 				.andExpect(jsonPath("$.message", is("correspondance not found")));
 
 		assertEquals(count, correspondanceDAO.count());
@@ -609,9 +605,10 @@ public class PatientFileControllerIntegrationTest {
 		uuid = UUID.fromString("e1eb3425-d257-4c5e-8600-b125731c458c"); // P001 (referring D001), corresponding D007
 
 		assertTrue(correspondanceDAO.existsById(uuid));
-		
-		mockMvc.perform(delete("/patient-file/P001/correspondance/" + uuid.toString())).andExpect(status().isForbidden());
-		
+
+		mockMvc.perform(delete("/patient-file/P001/correspondance/" + uuid.toString()))
+				.andExpect(status().isForbidden());
+
 		assertTrue(correspondanceDAO.existsById(uuid));
 	}
 
@@ -622,11 +619,12 @@ public class PatientFileControllerIntegrationTest {
 		uuid = UUID.fromString("e1eb3425-d257-4c5e-8600-b125731c458c"); // P001 (referring D001), corresponding D007
 
 		assertTrue(correspondanceDAO.existsById(uuid));
-		
-		mockMvc.perform(delete("/patient-file/P001/correspondance/" + uuid.toString())).andExpect(status().isForbidden());
+
+		mockMvc.perform(delete("/patient-file/P001/correspondance/" + uuid.toString()))
+				.andExpect(status().isForbidden());
 
 		assertTrue(correspondanceDAO.existsById(uuid));
-}
+	}
 
 	@Test
 	@WithAnonymousUser
@@ -636,9 +634,74 @@ public class PatientFileControllerIntegrationTest {
 
 		assertTrue(correspondanceDAO.existsById(uuid));
 
-		mockMvc.perform(delete("/patient-file/P001/correspondance/" + uuid.toString())).andExpect(status().isUnauthorized());
+		mockMvc.perform(delete("/patient-file/P001/correspondance/" + uuid.toString()))
+				.andExpect(status().isUnauthorized());
 
 		assertTrue(correspondanceDAO.existsById(uuid));
-}
+	}
+
+	@Test
+	@WithUserDetails("user") // "D001", ROLE_DOCTOR
+	public void testFindCorrespondancesByPatientFileIdSuccessUserIsReferringDoctor() throws Exception {
+
+		mockMvc.perform(get("/patient-file/P001/correspondance"))
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$", hasSize(3)))
+				.andExpect(jsonPath("$[0].id", is("5b17ffa7-81e2-43ac-9246-7cab5b2f0f6b")))
+				.andExpect(jsonPath("$[0].doctorId", is("D002")))
+				.andExpect(jsonPath("$[0].doctorFirstName", is("Jean")))
+				.andExpect(jsonPath("$[0].doctorLastName", is("Dupont")))
+				.andExpect(jsonPath("$[0].dateUntil", is("2023-05-02")));
+	}
+	
+	@Test
+	@WithUserDetails("user") // "D001", ROLE_DOCTOR
+	public void testFindCorrespondancesByPatientFileIdSuccessUserIsCorrespondingDoctor() throws Exception {
+		
+		mockMvc.perform(get("/patient-file/P006/correspondance"))
+		.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+		.andExpect(status().isOk())
+		.andExpect(jsonPath("$", hasSize(2)))
+		.andExpect(jsonPath("$[1].id", is("8ea37abc-052d-4bc3-9aa1-f9a47e366e11")))
+		.andExpect(jsonPath("$[1].doctorId", is("D001")))
+		.andExpect(jsonPath("$[1].doctorFirstName", is("John")))
+		.andExpect(jsonPath("$[1].doctorLastName", is("Smith")))
+		.andExpect(jsonPath("$[1].dateUntil", is("2027-05-07")));
+	}
+
+	@Test
+	@WithUserDetails("user") // "D001", ROLE_DOCTOR
+	public void testFindCorrespondancesByPatientFileIdReturns0UserIsNotReferringNorCorrespondingDoctor() throws Exception {
+		
+		mockMvc.perform(get("/patient-file/P004/correspondance"))
+		.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+		.andExpect(status().isNotFound())
+		.andExpect(jsonPath("$.message", is("user is not referring nor corresponding doctor")));
+	}
+
+	@Test
+	@WithUserDetails("eric") // ROLE_PATIENT
+	public void testFindCorrespondancesByPatientFileIdFailureBadRolePatient() throws Exception {
+
+		mockMvc.perform(get("/patient-file/P001/correspondance"))
+				.andExpect(status().isForbidden());
+	}
+
+	@Test
+	@WithUserDetails("admin") // ROLE_ADMIN
+	public void testFindCorrespondancesByPatientFileIdFailureBadRoleAdmin() throws Exception {
+
+		mockMvc.perform(get("/patient-file/P001/correspondance"))
+				.andExpect(status().isForbidden());
+	}
+
+	@Test
+	@WithAnonymousUser
+	public void testFindCorrespondancesByPatientFileIdFailureUnauthenticatedUser() throws Exception {
+
+		mockMvc.perform(get("/patient-file/P001/correspondance"))
+				.andExpect(status().isUnauthorized());
+	}
 
 }

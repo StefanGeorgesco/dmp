@@ -390,5 +390,24 @@ public class PatientFileServiceIntegrationTest {
 		
 		assertEquals("correspondance not found", ex.getMessage());
 	}
+	
+	@Test
+	public void testFindCorrespondancesByPatientFileIdFound3() {
+		
+		List<CorrespondanceDTO> correspondancesDTO = patientFileService.findCorrespondancesByPatientFileId("P001");
+		
+		assertEquals(3, correspondancesDTO.size());
+		assertEquals("2023-05-02", correspondancesDTO.get(0).getDateUntil().toString());
+		assertEquals("e1eb3425-d257-4c5e-8600-b125731c458c", correspondancesDTO.get(1).getId().toString());
+		assertEquals("D011", correspondancesDTO.get(2).getDoctorId());
+	}
+	
+	@Test
+	public void testFindCorrespondancesByPatientFileIdFound0() {
+
+		List<CorrespondanceDTO> correspondancesDTO = patientFileService.findCorrespondancesByPatientFileId("P055");
+		
+		assertEquals(0, correspondancesDTO.size());
+	}
 
 }

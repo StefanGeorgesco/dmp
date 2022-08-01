@@ -1,7 +1,5 @@
 package fr.cnam.stefangeorgesco.dmp.domain.service;
 
-
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -39,7 +37,7 @@ public class PatientFileService {
 
 	@Autowired
 	private DoctorDAO doctorDAO;
-	
+
 	@Autowired
 	private CorrespondanceDAO correspondanceDAO;
 
@@ -139,15 +137,14 @@ public class PatientFileService {
 	}
 
 	public List<PatientFileDTO> findPatientFilesByIdOrFirstnameOrLastname(String string) {
-		
+
 		if ("".equals(string)) {
 			return new ArrayList<PatientFileDTO>();
 		}
-		
+
 		Iterable<PatientFile> patientFiles = patientFileDAO.findByIdOrFirstnameOrLastname(string);
-		
-		List<PatientFileDTO> response = ((List<PatientFile>) patientFiles)
-				.stream()
+
+		List<PatientFileDTO> response = ((List<PatientFile>) patientFiles).stream()
 				.map(patientFile -> patientFileModelMapper.map(patientFile, PatientFileDTO.class))
 				.collect(Collectors.toList());
 
@@ -155,40 +152,51 @@ public class PatientFileService {
 	}
 
 	public CorrespondanceDTO createCorrespondance(CorrespondanceDTO correspondanceDTO) throws CreateException {
-		
+
 		Correspondance correspondance = commonModelMapper.map(correspondanceDTO, Correspondance.class);
-		
+
 		try {
 			correspondance = correspondanceDAO.save(correspondance);
 		} catch (Exception e) {
 			throw new CreateException("correspondance could not be created: " + e.getMessage());
 		}
-		
+
 		correspondance = correspondanceDAO.findById(correspondance.getId()).get();
-		
+
 		CorrespondanceDTO response = commonModelMapper.map(correspondance, CorrespondanceDTO.class);
 
 		return response;
 	}
 
 	public void deleteCorrespondance(UUID uuid) {
-		
+
 		correspondanceDAO.deleteById(uuid);
 	}
 
 	public CorrespondanceDTO findCorrespondance(String id) throws FinderException {
-		
+
 		Optional<Correspondance> optionalCorrespondance = correspondanceDAO.findById(UUID.fromString(id));
-				
+
 		if (optionalCorrespondance.isEmpty()) {
 			throw new FinderException("correspondance not found");
 		}
-		
+
 		Correspondance correspondance = optionalCorrespondance.get();
-		
+
 		CorrespondanceDTO response = commonModelMapper.map(correspondance, CorrespondanceDTO.class);
 
 		return response;
+	}
+
+	public List<CorrespondanceDTO> findCorrespondancesByPatientFileId(String patientFileId) {
+
+		Iterable<Correspondance> correspondances = correspondanceDAO.findByPatientFileId(patientFileId);
+
+		List<CorrespondanceDTO> correspondancesDTO = ((List<Correspondance>) correspondances).stream()
+				.map(correspondance -> commonModelMapper.map(correspondance, CorrespondanceDTO.class))
+				.collect(Collectors.toList());
+
+		return correspondancesDTO;
 	}
 
 }

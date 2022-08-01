@@ -3,6 +3,7 @@ package fr.cnam.stefangeorgesco.dmp.api;
 import java.security.Principal;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
@@ -105,7 +106,7 @@ public class PatientFileController {
 		if (!userDTO.getId().equals(patientFileDTO.getReferringDoctorId())) {
 			throw new CreateException("user is not referring doctor");
 		}
-		
+
 		if (userDTO.getId().equals(correspondanceDTO.getDoctorId())) {
 			throw new CreateException("trying to create correspondance for referring doctor");
 		}
@@ -132,8 +133,7 @@ public class PatientFileController {
 		CorrespondanceDTO correspondanceDTO = patientFileService.findCorrespondance(correspondanceId);
 
 		if (!correspondanceDTO.getPatientFileId().equals(patientFileDTO.getId())) {
-			throw new FinderException(
-					"correspondance not found for patient file '" + patientFileDTO.getId() + "'");
+			throw new FinderException("correspondance not found for patient file '" + patientFileDTO.getId() + "'");
 		}
 
 		patientFileService.deleteCorrespondance(UUID.fromString(correspondanceId));
@@ -141,6 +141,29 @@ public class PatientFileController {
 		RestResponse response = new RestResponse(HttpStatus.OK.value(), "correspondance was deleted");
 
 		return ResponseEntity.status(HttpStatus.OK).body(response);
+	}
+
+	@GetMapping("/patient-file/{id}/correspondance")
+	public ResponseEntity<List<CorrespondanceDTO>> findCorrespondancesByPatientFileId(@PathVariable String id,
+			Principal principal) throws FinderException {
+
+		String userId = userService.findUserByUsername(principal.getName()).getId();
+
+		String referringDoctorId = patientFileService.findPatientFile(id).getReferringDoctorId();
+
+		List<CorrespondanceDTO> correspondancesDTO = patientFileService.findCorrespondancesByPatientFileId(id);
+
+		boolean userIsReferringDoctor = userId.equals(referringDoctorId);
+
+		boolean userIsCorrespondingDoctor = correspondancesDTO.stream().map(CorrespondanceDTO::getDoctorId)
+				.collect(Collectors.toList()).contains(userId);
+		
+		if (!userIsReferringDoctor && !userIsCorrespondingDoctor) {
+			throw new FinderException("user is not referring nor corresponding doctor");
+		}
+
+		return ResponseEntity.ok(correspondancesDTO);
+
 	}
 
 }

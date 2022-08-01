@@ -12,4 +12,4 @@ insert into t_correspondance(id, date_until, doctor_id, patient_file_id) values(
 insert into t_correspondance(id, date_until, doctor_id, patient_file_id) values('1bd7028d-c850-4439-8cd3-8a38fb9365a2', '2024-02-07', 'D013', 'P013')
 insert into t_correspondance(id, date_until, doctor_id, patient_file_id) values('1e5670ac-3c72-4671-a22f-94a57ab72982', '2022-11-03', 'D004', 'P009')
 insert into t_correspondance(id, date_until, doctor_id, patient_file_id) values('7fd83511-1709-44b4-b60d-b100093402cb', '2025-12-12', 'D005', 'P008')
-insert into t_correspondance(id, date_until, doctor_id, patient_file_id) values('8ea37abc-052d-4bc3-9aa1-f9a47e366e11', '2027-05-07', 'D006', 'P006')
+insert into t_correspondance(id, date_until, doctor_id, patient_file_id) values('8ea37abc-052d-4bc3-9aa1-f9a47e366e11', '2027-05-07', 'D001', 'P006')

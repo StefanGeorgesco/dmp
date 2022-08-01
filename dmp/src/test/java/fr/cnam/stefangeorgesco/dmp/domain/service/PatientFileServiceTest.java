@@ -121,6 +121,12 @@ public class PatientFileServiceTest {
 
 	@Autowired
 	private Correspondance savedCorrespondance;
+	
+	@Autowired
+	private Correspondance foundCorrespondance1;
+	
+	@Autowired
+	private Correspondance foundCorrespondance2;
 
 	@Autowired
 	private BCryptPasswordEncoder bCryptPasswordEncoder;
@@ -190,6 +196,15 @@ public class PatientFileServiceTest {
 		persistentCorrespondance.setDateUntil(LocalDate.of(2022, 07, 29));
 		persistentCorrespondance.setDoctor(doctor2);
 		persistentCorrespondance.setPatientFile(patientFile1);
+		
+		foundCorrespondance1.setId(UUID.randomUUID());
+		foundCorrespondance1.setDateUntil(LocalDate.of(2022, 8, 01));
+		foundCorrespondance1.setDoctor(doctor1);
+		foundCorrespondance1.setPatientFile(patientFile1);
+		foundCorrespondance2.setId(UUID.randomUUID());
+		foundCorrespondance2.setDateUntil(LocalDate.of(2022, 9, 05));
+		foundCorrespondance2.setDoctor(doctor2);
+		foundCorrespondance2.setPatientFile(patientFile2);
 	}
 
 	@Test
@@ -533,6 +548,34 @@ public class PatientFileServiceTest {
 		verify(correspondanceDAO, times(1)).findById(uuid);
 
 		assertEquals("correspondance not found", ex.getMessage());
+	}
+	
+	@Test
+	public void testFindCorrespondancesByPatientFileIdFound3() {
+		
+		when(correspondanceDAO.findByPatientFileId("P001")).thenReturn(List.of(foundCorrespondance1, foundCorrespondance2));
+		
+		List<CorrespondanceDTO> correspondancesDTO = patientFileService.findCorrespondancesByPatientFileId("P001");
+		
+		verify(correspondanceDAO, times(1)).findByPatientFileId("P001");
+		
+		assertEquals(2, correspondancesDTO.size());
+		assertEquals(foundCorrespondance1.getId(), correspondancesDTO.get(0).getId());
+		assertEquals("2022-08-01", correspondancesDTO.get(0).getDateUntil().toString());
+		assertEquals("D001", correspondancesDTO.get(0).getDoctorId());
+		assertEquals("ID_1", correspondancesDTO.get(0).getPatientFileId());
+	}
+
+	@Test
+	public void testFindCorrespondancesByPatientFileIdFound0() {
+		
+		when(correspondanceDAO.findByPatientFileId("P055")).thenReturn(List.of());
+		
+		List<CorrespondanceDTO> correspondancesDTO = patientFileService.findCorrespondancesByPatientFileId("P055");
+		
+		verify(correspondanceDAO, times(1)).findByPatientFileId("P055");
+		
+		assertEquals(0, correspondancesDTO.size());
 	}
 
 }

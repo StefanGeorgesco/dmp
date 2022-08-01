@@ -8,4 +8,6 @@ import fr.cnam.stefangeorgesco.dmp.domain.model.Correspondance;
 
 public interface CorrespondanceDAO extends CrudRepository<Correspondance, UUID> {
 
+	Iterable<Correspondance> findByPatientFileId(String patientFileId);
+
 }
