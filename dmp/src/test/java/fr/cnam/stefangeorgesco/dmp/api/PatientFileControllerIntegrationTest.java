@@ -449,7 +449,13 @@ public class PatientFileControllerIntegrationTest {
 				.content(objectMapper.writeValueAsString(correspondanceDTO))).andExpect(status().isCreated())
 				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
 				.andExpect(jsonPath("$.dateUntil", is(correspondanceDTO.getDateUntil().toString())))
-				.andExpect(jsonPath("$.doctorId", is("D002"))).andExpect(jsonPath("$.patientFileId", is("P001")))
+				.andExpect(jsonPath("$.doctorId", is("D002")))
+				.andExpect(jsonPath("$.doctorFirstName", is("Jean")))
+				.andExpect(jsonPath("$.doctorLastName", is("Dupont")))
+				.andExpect(jsonPath("$.doctorSpecialties", hasSize(2)))
+				.andExpect(jsonPath("$.doctorSpecialties[0]", is("Specialty 1")))
+				.andExpect(jsonPath("$.doctorSpecialties[1]", is("Specialty 2")))
+				.andExpect(jsonPath("$.patientFileId", is("P001")))
 				.andExpect(jsonPath("$.id", hasLength(36)));
 
 		assertEquals(count + 1, correspondanceDAO.count());

@@ -11,6 +11,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.mockito.ArgumentCaptor;
 
@@ -40,6 +41,7 @@ import fr.cnam.stefangeorgesco.dmp.domain.model.Address;
 import fr.cnam.stefangeorgesco.dmp.domain.model.Correspondance;
 import fr.cnam.stefangeorgesco.dmp.domain.model.Doctor;
 import fr.cnam.stefangeorgesco.dmp.domain.model.PatientFile;
+import fr.cnam.stefangeorgesco.dmp.domain.model.Specialty;
 import fr.cnam.stefangeorgesco.dmp.exception.domain.CheckException;
 import fr.cnam.stefangeorgesco.dmp.exception.domain.DuplicateKeyException;
 import fr.cnam.stefangeorgesco.dmp.exception.domain.FinderException;
@@ -56,7 +58,7 @@ public class PatientFileServiceTest {
 
 	@MockBean
 	private DoctorDAO doctorDAO;
-	
+
 	@MockBean
 	private CorrespondanceDAO correspondanceDAO;
 
@@ -77,19 +79,28 @@ public class PatientFileServiceTest {
 
 	@Autowired
 	private PatientFileDTO patientFileDTOResponse;
-	
+
 	@Autowired
 	private CorrespondanceDTO correspondanceDTO;
 
 	@Autowired
 	private CorrespondanceDTO correspondanceDTOResponse;
-	
+
 	@Autowired
-	private Doctor doctor;
+	private Specialty specialty1;
+
+	@Autowired
+	private Specialty specialty2;
+
+	@Autowired
+	private Doctor doctor1;
+
+	@Autowired
+	private Doctor doctor2;
 
 	@Autowired
 	private Doctor newDoctor;
-	
+
 	@Autowired
 	private Address address;
 
@@ -98,16 +109,16 @@ public class PatientFileServiceTest {
 
 	@Autowired
 	private PatientFile savedPatientFile;
-	
+
 	@Autowired
 	private PatientFile patientFile1;
 
 	@Autowired
 	private PatientFile patientFile2;
-	
+
 	@Autowired
 	private Correspondance persistentCorrespondance;
-	
+
 	@Autowired
 	private Correspondance savedCorrespondance;
 
@@ -119,7 +130,7 @@ public class PatientFileServiceTest {
 	private ArgumentCaptor<Correspondance> correspondanceCaptor = ArgumentCaptor.forClass(Correspondance.class);
 
 	private UUID uuid;
-	
+
 	@BeforeEach
 	public void setup() {
 		addressDTO.setStreet1("1 Rue Lecourbe");
@@ -139,22 +150,30 @@ public class PatientFileServiceTest {
 		address.setZipcode("zipcode");
 		address.setCity("City");
 		address.setCountry("Country");
-		doctor.setId("D001");
+		specialty1.setId("S001");
+		specialty1.setDescription("Specialty 1");
+		specialty2.setId("S002");
+		specialty2.setDescription("Specialty 2");
+		doctor1.setId("D001");
+		doctor2.setId("D002");
+		doctor2.setFirstname("firstname");
+		doctor2.setLastname("lastname");
+		doctor2.setSpecialties(List.of(specialty1, specialty2));
 		persistentPatientFile.setId(patientFileDTO.getId());
 		persistentPatientFile.setFirstname("firstname");
 		persistentPatientFile.setLastname("lastname");
 		persistentPatientFile.setDateOfBirth(LocalDate.of(2000, 2, 13));
 		persistentPatientFile.setAddress(address);
 		persistentPatientFile.setSecurityCode("securityCode");
-		persistentPatientFile.setReferringDoctor(doctor);
-		
+		persistentPatientFile.setReferringDoctor(doctor1);
+
 		patientFile1.setId("ID_1");
 		patientFile1.setFirstname("firstname_1");
 		patientFile1.setLastname("lastname_1");
 		patientFile1.setDateOfBirth(LocalDate.of(2000, 2, 13));
 		patientFile1.setAddress(address);
 		patientFile1.setSecurityCode("securityCode_1");
-		patientFile1.setReferringDoctor(doctor);
+		patientFile1.setReferringDoctor(doctor1);
 
 		patientFile2.setId("ID_2");
 		patientFile2.setFirstname("firstname_2");
@@ -162,16 +181,16 @@ public class PatientFileServiceTest {
 		patientFile2.setDateOfBirth(LocalDate.of(1995, 8, 21));
 		patientFile2.setAddress(address);
 		patientFile2.setSecurityCode("securityCode_2");
-		patientFile2.setReferringDoctor(doctor);
-		
+		patientFile2.setReferringDoctor(doctor1);
+
 		correspondanceDTO.setDateUntil(LocalDate.now().plusDays(1));
 		correspondanceDTO.setDoctorId("D002");
-		correspondanceDTO.setPatientFileId("P002");
-		
+		correspondanceDTO.setPatientFileId("ID_1");
+
 		persistentCorrespondance.setDateUntil(LocalDate.of(2022, 07, 29));
-		persistentCorrespondance.setDoctor(doctor);
+		persistentCorrespondance.setDoctor(doctor2);
 		persistentCorrespondance.setPatientFile(patientFile1);
-}
+	}
 
 	@Test
 	public void testCreatePatientFileSuccess() throws CheckException {
@@ -198,7 +217,8 @@ public class PatientFileServiceTest {
 
 		assertNotNull(patientFileDTOResponse.getSecurityCode());
 		assertTrue(patientFileDTOResponse.getSecurityCode().length() >= 10);
-		assertTrue(bCryptPasswordEncoder.matches(patientFileDTOResponse.getSecurityCode(), savedPatientFile.getSecurityCode()));
+		assertTrue(bCryptPasswordEncoder.matches(patientFileDTOResponse.getSecurityCode(),
+				savedPatientFile.getSecurityCode()));
 	}
 
 	@Test
@@ -300,11 +320,11 @@ public class PatientFileServiceTest {
 
 	@Test
 	public void testUpdateReferringDoctorSuccess() {
-		
+
 		patientFileDTO.setReferringDoctorId("D002");
 		newDoctor.setId("D002");
 		assertEquals("D001", persistentPatientFile.getReferringDoctor().getId());
-		
+
 		when(patientFileDAO.findById(patientFileDTO.getId())).thenReturn(Optional.of(persistentPatientFile));
 		when(doctorDAO.findById(patientFileDTO.getReferringDoctorId())).thenReturn(Optional.of(newDoctor));
 		when(patientFileDAO.save(patientFileCaptor.capture())).thenAnswer(invocation -> invocation.getArguments()[0]);
@@ -338,11 +358,14 @@ public class PatientFileServiceTest {
 		assertEquals(persistentPatientFile.getId(), patientFileDTOResponse.getId());
 		assertEquals(persistentPatientFile.getPhone(), patientFileDTOResponse.getPhone());
 		assertEquals(persistentPatientFile.getEmail(), patientFileDTOResponse.getEmail());
-		assertEquals(persistentPatientFile.getAddress().getStreet1(), patientFileDTOResponse.getAddressDTO().getStreet1());
-		assertEquals(persistentPatientFile.getAddress().getZipcode(), patientFileDTOResponse.getAddressDTO().getZipcode());
+		assertEquals(persistentPatientFile.getAddress().getStreet1(),
+				patientFileDTOResponse.getAddressDTO().getStreet1());
+		assertEquals(persistentPatientFile.getAddress().getZipcode(),
+				patientFileDTOResponse.getAddressDTO().getZipcode());
 		assertEquals(persistentPatientFile.getAddress().getCity(), patientFileDTOResponse.getAddressDTO().getCity());
-		assertEquals(persistentPatientFile.getAddress().getCountry(), patientFileDTOResponse.getAddressDTO().getCountry());
-		
+		assertEquals(persistentPatientFile.getAddress().getCountry(),
+				patientFileDTOResponse.getAddressDTO().getCountry());
+
 		// updated - compared to captured saved object
 		assertEquals(patientFileDTO.getReferringDoctorId(), savedPatientFile.getReferringDoctor().getId());
 		assertNotEquals("D001", savedPatientFile.getReferringDoctor().getId());
@@ -351,51 +374,53 @@ public class PatientFileServiceTest {
 		assertEquals(patientFileDTO.getReferringDoctorId(), patientFileDTOResponse.getReferringDoctorId());
 		assertNotEquals("D001", patientFileDTOResponse.getReferringDoctorId());
 	}
-	
+
 	@Test
 	public void testUpdateReferringDoctorFailurePatientFileDoesNotExist() {
 		patientFileDTO.setReferringDoctorId("D002");
-		
+
 		when(patientFileDAO.findById(patientFileDTO.getId())).thenReturn(Optional.ofNullable(null));
-		
-		FinderException ex = assertThrows(FinderException.class, () -> patientFileService.updateReferringDoctor(patientFileDTO));
-		
+
+		FinderException ex = assertThrows(FinderException.class,
+				() -> patientFileService.updateReferringDoctor(patientFileDTO));
+
 		verify(patientFileDAO, times(1)).findById(patientFileDTO.getId());
 		verify(doctorDAO, times(0)).findById(patientFileDTO.getReferringDoctorId());
 		verify(patientFileDAO, times(0)).save(any(PatientFile.class));
-		
+
 		assertEquals("patient file not found", ex.getMessage());
 	}
 
 	@Test
 	public void testUpdateReferringDoctorFailureNewDoctorDoesNotExist() {
 		patientFileDTO.setReferringDoctorId("D002");
-		
+
 		when(patientFileDAO.findById(patientFileDTO.getId())).thenReturn(Optional.ofNullable(persistentPatientFile));
 		when(doctorDAO.findById(patientFileDTO.getReferringDoctorId())).thenReturn(Optional.ofNullable(null));
-		
-		FinderException ex = assertThrows(FinderException.class, () -> patientFileService.updateReferringDoctor(patientFileDTO));
-		
+
+		FinderException ex = assertThrows(FinderException.class,
+				() -> patientFileService.updateReferringDoctor(patientFileDTO));
+
 		verify(patientFileDAO, times(1)).findById(patientFileDTO.getId());
 		verify(doctorDAO, times(1)).findById(patientFileDTO.getReferringDoctorId());
 		verify(patientFileDAO, times(0)).save(any(PatientFile.class));
-		
+
 		assertEquals("doctor not found", ex.getMessage());
 	}
-	
+
 	@Test
 	public void testFindPatientFileByIdOrFirstnameOrLastnameFound2() {
 		when(patientFileDAO.findByIdOrFirstnameOrLastname("la")).thenReturn(List.of(patientFile1, patientFile2));
-		
+
 		List<PatientFileDTO> patientFilesDTO = patientFileService.findPatientFilesByIdOrFirstnameOrLastname("la");
-		
+
 		verify(patientFileDAO, times(1)).findByIdOrFirstnameOrLastname("la");
-		
+
 		assertEquals(2, patientFilesDTO.size());
-		
+
 		patientFileDTO1 = patientFilesDTO.get(0);
 		patientFileDTO2 = patientFilesDTO.get(1);
-		
+
 		assertEquals("ID_1", patientFileDTO1.getId());
 		assertEquals("2000-02-13", patientFileDTO1.getDateOfBirth().toString());
 		assertEquals("zipcode", patientFileDTO1.getAddressDTO().getZipcode());
@@ -409,60 +434,75 @@ public class PatientFileServiceTest {
 	@Test
 	public void testFindPatientFileByIdOrFirstnameOrLastnameFound0() {
 		when(patientFileDAO.findByIdOrFirstnameOrLastname("za")).thenReturn(List.of());
-		
+
 		List<PatientFileDTO> patientFilesDTO = patientFileService.findPatientFilesByIdOrFirstnameOrLastname("za");
-		
+
 		verify(patientFileDAO, times(1)).findByIdOrFirstnameOrLastname("za");
-		
+
 		assertEquals(0, patientFilesDTO.size());
 	}
 
 	@Test
 	public void testFindPatientFileByIdOrFirstnameOrLastnameFound0SearchStringIsBlank() {
 		when(patientFileDAO.findByIdOrFirstnameOrLastname("")).thenReturn(List.of());
-		
+
 		List<PatientFileDTO> patientFilesDTO = patientFileService.findPatientFilesByIdOrFirstnameOrLastname("");
-		
+
 		verify(patientFileDAO, times(0)).findByIdOrFirstnameOrLastname("");
-		
+
 		assertEquals(0, patientFilesDTO.size());
 	}
-	
+
 	@Test
 	public void testCreateCorrespondanceSuccess() {
-		when(correspondanceDAO.save(correspondanceCaptor.capture())).thenAnswer(invocation -> invocation.getArguments()[0]);
-		
-		correspondanceDTOResponse = assertDoesNotThrow(() -> patientFileService.createCorrespondance(correspondanceDTO));
-		
+		uuid = UUID.randomUUID();
+
+		persistentCorrespondance.setId(uuid);
+		persistentCorrespondance.setDateUntil(correspondanceDTO.getDateUntil());
+
+		when(correspondanceDAO.save(correspondanceCaptor.capture())).thenReturn(persistentCorrespondance);
+		when(correspondanceDAO.findById(any(UUID.class))).thenReturn(Optional.of(persistentCorrespondance));
+
+		correspondanceDTOResponse = assertDoesNotThrow(
+				() -> patientFileService.createCorrespondance(correspondanceDTO));
+
 		verify(correspondanceDAO, times(1)).save(any(Correspondance.class));
-		
+
 		savedCorrespondance = correspondanceCaptor.getValue();
-		
+
 		assertEquals(correspondanceDTO.getDateUntil(), savedCorrespondance.getDateUntil());
 		assertEquals(correspondanceDTO.getDoctorId(), savedCorrespondance.getDoctor().getId());
 		assertEquals(correspondanceDTO.getPatientFileId(), savedCorrespondance.getPatientFile().getId());
-		
+
 		assertEquals(correspondanceDTO.getDateUntil(), correspondanceDTOResponse.getDateUntil());
 		assertEquals(correspondanceDTO.getDoctorId(), correspondanceDTOResponse.getDoctorId());
 		assertEquals(correspondanceDTO.getPatientFileId(), correspondanceDTOResponse.getPatientFileId());
+		assertEquals(persistentCorrespondance.getDoctor().getId(), correspondanceDTOResponse.getDoctorId());
+		assertEquals(persistentCorrespondance.getDoctor().getFirstname(),
+				correspondanceDTOResponse.getDoctorFirstName());
+		assertEquals(persistentCorrespondance.getDoctor().getLastname(), correspondanceDTOResponse.getDoctorLastName());
+		assertEquals(persistentCorrespondance.getDoctor().getSpecialties().stream().map(Specialty::getDescription)
+				.collect(Collectors.toList()), correspondanceDTOResponse.getDoctorSpecialties());
 	}
-	
+
 	@Test
 	public void testDeleteCorrespondanceSuccess() {
-		
+
 		uuid = UUID.randomUUID();
-		
+
 		doNothing().when(correspondanceDAO).deleteById(uuid);
-		
+
 		patientFileService.deleteCorrespondance(uuid);
-		
+
 		verify(correspondanceDAO, times(1)).deleteById(uuid);
 	}
-	
+
 	@Test
 	public void testFindCorrespondanceSuccess() {
 		uuid = UUID.randomUUID();
-		
+
+		persistentCorrespondance.setId(uuid);
+
 		when(correspondanceDAO.findById(uuid)).thenReturn(Optional.of(persistentCorrespondance));
 
 		correspondanceDTOResponse = assertDoesNotThrow(() -> patientFileService.findCorrespondance(uuid.toString()));
@@ -473,15 +513,22 @@ public class PatientFileServiceTest {
 		assertEquals(persistentCorrespondance.getDateUntil(), correspondanceDTOResponse.getDateUntil());
 		assertEquals(persistentCorrespondance.getDoctor().getId(), correspondanceDTOResponse.getDoctorId());
 		assertEquals(persistentCorrespondance.getPatientFile().getId(), correspondanceDTOResponse.getPatientFileId());
+		assertEquals(persistentCorrespondance.getDoctor().getId(), correspondanceDTOResponse.getDoctorId());
+		assertEquals(persistentCorrespondance.getDoctor().getFirstname(),
+				correspondanceDTOResponse.getDoctorFirstName());
+		assertEquals(persistentCorrespondance.getDoctor().getLastname(), correspondanceDTOResponse.getDoctorLastName());
+		assertEquals(persistentCorrespondance.getDoctor().getSpecialties().stream().map(Specialty::getDescription)
+				.collect(Collectors.toList()), correspondanceDTOResponse.getDoctorSpecialties());
 	}
 
 	@Test
 	public void testFindCorrespondanceFailureCorrespondanceDoesNotExist() throws FinderException {
 		uuid = UUID.randomUUID();
-		
+
 		when(correspondanceDAO.findById(uuid)).thenReturn(Optional.ofNullable(null));
 
-		FinderException ex = assertThrows(FinderException.class, () -> patientFileService.findCorrespondance(uuid.toString()));
+		FinderException ex = assertThrows(FinderException.class,
+				() -> patientFileService.findCorrespondance(uuid.toString()));
 
 		verify(correspondanceDAO, times(1)).findById(uuid);
 

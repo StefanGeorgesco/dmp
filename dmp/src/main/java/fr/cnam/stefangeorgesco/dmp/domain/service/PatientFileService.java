@@ -164,9 +164,11 @@ public class PatientFileService {
 			throw new CreateException("correspondance could not be created: " + e.getMessage());
 		}
 		
-		correspondanceDTO.setId(correspondance.getId());
+		correspondance = correspondanceDAO.findById(correspondance.getId()).get();
+		
+		CorrespondanceDTO response = commonModelMapper.map(correspondance, CorrespondanceDTO.class);
 
-		return correspondanceDTO;
+		return response;
 	}
 
 	public void deleteCorrespondance(UUID uuid) {

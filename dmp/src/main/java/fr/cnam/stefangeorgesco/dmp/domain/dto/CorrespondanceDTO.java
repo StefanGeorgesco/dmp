@@ -1,6 +1,7 @@
 package fr.cnam.stefangeorgesco.dmp.domain.dto;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 
 import javax.validation.constraints.Future;
@@ -21,8 +22,14 @@ public class CorrespondanceDTO {
 	private LocalDate dateUntil;
 
 	@NotBlank(message = "doctor is mandatory")
-	String doctorId;
+	private String doctorId;
+	
+	private String doctorFirstName;
 
-	String patientFileId;
+	private String doctorLastName;
+	
+	private List<String> doctorSpecialties;
+
+	private String patientFileId;
 
 }

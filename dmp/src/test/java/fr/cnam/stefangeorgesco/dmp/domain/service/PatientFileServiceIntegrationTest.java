@@ -12,6 +12,7 @@ import static org.mockito.Mockito.doNothing;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -23,6 +24,7 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlGroup;
 
 import fr.cnam.stefangeorgesco.dmp.domain.dao.CorrespondanceDAO;
+import fr.cnam.stefangeorgesco.dmp.domain.dao.DoctorDAO;
 import fr.cnam.stefangeorgesco.dmp.domain.dao.PatientFileDAO;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.AddressDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.CorrespondanceDTO;
@@ -30,6 +32,7 @@ import fr.cnam.stefangeorgesco.dmp.domain.dto.PatientFileDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.model.Address;
 import fr.cnam.stefangeorgesco.dmp.domain.model.Doctor;
 import fr.cnam.stefangeorgesco.dmp.domain.model.PatientFile;
+import fr.cnam.stefangeorgesco.dmp.domain.model.Specialty;
 import fr.cnam.stefangeorgesco.dmp.exception.domain.CheckException;
 import fr.cnam.stefangeorgesco.dmp.exception.domain.CreateException;
 import fr.cnam.stefangeorgesco.dmp.exception.domain.DuplicateKeyException;
@@ -51,6 +54,9 @@ public class PatientFileServiceIntegrationTest {
 
 	@Autowired
 	private CorrespondanceDAO correspondanceDAO;
+	
+	@Autowired
+	private DoctorDAO doctorDAO;
 
 	@Autowired
 	private PatientFileService patientFileService;
@@ -293,6 +299,8 @@ public class PatientFileServiceIntegrationTest {
 		count = correspondanceDAO.count();
 
 		assertNull(correspondanceDTO.getId());
+		
+		doctor = doctorDAO.findById(correspondanceDTO.getDoctorId()).get();
 
 		correspondanceDTOResponse = assertDoesNotThrow(
 				() -> patientFileService.createCorrespondance(correspondanceDTO));
@@ -302,6 +310,9 @@ public class PatientFileServiceIntegrationTest {
 		assertEquals(correspondanceDTO.getDateUntil(), correspondanceDTOResponse.getDateUntil());
 		assertEquals(correspondanceDTO.getDoctorId(), correspondanceDTOResponse.getDoctorId());
 		assertEquals(correspondanceDTO.getPatientFileId(), correspondanceDTOResponse.getPatientFileId());
+		assertEquals(doctor.getFirstname(), correspondanceDTOResponse.getDoctorFirstName());
+		assertEquals(doctor.getLastname(), correspondanceDTOResponse.getDoctorLastName());
+		assertEquals(doctor.getSpecialties().stream().map(Specialty::getDescription).collect(Collectors.toList()), correspondanceDTOResponse.getDoctorSpecialties());
 
 		assertNotNull(correspondanceDTOResponse.getId());
 	}
@@ -362,6 +373,10 @@ public class PatientFileServiceIntegrationTest {
 		CorrespondanceDTO correspondanceDTO = assertDoesNotThrow(() -> patientFileService.findCorrespondance(uuid.toString()));
 		
 		assertEquals("2023-08-14", correspondanceDTO.getDateUntil().toString());
+		assertEquals("P004", correspondanceDTO.getPatientFileId());
+		assertEquals("Melquisedeque", correspondanceDTO.getDoctorFirstName());
+		assertEquals("Nascimento", correspondanceDTO.getDoctorLastName());
+		assertEquals(List.of("Specialty 2"), correspondanceDTO.getDoctorSpecialties());
 	}
 	
 	@Test

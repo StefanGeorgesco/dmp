@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -126,7 +127,7 @@ public class ModelMapperTest {
 
 	@Autowired
 	private ModelMapper commonModelMapper;
-	
+
 	@Autowired
 	private ModelMapper userModelMapper;
 
@@ -135,7 +136,7 @@ public class ModelMapperTest {
 
 	@Autowired
 	private ModelMapper patientFileModelMapper;
-
+	
 	@Autowired
 	private ModelMapper diagnosisModelMapper;
 
@@ -162,7 +163,7 @@ public class ModelMapperTest {
 		assertEquals(userDTO.getRole(), user.getRole());
 		assertEquals(userDTO.getSecurityCode(), user.getSecurityCode());
 	}
-	
+
 	@Test
 	public void testModelMapperUser2UserDTO() {
 		user.setId("userId");
@@ -352,7 +353,16 @@ public class ModelMapperTest {
 
 	@Test
 	public void testModelMapperCorrespondance2CorrespondanceDTO() {
+		specialty1.setId("S001");
+		specialty1.setDescription("Specialty 1");
+		specialty2.setId("S002");
+		specialty2.setDescription("Specialty 2");
+		specialties.add(specialty1);
+		specialties.add(specialty2);
 		doctor1.setId("D001");
+		doctor1.setFirstname("firstname");
+		doctor1.setLastname("lastname");
+		doctor1.setSpecialties(specialties);
 		patientFile.setId("P001");
 		correspondance.setId(UUID.randomUUID());
 		correspondance.setDateUntil(LocalDate.of(2022, 7, 21));
@@ -363,8 +373,15 @@ public class ModelMapperTest {
 
 		assertEquals(correspondance.getId(), correspondanceDTO.getId());
 		assertEquals(correspondance.getDateUntil(), correspondanceDTO.getDateUntil());
-		assertEquals(correspondance.getDoctor().getId(), correspondanceDTO.getDoctorId());
 		assertEquals(correspondance.getPatientFile().getId(), correspondanceDTO.getPatientFileId());
+		assertEquals(correspondance.getDoctor().getId(), correspondanceDTO.getDoctorId());
+		assertEquals(correspondance.getDoctor().getFirstname(), correspondanceDTO.getDoctorFirstName());
+		assertEquals(correspondance.getDoctor().getLastname(), correspondanceDTO.getDoctorLastName());
+		assertEquals(correspondance.getDoctor().getSpecialties().size(),
+				correspondanceDTO.getDoctorSpecialties().size());
+
+		List<String> specialtiesFromCorrespondance = correspondance.getDoctor().getSpecialties().stream().map(Specialty::getDescription).collect(Collectors.toList());
+		assertEquals(specialtiesFromCorrespondance, correspondanceDTO.getDoctorSpecialties());
 	}
 
 	@Test

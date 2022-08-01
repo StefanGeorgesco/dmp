@@ -19,5 +19,10 @@ public class Specialty {
 	
 	@NotBlank(message = "description is mandatory")
 	private String description;
+	
+	@Override
+	public String toString() {
+		return this.description;
+	}
 
 }
