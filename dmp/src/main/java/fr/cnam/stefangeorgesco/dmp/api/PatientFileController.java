@@ -22,7 +22,9 @@ import org.springframework.web.bind.annotation.RestController;
 import fr.cnam.stefangeorgesco.dmp.authentication.domain.dto.UserDTO;
 import fr.cnam.stefangeorgesco.dmp.authentication.domain.service.UserService;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.CorrespondanceDTO;
+import fr.cnam.stefangeorgesco.dmp.domain.dto.DiseaseDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.DoctorDTO;
+import fr.cnam.stefangeorgesco.dmp.domain.dto.MedicalActDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.PatientFileDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.service.PatientFileService;
 import fr.cnam.stefangeorgesco.dmp.exception.domain.ApplicationException;
@@ -172,6 +174,30 @@ public class PatientFileController {
 		String userId = userService.findUserByUsername(principal.getName()).getId();
 		
 		return ResponseEntity.ok(patientFileService.findCorrespondancesByPatientFileId(userId));
+	}
+
+	@GetMapping("/disease/{id}")
+	public ResponseEntity<DiseaseDTO> getDisease(@PathVariable String id) throws FinderException {
+		
+		return ResponseEntity.ok(patientFileService.findDisease(id));
+	}
+
+	@GetMapping("/disease")
+	public ResponseEntity<List<DiseaseDTO>> getDiseases(@RequestParam String q, @RequestParam(required = false, defaultValue = "30") int limit) throws FinderException {
+		
+		return ResponseEntity.ok(patientFileService.findDiseasesByIdOrDescription(q, limit));
+	}
+
+	@GetMapping("/medical-act/{id}")
+	public ResponseEntity<MedicalActDTO> getMedicalAct(@PathVariable String id) throws FinderException {
+		
+		return ResponseEntity.ok(patientFileService.findMedicalAct(id));
+	}
+
+	@GetMapping("/medical-act")
+	public ResponseEntity<List<MedicalActDTO>> getMedicalActs(@RequestParam String q, @RequestParam(required = false, defaultValue = "30") int limit) throws FinderException {
+		
+		return ResponseEntity.ok(patientFileService.findMedicalActsByIdOrDescription(q, limit));
 	}
 
 }

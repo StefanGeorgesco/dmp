@@ -32,14 +32,20 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.context.TestPropertySource;
 
 import fr.cnam.stefangeorgesco.dmp.domain.dao.CorrespondanceDAO;
+import fr.cnam.stefangeorgesco.dmp.domain.dao.DiseaseDAO;
 import fr.cnam.stefangeorgesco.dmp.domain.dao.DoctorDAO;
+import fr.cnam.stefangeorgesco.dmp.domain.dao.MedicalActDAO;
 import fr.cnam.stefangeorgesco.dmp.domain.dao.PatientFileDAO;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.AddressDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.CorrespondanceDTO;
+import fr.cnam.stefangeorgesco.dmp.domain.dto.DiseaseDTO;
+import fr.cnam.stefangeorgesco.dmp.domain.dto.MedicalActDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.PatientFileDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.model.Address;
 import fr.cnam.stefangeorgesco.dmp.domain.model.Correspondance;
+import fr.cnam.stefangeorgesco.dmp.domain.model.Disease;
 import fr.cnam.stefangeorgesco.dmp.domain.model.Doctor;
+import fr.cnam.stefangeorgesco.dmp.domain.model.MedicalAct;
 import fr.cnam.stefangeorgesco.dmp.domain.model.PatientFile;
 import fr.cnam.stefangeorgesco.dmp.domain.model.Specialty;
 import fr.cnam.stefangeorgesco.dmp.exception.domain.CheckException;
@@ -61,6 +67,12 @@ public class PatientFileServiceTest {
 
 	@MockBean
 	private CorrespondanceDAO correspondanceDAO;
+	
+	@MockBean
+	private DiseaseDAO diseaseDAO;
+	
+	@MockBean
+	private MedicalActDAO medicalActDAO;
 
 	@Autowired
 	private PatientFileService patientFileService;
@@ -82,6 +94,12 @@ public class PatientFileServiceTest {
 
 	@Autowired
 	private CorrespondanceDTO correspondanceDTO;
+	
+	@Autowired
+	private DiseaseDTO diseaseDTO;
+	
+	@Autowired
+	private MedicalActDTO medicalActDTO;
 
 	@Autowired
 	private CorrespondanceDTO correspondanceDTOResponse;
@@ -91,6 +109,18 @@ public class PatientFileServiceTest {
 
 	@Autowired
 	private Specialty specialty2;
+	
+	@Autowired
+	private Disease disease1;
+
+	@Autowired
+	private Disease disease2;
+	
+	@Autowired
+	private MedicalAct medicalAct1;
+
+	@Autowired
+	private MedicalAct medicalAct2;
 
 	@Autowired
 	private Doctor doctor1;
@@ -160,6 +190,14 @@ public class PatientFileServiceTest {
 		specialty1.setDescription("Specialty 1");
 		specialty2.setId("S002");
 		specialty2.setDescription("Specialty 2");
+		disease1.setId("DIS001");
+		disease1.setDescription("Disease 1");
+		disease2.setId("DIS002");
+		disease2.setDescription("Disease 2");
+		medicalAct1.setId("MA001");
+		medicalAct1.setDescription("Medical act 1");
+		medicalAct2.setId("MA002");
+		medicalAct2.setDescription("Medical act 2");
 		doctor1.setId("D001");
 		doctor2.setId("D002");
 		doctor2.setFirstname("firstname");
@@ -192,7 +230,7 @@ public class PatientFileServiceTest {
 		correspondanceDTO.setDateUntil(LocalDate.now().plusDays(1));
 		correspondanceDTO.setDoctorId("D002");
 		correspondanceDTO.setPatientFileId("ID_1");
-
+		
 		persistentCorrespondance.setDateUntil(LocalDate.of(2022, 07, 29));
 		persistentCorrespondance.setDoctor(doctor2);
 		persistentCorrespondance.setPatientFile(patientFile1);
@@ -576,6 +614,60 @@ public class PatientFileServiceTest {
 		verify(correspondanceDAO, times(1)).findByPatientFileId("P055");
 		
 		assertEquals(0, correspondancesDTO.size());
+	}
+
+	@Test
+	public void testFindDiseaseSuccess() {
+		
+		when(diseaseDAO.findById(disease1.getId())).thenReturn(Optional.of(disease1));
+		
+		diseaseDTO = assertDoesNotThrow(() -> patientFileService.findDisease(disease1.getId()));
+		
+		verify(diseaseDAO, times(1)).findById(disease1.getId());
+		
+		assertEquals(disease1.getId(), diseaseDTO.getId());
+		assertEquals(disease1.getDescription(), diseaseDTO.getDescription());
+	}
+	
+	@Test
+	public void testFindMedicalActSuccess() {
+		
+		when(medicalActDAO.findById(medicalAct1.getId())).thenReturn(Optional.of(medicalAct1));
+		
+		medicalActDTO = assertDoesNotThrow(() -> patientFileService.findMedicalAct(medicalAct1.getId()));
+		
+		verify(medicalActDAO, times(1)).findById(medicalAct1.getId());
+		
+		assertEquals(medicalAct1.getId(), medicalActDTO.getId());
+		assertEquals(medicalAct1.getDescription(), medicalActDTO.getDescription());
+	}
+	
+	@Test
+	void testFindDiseasesByIdOrDescriptionFound2() {
+		
+		when(diseaseDAO.findByIdOrDescription("sinusite", 10)).thenReturn(List.of(disease1, disease2));
+		
+		List<DiseaseDTO> diseasesDTO = patientFileService.findDiseasesByIdOrDescription("sinusite", 10);
+		
+		verify(diseaseDAO, times(1)).findByIdOrDescription("sinusite", 10);
+		
+		assertEquals(2, diseasesDTO.size());
+		assertEquals("DIS001", diseasesDTO.get(0).getId());
+		assertEquals("Disease 1", diseasesDTO.get(0).getDescription());
+	}
+
+	@Test
+	void testFindMedicalActsByIdOrDescriptionFound2() {
+		
+		when(medicalActDAO.findByIdOrDescription("radio", 10)).thenReturn(List.of(medicalAct1, medicalAct2));
+		
+		List<MedicalActDTO> medicalActsDTO = patientFileService.findMedicalActsByIdOrDescription("radio", 10);
+		
+		verify(medicalActDAO, times(1)).findByIdOrDescription("radio", 10);
+		
+		assertEquals(2, medicalActsDTO.size());
+		assertEquals("MA001", medicalActsDTO.get(0).getId());
+		assertEquals("Medical act 1", medicalActsDTO.get(0).getDescription());
 	}
 
 }

@@ -37,6 +37,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import fr.cnam.stefangeorgesco.dmp.domain.dao.CorrespondanceDAO;
+import fr.cnam.stefangeorgesco.dmp.domain.dao.DiseaseDAO;
+import fr.cnam.stefangeorgesco.dmp.domain.dao.MedicalActDAO;
 import fr.cnam.stefangeorgesco.dmp.domain.dao.PatientFileDAO;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.AddressDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.CorrespondanceDTO;
@@ -51,14 +53,18 @@ import fr.cnam.stefangeorgesco.dmp.domain.service.RNIPPService;
 @TestPropertySource("/application-test.properties")
 @AutoConfigureMockMvc
 @SpringBootTest
-@SqlGroup({ @Sql(scripts = "/sql/create-users.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
-		@Sql(scripts = "/sql/create-specialties.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
-		@Sql(scripts = "/sql/create-files.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
-		@Sql(scripts = "/sql/create-correspondances.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
-		@Sql(scripts = "/sql/delete-users.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD),
-		@Sql(scripts = "/sql/delete-correspondances.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD),
-		@Sql(scripts = "/sql/delete-files.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD),
-		@Sql(scripts = "/sql/delete-specialties.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD) })
+@SqlGroup({ @Sql(scripts = "/sql/create-specialties.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
+	@Sql(scripts = "/sql/create-files.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
+	@Sql(scripts = "/sql/create-correspondances.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
+	@Sql(scripts = "/sql/create-diseases.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
+	@Sql(scripts = "/sql/create-medical-acts.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
+	@Sql(scripts = "/sql/delete-diseases.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD),
+	@Sql(scripts = "/sql/delete-medical-acts.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD),
+	@Sql(scripts = "/sql/delete-correspondances.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD),
+	@Sql(scripts = "/sql/delete-files.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD),
+	@Sql(scripts = "/sql/delete-specialties.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD),
+	@Sql(scripts = "/sql/create-users.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
+	@Sql(scripts = "/sql/delete-users.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD) })
 public class PatientFileControllerIntegrationTest {
 
 	@Autowired
@@ -75,6 +81,12 @@ public class PatientFileControllerIntegrationTest {
 
 	@Autowired
 	private CorrespondanceDAO correspondanceDAO;
+
+	@Autowired
+	private DiseaseDAO diseaseDAO;
+
+	@Autowired
+	private MedicalActDAO medicalActDAO;
 
 	@Autowired
 	private AddressDTO patientAddressDTO;
@@ -734,6 +746,238 @@ public class PatientFileControllerIntegrationTest {
 	public void testFindPatientCorrespondancesFailureUnauthenticatedUser() throws Exception {
 
 		mockMvc.perform(get("/patient-file/details/correspondance")).andExpect(status().isUnauthorized());
+	}
+
+	@Test
+	@WithUserDetails("user") // ROLE_DOCTOR
+	public void testGetDiseaseByIdSuccessUserIsDoctor() throws Exception {
+
+		assertTrue(diseaseDAO.existsById("J01"));
+
+		mockMvc.perform(get("/disease/J01")).andExpect(status().isOk())
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON)).andExpect(jsonPath("$.id", is("J01")))
+				.andExpect(jsonPath("$.description", is("Sinusite aiguë")));
+	}
+
+	@Test
+	@WithUserDetails("user") // ROLE_DOCTOR
+	public void testGetDiseaseByIdFailureUserIsDoctorDiseaseDoesNotExist() throws Exception {
+
+		assertFalse(diseaseDAO.existsById("J000"));
+
+		mockMvc.perform(get("/disease/J000")).andExpect(status().isNotFound())
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+				.andExpect(jsonPath("$.message", is("disease not found")));
+	}
+
+	@Test
+	@WithUserDetails("admin") // ROLE_ADMIN
+	public void testGetDiseaseByIdFailureUserIsAdmin() throws Exception {
+
+		assertTrue(diseaseDAO.existsById("J01"));
+
+		mockMvc.perform(get("/disease/J01")).andExpect(status().isForbidden());
+	}
+
+	@Test
+	@WithUserDetails("eric") // ROLE_PATIENT
+	public void testGetDiseaseByIdFailureUserIsPatient() throws Exception {
+
+		assertTrue(diseaseDAO.existsById("J01"));
+
+		mockMvc.perform(get("/disease/J01")).andExpect(status().isForbidden());
+	}
+
+	@Test
+	@WithAnonymousUser
+	public void testGetDiseaseByIdFailureUnauthenticatedUser() throws Exception {
+
+		assertTrue(diseaseDAO.existsById("J01"));
+
+		mockMvc.perform(get("/disease/J01")).andExpect(status().isUnauthorized());
+	}
+
+	@Test
+	@WithUserDetails("user") // ROLE_DOCTOR
+	public void testGetDiseasesByIdOrDescriptionFound8UserIsDoctor() throws Exception {
+
+		mockMvc.perform(get("/disease?q=sinusite")).andExpect(status().isOk())
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON)).andExpect(jsonPath("$", hasSize(8)))
+				.andExpect(jsonPath("$[2].id", is("J011")))
+				.andExpect(jsonPath("$[2].description", is("Sinusite frontale aiguë")));
+	}
+
+	@Test
+	@WithUserDetails("user") // ROLE_DOCTOR
+	public void testGetDiseasesByIdOrDescriptionLimit5UserIsDoctor() throws Exception {
+
+		mockMvc.perform(get("/disease?q=sinusite&limit=5")).andExpect(status().isOk())
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+				.andExpect(jsonPath("$", hasSize(5)));
+	}
+
+	@Test
+	@WithUserDetails("user") // ROLE_DOCTOR
+	public void testGetDiseasesByIdOrDescriptionFound0UserIsDoctor() throws Exception {
+
+		mockMvc.perform(get("/disease?q=mas")).andExpect(status().isOk())
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON)).andExpect(jsonPath("$", hasSize(0)));
+	}
+
+	@Test
+	@WithUserDetails("user") // ROLE_DOCTOR
+	public void testGetDiseasesByIdOrDescriptionFound0SearchStringIsBlankUserIsDoctor() throws Exception {
+
+		mockMvc.perform(get("/disease?q=")).andExpect(status().isOk())
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON)).andExpect(jsonPath("$", hasSize(0)));
+	}
+
+	@Test
+	@WithUserDetails("user") // ROLE_DOCTOR
+	public void testGetDiseasesByIdOrDescriptionErrorQSearchStringIsAbsentUserIsDoctor() throws Exception {
+
+		mockMvc.perform(get("/disease")).andExpect(status().isInternalServerError())
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON));
+	}
+
+	@Test
+	@WithUserDetails("admin") // ROLE_ADMIN
+	public void testGetDiseasesByIdOrDescriptionFailureUserIsAdmin() throws Exception {
+
+		mockMvc.perform(get("/disease?q=sinusite")).andExpect(status().isForbidden());
+	}
+
+	@Test
+	@WithUserDetails("eric") // ROLE_PATIENT
+	public void testGetDiseasesByIdOrDescriptionFailureUserIsPatient() throws Exception {
+
+		mockMvc.perform(get("/disease?q=sinusite")).andExpect(status().isForbidden());
+	}
+
+	@Test
+	@WithAnonymousUser
+	public void testGetDiseasesByIdOrDescriptionFailureUnauthenticatedUser() throws Exception {
+
+		mockMvc.perform(get("/disease?q=sinusite")).andExpect(status().isUnauthorized());
+	}
+
+	@Test
+	@WithUserDetails("user") // ROLE_DOCTOR
+	public void testGetMedicalActByIdSuccessUserIsDoctor() throws Exception {
+
+		assertTrue(medicalActDAO.existsById("HCAE201"));
+
+		mockMvc.perform(get("/medical-act/HCAE201")).andExpect(status().isOk())
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+				.andExpect(jsonPath("$.id", is("HCAE201")))
+				.andExpect(jsonPath("$.description", is(
+						"Dilatation de sténose du conduit d'une glande salivaire par endoscopie [sialendoscopie] ")));
+	}
+
+	@Test
+	@WithUserDetails("user") // ROLE_DOCTOR
+	public void testGetMedicalActByIdFailureUserIsDoctorMedicalActDoesNotExist() throws Exception {
+
+		assertFalse(medicalActDAO.existsById("H000000"));
+
+		mockMvc.perform(get("/medical-act/H000000")).andExpect(status().isNotFound())
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+				.andExpect(jsonPath("$.message", is("medical act not found")));
+	}
+
+	@Test
+	@WithUserDetails("admin") // ROLE_ADMIN
+	public void testGetMedicalActByIdFailureUserIsAdmin() throws Exception {
+
+		assertTrue(medicalActDAO.existsById("HCAE201"));
+
+		mockMvc.perform(get("/medical-act/HCAE201")).andExpect(status().isForbidden());
+	}
+
+	@Test
+	@WithUserDetails("eric") // ROLE_PATIENT
+	public void testGetMedicalActByIdFailureUserIsPatient() throws Exception {
+
+		assertTrue(medicalActDAO.existsById("HCAE201"));
+
+		mockMvc.perform(get("/medical-act/HCAE201")).andExpect(status().isForbidden());
+	}
+
+	@Test
+	@WithAnonymousUser
+	public void testGetMedicalActByIdFailureUnauthenticatedUser() throws Exception {
+
+		assertTrue(medicalActDAO.existsById("HCAE201"));
+
+		mockMvc.perform(get("/medical-act/HCAE201")).andExpect(status().isUnauthorized());
+	}
+
+	@Test
+	@WithUserDetails("user") // ROLE_DOCTOR
+	public void testGetMedicalActsByIdOrDescriptionFound9UserIsDoctor() throws Exception {
+
+		mockMvc.perform(get("/medical-act?q=radio")).andExpect(status().isOk())
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+				.andExpect(jsonPath("$", hasSize(9)))
+				.andExpect(jsonPath("$[2].id", is("HBQK389")))
+				.andExpect(jsonPath("$[2].description", is(
+						"Radiographie intrabuccale rétroalvéolaire et/ou rétrocoronaire d'un secteur de 1 à 3 dents contigües")));
+	}
+
+	@Test
+	@WithUserDetails("user") // ROLE_DOCTOR
+	public void testGetMedicalActsByIdOrDescriptionLimit5UserIsDoctor() throws Exception {
+
+		mockMvc.perform(get("/medical-act?q=radio&limit=5")).andExpect(status().isOk())
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+				.andExpect(jsonPath("$", hasSize(5)));
+	}
+
+	@Test
+	@WithUserDetails("user") // ROLE_DOCTOR
+	public void testGetMedicalActsByIdOrDescriptionFound0UserIsDoctor() throws Exception {
+
+		mockMvc.perform(get("/medical-act?q=rid")).andExpect(status().isOk())
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+				.andExpect(jsonPath("$", hasSize(0)));
+	}
+
+	@Test
+	@WithUserDetails("user") // ROLE_DOCTOR
+	public void testGetMedicalActsByIdOrDescriptionFound0SearchStringIsBlankUserIsDoctor() throws Exception {
+
+		mockMvc.perform(get("/medical-act?q=")).andExpect(status().isOk())
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+				.andExpect(jsonPath("$", hasSize(0)));
+	}
+
+	@Test
+	@WithUserDetails("user") // ROLE_DOCTOR
+	public void testGetMedicalActsByIdOrDescriptionErrorQSearchStringIsAbsentUserIsDoctor() throws Exception {
+
+		mockMvc.perform(get("/medical-act")).andExpect(status().isInternalServerError())
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON));
+	}
+
+	@Test
+	@WithUserDetails("admin") // ROLE_ADMIN
+	public void testGetMedicalActsByIdOrDescriptionFailureUserIsAdmin() throws Exception {
+
+		mockMvc.perform(get("/medical-act?q=radio")).andExpect(status().isForbidden());
+	}
+
+	@Test
+	@WithUserDetails("eric") // ROLE_PATIENT
+	public void testGetMedicalActsByIdOrDescriptionFailureUserIsPatient() throws Exception {
+
+		mockMvc.perform(get("/medical-act?q=radio")).andExpect(status().isForbidden());
+	}
+
+	@Test
+	@WithAnonymousUser
+	public void testGetMedicalActsByIdOrDescriptionFailureUnauthenticatedUser() throws Exception {
+
+		mockMvc.perform(get("/medical-act?q=radio")).andExpect(status().isUnauthorized());
 	}
 
 }

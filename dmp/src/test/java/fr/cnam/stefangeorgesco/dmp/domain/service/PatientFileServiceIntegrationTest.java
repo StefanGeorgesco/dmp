@@ -28,6 +28,8 @@ import fr.cnam.stefangeorgesco.dmp.domain.dao.DoctorDAO;
 import fr.cnam.stefangeorgesco.dmp.domain.dao.PatientFileDAO;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.AddressDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.CorrespondanceDTO;
+import fr.cnam.stefangeorgesco.dmp.domain.dto.DiseaseDTO;
+import fr.cnam.stefangeorgesco.dmp.domain.dto.MedicalActDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.PatientFileDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.model.Address;
 import fr.cnam.stefangeorgesco.dmp.domain.model.Doctor;
@@ -43,6 +45,10 @@ import fr.cnam.stefangeorgesco.dmp.exception.domain.FinderException;
 @SqlGroup({ @Sql(scripts = "/sql/create-specialties.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
 		@Sql(scripts = "/sql/create-files.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
 		@Sql(scripts = "/sql/create-correspondances.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
+		@Sql(scripts = "/sql/create-diseases.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
+		@Sql(scripts = "/sql/create-medical-acts.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
+		@Sql(scripts = "/sql/delete-diseases.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD),
+		@Sql(scripts = "/sql/delete-medical-acts.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD),
 		@Sql(scripts = "/sql/delete-correspondances.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD),
 		@Sql(scripts = "/sql/delete-files.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD),
 		@Sql(scripts = "/sql/delete-specialties.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)})
@@ -74,6 +80,12 @@ public class PatientFileServiceIntegrationTest {
 
 	@Autowired
 	private CorrespondanceDTO correspondanceDTO;
+	
+	@Autowired
+	private DiseaseDTO diseaseDTO;
+	
+	@Autowired
+	private MedicalActDTO medicalActDTO;
 
 	@Autowired
 	private CorrespondanceDTO correspondanceDTOResponse;
@@ -410,6 +422,88 @@ public class PatientFileServiceIntegrationTest {
 		List<CorrespondanceDTO> correspondancesDTO = patientFileService.findCorrespondancesByPatientFileId("P055");
 		
 		assertEquals(0, correspondancesDTO.size());
+	}
+	
+	@Test
+	public void testFindDiseaseSuccess() {
+		
+		diseaseDTO = assertDoesNotThrow(() -> patientFileService.findDisease("J01"));
+		
+		assertEquals("J01", diseaseDTO.getId());
+		assertEquals("Sinusite aiguë", diseaseDTO.getDescription());
+	}
+	
+	@Test
+	public void testFindDiseaseFailureDiseaseDoesNotExist() {
+		
+		FinderException ex = assertThrows(FinderException.class, () -> patientFileService.findDisease("J000"));
+		
+		assertEquals("disease not found", ex.getMessage());
+	}
+	
+	@Test
+	public void testFindMedicalActSuccess() {
+		
+		medicalActDTO = assertDoesNotThrow(() -> patientFileService.findMedicalAct("HCAE201"));
+		
+		assertEquals("HCAE201", medicalActDTO.getId());
+		assertEquals("Dilatation de sténose du conduit d'une glande salivaire par endoscopie [sialendoscopie] ", medicalActDTO.getDescription());
+	}
+	
+	@Test
+	public void testFindMedicalActFailureMedicalActDoesNotExist() {
+		
+		FinderException ex = assertThrows(FinderException.class, () -> patientFileService.findMedicalAct("H000000"));
+		
+		assertEquals("medical act not found", ex.getMessage());
+	}
+	
+	@Test
+	public void testFindDiseasesByIdOrDescriptionFound8() {
+		
+		List<DiseaseDTO> diseasesDTO = patientFileService.findDiseasesByIdOrDescription("sinusite", 10);
+		
+		assertEquals(8, diseasesDTO.size());
+	}
+
+	@Test
+	public void testFindDiseasesByIdOrDescriptionFound0() {
+		
+		List<DiseaseDTO> diseasesDTO = patientFileService.findDiseasesByIdOrDescription("mas", 10);
+		
+		assertEquals(0, diseasesDTO.size());
+	}
+
+	@Test
+	public void testFindDiseasesByIdOrDescriptionSearchStringIsBlank() {
+		
+		List<DiseaseDTO> diseasesDTO = patientFileService.findDiseasesByIdOrDescription("", 10);
+		
+		assertEquals(0, diseasesDTO.size());
+	}
+
+	@Test
+	public void testFindMedicalActsByIdOrDescriptionFound9() {
+		
+		List<MedicalActDTO> medicalActsDTO = patientFileService.findMedicalActsByIdOrDescription("radio", 10);
+		
+		assertEquals(9, medicalActsDTO.size());
+	}
+
+	@Test
+	public void testFindMedicalActsByIdOrDescriptionFound0() {
+		
+		List<MedicalActDTO> medicalActsDTO = patientFileService.findMedicalActsByIdOrDescription("rid", 10);
+		
+		assertEquals(0, medicalActsDTO.size());
+	}
+
+	@Test
+	public void testFindMedicalActsByIdOrDescriptionSearchStringIsBlank() {
+		
+		List<MedicalActDTO> medicalActsDTO = patientFileService.findMedicalActsByIdOrDescription("", 10);
+		
+		assertEquals(0, medicalActsDTO.size());
 	}
 
 }

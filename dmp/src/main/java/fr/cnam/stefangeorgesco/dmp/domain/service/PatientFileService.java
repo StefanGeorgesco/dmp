@@ -12,12 +12,18 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import fr.cnam.stefangeorgesco.dmp.domain.dao.CorrespondanceDAO;
+import fr.cnam.stefangeorgesco.dmp.domain.dao.DiseaseDAO;
 import fr.cnam.stefangeorgesco.dmp.domain.dao.DoctorDAO;
+import fr.cnam.stefangeorgesco.dmp.domain.dao.MedicalActDAO;
 import fr.cnam.stefangeorgesco.dmp.domain.dao.PatientFileDAO;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.CorrespondanceDTO;
+import fr.cnam.stefangeorgesco.dmp.domain.dto.DiseaseDTO;
+import fr.cnam.stefangeorgesco.dmp.domain.dto.MedicalActDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.PatientFileDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.model.Correspondance;
+import fr.cnam.stefangeorgesco.dmp.domain.model.Disease;
 import fr.cnam.stefangeorgesco.dmp.domain.model.Doctor;
+import fr.cnam.stefangeorgesco.dmp.domain.model.MedicalAct;
 import fr.cnam.stefangeorgesco.dmp.domain.model.PatientFile;
 import fr.cnam.stefangeorgesco.dmp.exception.domain.ApplicationException;
 import fr.cnam.stefangeorgesco.dmp.exception.domain.CreateException;
@@ -40,6 +46,12 @@ public class PatientFileService {
 
 	@Autowired
 	private CorrespondanceDAO correspondanceDAO;
+	
+	@Autowired
+	private DiseaseDAO diseaseDAO;
+	
+	@Autowired
+	private MedicalActDAO medicalActDAO;
 
 	@Autowired
 	private ModelMapper commonModelMapper;
@@ -136,13 +148,13 @@ public class PatientFileService {
 		return response;
 	}
 
-	public List<PatientFileDTO> findPatientFilesByIdOrFirstnameOrLastname(String string) {
+	public List<PatientFileDTO> findPatientFilesByIdOrFirstnameOrLastname(String q) {
 
-		if ("".equals(string)) {
+		if ("".equals(q)) {
 			return new ArrayList<PatientFileDTO>();
 		}
 
-		Iterable<PatientFile> patientFiles = patientFileDAO.findByIdOrFirstnameOrLastname(string);
+		Iterable<PatientFile> patientFiles = patientFileDAO.findByIdOrFirstnameOrLastname(q);
 
 		List<PatientFileDTO> response = ((List<PatientFile>) patientFiles).stream()
 				.map(patientFile -> patientFileModelMapper.map(patientFile, PatientFileDTO.class))
@@ -197,6 +209,56 @@ public class PatientFileService {
 				.collect(Collectors.toList());
 
 		return correspondancesDTO;
+	}
+
+	public DiseaseDTO findDisease(String id) throws FinderException {
+		
+		Optional<Disease> optionalDisease = diseaseDAO.findById(id);
+
+		if (optionalDisease.isPresent()) {
+			return commonModelMapper.map(optionalDisease.get(), DiseaseDTO.class);
+		} else {
+			throw new FinderException("disease not found");
+		}
+	}
+
+	public MedicalActDTO findMedicalAct(String id) throws FinderException {
+		
+		Optional<MedicalAct> optionalMedicalAct = medicalActDAO.findById(id);
+
+		if (optionalMedicalAct.isPresent()) {
+			return commonModelMapper.map(optionalMedicalAct.get(), MedicalActDTO.class);
+		} else {
+			throw new FinderException("medical act not found");
+		}
+	}
+
+	public List<DiseaseDTO> findDiseasesByIdOrDescription(String q, int limit) {
+		
+		if ("".equals(q)) {
+			return new ArrayList<>();
+		}
+
+		Iterable<Disease> diseases = diseaseDAO.findByIdOrDescription(q, limit);
+
+		List<DiseaseDTO> diseasesDTO = ((List<Disease>) diseases).stream()
+				.map(disease -> commonModelMapper.map(disease, DiseaseDTO.class)).collect(Collectors.toList());
+
+		return diseasesDTO;
+	}
+
+	public List<MedicalActDTO> findMedicalActsByIdOrDescription(String q, int limit) {
+		
+		if ("".equals(q)) {
+			return new ArrayList<>();
+		}
+
+		Iterable<MedicalAct> medicalActs = medicalActDAO.findByIdOrDescription(q, limit);
+
+		List<MedicalActDTO> medicalActsDTO = ((List<MedicalAct>) medicalActs).stream()
+				.map(medicalAct -> commonModelMapper.map(medicalAct, MedicalActDTO.class)).collect(Collectors.toList());
+
+		return medicalActsDTO;
 	}
 
 }
