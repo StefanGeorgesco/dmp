@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import fr.cnam.stefangeorgesco.dmp.authentication.domain.dto.UserDTO;
 import fr.cnam.stefangeorgesco.dmp.authentication.domain.service.UserService;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.DoctorDTO;
+import fr.cnam.stefangeorgesco.dmp.domain.dto.SpecialtyDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.service.DoctorService;
 import fr.cnam.stefangeorgesco.dmp.exception.domain.ApplicationException;
 import fr.cnam.stefangeorgesco.dmp.exception.domain.DeleteException;
@@ -81,5 +82,11 @@ public class DoctorController {
 		
 		return ResponseEntity.status(HttpStatus.OK).body(doctorService.findDoctorsByIdOrFirstnameOrLastname(q));
 	 }
+	
+	@GetMapping("/specialty/{id}")
+	public ResponseEntity<SpecialtyDTO> getSpecialty(@PathVariable String id) throws FinderException {
+		
+		return ResponseEntity.ok(doctorService.findSpecialty(id));
+	}
 
 }

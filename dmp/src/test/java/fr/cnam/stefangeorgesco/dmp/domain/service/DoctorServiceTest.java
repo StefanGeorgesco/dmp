@@ -380,5 +380,28 @@ public class DoctorServiceTest {
 		
 		assertEquals(0, doctors.size());
 	}
+	
+	@Test
+	public void testFindSpecialtySuccess() {
+		
+		when(specialtyDAO.findById(specialty1.getId())).thenReturn(Optional.of(specialty1));
+		
+		specialtyDTO1 = assertDoesNotThrow(() -> doctorService.findSpecialty(specialty1.getId()));
+		
+		verify(specialtyDAO, times(1)).findById(specialty1.getId());
+		
+		assertEquals(specialty1.getId(), specialtyDTO1.getId());
+		assertEquals(specialty1.getDescription(), specialtyDTO1.getDescription());
+	}
+	
+	@Test void testFindSpecialtyFailureSpecialtyDoesNotExist() {
+		
+		when(specialtyDAO.findById(specialty1.getId())).thenReturn(Optional.ofNullable(null));
+		
+		FinderException ex = assertThrows(FinderException.class, () -> doctorService.findSpecialty(specialty1.getId()));
+		
+		assertEquals("specialty not found", ex.getMessage());
+	}
+	
 
 }

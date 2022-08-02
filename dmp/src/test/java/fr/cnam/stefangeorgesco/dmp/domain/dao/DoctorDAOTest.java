@@ -28,8 +28,10 @@ import fr.cnam.stefangeorgesco.dmp.domain.model.Specialty;
 
 @TestPropertySource("/application-test.properties")
 @SpringBootTest
-@SqlGroup({ @Sql(scripts = "/sql/create-files.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
-		@Sql(scripts = "/sql/delete-files.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD) })
+@SqlGroup({ @Sql(scripts = "/sql/create-specialties.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
+		@Sql(scripts = "/sql/create-files.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
+		@Sql(scripts = "/sql/delete-files.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD),
+		@Sql(scripts = "/sql/delete-specialties.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD) })
 public class DoctorDAOTest {
 
 	@Autowired
@@ -89,14 +91,14 @@ public class DoctorDAOTest {
 
 		assertTrue(optionalDoctor.isPresent());
 
-		Doctor doctor = optionalDoctor.get();
+		doctor = optionalDoctor.get();
 
 		assertEquals(doctor.getFirstname(), "John");
 		assertEquals(doctor.getLastname(), "Smith");
 		assertNotNull(doctor.getSpecialties());
 		assertEquals(2, doctor.getSpecialties().size());
 		assertEquals("S001", ((List<Specialty>) doctor.getSpecialties()).get(0).getId());
-		assertEquals("S002", ((List<Specialty>) doctor.getSpecialties()).get(1).getId());
+		assertEquals("S024", ((List<Specialty>) doctor.getSpecialties()).get(1).getId());
 	}
 
 	@Test
@@ -113,42 +115,42 @@ public class DoctorDAOTest {
 		doctor.getSpecialties().clear();
 
 		assertThrows(RuntimeException.class, () -> doctorDAO.save(doctor));
-		
+
 		assertFalse(doctorDAO.existsById("D003"));
 	}
-	
+
 	@Test
 	public void testDoctorDAOSaveCreateFailureSpecialtyDoesNotExist() {
-		((List<Specialty>) doctor.getSpecialties()).get(1).setId("S003");
-		
+		((List<Specialty>) doctor.getSpecialties()).get(1).setId("S103");
+
 		assertThrows(RuntimeException.class, () -> doctorDAO.save(doctor));
-		
+
 		assertFalse(doctorDAO.existsById("D003"));
 	}
-	
+
 	@Test
 	public void testDoctorDAOSaveUpdateSuccess() {
-		
+
 		doctor = doctorDAO.findById("D001").get();
-		
+
 		assertNotEquals("mail@mail.com", doctor.getEmail());
-		
+
 		doctor.setEmail("mail@mail.com");
-		
+
 		doctorDAO.save(doctor);
-		
+
 		doctor = doctorDAO.findById("D001").get();
-		
+
 		assertEquals("mail@mail.com", doctor.getEmail());
 	}
 
 	@Test
 	void testDoctorDAODeleteSuccess() {
 		assertTrue(doctorDAO.existsById("D002"));
-		
-		List<Map<String, Object>> results = jdbc.queryForList(
-						"SELECT * FROM t_doctor_specialty where t_doctor_specialty.doctor_id='D002';");
-		
+
+		List<Map<String, Object>> results = jdbc
+				.queryForList("SELECT * FROM t_doctor_specialty where t_doctor_specialty.doctor_id='D002';");
+
 		assertEquals(2, results.size());
 
 		doctor.setId("D002");
@@ -156,61 +158,59 @@ public class DoctorDAOTest {
 		assertDoesNotThrow(() -> doctorDAO.delete(doctor));
 
 		assertFalse(doctorDAO.existsById("D002"));
-		
-		results = jdbc.queryForList(
-				"SELECT * FROM t_doctor_specialty where t_doctor_specialty.doctor_id='D002';");
-		
+
+		results = jdbc.queryForList("SELECT * FROM t_doctor_specialty where t_doctor_specialty.doctor_id='D002';");
+
 		assertEquals(0, results.size());
 	}
-	
+
 	@Test
 	public void testDoctorDAODeleteFailureDoctorIsReferringDoctor() {
 		assertTrue(doctorDAO.existsById("D001"));
-		
+
 		doctor.setId("D001");
-		
+
 		assertThrows(RuntimeException.class, () -> doctorDAO.delete(doctor));
-		
+
 		assertTrue(doctorDAO.existsById("D001"));
 	}
 
 	@Test
 	void testDoctorDAODeleteByIdSuccess() {
 		assertTrue(doctorDAO.existsById("D002"));
-		
-		List<Map<String, Object>> results = jdbc.queryForList(
-						"SELECT * FROM t_doctor_specialty where t_doctor_specialty.doctor_id='D002';");
-		
+
+		List<Map<String, Object>> results = jdbc
+				.queryForList("SELECT * FROM t_doctor_specialty where t_doctor_specialty.doctor_id='D002';");
+
 		assertEquals(2, results.size());
 
 		assertDoesNotThrow(() -> doctorDAO.deleteById("D002"));
 
 		assertFalse(doctorDAO.existsById("D002"));
-		
-		results = jdbc.queryForList(
-				"SELECT * FROM t_doctor_specialty where t_doctor_specialty.doctor_id='D002';");
-		
+
+		results = jdbc.queryForList("SELECT * FROM t_doctor_specialty where t_doctor_specialty.doctor_id='D002';");
+
 		assertEquals(0, results.size());
 	}
-	
+
 	@Test
 	public void testDoctorDAODeleteByIdFailureDoctorIsReferringDoctor() {
 		assertTrue(doctorDAO.existsById("D001"));
-		
+
 		assertThrows(RuntimeException.class, () -> doctorDAO.deleteById("D001"));
-		
+
 		assertTrue(doctorDAO.existsById("D001"));
 	}
-	
+
 	@Test
 	public void testDoctorDAOfindByIdOrFirstnameOrLastnameFound2() {
-		
+
 		List<Doctor> doctorsList = new ArrayList<>();
-		
+
 		Iterable<Doctor> doctors = doctorDAO.findByIdOrFirstnameOrLastname("el");
-		
+
 		doctors.forEach(doctorsList::add);
-		
+
 		assertEquals(2, doctorsList.size());
 		assertEquals("D010", doctorsList.get(0).getId());
 		assertEquals("D012", doctorsList.get(1).getId());
@@ -218,25 +218,25 @@ public class DoctorDAOTest {
 
 	@Test
 	public void testDoctorDAOfindByIdOrFirstnameOrLastnameFound12() {
-		
+
 		List<Doctor> doctorsList = new ArrayList<>();
-		
+
 		Iterable<Doctor> doctors = doctorDAO.findByIdOrFirstnameOrLastname("D0");
-		
+
 		doctors.forEach(doctorsList::add);
-		
+
 		assertEquals(12, doctorsList.size());
 	}
 
 	@Test
 	public void testDoctorDAOfindByIdOrFirstnameOrLastnameFound0() {
-		
+
 		List<Doctor> doctorsList = new ArrayList<>();
-		
+
 		Iterable<Doctor> doctors = doctorDAO.findByIdOrFirstnameOrLastname("za");
-		
+
 		doctors.forEach(doctorsList::add);
-		
+
 		assertEquals(0, doctorsList.size());
 	}
 

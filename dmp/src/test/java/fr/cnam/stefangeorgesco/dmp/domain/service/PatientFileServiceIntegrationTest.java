@@ -40,10 +40,12 @@ import fr.cnam.stefangeorgesco.dmp.exception.domain.FinderException;
 
 @TestPropertySource("/application-test.properties")
 @SpringBootTest
-@SqlGroup({ @Sql(scripts = "/sql/create-files.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
+@SqlGroup({ @Sql(scripts = "/sql/create-specialties.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
+		@Sql(scripts = "/sql/create-files.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
 		@Sql(scripts = "/sql/create-correspondances.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
 		@Sql(scripts = "/sql/delete-correspondances.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD),
-		@Sql(scripts = "/sql/delete-files.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD) })
+		@Sql(scripts = "/sql/delete-files.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD),
+		@Sql(scripts = "/sql/delete-specialties.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)})
 public class PatientFileServiceIntegrationTest {
 
 	@MockBean
@@ -376,7 +378,7 @@ public class PatientFileServiceIntegrationTest {
 		assertEquals("P004", correspondanceDTO.getPatientFileId());
 		assertEquals("Melquisedeque", correspondanceDTO.getDoctorFirstName());
 		assertEquals("Nascimento", correspondanceDTO.getDoctorLastName());
-		assertEquals(List.of("Specialty 2"), correspondanceDTO.getDoctorSpecialties());
+		assertEquals("[chirurgie thoracique, chirurgie vasculaire]", correspondanceDTO.getDoctorSpecialties().toString());
 	}
 	
 	@Test

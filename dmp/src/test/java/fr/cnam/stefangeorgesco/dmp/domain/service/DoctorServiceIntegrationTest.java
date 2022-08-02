@@ -35,8 +35,10 @@ import fr.cnam.stefangeorgesco.dmp.exception.domain.FinderException;
 
 @TestPropertySource("/application-test.properties")
 @SpringBootTest
-@SqlGroup({ @Sql(scripts = "/sql/create-files.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
+@SqlGroup({ @Sql(scripts = "/sql/create-specialties.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
+		@Sql(scripts = "/sql/create-files.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
 		@Sql(scripts = "/sql/delete-files.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD),
+		@Sql(scripts = "/sql/delete-specialties.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD),
 		@Sql(scripts = "/sql/create-users.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
 		@Sql(scripts = "/sql/delete-users.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD) })
 public class DoctorServiceIntegrationTest {
@@ -73,7 +75,7 @@ public class DoctorServiceIntegrationTest {
 
 	@Autowired
 	private Doctor savedDoctor;
-	
+
 	@Autowired
 	private User user;
 
@@ -115,7 +117,7 @@ public class DoctorServiceIntegrationTest {
 		doctor.setSpecialties(specialties);
 		doctor.setAddress(address);
 		doctor.setSecurityCode("code");
-		
+
 		user.setId("D002");
 		user.setUsername("username");
 		user.setPassword("password");
@@ -169,10 +171,10 @@ public class DoctorServiceIntegrationTest {
 		Iterator<Specialty> itSavedSp = savedDoctor.getSpecialties().iterator();
 		Specialty savedSp = itSavedSp.next();
 		assertEquals("S001", savedSp.getId());
-		assertEquals("Specialty 1", savedSp.getDescription());
+		assertEquals("allergologie", savedSp.getDescription());
 		savedSp = itSavedSp.next();
-		assertEquals("S002", savedSp.getId());
-		assertEquals("Specialty 2", savedSp.getDescription());
+		assertEquals("S024", savedSp.getId());
+		assertEquals("médecine générale", savedSp.getDescription());
 
 		assertEquals(doctorDTO.getId(), savedDoctor.getId());
 		// changes in saved object
@@ -192,10 +194,10 @@ public class DoctorServiceIntegrationTest {
 		Iterator<SpecialtyDTO> itspDTO = response.getSpecialtiesDTO().iterator();
 		SpecialtyDTO spDTO = itspDTO.next();
 		assertEquals("S001", spDTO.getId());
-		assertEquals("Specialty 1", spDTO.getDescription());
+		assertEquals("allergologie", spDTO.getDescription());
 		spDTO = itspDTO.next();
-		assertEquals("S002", spDTO.getId());
-		assertEquals("Specialty 2", spDTO.getDescription());
+		assertEquals("S024", spDTO.getId());
+		assertEquals("médecine générale", spDTO.getDescription());
 
 		assertEquals(doctorDTO.getId(), response.getId());
 		// changes in returned object
@@ -214,10 +216,10 @@ public class DoctorServiceIntegrationTest {
 		assertEquals("D002", doctorDTO.getId());
 		assertEquals("15 rue de Vaugirard", doctorDTO.getAddressDTO().getStreet1());
 		assertEquals(2, ((List<SpecialtyDTO>) doctorDTO.getSpecialtiesDTO()).size());
-		assertEquals("S001", ((List<SpecialtyDTO>) doctorDTO.getSpecialtiesDTO()).get(0).getId());
-		assertEquals("Specialty 1", ((List<SpecialtyDTO>) doctorDTO.getSpecialtiesDTO()).get(0).getDescription());
-		assertEquals("S002", ((List<SpecialtyDTO>) doctorDTO.getSpecialtiesDTO()).get(1).getId());
-		assertEquals("Specialty 2", ((List<SpecialtyDTO>) doctorDTO.getSpecialtiesDTO()).get(1).getDescription());
+		assertEquals("S012", ((List<SpecialtyDTO>) doctorDTO.getSpecialtiesDTO()).get(0).getId());
+		assertEquals("chirurgie vasculaire", ((List<SpecialtyDTO>) doctorDTO.getSpecialtiesDTO()).get(0).getDescription());
+		assertEquals("S013", ((List<SpecialtyDTO>) doctorDTO.getSpecialtiesDTO()).get(1).getId());
+		assertEquals("neurochirurgie", ((List<SpecialtyDTO>) doctorDTO.getSpecialtiesDTO()).get(1).getDescription());
 		assertNull(doctorDTO.getSecurityCode());
 	}
 
@@ -245,7 +247,7 @@ public class DoctorServiceIntegrationTest {
 	public void testDeleteDoctorSuccessUserPresent() {
 
 		userDAO.save(user);
-		
+
 		assertTrue(userDAO.existsById("D002"));
 
 		assertTrue(doctorDAO.existsById("D002"));
@@ -278,39 +280,56 @@ public class DoctorServiceIntegrationTest {
 
 		assertTrue(doctorDAO.existsById("D001"));
 	}
-	
+
 	@Test
 	public void testFindDoctorsByIdOrFirstnameOrLastnameFound2() {
-		
+
 		List<DoctorDTO> doctors = doctorService.findDoctorsByIdOrFirstnameOrLastname("el");
-		
+
 		assertEquals(2, doctors.size());
 		assertEquals("D010", doctors.get(0).getId());
 		assertEquals("D012", doctors.get(1).getId());
 	}
-	
+
 	@Test
 	public void testFindDoctorsByIdOrFirstnameOrLastnameFound12() {
-		
+
 		List<DoctorDTO> doctors = doctorService.findDoctorsByIdOrFirstnameOrLastname("D0");
-		
+
 		assertEquals(12, doctors.size());
 	}
 
 	@Test
 	public void testFindDoctorsByIdOrFirstnameOrLastnameFound0() {
-		
+
 		List<DoctorDTO> doctors = doctorService.findDoctorsByIdOrFirstnameOrLastname("za");
-		
+
 		assertEquals(0, doctors.size());
 	}
 
 	@Test
 	public void testFindDoctorsByIdOrFirstnameOrLastnameFound0SearchStringIsBlank() {
-		
+
 		List<DoctorDTO> doctors = doctorService.findDoctorsByIdOrFirstnameOrLastname("");
-		
+
 		assertEquals(0, doctors.size());
+	}
+
+	@Test
+	public void testFindSpecialtySuccess() {
+		
+		specialtyDTO = assertDoesNotThrow(() -> doctorService.findSpecialty("S045"));
+		
+		assertEquals("S045", specialtyDTO.getId());
+		assertEquals("urologie", specialtyDTO.getDescription());
+	}
+	
+	@Test
+	public void testFindSpecialtyFailureSpecialtyDoesNotExist() {
+		
+		FinderException ex = assertThrows(FinderException.class, () -> doctorService.findSpecialty("S145"));
+		
+		assertEquals("specialty not found", ex.getMessage());
 	}
 
 }

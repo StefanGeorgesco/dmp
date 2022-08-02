@@ -35,6 +35,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import fr.cnam.stefangeorgesco.dmp.authentication.domain.dao.UserDAO;
 import fr.cnam.stefangeorgesco.dmp.authentication.domain.model.User;
 import fr.cnam.stefangeorgesco.dmp.domain.dao.DoctorDAO;
+import fr.cnam.stefangeorgesco.dmp.domain.dao.SpecialtyDAO;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.AddressDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.DoctorDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.SpecialtyDTO;
@@ -45,10 +46,12 @@ import fr.cnam.stefangeorgesco.dmp.domain.model.Specialty;
 @TestPropertySource("/application-test.properties")
 @AutoConfigureMockMvc
 @SpringBootTest
-@SqlGroup({ @Sql(scripts = "/sql/create-users.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
-		@Sql(scripts = "/sql/delete-users.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD),
-		@Sql(scripts = "/sql/create-files.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
-		@Sql(scripts = "/sql/delete-files.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD) })
+@SqlGroup({ @Sql(scripts = "/sql/create-specialties.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
+	@Sql(scripts = "/sql/create-files.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
+	@Sql(scripts = "/sql/delete-files.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD),
+	@Sql(scripts = "/sql/delete-specialties.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD),
+	@Sql(scripts = "/sql/create-users.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
+	@Sql(scripts = "/sql/delete-users.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD) })
 public class DoctorControllerIntegrationTest {
 
 	@Autowired
@@ -59,6 +62,9 @@ public class DoctorControllerIntegrationTest {
 
 	@Autowired
 	private DoctorDAO doctorDAO;
+	
+	@Autowired
+	private SpecialtyDAO specialtyDAO;
 	
 	@Autowired
 	private UserDAO userDAO;
@@ -165,8 +171,8 @@ public class DoctorControllerIntegrationTest {
 				.andExpect(jsonPath("$.firstname", is("Pierre")))
 				.andExpect(jsonPath("$.address.street1", is("1 Rue Lecourbe")))
 				.andExpect(jsonPath("$.specialties", hasSize(2)))
-				.andExpect(jsonPath("$.specialties[0].description", is("Specialty 1")))
-				.andExpect(jsonPath("$.specialties[1].description", is("Specialty 2")))
+				.andExpect(jsonPath("$.specialties[0].description", is("allergologie")))
+				.andExpect(jsonPath("$.specialties[1].description", is("immunologie")))
 				.andExpect(jsonPath("$.securityCode", notNullValue()));
 
 		assertTrue(doctorDAO.existsById("D003"));
@@ -252,7 +258,7 @@ public class DoctorControllerIntegrationTest {
 	@WithUserDetails("admin")
 	public void testCreateDoctorFailureSpecialtyDoesNotExist() throws Exception {
 
-		((List<SpecialtyDTO>) doctorDTO.getSpecialtiesDTO()).get(1).setId("S003");
+		((List<SpecialtyDTO>) doctorDTO.getSpecialtiesDTO()).get(1).setId("S100");
 
 		mockMvc.perform(post("/doctor").contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(doctorDTO))).andExpect(status().isNotFound())
@@ -292,9 +298,9 @@ public class DoctorControllerIntegrationTest {
 				.andExpect(jsonPath("$.id", is("D001"))).andExpect(jsonPath("$.firstname", is("John")))
 				.andExpect(jsonPath("$.lastname", is("Smith"))).andExpect(jsonPath("$.specialties", hasSize(2)))
 				.andExpect(jsonPath("$.specialties[0].id", is("S001")))
-				.andExpect(jsonPath("$.specialties[0].description", is("Specialty 1")))
-				.andExpect(jsonPath("$.specialties[1].id", is("S002")))
-				.andExpect(jsonPath("$.specialties[1].description", is("Specialty 2")))
+				.andExpect(jsonPath("$.specialties[0].description", is("allergologie")))
+				.andExpect(jsonPath("$.specialties[1].id", is("S024")))
+				.andExpect(jsonPath("$.specialties[1].description", is("médecine générale")))
 				// changes
 				.andExpect(jsonPath("$.phone", is(doctorDTO.getPhone())))
 				.andExpect(jsonPath("$.email", is(doctorDTO.getEmail())))
@@ -334,8 +340,8 @@ public class DoctorControllerIntegrationTest {
 				.andExpect(jsonPath("$.firstname", is("John")))
 				.andExpect(jsonPath("$.address.street1", is("1 baker street")))
 				.andExpect(jsonPath("$.specialties", hasSize(2)))
-				.andExpect(jsonPath("$.specialties[0].description", is("Specialty 1")))
-				.andExpect(jsonPath("$.specialties[1].description", is("Specialty 2")))
+				.andExpect(jsonPath("$.specialties[0].description", is("allergologie")))
+				.andExpect(jsonPath("$.specialties[1].description", is("médecine générale")))
 				.andExpect(jsonPath("$.securityCode").doesNotExist());
 	}
 
@@ -364,8 +370,8 @@ public class DoctorControllerIntegrationTest {
 				.andExpect(jsonPath("$.firstname", is("Jean")))
 				.andExpect(jsonPath("$.address.street1", is("15 rue de Vaugirard")))
 				.andExpect(jsonPath("$.specialties", hasSize(2)))
-				.andExpect(jsonPath("$.specialties[0].description", is("Specialty 1")))
-				.andExpect(jsonPath("$.specialties[1].description", is("Specialty 2")))
+				.andExpect(jsonPath("$.specialties[0].description", is("chirurgie vasculaire")))
+				.andExpect(jsonPath("$.specialties[1].description", is("neurochirurgie")))
 				.andExpect(jsonPath("$.securityCode").doesNotExist());
 	}
 
@@ -380,8 +386,8 @@ public class DoctorControllerIntegrationTest {
 				.andExpect(jsonPath("$.firstname", is("Jean")))
 				.andExpect(jsonPath("$.address.street1", is("15 rue de Vaugirard")))
 				.andExpect(jsonPath("$.specialties", hasSize(2)))
-				.andExpect(jsonPath("$.specialties[0].description", is("Specialty 1")))
-				.andExpect(jsonPath("$.specialties[1].description", is("Specialty 2")))
+				.andExpect(jsonPath("$.specialties[0].description", is("chirurgie vasculaire")))
+				.andExpect(jsonPath("$.specialties[1].description", is("neurochirurgie")))
 				.andExpect(jsonPath("$.securityCode").doesNotExist());
 	}
 
@@ -396,8 +402,8 @@ public class DoctorControllerIntegrationTest {
 				.andExpect(jsonPath("$.firstname", is("Jean")))
 				.andExpect(jsonPath("$.address.street1", is("15 rue de Vaugirard")))
 				.andExpect(jsonPath("$.specialties", hasSize(2)))
-				.andExpect(jsonPath("$.specialties[0].description", is("Specialty 1")))
-				.andExpect(jsonPath("$.specialties[1].description", is("Specialty 2")))
+				.andExpect(jsonPath("$.specialties[0].description", is("chirurgie vasculaire")))
+				.andExpect(jsonPath("$.specialties[1].description", is("neurochirurgie")))
 				.andExpect(jsonPath("$.securityCode").doesNotExist());
 	}
 
@@ -522,4 +528,54 @@ public class DoctorControllerIntegrationTest {
 		mockMvc.perform(get("/doctor?q=el")).andExpect(status().isUnauthorized());
 	}
 	
+	@Test
+	@WithUserDetails("admin") // ROLE_ADMIN
+	public void testGetSpecialtyByIdSuccessUserIsAdmin() throws Exception {
+
+		assertTrue(specialtyDAO.existsById("S003"));
+
+		mockMvc.perform(get("/specialty/S003")).andExpect(status().isOk())
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+				.andExpect(jsonPath("$.id", is("S003")))
+				.andExpect(jsonPath("$.description", is("anesthésiologie")));
+	}
+
+	@Test
+	@WithUserDetails("admin") // ROLE_ADMIN
+	public void testGetSpecialtyByIdFailureUserIsAdminSPecialtyDoesNotExist() throws Exception {
+
+		assertFalse(specialtyDAO.existsById("S103"));
+
+		mockMvc.perform(get("/specialty/S103")).andExpect(status().isNotFound())
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+				.andExpect(jsonPath("$.message", is("specialty not found")));
+	}
+
+	@Test
+	@WithUserDetails("user") // ROLE_DOCTOR
+	public void testGetSpecialtyByIdFailureUserIsDoctor() throws Exception {
+
+		assertTrue(specialtyDAO.existsById("S003"));
+
+		mockMvc.perform(get("/specialty/S003")).andExpect(status().isForbidden());
+	}
+
+	@Test
+	@WithUserDetails("eric") // ROLE_PATIENT
+	public void testGetSpecialtyByIdFailureUserIsPatient() throws Exception {
+
+		assertTrue(specialtyDAO.existsById("S003"));
+
+		mockMvc.perform(get("/specialty/S003")).andExpect(status().isForbidden());
+	}
+
+	@Test
+	@WithAnonymousUser
+	public void testGetSpecialtyByIdFailureUnauthenticatedUser() throws Exception {
+
+		assertTrue(specialtyDAO.existsById("S003"));
+
+		mockMvc.perform(get("/specialty/S003")).andExpect(status().isUnauthorized());
+	}
+
 }

@@ -61,17 +61,6 @@ INSERT INTO `t_doctor` VALUES ('D011');
 INSERT INTO `t_doctor` VALUES ('D012');
 INSERT INTO `t_doctor` VALUES ('D013');
 
-DROP TABLE IF EXISTS `t_specialty`;
-
-CREATE TABLE `t_specialty` (
-  `id` VARCHAR(255) NOT NULL,
-  `description` VARCHAR(255) NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB;
-
-INSERT INTO `t_specialty` VALUES ('S001', 'Specialty 1');
-INSERT INTO `t_specialty` VALUES ('S002', 'Specialty 2');
-
 DROP TABLE IF EXISTS `t_doctor_specialty`;
 
 CREATE TABLE `t_doctor_specialty` (
@@ -83,20 +72,23 @@ CREATE TABLE `t_doctor_specialty` (
   CONSTRAINT `FK_specialty_doctor_specialty` FOREIGN KEY (`specialty_id`) REFERENCES `t_specialty` (`id`)
 ) ENGINE=InnoDB;
 
-INSERT INTO `t_doctor_specialty` VALUES ('D001', 'S001');
-INSERT INTO `t_doctor_specialty` VALUES ('D001', 'S002');
-INSERT INTO `t_doctor_specialty` VALUES ('D002', 'S001');
-INSERT INTO `t_doctor_specialty` VALUES ('D002', 'S002');
-INSERT INTO `t_doctor_specialty` VALUES ('D004', 'S002');
-INSERT INTO `t_doctor_specialty` VALUES ('D005', 'S001');
-INSERT INTO `t_doctor_specialty` VALUES ('D006', 'S002');
-INSERT INTO `t_doctor_specialty` VALUES ('D007', 'S001');
-INSERT INTO `t_doctor_specialty` VALUES ('D008', 'S002');
-INSERT INTO `t_doctor_specialty` VALUES ('D009', 'S001');
-INSERT INTO `t_doctor_specialty` VALUES ('D010', 'S002');
-INSERT INTO `t_doctor_specialty` VALUES ('D011', 'S001');
-INSERT INTO `t_doctor_specialty` VALUES ('D012', 'S002');
-INSERT INTO `t_doctor_specialty` VALUES ('D013', 'S001');
+INSERT INTO t_doctor_specialty(doctor_id, specialty_id) values ('D001', 'S001');
+INSERT INTO t_doctor_specialty(doctor_id, specialty_id) values ('D001', 'S024');
+INSERT INTO t_doctor_specialty(doctor_id, specialty_id) values ('D002', 'S012');
+INSERT INTO t_doctor_specialty(doctor_id, specialty_id) values ('D002', 'S013');
+INSERT INTO t_doctor_specialty(doctor_id, specialty_id) values ('D004', 'S017');
+INSERT INTO t_doctor_specialty(doctor_id, specialty_id) values ('D005', 'S045');
+INSERT INTO t_doctor_specialty(doctor_id, specialty_id) values ('D006', 'S032');
+INSERT INTO t_doctor_specialty(doctor_id, specialty_id) values ('D007', 'S027');
+INSERT INTO t_doctor_specialty(doctor_id, specialty_id) values ('D007', 'S028');
+INSERT INTO t_doctor_specialty(doctor_id, specialty_id) values ('D008', 'S002');
+INSERT INTO t_doctor_specialty(doctor_id, specialty_id) values ('D009', 'S044');
+INSERT INTO t_doctor_specialty(doctor_id, specialty_id) values ('D010', 'S039');
+INSERT INTO t_doctor_specialty(doctor_id, specialty_id) values ('D011', 'S035');
+INSERT INTO t_doctor_specialty(doctor_id, specialty_id) values ('D012', 'S011');
+INSERT INTO t_doctor_specialty(doctor_id, specialty_id) values ('D012', 'S012');
+INSERT INTO t_doctor_specialty(doctor_id, specialty_id) values ('D013', 'S012');
+
 DROP TABLE IF EXISTS `t_patient_file`;
 
 CREATE TABLE `t_patient_file` (
@@ -120,21 +112,3 @@ INSERT INTO `t_patient_file` VALUES ('P010', '1946-02-17', 'D004');
 INSERT INTO `t_patient_file` VALUES ('P011', '2000-11-30', 'D005');
 INSERT INTO `t_patient_file` VALUES ('P012', '1962-06-29', 'D004');
 INSERT INTO `t_patient_file` VALUES ('P013', '1986-02-27', 'D005');
-
-DROP TABLE IF EXISTS `t_user`;
-
-CREATE TABLE `t_user` (
-  `id` VARCHAR(255) NOT NULL,
-  `username` VARCHAR(255) NOT NULL,
-  `password` VARCHAR(255) NOT NULL,
-  `role` VARCHAR(255) NOT NULL,
-  `security_code` VARCHAR(255) NOT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `UK_username_user` (`username`)
-) ENGINE=InnoDB;
-
-INSERT INTO `t_user` VALUES ('A001','admin','$2a$12$yjbMztwlMm0yEIVbM8ybu.nJ6kQPipI6ViV/8GbU8TWgIwSvRbAQa','ROLE_ADMIN','');
-INSERT INTO `t_user` VALUES ('D001','user','$2a$12$7/n1myGRPalYXRCUbsrXz.vhtJCYTfi8j1dBlX1m/ECFosXD6jcMa','ROLE_DOCTOR','');
-INSERT INTO `t_user` VALUES ('D002','doc','$2a$12$rbh2MVQ3zMmeE4a.vHQcJOlBQ7uLLE9fpcy3G.l.vfT96WhlF/51m','ROLE_DOCTOR','');
-INSERT INTO `t_user` VALUES ('P001','jean','$2a$12$nGajrCywpBYm9xLtu.lAbuTTNCFX3rrHaisz87P.fw2BXCF8E/gD2','ROLE_PATIENT','');
-INSERT INTO `t_user` VALUES ('P002','utilisateur','$2a$12$tClFvDjq0BaRSxi8/iird.BdMGV99a88Bun39z1yc29A9Qg0u40bm','ROLE_PATIENT','');

@@ -143,4 +143,16 @@ public class DoctorService {
 		return doctorsDTO;
 	}
 
+	public SpecialtyDTO findSpecialty(String id) throws FinderException {
+		
+		Optional<Specialty> optionalSpecialty = specialtyDAO.findById(id);
+		
+		if (optionalSpecialty.isPresent()) {
+			return commonModelMapper.map(optionalSpecialty.get(), SpecialtyDTO.class);
+		} else {
+			throw new FinderException("specialty not found");
+		}
+
+	}
+
 }
