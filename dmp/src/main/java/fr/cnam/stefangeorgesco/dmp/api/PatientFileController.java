@@ -165,5 +165,13 @@ public class PatientFileController {
 		return ResponseEntity.ok(correspondancesDTO);
 
 	}
+	
+	@GetMapping("/patient-file/details/correspondance")
+	public ResponseEntity<List<CorrespondanceDTO>> findPatientCorrespondances(Principal principal) throws FinderException {
+		
+		String userId = userService.findUserByUsername(principal.getName()).getId();
+		
+		return ResponseEntity.ok(patientFileService.findCorrespondancesByPatientFileId(userId));
+	}
 
 }

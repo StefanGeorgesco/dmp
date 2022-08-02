@@ -703,5 +703,44 @@ public class PatientFileControllerIntegrationTest {
 		mockMvc.perform(get("/patient-file/P001/correspondance"))
 				.andExpect(status().isUnauthorized());
 	}
+	
+	@Test
+	@WithUserDetails("eric") // ROLE_PATIENT, P001
+	public void testFindPatientCorrespondancesSuccess() throws Exception {
+		
+		mockMvc.perform(get("/patient-file/details/correspondance"))
+		.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+		.andExpect(status().isOk())
+		.andExpect(jsonPath("$", hasSize(3)))
+		.andExpect(jsonPath("$[0].id", is("5b17ffa7-81e2-43ac-9246-7cab5b2f0f6b")))
+		.andExpect(jsonPath("$[0].doctorId", is("D002")))
+		.andExpect(jsonPath("$[0].doctorFirstName", is("Jean")))
+		.andExpect(jsonPath("$[0].doctorLastName", is("Dupont")))
+		.andExpect(jsonPath("$[0].dateUntil", is("2023-05-02")));
+	}
+	
+	@Test
+	@WithUserDetails("user") // ROLE_DOCTOR
+	public void testFindPatientCorrespondancesFailureBadRoleDoctor() throws Exception {
+		
+		mockMvc.perform(get("/patient-file/details/correspondance"))
+		.andExpect(status().isForbidden());
+	}
 
+	@Test
+	@WithUserDetails("admin") // ROLE_ADMIN
+	public void testFindPatientCorrespondancesFailureBadRoleAdmin() throws Exception {
+		
+		mockMvc.perform(get("/patient-file/details/correspondance"))
+		.andExpect(status().isForbidden());
+	}
+
+	@Test
+	@WithAnonymousUser
+	public void testFindPatientCorrespondancesFailureUnauthenticatedUser() throws Exception {
+
+		mockMvc.perform(get("/patient-file/details/correspondance"))
+				.andExpect(status().isUnauthorized());
+	}
+	
 }
