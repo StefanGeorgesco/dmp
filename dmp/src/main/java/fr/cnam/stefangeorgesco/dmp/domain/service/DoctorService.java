@@ -30,13 +30,13 @@ public class DoctorService {
 
 	@Autowired
 	private UserService userService;
-	
+
 	@Autowired
 	private DoctorDAO doctorDAO;
 
 	@Autowired
 	private ModelMapper commonModelMapper;
-	
+
 	@Autowired
 	private ModelMapper doctorModelMapper;
 
@@ -54,7 +54,7 @@ public class DoctorService {
 
 		doctorDTO.setSecurityCode(PasswordGenerator.generatePassword());
 
-		for (SpecialtyDTO specialtyDTO: doctorDTO.getSpecialtiesDTO()) {
+		for (SpecialtyDTO specialtyDTO : doctorDTO.getSpecialtiesDTO()) {
 			Optional<Specialty> optionalSpecialty = specialtyDAO.findById(specialtyDTO.getId());
 
 			if (optionalSpecialty.isPresent()) {
@@ -78,9 +78,9 @@ public class DoctorService {
 	}
 
 	public DoctorDTO findDoctor(String id) throws FinderException {
-		
+
 		Optional<Doctor> optionalDoctor = doctorDAO.findById(id);
-		
+
 		if (optionalDoctor.isPresent()) {
 			return doctorModelMapper.map(optionalDoctor.get(), DoctorDTO.class);
 		} else {
@@ -90,69 +90,81 @@ public class DoctorService {
 	}
 
 	public DoctorDTO updateDoctor(DoctorDTO doctorDTO) throws UpdateException {
-		
+
 		Doctor doctor = doctorDAO.findById(doctorDTO.getId()).get();
-		
+
 		doctor.setPhone(doctorDTO.getPhone());
 		doctor.setEmail(doctorDTO.getEmail());
-		
+
 		Doctor mappedDoctor = commonModelMapper.map(doctorDTO, Doctor.class);
-		
+
 		doctor.setAddress(mappedDoctor.getAddress());
-		
+
 		try {
 			doctorDAO.save(doctor);
 		} catch (Exception e) {
 			throw new UpdateException("doctor could not be updated: " + e.getMessage());
 		}
-		
+
 		DoctorDTO response = doctorModelMapper.map(doctor, DoctorDTO.class);
-		
+
 		return response;
 	}
 
 	public void deleteDoctor(String id) throws DeleteException {
-		
+
 		try {
 			doctorDAO.deleteById(id);
 		} catch (Exception e) {
 			throw new DeleteException("doctor could not be deleted: " + e.getMessage());
 		}
-		
+
 		try {
 			userService.deleteUser(id);
 		} catch (DeleteException e) {
 			System.out.println("no user associated to deleted doctor");
 		}
-		
+
 	}
 
 	public List<DoctorDTO> findDoctorsByIdOrFirstnameOrLastname(String string) {
-		
+
 		if ("".equals(string)) {
 			return new ArrayList<DoctorDTO>();
 		}
-		
+
 		Iterable<Doctor> doctors = doctorDAO.findByIdOrFirstnameOrLastname(string);
-		
-		List<DoctorDTO> doctorsDTO = ((List<Doctor>) doctors)
-				.stream()
-				.map(doctor -> doctorModelMapper.map(doctor, DoctorDTO.class))
-				.collect(Collectors.toList());
+
+		List<DoctorDTO> doctorsDTO = ((List<Doctor>) doctors).stream()
+				.map(doctor -> doctorModelMapper.map(doctor, DoctorDTO.class)).collect(Collectors.toList());
 
 		return doctorsDTO;
 	}
 
 	public SpecialtyDTO findSpecialty(String id) throws FinderException {
-		
+
 		Optional<Specialty> optionalSpecialty = specialtyDAO.findById(id);
-		
+
 		if (optionalSpecialty.isPresent()) {
 			return commonModelMapper.map(optionalSpecialty.get(), SpecialtyDTO.class);
 		} else {
 			throw new FinderException("specialty not found");
 		}
 
+	}
+
+	public List<SpecialtyDTO> findSpecialtiesByIdOrDescription(String string) {
+		
+		if ("".equals(string)) {
+			return new ArrayList<>();
+		}
+
+		Iterable<Specialty> specialties = specialtyDAO.findByIdOrDescription(string);
+
+		List<SpecialtyDTO> specialtiesDTO = ((List<Specialty>) specialties).stream()
+				.map(specialty -> commonModelMapper.map(specialty, SpecialtyDTO.class)).collect(Collectors.toList());
+
+		return specialtiesDTO;
 	}
 
 }

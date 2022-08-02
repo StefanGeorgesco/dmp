@@ -49,7 +49,7 @@ public class DoctorController {
 
 		doctorDTO.setId(userDTO.getId());
 
-		return ResponseEntity.status(HttpStatus.OK).body(doctorService.updateDoctor(doctorDTO));
+		return ResponseEntity.ok(doctorService.updateDoctor(doctorDTO));
 	}
 
 	@GetMapping("/doctor/details")
@@ -57,14 +57,14 @@ public class DoctorController {
 
 		UserDTO userDTO = userService.findUserByUsername(principal.getName());
 
-		return ResponseEntity.status(HttpStatus.OK).body(doctorService.findDoctor(userDTO.getId()));
+		return ResponseEntity.ok(doctorService.findDoctor(userDTO.getId()));
 	}
 
 	@GetMapping("/doctor/{id}")
 	public ResponseEntity<DoctorDTO> getDoctorDetails(@PathVariable String id, Principal principal)
 			throws FinderException {
 
-		return ResponseEntity.status(HttpStatus.OK).body(doctorService.findDoctor(id));
+		return ResponseEntity.ok(doctorService.findDoctor(id));
 	}
 
 	@DeleteMapping("/doctor/{id}")
@@ -74,19 +74,25 @@ public class DoctorController {
 
 		RestResponse response = new RestResponse(HttpStatus.OK.value(), "doctor was deleted");
 
-		return ResponseEntity.status(HttpStatus.OK).body(response);
+		return ResponseEntity.ok(response);
 	}
 
 	@GetMapping("/doctor")
 	 public ResponseEntity<List<DoctorDTO>> findDoctorsByIdOrFirstnameOrLastname(@RequestParam String q) throws FinderException {
 		
-		return ResponseEntity.status(HttpStatus.OK).body(doctorService.findDoctorsByIdOrFirstnameOrLastname(q));
+		return ResponseEntity.ok(doctorService.findDoctorsByIdOrFirstnameOrLastname(q));
 	 }
 	
 	@GetMapping("/specialty/{id}")
 	public ResponseEntity<SpecialtyDTO> getSpecialty(@PathVariable String id) throws FinderException {
 		
 		return ResponseEntity.ok(doctorService.findSpecialty(id));
+	}
+
+	@GetMapping("/specialty")
+	public ResponseEntity<List<SpecialtyDTO>> getSpecialties(@RequestParam String q) throws FinderException {
+		
+		return ResponseEntity.ok(doctorService.findSpecialtiesByIdOrDescription(q));
 	}
 
 }

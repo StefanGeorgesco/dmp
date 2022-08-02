@@ -12,6 +12,6 @@ public interface DoctorDAO extends CrudRepository<Doctor, String> {
 			+ "where lower(doctor.id) like lower(concat('%', :keyword,'%')) "
 			+ "or lower(doctor.firstname) like lower(concat('%', :keyword,'%')) "
 			+ "or lower(doctor.lastname) like lower(concat('%', :keyword,'%'))")
-	Iterable<Doctor> findByIdOrFirstnameOrLastname(@Param("keyword") String keyword);
+	public Iterable<Doctor> findByIdOrFirstnameOrLastname(@Param("keyword") String keyword);
 
 }

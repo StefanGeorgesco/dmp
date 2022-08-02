@@ -394,7 +394,8 @@ public class DoctorServiceTest {
 		assertEquals(specialty1.getDescription(), specialtyDTO1.getDescription());
 	}
 	
-	@Test void testFindSpecialtyFailureSpecialtyDoesNotExist() {
+	@Test
+	void testFindSpecialtyFailureSpecialtyDoesNotExist() {
 		
 		when(specialtyDAO.findById(specialty1.getId())).thenReturn(Optional.ofNullable(null));
 		
@@ -403,5 +404,18 @@ public class DoctorServiceTest {
 		assertEquals("specialty not found", ex.getMessage());
 	}
 	
+	@Test
+	void testFindSpecialtiesByIdOrDescriptionFound2() {
+		
+		when(specialtyDAO.findByIdOrDescription("chirur")).thenReturn(List.of(specialty1, specialty2));
+		
+		List<SpecialtyDTO> specialtiesDTO = doctorService.findSpecialtiesByIdOrDescription("chirur");
+		
+		verify(specialtyDAO, times(1)).findByIdOrDescription("chirur");
+		
+		assertEquals(2, specialtiesDTO.size());
+		assertEquals("S001", specialtiesDTO.get(0).getId());
+		assertEquals("First specialty", specialtiesDTO.get(0).getDescription());
+	}
 
 }

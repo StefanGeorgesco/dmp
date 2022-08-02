@@ -331,5 +331,29 @@ public class DoctorServiceIntegrationTest {
 		
 		assertEquals("specialty not found", ex.getMessage());
 	}
+	
+	@Test
+	public void testFindSpecialtiesByIdOrDescriptionFound8() {
+		
+		List<SpecialtyDTO> specialtiesDTO = doctorService.findSpecialtiesByIdOrDescription("chirur");
+		
+		assertEquals(8, specialtiesDTO.size());
+	}
+
+	@Test
+	public void testFindSpecialtiesByIdOrDescriptionFound0() {
+		
+		List<SpecialtyDTO> specialtiesDTO = doctorService.findSpecialtiesByIdOrDescription("tu");
+		
+		assertEquals(0, specialtiesDTO.size());
+	}
+
+	@Test
+	public void testFindSpecialtiesByIdOrDescriptionSearchStringIsBlank() {
+		
+		List<SpecialtyDTO> specialtiesDTO = doctorService.findSpecialtiesByIdOrDescription("");
+		
+		assertEquals(0, specialtiesDTO.size());
+	}
 
 }

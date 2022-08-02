@@ -577,5 +577,63 @@ public class DoctorControllerIntegrationTest {
 
 		mockMvc.perform(get("/specialty/S003")).andExpect(status().isUnauthorized());
 	}
+	
+	@Test
+	@WithUserDetails("admin") // ROLE_ADMIN
+	public void testGetSpecialtiesByIdOrDescriptionFound8UserIsAdmin() throws Exception {
+		
+		mockMvc.perform(get("/specialty?q=chirur")).andExpect(status().isOk())
+		.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+		.andExpect(jsonPath("$", hasSize(8)))
+		.andExpect(jsonPath("$[2].id", is("S008")))
+		.andExpect(jsonPath("$[2].description", is("chirurgie générale")));
+	}
+
+	@Test
+	@WithUserDetails("admin") // ROLE_ADMIN
+	public void testGetSpecialtiesByIdOrDescriptionFound0UserIsAdmin() throws Exception {
+		
+		mockMvc.perform(get("/specialty?q=tu")).andExpect(status().isOk())
+		.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+		.andExpect(jsonPath("$", hasSize(0)));
+	}
+
+	@Test
+	@WithUserDetails("admin") // ROLE_ADMIN
+	public void testGetSpecialtiesByIdOrDescriptionFound0SearchStringIsBlankUserIsAdmin() throws Exception {
+		
+		mockMvc.perform(get("/specialty?q=")).andExpect(status().isOk())
+		.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+		.andExpect(jsonPath("$", hasSize(0)));
+	}
+
+	@Test
+	@WithUserDetails("admin") // ROLE_ADMIN
+	public void testGetSpecialtiesByIdOrDescriptionErrorQSearchStringIsAbsentUserIsAdmin() throws Exception {
+		
+		mockMvc.perform(get("/specialty")).andExpect(status().isInternalServerError())
+		.andExpect(content().contentType(MediaType.APPLICATION_JSON));
+	}
+
+	@Test
+	@WithUserDetails("user") // ROLE_DOCTOR
+	public void testGetSpecialtiesByIdOrDescriptionFailureUserIsDoctor() throws Exception {
+		
+		mockMvc.perform(get("/specialty?q=chirur")).andExpect(status().isForbidden());
+	}
+
+	@Test
+	@WithUserDetails("eric") // ROLE_PATIENT
+	public void testGetSpecialtiesByIdOrDescriptionFailureUserIsPatient() throws Exception {
+		
+		mockMvc.perform(get("/specialty?q=chirur")).andExpect(status().isForbidden());
+	}
+
+	@Test
+	@WithAnonymousUser
+	public void testGetSpecialtiesByIdOrDescriptionFailureUnauthenticatedUser() throws Exception {
+		
+		mockMvc.perform(get("/specialty?q=chirur")).andExpect(status().isUnauthorized());
+	}
 
 }

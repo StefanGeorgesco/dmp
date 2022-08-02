@@ -57,7 +57,7 @@ public class PatientFileController {
 
 		patientFileDTO.setId(userDTO.getId());
 
-		return ResponseEntity.status(HttpStatus.OK).body(patientFileService.updatePatientFile(patientFileDTO));
+		return ResponseEntity.ok(patientFileService.updatePatientFile(patientFileDTO));
 	}
 
 	@GetMapping("/patient-file/details")
@@ -65,14 +65,14 @@ public class PatientFileController {
 
 		UserDTO userDTO = userService.findUserByUsername(principal.getName());
 
-		return ResponseEntity.status(HttpStatus.OK).body(patientFileService.findPatientFile(userDTO.getId()));
+		return ResponseEntity.ok(patientFileService.findPatientFile(userDTO.getId()));
 	}
 
 	@GetMapping("/patient-file/{id}")
 	public ResponseEntity<PatientFileDTO> getPatientFileDetails(@PathVariable String id, Principal principal)
 			throws ApplicationException {
 
-		return ResponseEntity.status(HttpStatus.OK).body(patientFileService.findPatientFile(id));
+		return ResponseEntity.ok(patientFileService.findPatientFile(id));
 	}
 
 	@PutMapping("/patient-file/{id}/referring-doctor")
@@ -83,7 +83,7 @@ public class PatientFileController {
 
 		patientFileDTO.setReferringDoctorId(doctorDTO.getId());
 
-		return ResponseEntity.status(HttpStatus.OK).body(patientFileService.updateReferringDoctor(patientFileDTO));
+		return ResponseEntity.ok(patientFileService.updateReferringDoctor(patientFileDTO));
 	}
 
 	@GetMapping("/patient-file")
@@ -140,7 +140,7 @@ public class PatientFileController {
 
 		RestResponse response = new RestResponse(HttpStatus.OK.value(), "correspondance was deleted");
 
-		return ResponseEntity.status(HttpStatus.OK).body(response);
+		return ResponseEntity.ok(response);
 	}
 
 	@GetMapping("/patient-file/{id}/correspondance")

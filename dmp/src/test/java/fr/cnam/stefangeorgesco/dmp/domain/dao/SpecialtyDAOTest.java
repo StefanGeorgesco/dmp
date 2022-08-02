@@ -4,6 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
@@ -46,6 +48,30 @@ public class SpecialtyDAOTest {
 		Optional<Specialty> optionalSpecialty = specialtyDAO.findById("S124");
 		
 		assertFalse(optionalSpecialty.isPresent());
+	}
+	
+	@Test
+	public void testSpecialtyDAOFindByIdOrDescriptionFound8() {
+		
+		List<Specialty> specialtiesList = new ArrayList<>();
+		
+		Iterable<Specialty> specialties = specialtyDAO.findByIdOrDescription("chirur");
+		
+		specialties.forEach(specialtiesList::add);
+		
+		assertEquals(8, specialtiesList.size());
+	}
+	
+	@Test
+	public void testSpecialtyDAOFindByIdOrDescriptionFound0() {
+		
+		List<Specialty> specialtiesList = new ArrayList<>();
+		
+		Iterable<Specialty> specialties = specialtyDAO.findByIdOrDescription("tu");
+		
+		specialties.forEach(specialtiesList::add);
+		
+		assertEquals(0, specialtiesList.size());
 	}
 
 }
