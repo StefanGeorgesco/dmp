@@ -54,7 +54,7 @@ public class TestConfiguration {
 	
 	@Bean(name = "address")
 	@Scope(value = "prototype")
-	Address GetObjectAddressNode() {
+	Address getAddress() {
 		return new Address();
 	}
 	
