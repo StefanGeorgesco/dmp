@@ -1,7 +1,6 @@
 package fr.cnam.stefangeorgesco.dmp.configuration;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
@@ -9,6 +8,7 @@ import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -136,16 +136,49 @@ public class ModelMapperTest {
 
 	@Autowired
 	private ModelMapper patientFileModelMapper;
-	
+
 	@Autowired
 	private ModelMapper diagnosisModelMapper;
 
 	@Autowired
 	private ModelMapper actModelMapper;
 
-	private List<Specialty> specialties = new ArrayList<>();
+	@BeforeEach
+	public void setup() {
+		addressDTO.setStreet1("1 Rue Lecourbe");
+		addressDTO.setZipcode("75015");
+		addressDTO.setCity("Paris");
+		addressDTO.setCountry("France");
+		specialtyDTO1.setId("S001");
+		specialtyDTO1.setDescription("First specialty");
+		specialtyDTO2.setId("S002");
+		specialtyDTO2.setDescription("Second specialty");
+		doctorDTO.setId("P001");
+		doctorDTO.setFirstname("Patrick");
+		doctorDTO.setLastname("Dubois");
+		doctorDTO.setPhone("9876543210");
+		doctorDTO.setEmail("patrick.dubois@mail.fr");
+		doctorDTO.setAddressDTO(addressDTO);
+		doctorDTO.setSpecialtiesDTO(List.of(specialtyDTO1, specialtyDTO2));
+		doctorDTO.setSecurityCode("code");
 
-	private List<SpecialtyDTO> specialtiesDTO = new ArrayList<>();
+		address.setStreet1("1 Rue Lecourbe");
+		address.setZipcode("75015");
+		address.setCity("Paris");
+		address.setCountry("France");
+		specialty1.setId("S001");
+		specialty1.setDescription("First specialty");
+		specialty2.setId("S002");
+		specialty2.setDescription("Second specialty");
+		doctor1.setId("D001");
+		doctor1.setFirstname("Patrick");
+		doctor1.setLastname("Dubois");
+		doctor1.setPhone("9876543210");
+		doctor1.setEmail("patrick.dubois@mail.fr");
+		doctor1.setAddress(address);
+		doctor1.setSpecialties(List.of(specialty1, specialty2));
+		patientFile.setId("P001");
+}
 
 	@Test
 	public void testModelMapperUserDTO2User() {
@@ -183,24 +216,6 @@ public class ModelMapperTest {
 
 	@Test
 	public void testModelMapperDoctorDTO2Doctor() {
-		addressDTO.setStreet1("1 Rue Lecourbe");
-		addressDTO.setZipcode("75015");
-		addressDTO.setCity("Paris");
-		addressDTO.setCountry("France");
-		specialtyDTO1.setId("S001");
-		specialtyDTO1.setDescription("First specialty");
-		specialtyDTO2.setId("S002");
-		specialtyDTO2.setDescription("Second specialty");
-		specialtiesDTO.add(specialtyDTO1);
-		specialtiesDTO.add(specialtyDTO2);
-		doctorDTO.setId("P001");
-		doctorDTO.setFirstname("Patrick");
-		doctorDTO.setLastname("Dubois");
-		doctorDTO.setPhone("9876543210");
-		doctorDTO.setEmail("patrick.dubois@mail.fr");
-		doctorDTO.setAddressDTO(addressDTO);
-		doctorDTO.setSpecialtiesDTO(specialtiesDTO);
-		doctorDTO.setSecurityCode("code");
 
 		doctor1 = commonModelMapper.map(doctorDTO, Doctor.class);
 
@@ -228,24 +243,6 @@ public class ModelMapperTest {
 
 	@Test
 	public void testModelMapperDoctor2DoctorDTO() {
-		address.setStreet1("1 Rue Lecourbe");
-		address.setZipcode("75015");
-		address.setCity("Paris");
-		address.setCountry("France");
-		specialty1.setId("S001");
-		specialty1.setDescription("First specialty");
-		specialty2.setId("S002");
-		specialty2.setDescription("Second specialty");
-		specialties.add(specialty1);
-		specialties.add(specialty2);
-		doctor1.setId("P001");
-		doctor1.setFirstname("Patrick");
-		doctor1.setLastname("Dubois");
-		doctor1.setPhone("9876543210");
-		doctor1.setEmail("patrick.dubois@mail.fr");
-		doctor1.setAddress(address);
-		doctor1.setSpecialties(specialties);
-		doctorDTO.setSecurityCode("code");
 
 		doctorDTO = doctorModelMapper.map(doctor1, DoctorDTO.class);
 
@@ -273,10 +270,6 @@ public class ModelMapperTest {
 
 	@Test
 	public void testModelMapperPatientFileDTO2PatientFile() {
-		addressDTO.setStreet1("1 Rue Lecourbe");
-		addressDTO.setZipcode("75015");
-		addressDTO.setCity("Paris");
-		addressDTO.setCountry("France");
 		patientFileDTO.setId("P001");
 		patientFileDTO.setFirstname("Patrick");
 		patientFileDTO.setLastname("Dubois");
@@ -305,12 +298,6 @@ public class ModelMapperTest {
 
 	@Test
 	public void testModelMapperPatientFile2PatientFileDTO() {
-		address.setStreet1("1 Rue Lecourbe");
-		address.setZipcode("75015");
-		address.setCity("Paris");
-		address.setCountry("France");
-		doctor1.setId("D001");
-		patientFile.setId("P001");
 		patientFile.setFirstname("Patrick");
 		patientFile.setLastname("Dubois");
 		patientFile.setDateOfBirth(LocalDate.of(2000, 2, 13));
@@ -353,17 +340,6 @@ public class ModelMapperTest {
 
 	@Test
 	public void testModelMapperCorrespondance2CorrespondanceDTO() {
-		specialty1.setId("S001");
-		specialty1.setDescription("Specialty 1");
-		specialty2.setId("S002");
-		specialty2.setDescription("Specialty 2");
-		specialties.add(specialty1);
-		specialties.add(specialty2);
-		doctor1.setId("D001");
-		doctor1.setFirstname("firstname");
-		doctor1.setLastname("lastname");
-		doctor1.setSpecialties(specialties);
-		patientFile.setId("P001");
 		correspondance.setId(UUID.randomUUID());
 		correspondance.setDateUntil(LocalDate.of(2022, 7, 21));
 		correspondance.setDoctor(doctor1);
@@ -377,11 +353,8 @@ public class ModelMapperTest {
 		assertEquals(correspondance.getDoctor().getId(), correspondanceDTO.getDoctorId());
 		assertEquals(correspondance.getDoctor().getFirstname(), correspondanceDTO.getDoctorFirstName());
 		assertEquals(correspondance.getDoctor().getLastname(), correspondanceDTO.getDoctorLastName());
-		assertEquals(correspondance.getDoctor().getSpecialties().size(),
-				correspondanceDTO.getDoctorSpecialties().size());
-
-		List<String> specialtiesFromCorrespondance = correspondance.getDoctor().getSpecialties().stream().map(Specialty::getDescription).collect(Collectors.toList());
-		assertEquals(specialtiesFromCorrespondance, correspondanceDTO.getDoctorSpecialties());
+		assertEquals(correspondance.getDoctor().getSpecialties().stream().map(Specialty::getDescription)
+				.collect(Collectors.toList()), correspondanceDTO.getDoctorSpecialties());
 	}
 
 	@Test
@@ -407,9 +380,10 @@ public class ModelMapperTest {
 
 	@Test
 	public void testModelMapperMail2MailDTO() {
-		doctor1.setId("D001");
-		patientFile.setId("P001");
 		doctor2.setId("D002");
+		doctor2.setFirstname("firstname_2");
+		doctor2.setLastname("lastname_2");
+		doctor2.setSpecialties(List.of(specialty2, specialty1));
 		mail.setId(1L);
 		mail.setDate(LocalDate.of(2022, 07, 22));
 		mail.setComments("A commment");
@@ -424,9 +398,17 @@ public class ModelMapperTest {
 		assertEquals(mail.getDate(), mailDTO.getDate());
 		assertEquals(mail.getComments(), mailDTO.getComments());
 		assertEquals(mail.getAuthoringDoctor().getId(), mailDTO.getAuthoringDoctorId());
+		assertEquals(mail.getAuthoringDoctor().getFirstname(), mailDTO.getAuthoringDoctorFirstname());
+		assertEquals(mail.getAuthoringDoctor().getLastname(), mailDTO.getAuthoringDoctorLastname());
+		assertEquals(mail.getAuthoringDoctor().getSpecialties().stream().map(Specialty::getDescription)
+				.collect(Collectors.toList()), mailDTO.getAuthoringDoctorSpecialties());
 		assertEquals(mail.getPatientFile().getId(), mailDTO.getPatientFileId());
 		assertEquals(mail.getText(), mailDTO.getText());
 		assertEquals(mail.getRecipientDoctor().getId(), mailDTO.getRecipientDoctorId());
+		assertEquals(mail.getRecipientDoctor().getFirstname(), mailDTO.getRecipientDoctorFirstname());
+		assertEquals(mail.getRecipientDoctor().getLastname(), mailDTO.getRecipientDoctorLastname());
+		assertEquals(mail.getRecipientDoctor().getSpecialties().stream().map(Specialty::getDescription)
+				.collect(Collectors.toList()), mailDTO.getRecipientDoctorSpecialties());
 	}
 
 	@Test
@@ -455,8 +437,6 @@ public class ModelMapperTest {
 	public void testModelMapperDiagnosis2DiagnosisDTO() {
 		disease.setId("DIS001");
 		disease.setDescription("A disease");
-		doctor1.setId("D001");
-		patientFile.setId("P001");
 		diagnosis.setId(1L);
 		diagnosis.setDate(LocalDate.of(2022, 07, 22));
 		diagnosis.setComments("A commment");
@@ -470,6 +450,10 @@ public class ModelMapperTest {
 		assertEquals(diagnosis.getDate(), diagnosisDTO.getDate());
 		assertEquals(diagnosis.getComments(), diagnosisDTO.getComments());
 		assertEquals(diagnosis.getAuthoringDoctor().getId(), diagnosisDTO.getAuthoringDoctorId());
+		assertEquals(diagnosis.getAuthoringDoctor().getFirstname(), diagnosisDTO.getAuthoringDoctorFirstname());
+		assertEquals(diagnosis.getAuthoringDoctor().getLastname(), diagnosisDTO.getAuthoringDoctorLastname());
+		assertEquals(diagnosis.getAuthoringDoctor().getSpecialties().stream().map(Specialty::getDescription)
+				.collect(Collectors.toList()), diagnosisDTO.getAuthoringDoctorSpecialties());
 		assertEquals(diagnosis.getPatientFile().getId(), diagnosisDTO.getPatientFileId());
 		assertEquals(diagnosis.getDisease().getId(), diagnosisDTO.getDiseaseDTO().getId());
 		assertEquals(diagnosis.getDisease().getDescription(), diagnosisDTO.getDiseaseDTO().getDescription());
@@ -501,8 +485,6 @@ public class ModelMapperTest {
 	public void testModelMapperAct2ActDTO() {
 		medicalAct.setId("MA001");
 		medicalAct.setDescription("A disease");
-		doctor1.setId("D001");
-		patientFile.setId("P001");
 		act.setId(1L);
 		act.setDate(LocalDate.of(2022, 07, 22));
 		act.setComments("A commment");
@@ -516,6 +498,10 @@ public class ModelMapperTest {
 		assertEquals(act.getDate(), actDTO.getDate());
 		assertEquals(act.getComments(), actDTO.getComments());
 		assertEquals(act.getAuthoringDoctor().getId(), actDTO.getAuthoringDoctorId());
+		assertEquals(act.getAuthoringDoctor().getFirstname(), actDTO.getAuthoringDoctorFirstname());
+		assertEquals(act.getAuthoringDoctor().getLastname(), actDTO.getAuthoringDoctorLastname());
+		assertEquals(act.getAuthoringDoctor().getSpecialties().stream().map(Specialty::getDescription)
+				.collect(Collectors.toList()), actDTO.getAuthoringDoctorSpecialties());
 		assertEquals(act.getPatientFile().getId(), actDTO.getPatientFileId());
 		assertEquals(act.getMedicalAct().getId(), actDTO.getMedicalActDTO().getId());
 		assertEquals(act.getMedicalAct().getDescription(), actDTO.getMedicalActDTO().getDescription());
@@ -542,8 +528,6 @@ public class ModelMapperTest {
 
 	@Test
 	public void testModelMapperSymptom2SymptomDTO() {
-		doctor1.setId("D001");
-		patientFile.setId("P001");
 		symptom.setId(1L);
 		symptom.setDate(LocalDate.of(2022, 07, 22));
 		symptom.setComments("A commment");
@@ -557,6 +541,10 @@ public class ModelMapperTest {
 		assertEquals(symptom.getDate(), symptomDTO.getDate());
 		assertEquals(symptom.getComments(), symptomDTO.getComments());
 		assertEquals(symptom.getAuthoringDoctor().getId(), symptomDTO.getAuthoringDoctorId());
+		assertEquals(symptom.getAuthoringDoctor().getFirstname(), symptomDTO.getAuthoringDoctorFirstname());
+		assertEquals(symptom.getAuthoringDoctor().getLastname(), symptomDTO.getAuthoringDoctorLastname());
+		assertEquals(symptom.getAuthoringDoctor().getSpecialties().stream().map(Specialty::getDescription)
+				.collect(Collectors.toList()), symptomDTO.getAuthoringDoctorSpecialties());
 		assertEquals(symptom.getPatientFile().getId(), symptomDTO.getPatientFileId());
 		assertEquals(symptom.getDescription(), symptomDTO.getDescription());
 	}

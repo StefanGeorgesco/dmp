@@ -1,5 +1,7 @@
 package fr.cnam.stefangeorgesco.dmp.domain.dto;
 
+import java.util.List;
+
 import javax.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
@@ -14,4 +16,10 @@ public class MailDTO extends PatientFileItemDTO {
 	@NotBlank(message = "recipient doctor id is mandatory")
 	private String recipientDoctorId;
 
+	private String recipientDoctorFirstname;
+	
+	private String recipientDoctorLastname;
+	
+	private List<String> recipientDoctorSpecialties;
+	
 }

@@ -1,6 +1,7 @@
 package fr.cnam.stefangeorgesco.dmp.domain.dto;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -23,6 +24,12 @@ public abstract class PatientFileItemDTO {
 	
 	@NotBlank(message = "authoring doctor id is mandatory")
 	private String authoringDoctorId;
+	
+	private String authoringDoctorFirstname;
+	
+	private String authoringDoctorLastname;
+	
+	private List<String> authoringDoctorSpecialties;
 	
 	@NotBlank(message = "patient file id is mandatory")
 	private String patientFileId;
