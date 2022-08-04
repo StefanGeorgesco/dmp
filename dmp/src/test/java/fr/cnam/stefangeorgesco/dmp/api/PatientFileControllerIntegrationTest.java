@@ -54,17 +54,17 @@ import fr.cnam.stefangeorgesco.dmp.domain.service.RNIPPService;
 @AutoConfigureMockMvc
 @SpringBootTest
 @SqlGroup({ @Sql(scripts = "/sql/create-specialties.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
-	@Sql(scripts = "/sql/create-files.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
-	@Sql(scripts = "/sql/create-correspondances.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
-	@Sql(scripts = "/sql/create-diseases.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
-	@Sql(scripts = "/sql/create-medical-acts.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
-	@Sql(scripts = "/sql/delete-diseases.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD),
-	@Sql(scripts = "/sql/delete-medical-acts.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD),
-	@Sql(scripts = "/sql/delete-correspondances.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD),
-	@Sql(scripts = "/sql/delete-files.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD),
-	@Sql(scripts = "/sql/delete-specialties.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD),
-	@Sql(scripts = "/sql/create-users.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
-	@Sql(scripts = "/sql/delete-users.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD) })
+		@Sql(scripts = "/sql/create-files.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
+		@Sql(scripts = "/sql/create-correspondances.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
+		@Sql(scripts = "/sql/create-diseases.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
+		@Sql(scripts = "/sql/create-medical-acts.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
+		@Sql(scripts = "/sql/delete-diseases.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD),
+		@Sql(scripts = "/sql/delete-medical-acts.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD),
+		@Sql(scripts = "/sql/delete-correspondances.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD),
+		@Sql(scripts = "/sql/delete-files.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD),
+		@Sql(scripts = "/sql/delete-specialties.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD),
+		@Sql(scripts = "/sql/create-users.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
+		@Sql(scripts = "/sql/delete-users.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD) })
 public class PatientFileControllerIntegrationTest {
 
 	@Autowired
@@ -670,7 +670,7 @@ public class PatientFileControllerIntegrationTest {
 
 	@Test
 	@WithUserDetails("user") // "D001", ROLE_DOCTOR
-	public void testFindCorrespondancesByPatientFileIdSuccessUserIsCorrespondingDoctor() throws Exception {
+	public void testFindCorrespondancesByPatientFileIdSuccessUserIsActiveCorrespondingDoctor() throws Exception {
 
 		mockMvc.perform(get("/patient-file/P006/correspondance"))
 				.andExpect(content().contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk())
@@ -680,6 +680,15 @@ public class PatientFileControllerIntegrationTest {
 				.andExpect(jsonPath("$[1].doctorFirstName", is("John")))
 				.andExpect(jsonPath("$[1].doctorLastName", is("Smith")))
 				.andExpect(jsonPath("$[1].dateUntil", is("2027-05-07")));
+	}
+
+	@Test
+	@WithUserDetails("user") // "D001", ROLE_DOCTOR
+	public void testFindCorrespondancesByPatientFileIdFailureUserCorrespondanceExpired() throws Exception {
+
+		mockMvc.perform(get("/patient-file/P013/correspondance"))
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON)).andExpect(status().isNotFound())
+				.andExpect(jsonPath("$.message", is("user is not referring nor corresponding doctor")));
 	}
 
 	@Test
@@ -812,8 +821,7 @@ public class PatientFileControllerIntegrationTest {
 	public void testGetDiseasesByIdOrDescriptionLimit5UserIsDoctor() throws Exception {
 
 		mockMvc.perform(get("/disease?q=sinusite&limit=5")).andExpect(status().isOk())
-				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
-				.andExpect(jsonPath("$", hasSize(5)));
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON)).andExpect(jsonPath("$", hasSize(5)));
 	}
 
 	@Test
@@ -868,8 +876,7 @@ public class PatientFileControllerIntegrationTest {
 		assertTrue(medicalActDAO.existsById("HCAE201"));
 
 		mockMvc.perform(get("/medical-act/HCAE201")).andExpect(status().isOk())
-				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
-				.andExpect(jsonPath("$.id", is("HCAE201")))
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON)).andExpect(jsonPath("$.id", is("HCAE201")))
 				.andExpect(jsonPath("$.description", is(
 						"Dilatation de sténose du conduit d'une glande salivaire par endoscopie [sialendoscopie] ")));
 	}
@@ -917,10 +924,8 @@ public class PatientFileControllerIntegrationTest {
 	public void testGetMedicalActsByIdOrDescriptionFound9UserIsDoctor() throws Exception {
 
 		mockMvc.perform(get("/medical-act?q=radio")).andExpect(status().isOk())
-				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
-				.andExpect(jsonPath("$", hasSize(9)))
-				.andExpect(jsonPath("$[2].id", is("HBQK389")))
-				.andExpect(jsonPath("$[2].description", is(
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON)).andExpect(jsonPath("$", hasSize(9)))
+				.andExpect(jsonPath("$[2].id", is("HBQK389"))).andExpect(jsonPath("$[2].description", is(
 						"Radiographie intrabuccale rétroalvéolaire et/ou rétrocoronaire d'un secteur de 1 à 3 dents contigües")));
 	}
 
@@ -929,8 +934,7 @@ public class PatientFileControllerIntegrationTest {
 	public void testGetMedicalActsByIdOrDescriptionLimit5UserIsDoctor() throws Exception {
 
 		mockMvc.perform(get("/medical-act?q=radio&limit=5")).andExpect(status().isOk())
-				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
-				.andExpect(jsonPath("$", hasSize(5)));
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON)).andExpect(jsonPath("$", hasSize(5)));
 	}
 
 	@Test
@@ -938,8 +942,7 @@ public class PatientFileControllerIntegrationTest {
 	public void testGetMedicalActsByIdOrDescriptionFound0UserIsDoctor() throws Exception {
 
 		mockMvc.perform(get("/medical-act?q=rid")).andExpect(status().isOk())
-				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
-				.andExpect(jsonPath("$", hasSize(0)));
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON)).andExpect(jsonPath("$", hasSize(0)));
 	}
 
 	@Test
@@ -947,8 +950,7 @@ public class PatientFileControllerIntegrationTest {
 	public void testGetMedicalActsByIdOrDescriptionFound0SearchStringIsBlankUserIsDoctor() throws Exception {
 
 		mockMvc.perform(get("/medical-act?q=")).andExpect(status().isOk())
-				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
-				.andExpect(jsonPath("$", hasSize(0)));
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON)).andExpect(jsonPath("$", hasSize(0)));
 	}
 
 	@Test

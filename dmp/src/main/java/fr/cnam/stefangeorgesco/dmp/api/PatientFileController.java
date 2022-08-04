@@ -1,6 +1,7 @@
 package fr.cnam.stefangeorgesco.dmp.api;
 
 import java.security.Principal;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -155,9 +156,13 @@ public class PatientFileController {
 
 		List<CorrespondanceDTO> correspondancesDTO = patientFileService.findCorrespondancesByPatientFileId(id);
 
+		LocalDate now = LocalDate.now();
+		
 		boolean userIsReferringDoctor = userId.equals(referringDoctorId);
 
-		boolean userIsCorrespondingDoctor = correspondancesDTO.stream().map(CorrespondanceDTO::getDoctorId)
+		boolean userIsCorrespondingDoctor = correspondancesDTO.stream()
+				.filter(correspondance -> correspondance.getDateUntil().compareTo(now) >= 0)
+				.map(CorrespondanceDTO::getDoctorId)
 				.collect(Collectors.toList()).contains(userId);
 		
 		if (!userIsReferringDoctor && !userIsCorrespondingDoctor) {

@@ -20,7 +20,7 @@ INSERT INTO t_correspondance(id, date_until, doctor_id, patient_file_id) VALUES(
 INSERT INTO t_correspondance(id, date_until, doctor_id, patient_file_id) VALUES('e1eb3425-d257-4c5e-8600-b125731c458c', '2023-01-01', 'D007', 'P001');
 INSERT INTO t_correspondance(id, date_until, doctor_id, patient_file_id) VALUES('2454a376-9f8c-4e01-ab07-87b3cb992ae3', '2026-03-22', 'D008', 'P011');
 INSERT INTO t_correspondance(id, date_until, doctor_id, patient_file_id) VALUES('f549abff-1a11-4d9e-9cea-fcbef29eb35c', '2023-06-15', 'D009', 'P012');
-INSERT INTO t_correspondance(id, date_until, doctor_id, patient_file_id) VALUES('77aaab4e-6b17-4c3a-88c0-b007122db4bc', '2022-07-12', 'D010', 'P013');
+INSERT INTO t_correspondance(id, date_until, doctor_id, patient_file_id) VALUES('77aaab4e-6b17-4c3a-88c0-b007122db4bc', '2022-07-12', 'D001', 'P013');
 INSERT INTO t_correspondance(id, date_until, doctor_id, patient_file_id) VALUES('ef11c7e1-1694-474e-8d34-eb0a1677b140', '2023-04-24', 'D011', 'P001');
 INSERT INTO t_correspondance(id, date_until, doctor_id, patient_file_id) VALUES('3d80bbeb-997e-4354-82d3-68cea80256d6', '2023-08-14', 'D012', 'P004');
 INSERT INTO t_correspondance(id, date_until, doctor_id, patient_file_id) VALUES('1bd7028d-c850-4439-8cd3-8a38fb9365a2', '2024-02-07', 'D013', 'P013');
