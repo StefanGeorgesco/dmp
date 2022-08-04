@@ -8,7 +8,7 @@ import fr.cnam.stefangeorgesco.dmp.authentication.domain.dto.UserDTO;
 import fr.cnam.stefangeorgesco.dmp.authentication.domain.model.User;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.ActDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.AddressDTO;
-import fr.cnam.stefangeorgesco.dmp.domain.dto.CorrespondanceDTO;
+import fr.cnam.stefangeorgesco.dmp.domain.dto.CorrespondenceDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.DiagnosisDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.DiseaseDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.DoctorDTO;
@@ -20,7 +20,7 @@ import fr.cnam.stefangeorgesco.dmp.domain.dto.SpecialtyDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.SymptomDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.model.Act;
 import fr.cnam.stefangeorgesco.dmp.domain.model.Address;
-import fr.cnam.stefangeorgesco.dmp.domain.model.Correspondance;
+import fr.cnam.stefangeorgesco.dmp.domain.model.Correspondence;
 import fr.cnam.stefangeorgesco.dmp.domain.model.Diagnosis;
 import fr.cnam.stefangeorgesco.dmp.domain.model.Disease;
 import fr.cnam.stefangeorgesco.dmp.domain.model.Doctor;
@@ -60,8 +60,8 @@ public class TestConfiguration {
 	
 	@Bean(name = "correspondance")
 	@Scope(value = "prototype")
-	Correspondance getCorrespondance() {
-		return new Correspondance();
+	Correspondence getCorrespondance() {
+		return new Correspondence();
 	}
 	
 	@Bean(name = "specialty")
@@ -132,8 +132,8 @@ public class TestConfiguration {
 	
 	@Bean(name = "correspondanceDTO")
 	@Scope(value = "prototype")
-	CorrespondanceDTO getCorrespondanceDTO() {
-		return new CorrespondanceDTO();
+	CorrespondenceDTO getCorrespondanceDTO() {
+		return new CorrespondenceDTO();
 	}
 	
 	@Bean(name = "addressDTO")

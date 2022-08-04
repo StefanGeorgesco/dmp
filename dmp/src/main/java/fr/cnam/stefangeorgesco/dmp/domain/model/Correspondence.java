@@ -19,10 +19,10 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Entity
-@Table(name = "t_correspondance")
+@Table(name = "t_correspondence")
 @Getter
 @Setter
-public class Correspondance {
+public class Correspondence {
 
 	@Id
 	@GeneratedValue
@@ -30,7 +30,7 @@ public class Correspondance {
     private UUID id;
 
 	@Column(name = "date_until")
-	@NotNull(message = "correspondance date is mandatory")
+	@NotNull(message = "correspondence date is mandatory")
 	@Future(message = "correpondance date must be in the future")
 	private LocalDate dateUntil;
 

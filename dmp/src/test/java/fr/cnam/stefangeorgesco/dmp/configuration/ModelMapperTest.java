@@ -20,7 +20,7 @@ import fr.cnam.stefangeorgesco.dmp.authentication.domain.dto.UserDTO;
 import fr.cnam.stefangeorgesco.dmp.authentication.domain.model.User;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.ActDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.AddressDTO;
-import fr.cnam.stefangeorgesco.dmp.domain.dto.CorrespondanceDTO;
+import fr.cnam.stefangeorgesco.dmp.domain.dto.CorrespondenceDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.DiagnosisDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.DiseaseDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.DoctorDTO;
@@ -31,7 +31,7 @@ import fr.cnam.stefangeorgesco.dmp.domain.dto.SpecialtyDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.model.Symptom;
 import fr.cnam.stefangeorgesco.dmp.domain.model.Act;
 import fr.cnam.stefangeorgesco.dmp.domain.model.Address;
-import fr.cnam.stefangeorgesco.dmp.domain.model.Correspondance;
+import fr.cnam.stefangeorgesco.dmp.domain.model.Correspondence;
 import fr.cnam.stefangeorgesco.dmp.domain.model.Diagnosis;
 import fr.cnam.stefangeorgesco.dmp.domain.model.Disease;
 import fr.cnam.stefangeorgesco.dmp.domain.model.Doctor;
@@ -66,7 +66,7 @@ public class ModelMapperTest {
 	private PatientFile patientFile;
 
 	@Autowired
-	private Correspondance correspondance;
+	private Correspondence correspondence;
 
 	@Autowired
 	private Mail mail;
@@ -105,7 +105,7 @@ public class ModelMapperTest {
 	private PatientFileDTO patientFileDTO;
 
 	@Autowired
-	private CorrespondanceDTO correspondanceDTO;
+	private CorrespondenceDTO correspondenceDTO;
 
 	@Autowired
 	private MailDTO mailDTO;
@@ -325,36 +325,36 @@ public class ModelMapperTest {
 
 	@Test
 	public void testModelMapperCorrespondanceDTO2Correspondance() {
-		correspondanceDTO.setId(UUID.randomUUID());
-		correspondanceDTO.setDateUntil(LocalDate.of(2022, 7, 21));
-		correspondanceDTO.setDoctorId("D001");
-		correspondanceDTO.setPatientFileId("P001");
+		correspondenceDTO.setId(UUID.randomUUID());
+		correspondenceDTO.setDateUntil(LocalDate.of(2022, 7, 21));
+		correspondenceDTO.setDoctorId("D001");
+		correspondenceDTO.setPatientFileId("P001");
 
-		correspondance = commonModelMapper.map(correspondanceDTO, Correspondance.class);
+		correspondence = commonModelMapper.map(correspondenceDTO, Correspondence.class);
 
-		assertEquals(correspondanceDTO.getId(), correspondance.getId());
-		assertEquals(correspondanceDTO.getDateUntil(), correspondance.getDateUntil());
-		assertEquals(correspondanceDTO.getDoctorId(), correspondance.getDoctor().getId());
-		assertEquals(correspondanceDTO.getPatientFileId(), correspondance.getPatientFile().getId());
+		assertEquals(correspondenceDTO.getId(), correspondence.getId());
+		assertEquals(correspondenceDTO.getDateUntil(), correspondence.getDateUntil());
+		assertEquals(correspondenceDTO.getDoctorId(), correspondence.getDoctor().getId());
+		assertEquals(correspondenceDTO.getPatientFileId(), correspondence.getPatientFile().getId());
 	}
 
 	@Test
 	public void testModelMapperCorrespondance2CorrespondanceDTO() {
-		correspondance.setId(UUID.randomUUID());
-		correspondance.setDateUntil(LocalDate.of(2022, 7, 21));
-		correspondance.setDoctor(doctor1);
-		correspondance.setPatientFile(patientFile);
+		correspondence.setId(UUID.randomUUID());
+		correspondence.setDateUntil(LocalDate.of(2022, 7, 21));
+		correspondence.setDoctor(doctor1);
+		correspondence.setPatientFile(patientFile);
 
-		correspondanceDTO = commonModelMapper.map(correspondance, CorrespondanceDTO.class);
+		correspondenceDTO = commonModelMapper.map(correspondence, CorrespondenceDTO.class);
 
-		assertEquals(correspondance.getId(), correspondanceDTO.getId());
-		assertEquals(correspondance.getDateUntil(), correspondanceDTO.getDateUntil());
-		assertEquals(correspondance.getPatientFile().getId(), correspondanceDTO.getPatientFileId());
-		assertEquals(correspondance.getDoctor().getId(), correspondanceDTO.getDoctorId());
-		assertEquals(correspondance.getDoctor().getFirstname(), correspondanceDTO.getDoctorFirstName());
-		assertEquals(correspondance.getDoctor().getLastname(), correspondanceDTO.getDoctorLastName());
-		assertEquals(correspondance.getDoctor().getSpecialties().stream().map(Specialty::getDescription)
-				.collect(Collectors.toList()), correspondanceDTO.getDoctorSpecialties());
+		assertEquals(correspondence.getId(), correspondenceDTO.getId());
+		assertEquals(correspondence.getDateUntil(), correspondenceDTO.getDateUntil());
+		assertEquals(correspondence.getPatientFile().getId(), correspondenceDTO.getPatientFileId());
+		assertEquals(correspondence.getDoctor().getId(), correspondenceDTO.getDoctorId());
+		assertEquals(correspondence.getDoctor().getFirstname(), correspondenceDTO.getDoctorFirstName());
+		assertEquals(correspondence.getDoctor().getLastname(), correspondenceDTO.getDoctorLastName());
+		assertEquals(correspondence.getDoctor().getSpecialties().stream().map(Specialty::getDescription)
+				.collect(Collectors.toList()), correspondenceDTO.getDoctorSpecialties());
 	}
 
 	@Test

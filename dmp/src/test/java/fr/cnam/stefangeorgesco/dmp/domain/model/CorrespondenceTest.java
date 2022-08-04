@@ -18,7 +18,7 @@ import org.springframework.test.context.TestPropertySource;
 
 @TestPropertySource("/application-test.properties")
 @SpringBootTest
-public class CorrespondanceTest {
+public class CorrespondenceTest {
 
 	private static Validator validator;
 	private LocalDate now;
@@ -26,7 +26,7 @@ public class CorrespondanceTest {
 	private LocalDate pastDate;
 	
 	@Autowired
-	private Correspondance correspondance;
+	private Correspondence correspondence;
 	
 	@Autowired
 	private Doctor doctor;
@@ -44,58 +44,58 @@ public class CorrespondanceTest {
 		now = LocalDate.now();
 		pastDate = now.minusDays(1);
 		futureDate = now.plusDays(1);
-		correspondance.setDateUntil(futureDate);
-		correspondance.setDoctor(doctor);
-		correspondance.setPatientFile(patientFile);
+		correspondence.setDateUntil(futureDate);
+		correspondence.setDoctor(doctor);
+		correspondence.setPatientFile(patientFile);
 	}
 
 	@Test
-	public void correspondanceValidationCorrespondaceValid() {
+	public void correspondenceValidationCorrespondaceValid() {
 
-		Set<ConstraintViolation<Correspondance>> violations = validator.validate(correspondance);
+		Set<ConstraintViolation<Correspondence>> violations = validator.validate(correspondence);
 
 		assertEquals(0, violations.size());
 	}
 
 	@Test
-	public void correspondanceValidationInvalidDateNow() {
+	public void correspondenceValidationInvalidDateNow() {
 
-		correspondance.setDateUntil(now);
+		correspondence.setDateUntil(now);
 
-		Set<ConstraintViolation<Correspondance>> violations = validator.validate(correspondance);
-
-		assertEquals(1, violations.size());
-		assertEquals("correpondance date must be in the future", violations.iterator().next().getMessage());
-	}
-
-	@Test
-	public void correspondanceValidationInvalidDatePast() {
-
-		correspondance.setDateUntil(pastDate);
-
-		Set<ConstraintViolation<Correspondance>> violations = validator.validate(correspondance);
+		Set<ConstraintViolation<Correspondence>> violations = validator.validate(correspondence);
 
 		assertEquals(1, violations.size());
 		assertEquals("correpondance date must be in the future", violations.iterator().next().getMessage());
 	}
 
 	@Test
-	public void correspondanceValidationInvalidDateNull() {
+	public void correspondenceValidationInvalidDatePast() {
 
-		correspondance.setDateUntil(null);
+		correspondence.setDateUntil(pastDate);
 
-		Set<ConstraintViolation<Correspondance>> violations = validator.validate(correspondance);
+		Set<ConstraintViolation<Correspondence>> violations = validator.validate(correspondence);
 
 		assertEquals(1, violations.size());
-		assertEquals("correspondance date is mandatory", violations.iterator().next().getMessage());
+		assertEquals("correpondance date must be in the future", violations.iterator().next().getMessage());
+	}
+
+	@Test
+	public void correspondenceValidationInvalidDateNull() {
+
+		correspondence.setDateUntil(null);
+
+		Set<ConstraintViolation<Correspondence>> violations = validator.validate(correspondence);
+
+		assertEquals(1, violations.size());
+		assertEquals("correspondence date is mandatory", violations.iterator().next().getMessage());
 	}
 	
 	@Test
-	public void correspondanceValidationInvalidDoctorNull() {
+	public void correspondenceValidationInvalidDoctorNull() {
 		
-		correspondance.setDoctor(null);
+		correspondence.setDoctor(null);
 		
-		Set<ConstraintViolation<Correspondance>> violations = validator.validate(correspondance);
+		Set<ConstraintViolation<Correspondence>> violations = validator.validate(correspondence);
 
 		assertEquals(1, violations.size());
 		assertEquals("doctor is mandatory", violations.iterator().next().getMessage());
@@ -103,11 +103,11 @@ public class CorrespondanceTest {
 	}
 	
 	@Test
-	public void correspondanceValidationInvalidPatientFileNull() {
+	public void correspondenceValidationInvalidPatientFileNull() {
 		
-		correspondance.setPatientFile(null);
+		correspondence.setPatientFile(null);
 		
-		Set<ConstraintViolation<Correspondance>> violations = validator.validate(correspondance);
+		Set<ConstraintViolation<Correspondence>> violations = validator.validate(correspondence);
 
 		assertEquals(1, violations.size());
 		assertEquals("patient file is mandatory", violations.iterator().next().getMessage());

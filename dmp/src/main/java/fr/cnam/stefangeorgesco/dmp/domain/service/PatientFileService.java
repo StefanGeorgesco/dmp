@@ -11,16 +11,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import fr.cnam.stefangeorgesco.dmp.domain.dao.CorrespondanceDAO;
+import fr.cnam.stefangeorgesco.dmp.domain.dao.CorrespondenceDAO;
 import fr.cnam.stefangeorgesco.dmp.domain.dao.DiseaseDAO;
 import fr.cnam.stefangeorgesco.dmp.domain.dao.DoctorDAO;
 import fr.cnam.stefangeorgesco.dmp.domain.dao.MedicalActDAO;
 import fr.cnam.stefangeorgesco.dmp.domain.dao.PatientFileDAO;
-import fr.cnam.stefangeorgesco.dmp.domain.dto.CorrespondanceDTO;
+import fr.cnam.stefangeorgesco.dmp.domain.dto.CorrespondenceDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.DiseaseDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.MedicalActDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.PatientFileDTO;
-import fr.cnam.stefangeorgesco.dmp.domain.model.Correspondance;
+import fr.cnam.stefangeorgesco.dmp.domain.model.Correspondence;
 import fr.cnam.stefangeorgesco.dmp.domain.model.Disease;
 import fr.cnam.stefangeorgesco.dmp.domain.model.Doctor;
 import fr.cnam.stefangeorgesco.dmp.domain.model.MedicalAct;
@@ -45,7 +45,7 @@ public class PatientFileService {
 	private DoctorDAO doctorDAO;
 
 	@Autowired
-	private CorrespondanceDAO correspondanceDAO;
+	private CorrespondenceDAO correspondenceDAO;
 	
 	@Autowired
 	private DiseaseDAO diseaseDAO;
@@ -163,52 +163,52 @@ public class PatientFileService {
 		return response;
 	}
 
-	public CorrespondanceDTO createCorrespondance(CorrespondanceDTO correspondanceDTO) throws CreateException {
+	public CorrespondenceDTO createCorrespondence(CorrespondenceDTO correspondenceDTO) throws CreateException {
 
-		Correspondance correspondance = commonModelMapper.map(correspondanceDTO, Correspondance.class);
+		Correspondence correspondence = commonModelMapper.map(correspondenceDTO, Correspondence.class);
 
 		try {
-			correspondance = correspondanceDAO.save(correspondance);
+			correspondence = correspondenceDAO.save(correspondence);
 		} catch (Exception e) {
-			throw new CreateException("correspondance could not be created: " + e.getMessage());
+			throw new CreateException("correspondence could not be created: " + e.getMessage());
 		}
 
-		correspondance = correspondanceDAO.findById(correspondance.getId()).get();
+		correspondence = correspondenceDAO.findById(correspondence.getId()).get();
 
-		CorrespondanceDTO response = commonModelMapper.map(correspondance, CorrespondanceDTO.class);
+		CorrespondenceDTO response = commonModelMapper.map(correspondence, CorrespondenceDTO.class);
 
 		return response;
 	}
 
-	public void deleteCorrespondance(UUID uuid) {
+	public void deleteCorrespondence(UUID uuid) {
 
-		correspondanceDAO.deleteById(uuid);
+		correspondenceDAO.deleteById(uuid);
 	}
 
-	public CorrespondanceDTO findCorrespondance(String id) throws FinderException {
+	public CorrespondenceDTO findCorrespondence(String id) throws FinderException {
 
-		Optional<Correspondance> optionalCorrespondance = correspondanceDAO.findById(UUID.fromString(id));
+		Optional<Correspondence> optionalCorrespondence = correspondenceDAO.findById(UUID.fromString(id));
 
-		if (optionalCorrespondance.isEmpty()) {
-			throw new FinderException("correspondance not found");
+		if (optionalCorrespondence.isEmpty()) {
+			throw new FinderException("correspondence not found");
 		}
 
-		Correspondance correspondance = optionalCorrespondance.get();
+		Correspondence correspondence = optionalCorrespondence.get();
 
-		CorrespondanceDTO response = commonModelMapper.map(correspondance, CorrespondanceDTO.class);
+		CorrespondenceDTO response = commonModelMapper.map(correspondence, CorrespondenceDTO.class);
 
 		return response;
 	}
 
-	public List<CorrespondanceDTO> findCorrespondancesByPatientFileId(String patientFileId) {
+	public List<CorrespondenceDTO> findCorrespondencesByPatientFileId(String patientFileId) {
 
-		Iterable<Correspondance> correspondances = correspondanceDAO.findByPatientFileId(patientFileId);
+		Iterable<Correspondence> correspondences = correspondenceDAO.findByPatientFileId(patientFileId);
 
-		List<CorrespondanceDTO> correspondancesDTO = ((List<Correspondance>) correspondances).stream()
-				.map(correspondance -> commonModelMapper.map(correspondance, CorrespondanceDTO.class))
+		List<CorrespondenceDTO> correspondencesDTO = ((List<Correspondence>) correspondences).stream()
+				.map(correspondence -> commonModelMapper.map(correspondence, CorrespondenceDTO.class))
 				.collect(Collectors.toList());
 
-		return correspondancesDTO;
+		return correspondencesDTO;
 	}
 
 	public DiseaseDTO findDisease(String id) throws FinderException {

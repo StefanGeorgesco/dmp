@@ -13,11 +13,11 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class CorrespondanceDTO {
+public class CorrespondenceDTO {
 	
 	private UUID id;
 
-	@NotNull(message = "correspondance date is mandatory")
+	@NotNull(message = "correspondence date is mandatory")
 	@Future(message = "correpondance date must be in the future")
 	private LocalDate dateUntil;
 

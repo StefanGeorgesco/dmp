@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import fr.cnam.stefangeorgesco.dmp.authentication.domain.dto.UserDTO;
 import fr.cnam.stefangeorgesco.dmp.authentication.domain.service.UserService;
-import fr.cnam.stefangeorgesco.dmp.domain.dto.CorrespondanceDTO;
+import fr.cnam.stefangeorgesco.dmp.domain.dto.CorrespondenceDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.DiseaseDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.DoctorDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.MedicalActDTO;
@@ -97,9 +97,9 @@ public class PatientFileController {
 				.body(patientFileService.findPatientFilesByIdOrFirstnameOrLastname(q));
 	}
 
-	@PostMapping("/patient-file/{id}/correspondance")
-	public ResponseEntity<CorrespondanceDTO> createCorrespondance(
-			@Valid @RequestBody CorrespondanceDTO correspondanceDTO, @PathVariable String id, Principal principal)
+	@PostMapping("/patient-file/{id}/correspondence")
+	public ResponseEntity<CorrespondenceDTO> createCorrespondence(
+			@Valid @RequestBody CorrespondenceDTO correspondenceDTO, @PathVariable String id, Principal principal)
 			throws ApplicationException {
 
 		UserDTO userDTO = userService.findUserByUsername(principal.getName());
@@ -110,20 +110,20 @@ public class PatientFileController {
 			throw new CreateException("user is not referring doctor");
 		}
 
-		if (userDTO.getId().equals(correspondanceDTO.getDoctorId())) {
-			throw new CreateException("trying to create correspondance for referring doctor");
+		if (userDTO.getId().equals(correspondenceDTO.getDoctorId())) {
+			throw new CreateException("trying to create correspondence for referring doctor");
 		}
 
-		correspondanceDTO.setPatientFileId(patientFileDTO.getId());
+		correspondenceDTO.setPatientFileId(patientFileDTO.getId());
 
 		return ResponseEntity.status(HttpStatus.CREATED)
-				.body(patientFileService.createCorrespondance(correspondanceDTO));
+				.body(patientFileService.createCorrespondence(correspondenceDTO));
 
 	}
 
-	@DeleteMapping("/patient-file/{patientFileId}/correspondance/{correspondanceId}")
-	public ResponseEntity<RestResponse> deleteCorrespondance(@PathVariable String patientFileId,
-			@PathVariable String correspondanceId, Principal principal) throws ApplicationException {
+	@DeleteMapping("/patient-file/{patientFileId}/correspondence/{correspondenceId}")
+	public ResponseEntity<RestResponse> deleteCorrespondence(@PathVariable String patientFileId,
+			@PathVariable String correspondenceId, Principal principal) throws ApplicationException {
 
 		UserDTO userDTO = userService.findUserByUsername(principal.getName());
 
@@ -133,52 +133,52 @@ public class PatientFileController {
 			throw new CreateException("user is not referring doctor");
 		}
 
-		CorrespondanceDTO correspondanceDTO = patientFileService.findCorrespondance(correspondanceId);
+		CorrespondenceDTO correspondenceDTO = patientFileService.findCorrespondence(correspondenceId);
 
-		if (!correspondanceDTO.getPatientFileId().equals(patientFileDTO.getId())) {
-			throw new FinderException("correspondance not found for patient file '" + patientFileDTO.getId() + "'");
+		if (!correspondenceDTO.getPatientFileId().equals(patientFileDTO.getId())) {
+			throw new FinderException("correspondence not found for patient file '" + patientFileDTO.getId() + "'");
 		}
 
-		patientFileService.deleteCorrespondance(UUID.fromString(correspondanceId));
+		patientFileService.deleteCorrespondence(UUID.fromString(correspondenceId));
 
-		RestResponse response = new RestResponse(HttpStatus.OK.value(), "correspondance was deleted");
+		RestResponse response = new RestResponse(HttpStatus.OK.value(), "correspondence was deleted");
 
 		return ResponseEntity.ok(response);
 	}
 
-	@GetMapping("/patient-file/{id}/correspondance")
-	public ResponseEntity<List<CorrespondanceDTO>> findCorrespondancesByPatientFileId(@PathVariable String id,
+	@GetMapping("/patient-file/{id}/correspondence")
+	public ResponseEntity<List<CorrespondenceDTO>> findCorrespondencesByPatientFileId(@PathVariable String id,
 			Principal principal) throws FinderException {
 
 		String userId = userService.findUserByUsername(principal.getName()).getId();
 
 		String referringDoctorId = patientFileService.findPatientFile(id).getReferringDoctorId();
 
-		List<CorrespondanceDTO> correspondancesDTO = patientFileService.findCorrespondancesByPatientFileId(id);
+		List<CorrespondenceDTO> correspondencesDTO = patientFileService.findCorrespondencesByPatientFileId(id);
 
 		LocalDate now = LocalDate.now();
 		
 		boolean userIsReferringDoctor = userId.equals(referringDoctorId);
 
-		boolean userIsCorrespondingDoctor = correspondancesDTO.stream()
-				.filter(correspondance -> correspondance.getDateUntil().compareTo(now) >= 0)
-				.map(CorrespondanceDTO::getDoctorId)
+		boolean userIsCorrespondingDoctor = correspondencesDTO.stream()
+				.filter(correspondence -> correspondence.getDateUntil().compareTo(now) >= 0)
+				.map(CorrespondenceDTO::getDoctorId)
 				.collect(Collectors.toList()).contains(userId);
 		
 		if (!userIsReferringDoctor && !userIsCorrespondingDoctor) {
 			throw new FinderException("user is not referring nor corresponding doctor");
 		}
 
-		return ResponseEntity.ok(correspondancesDTO);
+		return ResponseEntity.ok(correspondencesDTO);
 
 	}
 	
-	@GetMapping("/patient-file/details/correspondance")
-	public ResponseEntity<List<CorrespondanceDTO>> findPatientCorrespondances(Principal principal) throws FinderException {
+	@GetMapping("/patient-file/details/correspondence")
+	public ResponseEntity<List<CorrespondenceDTO>> findPatientCorrespondences(Principal principal) throws FinderException {
 		
 		String userId = userService.findUserByUsername(principal.getName()).getId();
 		
-		return ResponseEntity.ok(patientFileService.findCorrespondancesByPatientFileId(userId));
+		return ResponseEntity.ok(patientFileService.findCorrespondencesByPatientFileId(userId));
 	}
 
 	@GetMapping("/disease/{id}")

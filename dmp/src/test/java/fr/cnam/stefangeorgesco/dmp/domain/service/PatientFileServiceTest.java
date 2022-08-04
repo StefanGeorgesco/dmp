@@ -31,18 +31,18 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.context.TestPropertySource;
 
-import fr.cnam.stefangeorgesco.dmp.domain.dao.CorrespondanceDAO;
+import fr.cnam.stefangeorgesco.dmp.domain.dao.CorrespondenceDAO;
 import fr.cnam.stefangeorgesco.dmp.domain.dao.DiseaseDAO;
 import fr.cnam.stefangeorgesco.dmp.domain.dao.DoctorDAO;
 import fr.cnam.stefangeorgesco.dmp.domain.dao.MedicalActDAO;
 import fr.cnam.stefangeorgesco.dmp.domain.dao.PatientFileDAO;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.AddressDTO;
-import fr.cnam.stefangeorgesco.dmp.domain.dto.CorrespondanceDTO;
+import fr.cnam.stefangeorgesco.dmp.domain.dto.CorrespondenceDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.DiseaseDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.MedicalActDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.PatientFileDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.model.Address;
-import fr.cnam.stefangeorgesco.dmp.domain.model.Correspondance;
+import fr.cnam.stefangeorgesco.dmp.domain.model.Correspondence;
 import fr.cnam.stefangeorgesco.dmp.domain.model.Disease;
 import fr.cnam.stefangeorgesco.dmp.domain.model.Doctor;
 import fr.cnam.stefangeorgesco.dmp.domain.model.MedicalAct;
@@ -66,7 +66,7 @@ public class PatientFileServiceTest {
 	private DoctorDAO doctorDAO;
 
 	@MockBean
-	private CorrespondanceDAO correspondanceDAO;
+	private CorrespondenceDAO correspondenceDAO;
 	
 	@MockBean
 	private DiseaseDAO diseaseDAO;
@@ -93,7 +93,7 @@ public class PatientFileServiceTest {
 	private PatientFileDTO patientFileDTOResponse;
 
 	@Autowired
-	private CorrespondanceDTO correspondanceDTO;
+	private CorrespondenceDTO correspondenceDTO;
 	
 	@Autowired
 	private DiseaseDTO diseaseDTO;
@@ -102,7 +102,7 @@ public class PatientFileServiceTest {
 	private MedicalActDTO medicalActDTO;
 
 	@Autowired
-	private CorrespondanceDTO correspondanceDTOResponse;
+	private CorrespondenceDTO correspondenceDTOResponse;
 
 	@Autowired
 	private Specialty specialty1;
@@ -147,23 +147,23 @@ public class PatientFileServiceTest {
 	private PatientFile patientFile2;
 
 	@Autowired
-	private Correspondance persistentCorrespondance;
+	private Correspondence persistentCorrespondence;
 
 	@Autowired
-	private Correspondance savedCorrespondance;
+	private Correspondence savedCorrespondence;
 	
 	@Autowired
-	private Correspondance foundCorrespondance1;
+	private Correspondence foundCorrespondence1;
 	
 	@Autowired
-	private Correspondance foundCorrespondance2;
+	private Correspondence foundCorrespondence2;
 
 	@Autowired
 	private BCryptPasswordEncoder bCryptPasswordEncoder;
 
 	private ArgumentCaptor<PatientFile> patientFileCaptor = ArgumentCaptor.forClass(PatientFile.class);
 
-	private ArgumentCaptor<Correspondance> correspondanceCaptor = ArgumentCaptor.forClass(Correspondance.class);
+	private ArgumentCaptor<Correspondence> correspondenceCaptor = ArgumentCaptor.forClass(Correspondence.class);
 
 	private UUID uuid;
 
@@ -227,22 +227,22 @@ public class PatientFileServiceTest {
 		patientFile2.setSecurityCode("securityCode_2");
 		patientFile2.setReferringDoctor(doctor1);
 
-		correspondanceDTO.setDateUntil(LocalDate.now().plusDays(1));
-		correspondanceDTO.setDoctorId("D002");
-		correspondanceDTO.setPatientFileId("ID_1");
+		correspondenceDTO.setDateUntil(LocalDate.now().plusDays(1));
+		correspondenceDTO.setDoctorId("D002");
+		correspondenceDTO.setPatientFileId("ID_1");
 		
-		persistentCorrespondance.setDateUntil(LocalDate.of(2022, 07, 29));
-		persistentCorrespondance.setDoctor(doctor2);
-		persistentCorrespondance.setPatientFile(patientFile1);
+		persistentCorrespondence.setDateUntil(LocalDate.of(2022, 07, 29));
+		persistentCorrespondence.setDoctor(doctor2);
+		persistentCorrespondence.setPatientFile(patientFile1);
 		
-		foundCorrespondance1.setId(UUID.randomUUID());
-		foundCorrespondance1.setDateUntil(LocalDate.of(2022, 8, 01));
-		foundCorrespondance1.setDoctor(doctor1);
-		foundCorrespondance1.setPatientFile(patientFile1);
-		foundCorrespondance2.setId(UUID.randomUUID());
-		foundCorrespondance2.setDateUntil(LocalDate.of(2022, 9, 05));
-		foundCorrespondance2.setDoctor(doctor2);
-		foundCorrespondance2.setPatientFile(patientFile2);
+		foundCorrespondence1.setId(UUID.randomUUID());
+		foundCorrespondence1.setDateUntil(LocalDate.of(2022, 8, 01));
+		foundCorrespondence1.setDoctor(doctor1);
+		foundCorrespondence1.setPatientFile(patientFile1);
+		foundCorrespondence2.setId(UUID.randomUUID());
+		foundCorrespondence2.setDateUntil(LocalDate.of(2022, 9, 05));
+		foundCorrespondence2.setDoctor(doctor2);
+		foundCorrespondence2.setPatientFile(patientFile2);
 	}
 
 	@Test
@@ -507,113 +507,113 @@ public class PatientFileServiceTest {
 	}
 
 	@Test
-	public void testCreateCorrespondanceSuccess() {
+	public void testCreateCorrespondenceSuccess() {
 		uuid = UUID.randomUUID();
 
-		persistentCorrespondance.setId(uuid);
-		persistentCorrespondance.setDateUntil(correspondanceDTO.getDateUntil());
+		persistentCorrespondence.setId(uuid);
+		persistentCorrespondence.setDateUntil(correspondenceDTO.getDateUntil());
 
-		when(correspondanceDAO.save(correspondanceCaptor.capture())).thenReturn(persistentCorrespondance);
-		when(correspondanceDAO.findById(any(UUID.class))).thenReturn(Optional.of(persistentCorrespondance));
+		when(correspondenceDAO.save(correspondenceCaptor.capture())).thenReturn(persistentCorrespondence);
+		when(correspondenceDAO.findById(any(UUID.class))).thenReturn(Optional.of(persistentCorrespondence));
 
-		correspondanceDTOResponse = assertDoesNotThrow(
-				() -> patientFileService.createCorrespondance(correspondanceDTO));
+		correspondenceDTOResponse = assertDoesNotThrow(
+				() -> patientFileService.createCorrespondence(correspondenceDTO));
 
-		verify(correspondanceDAO, times(1)).save(any(Correspondance.class));
+		verify(correspondenceDAO, times(1)).save(any(Correspondence.class));
 
-		savedCorrespondance = correspondanceCaptor.getValue();
+		savedCorrespondence = correspondenceCaptor.getValue();
 
-		assertEquals(correspondanceDTO.getDateUntil(), savedCorrespondance.getDateUntil());
-		assertEquals(correspondanceDTO.getDoctorId(), savedCorrespondance.getDoctor().getId());
-		assertEquals(correspondanceDTO.getPatientFileId(), savedCorrespondance.getPatientFile().getId());
+		assertEquals(correspondenceDTO.getDateUntil(), savedCorrespondence.getDateUntil());
+		assertEquals(correspondenceDTO.getDoctorId(), savedCorrespondence.getDoctor().getId());
+		assertEquals(correspondenceDTO.getPatientFileId(), savedCorrespondence.getPatientFile().getId());
 
-		assertEquals(correspondanceDTO.getDateUntil(), correspondanceDTOResponse.getDateUntil());
-		assertEquals(correspondanceDTO.getDoctorId(), correspondanceDTOResponse.getDoctorId());
-		assertEquals(correspondanceDTO.getPatientFileId(), correspondanceDTOResponse.getPatientFileId());
-		assertEquals(persistentCorrespondance.getDoctor().getId(), correspondanceDTOResponse.getDoctorId());
-		assertEquals(persistentCorrespondance.getDoctor().getFirstname(),
-				correspondanceDTOResponse.getDoctorFirstName());
-		assertEquals(persistentCorrespondance.getDoctor().getLastname(), correspondanceDTOResponse.getDoctorLastName());
-		assertEquals(persistentCorrespondance.getDoctor().getSpecialties().stream().map(Specialty::getDescription)
-				.collect(Collectors.toList()), correspondanceDTOResponse.getDoctorSpecialties());
+		assertEquals(correspondenceDTO.getDateUntil(), correspondenceDTOResponse.getDateUntil());
+		assertEquals(correspondenceDTO.getDoctorId(), correspondenceDTOResponse.getDoctorId());
+		assertEquals(correspondenceDTO.getPatientFileId(), correspondenceDTOResponse.getPatientFileId());
+		assertEquals(persistentCorrespondence.getDoctor().getId(), correspondenceDTOResponse.getDoctorId());
+		assertEquals(persistentCorrespondence.getDoctor().getFirstname(),
+				correspondenceDTOResponse.getDoctorFirstName());
+		assertEquals(persistentCorrespondence.getDoctor().getLastname(), correspondenceDTOResponse.getDoctorLastName());
+		assertEquals(persistentCorrespondence.getDoctor().getSpecialties().stream().map(Specialty::getDescription)
+				.collect(Collectors.toList()), correspondenceDTOResponse.getDoctorSpecialties());
 	}
 
 	@Test
-	public void testDeleteCorrespondanceSuccess() {
+	public void testDeleteCorrespondenceSuccess() {
 
 		uuid = UUID.randomUUID();
 
-		doNothing().when(correspondanceDAO).deleteById(uuid);
+		doNothing().when(correspondenceDAO).deleteById(uuid);
 
-		patientFileService.deleteCorrespondance(uuid);
+		patientFileService.deleteCorrespondence(uuid);
 
-		verify(correspondanceDAO, times(1)).deleteById(uuid);
+		verify(correspondenceDAO, times(1)).deleteById(uuid);
 	}
 
 	@Test
-	public void testFindCorrespondanceSuccess() {
+	public void testFindCorrespondenceSuccess() {
 		uuid = UUID.randomUUID();
 
-		persistentCorrespondance.setId(uuid);
+		persistentCorrespondence.setId(uuid);
 
-		when(correspondanceDAO.findById(uuid)).thenReturn(Optional.of(persistentCorrespondance));
+		when(correspondenceDAO.findById(uuid)).thenReturn(Optional.of(persistentCorrespondence));
 
-		correspondanceDTOResponse = assertDoesNotThrow(() -> patientFileService.findCorrespondance(uuid.toString()));
+		correspondenceDTOResponse = assertDoesNotThrow(() -> patientFileService.findCorrespondence(uuid.toString()));
 
-		verify(correspondanceDAO, times(1)).findById(uuid);
+		verify(correspondenceDAO, times(1)).findById(uuid);
 
-		assertEquals(persistentCorrespondance.getId(), correspondanceDTOResponse.getId());
-		assertEquals(persistentCorrespondance.getDateUntil(), correspondanceDTOResponse.getDateUntil());
-		assertEquals(persistentCorrespondance.getDoctor().getId(), correspondanceDTOResponse.getDoctorId());
-		assertEquals(persistentCorrespondance.getPatientFile().getId(), correspondanceDTOResponse.getPatientFileId());
-		assertEquals(persistentCorrespondance.getDoctor().getId(), correspondanceDTOResponse.getDoctorId());
-		assertEquals(persistentCorrespondance.getDoctor().getFirstname(),
-				correspondanceDTOResponse.getDoctorFirstName());
-		assertEquals(persistentCorrespondance.getDoctor().getLastname(), correspondanceDTOResponse.getDoctorLastName());
-		assertEquals(persistentCorrespondance.getDoctor().getSpecialties().stream().map(Specialty::getDescription)
-				.collect(Collectors.toList()), correspondanceDTOResponse.getDoctorSpecialties());
+		assertEquals(persistentCorrespondence.getId(), correspondenceDTOResponse.getId());
+		assertEquals(persistentCorrespondence.getDateUntil(), correspondenceDTOResponse.getDateUntil());
+		assertEquals(persistentCorrespondence.getDoctor().getId(), correspondenceDTOResponse.getDoctorId());
+		assertEquals(persistentCorrespondence.getPatientFile().getId(), correspondenceDTOResponse.getPatientFileId());
+		assertEquals(persistentCorrespondence.getDoctor().getId(), correspondenceDTOResponse.getDoctorId());
+		assertEquals(persistentCorrespondence.getDoctor().getFirstname(),
+				correspondenceDTOResponse.getDoctorFirstName());
+		assertEquals(persistentCorrespondence.getDoctor().getLastname(), correspondenceDTOResponse.getDoctorLastName());
+		assertEquals(persistentCorrespondence.getDoctor().getSpecialties().stream().map(Specialty::getDescription)
+				.collect(Collectors.toList()), correspondenceDTOResponse.getDoctorSpecialties());
 	}
 
 	@Test
-	public void testFindCorrespondanceFailureCorrespondanceDoesNotExist() throws FinderException {
+	public void testFindCorrespondenceFailureCorrespondenceDoesNotExist() throws FinderException {
 		uuid = UUID.randomUUID();
 
-		when(correspondanceDAO.findById(uuid)).thenReturn(Optional.ofNullable(null));
+		when(correspondenceDAO.findById(uuid)).thenReturn(Optional.ofNullable(null));
 
 		FinderException ex = assertThrows(FinderException.class,
-				() -> patientFileService.findCorrespondance(uuid.toString()));
+				() -> patientFileService.findCorrespondence(uuid.toString()));
 
-		verify(correspondanceDAO, times(1)).findById(uuid);
+		verify(correspondenceDAO, times(1)).findById(uuid);
 
-		assertEquals("correspondance not found", ex.getMessage());
+		assertEquals("correspondence not found", ex.getMessage());
 	}
 	
 	@Test
-	public void testFindCorrespondancesByPatientFileIdFound3() {
+	public void testFindCorrespondencesByPatientFileIdFound3() {
 		
-		when(correspondanceDAO.findByPatientFileId("P001")).thenReturn(List.of(foundCorrespondance1, foundCorrespondance2));
+		when(correspondenceDAO.findByPatientFileId("P001")).thenReturn(List.of(foundCorrespondence1, foundCorrespondence2));
 		
-		List<CorrespondanceDTO> correspondancesDTO = patientFileService.findCorrespondancesByPatientFileId("P001");
+		List<CorrespondenceDTO> correspondencesDTO = patientFileService.findCorrespondencesByPatientFileId("P001");
 		
-		verify(correspondanceDAO, times(1)).findByPatientFileId("P001");
+		verify(correspondenceDAO, times(1)).findByPatientFileId("P001");
 		
-		assertEquals(2, correspondancesDTO.size());
-		assertEquals(foundCorrespondance1.getId(), correspondancesDTO.get(0).getId());
-		assertEquals("2022-08-01", correspondancesDTO.get(0).getDateUntil().toString());
-		assertEquals("D001", correspondancesDTO.get(0).getDoctorId());
-		assertEquals("ID_1", correspondancesDTO.get(0).getPatientFileId());
+		assertEquals(2, correspondencesDTO.size());
+		assertEquals(foundCorrespondence1.getId(), correspondencesDTO.get(0).getId());
+		assertEquals("2022-08-01", correspondencesDTO.get(0).getDateUntil().toString());
+		assertEquals("D001", correspondencesDTO.get(0).getDoctorId());
+		assertEquals("ID_1", correspondencesDTO.get(0).getPatientFileId());
 	}
 
 	@Test
-	public void testFindCorrespondancesByPatientFileIdFound0() {
+	public void testFindCorrespondencesByPatientFileIdFound0() {
 		
-		when(correspondanceDAO.findByPatientFileId("P055")).thenReturn(List.of());
+		when(correspondenceDAO.findByPatientFileId("P055")).thenReturn(List.of());
 		
-		List<CorrespondanceDTO> correspondancesDTO = patientFileService.findCorrespondancesByPatientFileId("P055");
+		List<CorrespondenceDTO> correspondencesDTO = patientFileService.findCorrespondencesByPatientFileId("P055");
 		
-		verify(correspondanceDAO, times(1)).findByPatientFileId("P055");
+		verify(correspondenceDAO, times(1)).findByPatientFileId("P055");
 		
-		assertEquals(0, correspondancesDTO.size());
+		assertEquals(0, correspondencesDTO.size());
 	}
 
 	@Test
