@@ -2,6 +2,7 @@ package fr.cnam.stefangeorgesco.dmp.domain.dto;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.UUID;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -25,7 +26,7 @@ import lombok.Setter;
 		@JsonSubTypes.Type(value = SymptomDTO.class, name = "symptom") })
 public abstract class PatientFileItemDTO {
 
-	private long id;
+	private UUID id;
 
 	@NotNull(message = "patient file date is mandatory")
 	@PastOrPresent(message = "patient file item date must be in the past or today")

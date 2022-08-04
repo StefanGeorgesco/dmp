@@ -359,7 +359,7 @@ public class ModelMapperTest {
 
 	@Test
 	public void testModelMapperMailDTO2Mail() {
-		mailDTO.setId(1L);
+		mailDTO.setId(UUID.randomUUID());
 		mailDTO.setDate(LocalDate.of(2022, 07, 22));
 		mailDTO.setComments("A commment");
 		mailDTO.setAuthoringDoctorId("DOO1");
@@ -384,7 +384,7 @@ public class ModelMapperTest {
 		doctor2.setFirstname("firstname_2");
 		doctor2.setLastname("lastname_2");
 		doctor2.setSpecialties(List.of(specialty2, specialty1));
-		mail.setId(1L);
+		mail.setId(UUID.randomUUID());
 		mail.setDate(LocalDate.of(2022, 07, 22));
 		mail.setComments("A commment");
 		mail.setAuthoringDoctor(doctor1);
@@ -415,7 +415,7 @@ public class ModelMapperTest {
 	public void testModelMapperDiagnosisDTO2Diagnosis() {
 		diseaseDTO.setId("DIS001");
 		diseaseDTO.setDescription("A disease");
-		diagnosisDTO.setId(1L);
+		diagnosisDTO.setId(UUID.randomUUID());
 		diagnosisDTO.setDate(LocalDate.of(2022, 07, 22));
 		diagnosisDTO.setComments("A commment");
 		diagnosisDTO.setAuthoringDoctorId("DOO1");
@@ -437,7 +437,7 @@ public class ModelMapperTest {
 	public void testModelMapperDiagnosis2DiagnosisDTO() {
 		disease.setId("DIS001");
 		disease.setDescription("A disease");
-		diagnosis.setId(1L);
+		diagnosis.setId(UUID.randomUUID());
 		diagnosis.setDate(LocalDate.of(2022, 07, 22));
 		diagnosis.setComments("A commment");
 		diagnosis.setAuthoringDoctor(doctor1);
@@ -463,7 +463,7 @@ public class ModelMapperTest {
 	public void testModelMapperActDTO2Act() {
 		medicalActDTO.setId("MA001");
 		medicalActDTO.setDescription("A medical act");
-		actDTO.setId(1L);
+		actDTO.setId(UUID.randomUUID());
 		actDTO.setDate(LocalDate.of(2022, 07, 22));
 		actDTO.setComments("A commment");
 		actDTO.setAuthoringDoctorId("DOO1");
@@ -485,7 +485,7 @@ public class ModelMapperTest {
 	public void testModelMapperAct2ActDTO() {
 		medicalAct.setId("MA001");
 		medicalAct.setDescription("A disease");
-		act.setId(1L);
+		act.setId(UUID.randomUUID());
 		act.setDate(LocalDate.of(2022, 07, 22));
 		act.setComments("A commment");
 		act.setAuthoringDoctor(doctor1);
@@ -509,7 +509,7 @@ public class ModelMapperTest {
 
 	@Test
 	public void testModelMapperSymptomDTO2Symptom() {
-		symptomDTO.setId(1L);
+		symptomDTO.setId(UUID.randomUUID());
 		symptomDTO.setDate(LocalDate.of(2022, 07, 22));
 		symptomDTO.setComments("A commment");
 		symptomDTO.setAuthoringDoctorId("DOO1");
@@ -528,7 +528,7 @@ public class ModelMapperTest {
 
 	@Test
 	public void testModelMapperSymptom2SymptomDTO() {
-		symptom.setId(1L);
+		symptom.setId(UUID.randomUUID());
 		symptom.setDate(LocalDate.of(2022, 07, 22));
 		symptom.setComments("A commment");
 		symptom.setAuthoringDoctor(doctor1);
