@@ -12,7 +12,6 @@ public class DiseaseDTO {
 	@NotBlank(message = "id is mandatory")
 	private String id;
 	
-	@NotBlank(message = "description is mandatory")
 	private String description;
 
 }
