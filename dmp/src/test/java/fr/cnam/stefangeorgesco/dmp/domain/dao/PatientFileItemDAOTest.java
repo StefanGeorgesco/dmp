@@ -2,9 +2,12 @@ package fr.cnam.stefangeorgesco.dmp.domain.dao;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.time.LocalDate;
+import java.util.UUID;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +23,7 @@ import fr.cnam.stefangeorgesco.dmp.domain.model.Doctor;
 import fr.cnam.stefangeorgesco.dmp.domain.model.Mail;
 import fr.cnam.stefangeorgesco.dmp.domain.model.MedicalAct;
 import fr.cnam.stefangeorgesco.dmp.domain.model.PatientFile;
+import fr.cnam.stefangeorgesco.dmp.domain.model.PatientFileItem;
 import fr.cnam.stefangeorgesco.dmp.domain.model.Prescription;
 import fr.cnam.stefangeorgesco.dmp.domain.model.Symptom;
 
@@ -55,6 +59,8 @@ public class PatientFileItemDAOTest {
 	@Autowired
 	private Act act;
 
+	private PatientFileItem savedPatientFileItem;
+
 	@Autowired
 	private Disease disease;
 
@@ -73,6 +79,14 @@ public class PatientFileItemDAOTest {
 	private LocalDate date;
 
 	private long count;
+
+	private String comment;
+	
+	private String text;
+	
+	private String description;
+
+	private String id;
 
 	@BeforeEach
 	public void setUp() {
@@ -113,6 +127,10 @@ public class PatientFileItemDAOTest {
 		symptom.setAuthoringDoctor(authoringDoctor);
 		symptom.setPatientFile(patientFile);
 		symptom.setDescription("this prescription...");
+		
+		comment = "un commentaire";
+		text = "texte du message";
+		description = "description de l'élément";
 	}
 
 	@Test
@@ -164,53 +182,157 @@ public class PatientFileItemDAOTest {
 
 		assertEquals(count + 1, patientFileItemDAO.count());
 	}
-	
+
 	@Test
 	public void testPatientFileItemDAOSaveCreateActFailureMedicalActDoesNotExist() {
-		
+
 		medicalAct.setId("ID");
-		
+
 		count = patientFileItemDAO.count();
-		
+
 		assertThrows(RuntimeException.class, () -> patientFileItemDAO.save(act));
-		
+
 		assertEquals(count, patientFileItemDAO.count());
 	}
-	
+
 	@Test
 	public void testPatientFileItemDAOSaveCreateMailFailureRecipientDoctorDoesNotExist() {
-		
+
 		recipientDoctor.setId("ID");
-		
+
 		count = patientFileItemDAO.count();
-		
+
 		assertThrows(RuntimeException.class, () -> patientFileItemDAO.save(mail));
-		
+
 		assertEquals(count, patientFileItemDAO.count());
 	}
-	
+
 	@Test
 	public void testPatientFileItemDAOSaveCreatePrescriptionFailureAuthoringDoctorDoesNotExist() {
-		
+
 		authoringDoctor.setId("ID");
-		
+
 		count = patientFileItemDAO.count();
-		
+
 		assertThrows(RuntimeException.class, () -> patientFileItemDAO.save(prescription));
-		
+
 		assertEquals(count, patientFileItemDAO.count());
 	}
-	
+
 	@Test
 	public void testPatientFileItemDAOSaveCreateSymptomFailurePatientFileDoesNotExist() {
-		
+
 		patientFile.setId("ID");
-		
+
 		count = patientFileItemDAO.count();
-		
+
 		assertThrows(RuntimeException.class, () -> patientFileItemDAO.save(symptom));
-		
+
 		assertEquals(count, patientFileItemDAO.count());
 	}
-	
+
+	@Test
+	public void testPatientFileItemDAOSaveUpdateActSuccess() {
+
+		id = "HBQK389";
+
+		act = (Act) patientFileItemDAO.findById(UUID.fromString("1b57e70f-8eb0-4a97-99c6-5d44f138c22c")).get();
+
+		assertNotEquals(comment, act.getComments());
+		assertNotEquals(id, act.getMedicalAct().getId());
+
+		act.setComments(comment);
+		act.getMedicalAct().setId(id);
+
+		savedPatientFileItem = assertDoesNotThrow(() -> patientFileItemDAO.save(act));
+
+		assertEquals(comment, savedPatientFileItem.getComments());
+		assertEquals(id, ((Act) savedPatientFileItem).getMedicalAct().getId());
+		assertEquals(
+				"Radiographie intrabuccale rétroalvéolaire et/ou rétrocoronaire d'un secteur de 1 à 3 dents contigües",
+				((Act) savedPatientFileItem).getMedicalAct().getDescription());
+	}
+
+	@Test
+	public void testPatientFileItemDAOSaveUpdateDiagnosisSuccess() {
+
+		id = "J011";
+
+		diagnosis = (Diagnosis) patientFileItemDAO.findById(UUID.fromString("707b71f1-0bbd-46ec-b79c-c9717bd6b2cd"))
+				.get();
+
+		assertNotEquals(comment, diagnosis.getComments());
+		assertNotEquals(id, diagnosis.getDisease().getId());
+		
+		diagnosis.setComments(comment);
+		diagnosis.getDisease().setId(id);
+
+		savedPatientFileItem = assertDoesNotThrow(() -> patientFileItemDAO.save(diagnosis));
+		
+		assertEquals(comment, savedPatientFileItem.getComments());
+		assertEquals(id, ((Diagnosis) savedPatientFileItem).getDisease().getId());
+		assertEquals(
+				"Sinusite frontale aiguë",
+				((Diagnosis) savedPatientFileItem).getDisease().getDescription());
+	}
+
+	@Test
+	public void testPatientFileItemDAOSaveUpdateMailSuccess() {
+		
+		id = "D013";
+		
+		mail = (Mail) patientFileItemDAO.findById(UUID.fromString("3ab3d311-585c-498e-aaca-728c00beb86e"))
+				.get();
+		
+		assertNotEquals(comment, mail.getComments());
+		assertNotEquals(text, mail.getText());
+		assertNotEquals(id, mail.getRecipientDoctor().getId());
+		
+		mail.setComments(comment);
+		mail.setText(text);
+		mail.getRecipientDoctor().setId(id);
+
+		savedPatientFileItem = assertDoesNotThrow(() -> patientFileItemDAO.save(mail));
+
+		assertEquals(comment, savedPatientFileItem.getComments());
+		assertEquals(text, ((Mail) savedPatientFileItem).getText());
+		assertEquals(id, ((Mail) savedPatientFileItem).getRecipientDoctor().getId());
+	}
+
+	@Test
+	public void testPatientFileItemDAOSaveUpdatePrescriptionSuccess() {
+		
+		prescription = (Prescription) patientFileItemDAO.findById(UUID.fromString("31571533-a9d4-4b10-ac46-8afe0247e6cd"))
+				.get();
+		
+		assertNotEquals(comment, prescription.getComments());
+		assertNotEquals(description, prescription.getDescription());
+		
+		prescription.setComments(comment);
+		prescription.setDescription(description);
+
+		savedPatientFileItem = assertDoesNotThrow(() -> patientFileItemDAO.save(prescription));
+		
+		assertEquals(comment, savedPatientFileItem.getComments());
+		assertEquals(description, ((Prescription) savedPatientFileItem).getDescription());
+	}
+
+	@Test
+	public void testPatientFileItemDAOSaveUpdateSymptomSuccess() {
+		
+		symptom = (Symptom) patientFileItemDAO.findById(UUID.fromString("142763cf-6eeb-47a5-b8f8-8ec85f0025c4"))
+				.get();
+
+		assertNotEquals(comment, symptom.getComments());
+		assertNotEquals(description, symptom.getDescription());
+		
+		symptom.setComments(comment);
+		symptom.setDescription(description);
+
+		savedPatientFileItem = assertDoesNotThrow(() -> patientFileItemDAO.save(symptom));
+
+		assertEquals(comment, savedPatientFileItem.getComments());
+		assertEquals(description, ((Symptom) savedPatientFileItem).getDescription());
+}
+
 }

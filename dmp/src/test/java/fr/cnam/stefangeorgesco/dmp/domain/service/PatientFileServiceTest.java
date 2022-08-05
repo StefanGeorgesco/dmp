@@ -40,19 +40,27 @@ import fr.cnam.stefangeorgesco.dmp.domain.dao.PatientFileItemDAO;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.ActDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.AddressDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.CorrespondenceDTO;
+import fr.cnam.stefangeorgesco.dmp.domain.dto.DiagnosisDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.DiseaseDTO;
+import fr.cnam.stefangeorgesco.dmp.domain.dto.MailDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.MedicalActDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.PatientFileDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.PatientFileItemDTO;
+import fr.cnam.stefangeorgesco.dmp.domain.dto.PrescriptionDTO;
+import fr.cnam.stefangeorgesco.dmp.domain.dto.SymptomDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.model.Act;
 import fr.cnam.stefangeorgesco.dmp.domain.model.Address;
 import fr.cnam.stefangeorgesco.dmp.domain.model.Correspondence;
+import fr.cnam.stefangeorgesco.dmp.domain.model.Diagnosis;
 import fr.cnam.stefangeorgesco.dmp.domain.model.Disease;
 import fr.cnam.stefangeorgesco.dmp.domain.model.Doctor;
+import fr.cnam.stefangeorgesco.dmp.domain.model.Mail;
 import fr.cnam.stefangeorgesco.dmp.domain.model.MedicalAct;
 import fr.cnam.stefangeorgesco.dmp.domain.model.PatientFile;
 import fr.cnam.stefangeorgesco.dmp.domain.model.PatientFileItem;
+import fr.cnam.stefangeorgesco.dmp.domain.model.Prescription;
 import fr.cnam.stefangeorgesco.dmp.domain.model.Specialty;
+import fr.cnam.stefangeorgesco.dmp.domain.model.Symptom;
 import fr.cnam.stefangeorgesco.dmp.exception.domain.CheckException;
 import fr.cnam.stefangeorgesco.dmp.exception.domain.DuplicateKeyException;
 import fr.cnam.stefangeorgesco.dmp.exception.domain.FinderException;
@@ -104,16 +112,28 @@ public class PatientFileServiceTest {
 	private CorrespondenceDTO correspondenceDTO;
 	
 	@Autowired
-	private DiseaseDTO diseaseDTO;
+	private CorrespondenceDTO correspondenceDTOResponse;
 	
 	@Autowired
 	private MedicalActDTO medicalActDTO;
 
 	@Autowired
-	private CorrespondenceDTO correspondenceDTOResponse;
+	private ActDTO actDTO;
 	
 	@Autowired
-	private ActDTO actDTO;
+	private DiseaseDTO diseaseDTO;
+	
+	@Autowired
+	private DiagnosisDTO diagnosisDTO;
+	
+	@Autowired
+	private MailDTO mailDTO;
+	
+	@Autowired
+	private PrescriptionDTO prescriptionDTO;
+	
+	@Autowired
+	private SymptomDTO symptomDTO;
 	
 	@Autowired
 	private Specialty specialty1;
@@ -173,6 +193,18 @@ public class PatientFileServiceTest {
 	private Act act;
 	
 	@Autowired
+	private Diagnosis diagnosis;
+	
+	@Autowired
+	private Mail mail;
+	
+	@Autowired
+	private Prescription prescription;
+	
+	@Autowired
+	private Symptom symptom;
+	
+	@Autowired
 	private BCryptPasswordEncoder bCryptPasswordEncoder;
 
 	private ArgumentCaptor<PatientFile> patientFileCaptor = ArgumentCaptor.forClass(PatientFile.class);
@@ -182,6 +214,8 @@ public class PatientFileServiceTest {
 	private ArgumentCaptor<PatientFileItem> patientFileItemCaptor = ArgumentCaptor.forClass(PatientFileItem.class);
 	
 	private UUID uuid;
+	
+	private LocalDate date;
 
 	@BeforeEach
 	public void setup() {
@@ -247,12 +281,40 @@ public class PatientFileServiceTest {
 		correspondenceDTO.setDoctorId("D002");
 		correspondenceDTO.setPatientFileId("ID_1");
 		
-		medicalActDTO.setId("HBSD001");
-		actDTO.setDate(LocalDate.now());
+		date = LocalDate.now();
+		
+		medicalActDTO.setId("MA001");
+		actDTO.setDate(date);
 		actDTO.setComments("act comment");
 		actDTO.setAuthoringDoctorId("D001");
 		actDTO.setPatientFileId("P001");
 		actDTO.setMedicalActDTO(medicalActDTO);
+		
+		diseaseDTO.setId("DIS001");
+		diagnosisDTO.setDate(date);
+		diagnosisDTO.setComments("diagnosis comment");
+		diagnosisDTO.setAuthoringDoctorId("D001");
+		diagnosisDTO.setPatientFileId("P001");
+		diagnosisDTO.setDiseaseDTO(diseaseDTO);
+		
+		mailDTO.setDate(date);
+		mailDTO.setComments("mail comment");
+		mailDTO.setAuthoringDoctorId("D001");
+		mailDTO.setPatientFileId("P001");
+		mailDTO.setText("texte du message");
+		mailDTO.setRecipientDoctorId("D002");
+		
+		prescriptionDTO.setDate(date);
+		prescriptionDTO.setComments("prescription comment");
+		prescriptionDTO.setAuthoringDoctorId("D001");
+		prescriptionDTO.setPatientFileId("P001");
+		prescriptionDTO.setDescription("prescription description");
+		
+		symptomDTO.setDate(date);
+		symptomDTO.setComments("symptom comment");
+		symptomDTO.setAuthoringDoctorId("D001");
+		symptomDTO.setPatientFileId("P001");
+		symptomDTO.setDescription("symptom description");
 		
 		persistentCorrespondence.setDateUntil(LocalDate.of(2022, 07, 29));
 		persistentCorrespondence.setDoctor(doctor2);
@@ -706,13 +768,13 @@ public class PatientFileServiceTest {
 		act.setMedicalAct(medicalAct1);
 
 		when(patientFileItemDAO.save(patientFileItemCaptor.capture())).thenReturn(act);
-		when(patientFileItemDAO.findById(any(UUID.class))).thenReturn(Optional.of(act));
+		when(patientFileItemDAO.findById(uuid)).thenReturn(Optional.of(act));
 
 		PatientFileItemDTO patientFileItemDTOResponse = assertDoesNotThrow(
 				() -> patientFileService.createPatientFileItem(actDTO));
 
 		verify(patientFileItemDAO, times(1)).save(any(Act.class));
-		verify(patientFileItemDAO, times(1)).findById(any(UUID.class));
+		verify(patientFileItemDAO, times(1)).findById(uuid);
 
 		PatientFileItem savedPatientFileItem = patientFileItemCaptor.getValue();
 		
@@ -734,6 +796,235 @@ public class PatientFileServiceTest {
 		assertTrue(patientFileItemDTOResponse instanceof ActDTO);
 		assertEquals(act.getMedicalAct().getId(), ((ActDTO) patientFileItemDTOResponse).getMedicalActDTO().getId());
 		assertEquals(act.getMedicalAct().getDescription(), ((ActDTO) patientFileItemDTOResponse).getMedicalActDTO().getDescription());
+	}
+	
+	@Test
+	public void testUpdateActSuccess() {
+		uuid = UUID.randomUUID();
+		
+		actDTO.setId(uuid);
+		
+		
+		act.setId(uuid);
+		act.setDate(LocalDate.of(2022, 7, 14));
+		act.setComments("another comment");
+		act.setAuthoringDoctor(doctor2);
+		patientFile2.setId("P002");
+		act.setPatientFile(patientFile2);
+		act.setMedicalAct(medicalAct2);
+
+		when(patientFileItemDAO.findById(uuid)).thenReturn(Optional.of(act));
+		when(patientFileItemDAO.save(patientFileItemCaptor.capture())).thenReturn(act);
+
+		PatientFileItemDTO patientFileItemDTOResponse = assertDoesNotThrow(
+				() -> patientFileService.updatePatientFileItem(actDTO));
+
+		verify(patientFileItemDAO, times(1)).findById(uuid);
+		verify(patientFileItemDAO, times(1)).save(any(Act.class));
+
+		PatientFileItem savedPatientFileItem = patientFileItemCaptor.getValue();
+		
+		assertEquals(uuid, savedPatientFileItem.getId());
+		assertEquals(act.getDate(), savedPatientFileItem.getDate());
+		assertEquals(actDTO.getComments(), savedPatientFileItem.getComments());
+		assertEquals(act.getAuthoringDoctor().getId(), savedPatientFileItem.getAuthoringDoctor().getId());
+		assertEquals(act.getPatientFile().getId(), savedPatientFileItem.getPatientFile().getId());
+		assertTrue(savedPatientFileItem instanceof Act);
+		assertEquals(actDTO.getMedicalActDTO().getId(), ((Act) savedPatientFileItem).getMedicalAct().getId());
+		
+		assertEquals(uuid, patientFileItemDTOResponse.getId());
+		assertEquals(act.getDate(), patientFileItemDTOResponse.getDate());
+		assertEquals(actDTO.getComments(), patientFileItemDTOResponse.getComments());
+		assertEquals(act.getAuthoringDoctor().getId(), patientFileItemDTOResponse.getAuthoringDoctorId());
+		assertEquals(act.getAuthoringDoctor().getFirstname(), patientFileItemDTOResponse.getAuthoringDoctorFirstname());
+		assertEquals(act.getAuthoringDoctor().getLastname(), patientFileItemDTOResponse.getAuthoringDoctorLastname());
+		assertEquals(act.getPatientFile().getId(), patientFileItemDTOResponse.getPatientFileId());
+		assertTrue(patientFileItemDTOResponse instanceof ActDTO);
+		assertEquals(actDTO.getMedicalActDTO().getId(), ((ActDTO) patientFileItemDTOResponse).getMedicalActDTO().getId());
+		assertEquals(act.getMedicalAct().getDescription(), ((ActDTO) patientFileItemDTOResponse).getMedicalActDTO().getDescription());
+	}
+
+	@Test
+	public void testUpdateDiagnosisSuccess() {
+		uuid = UUID.randomUUID();
+		
+		diagnosisDTO.setId(uuid);
+		
+		
+		diagnosis.setId(uuid);
+		diagnosis.setDate(LocalDate.of(2022, 7, 14));
+		diagnosis.setComments("another comment");
+		diagnosis.setAuthoringDoctor(doctor2);
+		patientFile2.setId("P002");
+		diagnosis.setPatientFile(patientFile2);
+		diagnosis.setDisease(disease2);
+
+		when(patientFileItemDAO.findById(uuid)).thenReturn(Optional.of(diagnosis));
+		when(patientFileItemDAO.save(patientFileItemCaptor.capture())).thenReturn(diagnosis);
+
+		PatientFileItemDTO patientFileItemDTOResponse = assertDoesNotThrow(
+				() -> patientFileService.updatePatientFileItem(diagnosisDTO));
+
+		verify(patientFileItemDAO, times(1)).findById(uuid);
+		verify(patientFileItemDAO, times(1)).save(any(Diagnosis.class));
+
+		PatientFileItem savedPatientFileItem = patientFileItemCaptor.getValue();
+		
+		assertEquals(uuid, savedPatientFileItem.getId());
+		assertEquals(diagnosis.getDate(), savedPatientFileItem.getDate());
+		assertEquals(diagnosisDTO.getComments(), savedPatientFileItem.getComments());
+		assertEquals(diagnosis.getAuthoringDoctor().getId(), savedPatientFileItem.getAuthoringDoctor().getId());
+		assertEquals(diagnosis.getPatientFile().getId(), savedPatientFileItem.getPatientFile().getId());
+		assertTrue(savedPatientFileItem instanceof Diagnosis);
+		assertEquals(diagnosisDTO.getDiseaseDTO().getId(), ((Diagnosis) savedPatientFileItem).getDisease().getId());
+		
+		assertEquals(uuid, patientFileItemDTOResponse.getId());
+		assertEquals(diagnosis.getDate(), patientFileItemDTOResponse.getDate());
+		assertEquals(diagnosisDTO.getComments(), patientFileItemDTOResponse.getComments());
+		assertEquals(diagnosis.getAuthoringDoctor().getId(), patientFileItemDTOResponse.getAuthoringDoctorId());
+		assertEquals(diagnosis.getAuthoringDoctor().getFirstname(), patientFileItemDTOResponse.getAuthoringDoctorFirstname());
+		assertEquals(diagnosis.getAuthoringDoctor().getLastname(), patientFileItemDTOResponse.getAuthoringDoctorLastname());
+		assertEquals(diagnosis.getPatientFile().getId(), patientFileItemDTOResponse.getPatientFileId());
+		assertTrue(patientFileItemDTOResponse instanceof DiagnosisDTO);
+		assertEquals(diagnosisDTO.getDiseaseDTO().getId(), ((DiagnosisDTO) patientFileItemDTOResponse).getDiseaseDTO().getId());
+		assertEquals(diagnosis.getDisease().getDescription(), ((DiagnosisDTO) patientFileItemDTOResponse).getDiseaseDTO().getDescription());
+	}
+
+	@Test
+	public void testUpdateMailSuccess() {
+		uuid = UUID.randomUUID();
+		
+		mailDTO.setId(uuid);
+		
+		
+		mail.setId(uuid);
+		mail.setDate(LocalDate.of(2022, 7, 14));
+		mail.setComments("another comment");
+		mail.setAuthoringDoctor(doctor2);
+		patientFile2.setId("P002");
+		mail.setPatientFile(patientFile2);
+		mail.setRecipientDoctor(doctor2);
+
+		when(patientFileItemDAO.findById(uuid)).thenReturn(Optional.of(mail));
+		when(patientFileItemDAO.save(patientFileItemCaptor.capture())).thenReturn(mail);
+
+		PatientFileItemDTO patientFileItemDTOResponse = assertDoesNotThrow(
+				() -> patientFileService.updatePatientFileItem(mailDTO));
+
+		verify(patientFileItemDAO, times(1)).findById(uuid);
+		verify(patientFileItemDAO, times(1)).save(any(Mail.class));
+
+		PatientFileItem savedPatientFileItem = patientFileItemCaptor.getValue();
+		
+		assertEquals(uuid, savedPatientFileItem.getId());
+		assertEquals(mail.getDate(), savedPatientFileItem.getDate());
+		assertEquals(mailDTO.getComments(), savedPatientFileItem.getComments());
+		assertEquals(mail.getAuthoringDoctor().getId(), savedPatientFileItem.getAuthoringDoctor().getId());
+		assertEquals(mail.getPatientFile().getId(), savedPatientFileItem.getPatientFile().getId());
+		assertTrue(savedPatientFileItem instanceof Mail);
+		assertEquals(mailDTO.getText(), ((Mail) savedPatientFileItem).getText());
+		assertEquals(mailDTO.getRecipientDoctorId(), ((Mail) savedPatientFileItem).getRecipientDoctor().getId());
+		
+		assertEquals(uuid, patientFileItemDTOResponse.getId());
+		assertEquals(mail.getDate(), patientFileItemDTOResponse.getDate());
+		assertEquals(mailDTO.getComments(), patientFileItemDTOResponse.getComments());
+		assertEquals(mail.getAuthoringDoctor().getId(), patientFileItemDTOResponse.getAuthoringDoctorId());
+		assertEquals(mail.getAuthoringDoctor().getFirstname(), patientFileItemDTOResponse.getAuthoringDoctorFirstname());
+		assertEquals(mail.getAuthoringDoctor().getLastname(), patientFileItemDTOResponse.getAuthoringDoctorLastname());
+		assertEquals(mail.getPatientFile().getId(), patientFileItemDTOResponse.getPatientFileId());
+		assertTrue(patientFileItemDTOResponse instanceof MailDTO);
+		assertEquals(mailDTO.getText(), ((MailDTO) patientFileItemDTOResponse).getText());
+		assertEquals(mailDTO.getRecipientDoctorId(), ((MailDTO) patientFileItemDTOResponse).getRecipientDoctorId());
+	}
+
+	@Test
+	public void testUpdatePrescriptionSuccess() {
+		uuid = UUID.randomUUID();
+		
+		prescriptionDTO.setId(uuid);
+		
+		
+		prescription.setId(uuid);
+		prescription.setDate(LocalDate.of(2022, 7, 14));
+		prescription.setComments("another comment");
+		prescription.setAuthoringDoctor(doctor2);
+		patientFile2.setId("P002");
+		prescription.setPatientFile(patientFile2);
+		prescription.setDescription("another description");
+
+		when(patientFileItemDAO.findById(uuid)).thenReturn(Optional.of(prescription));
+		when(patientFileItemDAO.save(patientFileItemCaptor.capture())).thenReturn(prescription);
+
+		PatientFileItemDTO patientFileItemDTOResponse = assertDoesNotThrow(
+				() -> patientFileService.updatePatientFileItem(prescriptionDTO));
+
+		verify(patientFileItemDAO, times(1)).findById(uuid);
+		verify(patientFileItemDAO, times(1)).save(any(Prescription.class));
+
+		PatientFileItem savedPatientFileItem = patientFileItemCaptor.getValue();
+		
+		assertEquals(uuid, savedPatientFileItem.getId());
+		assertEquals(prescription.getDate(), savedPatientFileItem.getDate());
+		assertEquals(prescriptionDTO.getComments(), savedPatientFileItem.getComments());
+		assertEquals(prescription.getAuthoringDoctor().getId(), savedPatientFileItem.getAuthoringDoctor().getId());
+		assertEquals(prescription.getPatientFile().getId(), savedPatientFileItem.getPatientFile().getId());
+		assertTrue(savedPatientFileItem instanceof Prescription);
+		assertEquals(prescriptionDTO.getDescription(), ((Prescription) savedPatientFileItem).getDescription());
+		
+		assertEquals(uuid, patientFileItemDTOResponse.getId());
+		assertEquals(prescription.getDate(), patientFileItemDTOResponse.getDate());
+		assertEquals(prescriptionDTO.getComments(), patientFileItemDTOResponse.getComments());
+		assertEquals(prescription.getAuthoringDoctor().getId(), patientFileItemDTOResponse.getAuthoringDoctorId());
+		assertEquals(prescription.getAuthoringDoctor().getFirstname(), patientFileItemDTOResponse.getAuthoringDoctorFirstname());
+		assertEquals(prescription.getAuthoringDoctor().getLastname(), patientFileItemDTOResponse.getAuthoringDoctorLastname());
+		assertEquals(prescription.getPatientFile().getId(), patientFileItemDTOResponse.getPatientFileId());
+		assertTrue(patientFileItemDTOResponse instanceof PrescriptionDTO);
+		assertEquals(prescriptionDTO.getDescription(), ((PrescriptionDTO) patientFileItemDTOResponse).getDescription());
+	}
+
+	@Test
+	public void testUpdateSymptomSuccess() {
+		uuid = UUID.randomUUID();
+		
+		symptomDTO.setId(uuid);
+		
+		
+		symptom.setId(uuid);
+		symptom.setDate(LocalDate.of(2022, 7, 14));
+		symptom.setComments("another comment");
+		symptom.setAuthoringDoctor(doctor2);
+		patientFile2.setId("P002");
+		symptom.setPatientFile(patientFile2);
+		symptom.setDescription("another description");
+
+		when(patientFileItemDAO.findById(uuid)).thenReturn(Optional.of(symptom));
+		when(patientFileItemDAO.save(patientFileItemCaptor.capture())).thenReturn(symptom);
+
+		PatientFileItemDTO patientFileItemDTOResponse = assertDoesNotThrow(
+				() -> patientFileService.updatePatientFileItem(symptomDTO));
+
+		verify(patientFileItemDAO, times(1)).findById(uuid);
+		verify(patientFileItemDAO, times(1)).save(any(Symptom.class));
+
+		PatientFileItem savedPatientFileItem = patientFileItemCaptor.getValue();
+		
+		assertEquals(uuid, savedPatientFileItem.getId());
+		assertEquals(symptom.getDate(), savedPatientFileItem.getDate());
+		assertEquals(symptomDTO.getComments(), savedPatientFileItem.getComments());
+		assertEquals(symptom.getAuthoringDoctor().getId(), savedPatientFileItem.getAuthoringDoctor().getId());
+		assertEquals(symptom.getPatientFile().getId(), savedPatientFileItem.getPatientFile().getId());
+		assertTrue(savedPatientFileItem instanceof Symptom);
+		assertEquals(symptomDTO.getDescription(), ((Symptom) savedPatientFileItem).getDescription());
+		
+		assertEquals(uuid, patientFileItemDTOResponse.getId());
+		assertEquals(symptom.getDate(), patientFileItemDTOResponse.getDate());
+		assertEquals(symptomDTO.getComments(), patientFileItemDTOResponse.getComments());
+		assertEquals(symptom.getAuthoringDoctor().getId(), patientFileItemDTOResponse.getAuthoringDoctorId());
+		assertEquals(symptom.getAuthoringDoctor().getFirstname(), patientFileItemDTOResponse.getAuthoringDoctorFirstname());
+		assertEquals(symptom.getAuthoringDoctor().getLastname(), patientFileItemDTOResponse.getAuthoringDoctorLastname());
+		assertEquals(symptom.getPatientFile().getId(), patientFileItemDTOResponse.getPatientFileId());
+		assertTrue(patientFileItemDTOResponse instanceof SymptomDTO);
+		assertEquals(symptomDTO.getDescription(), ((SymptomDTO) patientFileItemDTOResponse).getDescription());
 	}
 
 }

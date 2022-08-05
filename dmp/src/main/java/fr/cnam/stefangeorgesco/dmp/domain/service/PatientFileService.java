@@ -17,17 +17,27 @@ import fr.cnam.stefangeorgesco.dmp.domain.dao.DoctorDAO;
 import fr.cnam.stefangeorgesco.dmp.domain.dao.MedicalActDAO;
 import fr.cnam.stefangeorgesco.dmp.domain.dao.PatientFileDAO;
 import fr.cnam.stefangeorgesco.dmp.domain.dao.PatientFileItemDAO;
+import fr.cnam.stefangeorgesco.dmp.domain.dto.ActDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.CorrespondenceDTO;
+import fr.cnam.stefangeorgesco.dmp.domain.dto.DiagnosisDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.DiseaseDTO;
+import fr.cnam.stefangeorgesco.dmp.domain.dto.MailDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.MedicalActDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.PatientFileDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.PatientFileItemDTO;
+import fr.cnam.stefangeorgesco.dmp.domain.dto.PrescriptionDTO;
+import fr.cnam.stefangeorgesco.dmp.domain.dto.SymptomDTO;
+import fr.cnam.stefangeorgesco.dmp.domain.model.Act;
 import fr.cnam.stefangeorgesco.dmp.domain.model.Correspondence;
+import fr.cnam.stefangeorgesco.dmp.domain.model.Diagnosis;
 import fr.cnam.stefangeorgesco.dmp.domain.model.Disease;
 import fr.cnam.stefangeorgesco.dmp.domain.model.Doctor;
+import fr.cnam.stefangeorgesco.dmp.domain.model.Mail;
 import fr.cnam.stefangeorgesco.dmp.domain.model.MedicalAct;
 import fr.cnam.stefangeorgesco.dmp.domain.model.PatientFile;
 import fr.cnam.stefangeorgesco.dmp.domain.model.PatientFileItem;
+import fr.cnam.stefangeorgesco.dmp.domain.model.Prescription;
+import fr.cnam.stefangeorgesco.dmp.domain.model.Symptom;
 import fr.cnam.stefangeorgesco.dmp.exception.domain.ApplicationException;
 import fr.cnam.stefangeorgesco.dmp.exception.domain.CreateException;
 import fr.cnam.stefangeorgesco.dmp.exception.domain.DuplicateKeyException;
@@ -279,12 +289,42 @@ public class PatientFileService {
 		} catch (Exception e) {
 			throw new CreateException("patient file item could not be created: " + e.getMessage());
 		}
-		
+
 		patientFileItem = patientFileItemDAO.findById(patientFileItem.getId()).get();
-		
+
 		PatientFileItemDTO respsonse = mapperService.mapToDTO(patientFileItem);
 
 		return respsonse;
+	}
+
+	public PatientFileItemDTO updatePatientFileItem(PatientFileItemDTO patientFileItemDTO) throws UpdateException {
+
+		PatientFileItem patientFileItem = patientFileItemDAO.findById(patientFileItemDTO.getId()).get();
+
+		patientFileItem.setComments(patientFileItemDTO.getComments());
+
+		if (patientFileItemDTO instanceof ActDTO) {
+			((Act) patientFileItem).getMedicalAct().setId(((ActDTO) patientFileItemDTO).getMedicalActDTO().getId());
+		} else if (patientFileItemDTO instanceof DiagnosisDTO) {
+			((Diagnosis) patientFileItem).getDisease().setId(((DiagnosisDTO) patientFileItemDTO).getDiseaseDTO().getId());
+		} else if (patientFileItemDTO instanceof MailDTO) {
+			((Mail) patientFileItem).setText(((MailDTO) patientFileItemDTO).getText());
+			((Mail) patientFileItem).getRecipientDoctor().setId(((MailDTO) patientFileItemDTO).getRecipientDoctorId());
+		} else if (patientFileItemDTO instanceof PrescriptionDTO) {
+			((Prescription) patientFileItem).setDescription(((PrescriptionDTO) patientFileItemDTO).getDescription());
+		} else if (patientFileItemDTO instanceof SymptomDTO) {
+			((Symptom) patientFileItem).setDescription(((SymptomDTO) patientFileItemDTO).getDescription());
+		}
+		
+		try {
+			patientFileItem = patientFileItemDAO.save(patientFileItem);
+		} catch (Exception e) {
+			throw new UpdateException("patient file item could not be updated: " + e.getMessage());
+		}
+		
+		PatientFileItemDTO response = mapperService.mapToDTO(patientFileItem);
+
+		return response;
 	}
 
 }
