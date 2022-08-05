@@ -27,6 +27,7 @@ import fr.cnam.stefangeorgesco.dmp.domain.dto.DiseaseDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.DoctorDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.MedicalActDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.PatientFileDTO;
+import fr.cnam.stefangeorgesco.dmp.domain.dto.PatientFileItemDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.service.PatientFileService;
 import fr.cnam.stefangeorgesco.dmp.exception.domain.ApplicationException;
 import fr.cnam.stefangeorgesco.dmp.exception.domain.CreateException;
@@ -121,6 +122,38 @@ public class PatientFileController {
 
 	}
 
+	@PostMapping("/patient-file/{id}/item")
+	public ResponseEntity<PatientFileItemDTO> createPatientFileItem(
+			@Valid @RequestBody PatientFileItemDTO patientFileItemDTO, @PathVariable String id, Principal principal)
+			throws Exception {
+
+		String userId = userService.findUserByUsername(principal.getName()).getId();
+
+		PatientFileDTO patientFileDTO = patientFileService.findPatientFile(id);
+
+		String referringDoctorId = patientFileDTO.getReferringDoctorId();
+		
+		List<CorrespondenceDTO> correspondencesDTO = patientFileService.findCorrespondencesByPatientFileId(id);
+
+		LocalDate now = LocalDate.now();
+
+		boolean userIsReferringDoctor = userId.equals(referringDoctorId);
+
+		boolean userIsCorrespondingDoctor = correspondencesDTO.stream()
+				.filter(correspondence -> correspondence.getDateUntil().compareTo(now) >= 0)
+				.map(CorrespondenceDTO::getDoctorId).collect(Collectors.toList()).contains(userId);
+
+		if (!userIsReferringDoctor && !userIsCorrespondingDoctor) {
+			throw new FinderException("user is not referring nor corresponding doctor");
+		}
+
+		patientFileItemDTO.setAuthoringDoctorId(userId);
+		patientFileItemDTO.setPatientFileId(patientFileDTO.getId());
+
+		return ResponseEntity.status(HttpStatus.CREATED)
+				.body(patientFileService.createPatientFileItem(patientFileItemDTO));
+	}
+
 	@DeleteMapping("/patient-file/{patientFileId}/correspondence/{correspondenceId}")
 	public ResponseEntity<RestResponse> deleteCorrespondence(@PathVariable String patientFileId,
 			@PathVariable String correspondenceId, Principal principal) throws ApplicationException {
@@ -157,14 +190,13 @@ public class PatientFileController {
 		List<CorrespondenceDTO> correspondencesDTO = patientFileService.findCorrespondencesByPatientFileId(id);
 
 		LocalDate now = LocalDate.now();
-		
+
 		boolean userIsReferringDoctor = userId.equals(referringDoctorId);
 
 		boolean userIsCorrespondingDoctor = correspondencesDTO.stream()
 				.filter(correspondence -> correspondence.getDateUntil().compareTo(now) >= 0)
-				.map(CorrespondenceDTO::getDoctorId)
-				.collect(Collectors.toList()).contains(userId);
-		
+				.map(CorrespondenceDTO::getDoctorId).collect(Collectors.toList()).contains(userId);
+
 		if (!userIsReferringDoctor && !userIsCorrespondingDoctor) {
 			throw new FinderException("user is not referring nor corresponding doctor");
 		}
@@ -172,36 +204,39 @@ public class PatientFileController {
 		return ResponseEntity.ok(correspondencesDTO);
 
 	}
-	
+
 	@GetMapping("/patient-file/details/correspondence")
-	public ResponseEntity<List<CorrespondenceDTO>> findPatientCorrespondences(Principal principal) throws FinderException {
-		
+	public ResponseEntity<List<CorrespondenceDTO>> findPatientCorrespondences(Principal principal)
+			throws FinderException {
+
 		String userId = userService.findUserByUsername(principal.getName()).getId();
-		
+
 		return ResponseEntity.ok(patientFileService.findCorrespondencesByPatientFileId(userId));
 	}
 
 	@GetMapping("/disease/{id}")
 	public ResponseEntity<DiseaseDTO> getDisease(@PathVariable String id) throws FinderException {
-		
+
 		return ResponseEntity.ok(patientFileService.findDisease(id));
 	}
 
 	@GetMapping("/disease")
-	public ResponseEntity<List<DiseaseDTO>> getDiseases(@RequestParam String q, @RequestParam(required = false, defaultValue = "30") int limit) throws FinderException {
-		
+	public ResponseEntity<List<DiseaseDTO>> getDiseases(@RequestParam String q,
+			@RequestParam(required = false, defaultValue = "30") int limit) throws FinderException {
+
 		return ResponseEntity.ok(patientFileService.findDiseasesByIdOrDescription(q, limit));
 	}
 
 	@GetMapping("/medical-act/{id}")
 	public ResponseEntity<MedicalActDTO> getMedicalAct(@PathVariable String id) throws FinderException {
-		
+
 		return ResponseEntity.ok(patientFileService.findMedicalAct(id));
 	}
 
 	@GetMapping("/medical-act")
-	public ResponseEntity<List<MedicalActDTO>> getMedicalActs(@RequestParam String q, @RequestParam(required = false, defaultValue = "30") int limit) throws FinderException {
-		
+	public ResponseEntity<List<MedicalActDTO>> getMedicalActs(@RequestParam String q,
+			@RequestParam(required = false, defaultValue = "30") int limit) throws FinderException {
+
 		return ResponseEntity.ok(patientFileService.findMedicalActsByIdOrDescription(q, limit));
 	}
 

@@ -26,11 +26,15 @@ import org.springframework.test.context.jdbc.SqlGroup;
 import fr.cnam.stefangeorgesco.dmp.domain.dao.CorrespondenceDAO;
 import fr.cnam.stefangeorgesco.dmp.domain.dao.DoctorDAO;
 import fr.cnam.stefangeorgesco.dmp.domain.dao.PatientFileDAO;
+import fr.cnam.stefangeorgesco.dmp.domain.dao.PatientFileItemDAO;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.AddressDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.CorrespondenceDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.DiseaseDTO;
+import fr.cnam.stefangeorgesco.dmp.domain.dto.MailDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.MedicalActDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.PatientFileDTO;
+import fr.cnam.stefangeorgesco.dmp.domain.dto.PatientFileItemDTO;
+import fr.cnam.stefangeorgesco.dmp.domain.dto.PrescriptionDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.model.Address;
 import fr.cnam.stefangeorgesco.dmp.domain.model.Doctor;
 import fr.cnam.stefangeorgesco.dmp.domain.model.PatientFile;
@@ -47,24 +51,29 @@ import fr.cnam.stefangeorgesco.dmp.exception.domain.FinderException;
 		@Sql(scripts = "/sql/create-correspondences.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
 		@Sql(scripts = "/sql/create-diseases.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
 		@Sql(scripts = "/sql/create-medical-acts.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
+		@Sql(scripts = "/sql/create-patient-file-items.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
+		@Sql(scripts = "/sql/delete-patient-file-items.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD),
 		@Sql(scripts = "/sql/delete-diseases.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD),
 		@Sql(scripts = "/sql/delete-medical-acts.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD),
 		@Sql(scripts = "/sql/delete-correspondences.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD),
 		@Sql(scripts = "/sql/delete-files.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD),
-		@Sql(scripts = "/sql/delete-specialties.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)})
+		@Sql(scripts = "/sql/delete-specialties.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD) })
 public class PatientFileServiceIntegrationTest {
 
 	@MockBean
 	private RNIPPService rnippService;
 
 	@Autowired
+	private DoctorDAO doctorDAO;
+
+	@Autowired
 	private PatientFileDAO patientFileDAO;
 
 	@Autowired
 	private CorrespondenceDAO correspondenceDAO;
-	
+
 	@Autowired
-	private DoctorDAO doctorDAO;
+	private PatientFileItemDAO patientFileItemDAO;
 
 	@Autowired
 	private PatientFileService patientFileService;
@@ -80,12 +89,18 @@ public class PatientFileServiceIntegrationTest {
 
 	@Autowired
 	private CorrespondenceDTO correspondenceDTO;
-	
+
 	@Autowired
 	private DiseaseDTO diseaseDTO;
-	
+
 	@Autowired
 	private MedicalActDTO medicalActDTO;
+
+	@Autowired
+	private MailDTO mailDTO;
+	
+	@Autowired
+	private PrescriptionDTO prescriptionDTO;
 
 	@Autowired
 	private CorrespondenceDTO correspondenceDTOResponse;
@@ -97,6 +112,12 @@ public class PatientFileServiceIntegrationTest {
 	private Doctor doctor;
 
 	@Autowired
+	private Doctor authoringDoctor;
+
+	@Autowired
+	private Doctor recipientDoctor;
+
+	@Autowired
 	private PatientFile patientFile;
 
 	@Autowired
@@ -106,9 +127,9 @@ public class PatientFileServiceIntegrationTest {
 	private PatientFile persistentPatientFile;
 
 	private long count;
-	
+
 	private UUID uuid;
-	
+
 	@BeforeEach
 	public void setup() {
 		addressDTO.setStreet1("1 Rue Lecourbe");
@@ -313,7 +334,7 @@ public class PatientFileServiceIntegrationTest {
 		count = correspondenceDAO.count();
 
 		assertNull(correspondenceDTO.getId());
-		
+
 		doctor = doctorDAO.findById(correspondenceDTO.getDoctorId()).get();
 
 		correspondenceDTOResponse = assertDoesNotThrow(
@@ -326,7 +347,8 @@ public class PatientFileServiceIntegrationTest {
 		assertEquals(correspondenceDTO.getPatientFileId(), correspondenceDTOResponse.getPatientFileId());
 		assertEquals(doctor.getFirstname(), correspondenceDTOResponse.getDoctorFirstName());
 		assertEquals(doctor.getLastname(), correspondenceDTOResponse.getDoctorLastName());
-		assertEquals(doctor.getSpecialties().stream().map(Specialty::getDescription).collect(Collectors.toList()), correspondenceDTOResponse.getDoctorSpecialties());
+		assertEquals(doctor.getSpecialties().stream().map(Specialty::getDescription).collect(Collectors.toList()),
+				correspondenceDTOResponse.getDoctorSpecialties());
 
 		assertNotNull(correspondenceDTOResponse.getId());
 	}
@@ -360,150 +382,207 @@ public class PatientFileServiceIntegrationTest {
 
 		assertEquals(count, correspondenceDAO.count());
 	}
-	
+
 	@Test
 	public void testDeleteCorrespondenceSuccess() {
-		
+
 		uuid = UUID.fromString("3d80bbeb-997e-4354-82d3-68cea80256d6");
-		
+
 		count = correspondenceDAO.count();
-		
+
 		assertTrue(correspondenceDAO.existsById(uuid));
-		
+
 		patientFileService.deleteCorrespondence(uuid);
-		
+
 		assertFalse(correspondenceDAO.existsById(uuid));
-		
+
 		assertEquals(count - 1, correspondenceDAO.count());
 	}
-	
+
 	@Test
 	public void testFindCorrespondenceSuccess() {
-		
+
 		uuid = UUID.fromString("3d80bbeb-997e-4354-82d3-68cea80256d6");
-		
+
 		assertTrue(correspondenceDAO.existsById(uuid));
-		
-		CorrespondenceDTO correspondenceDTO = assertDoesNotThrow(() -> patientFileService.findCorrespondence(uuid.toString()));
-		
+
+		CorrespondenceDTO correspondenceDTO = assertDoesNotThrow(
+				() -> patientFileService.findCorrespondence(uuid.toString()));
+
 		assertEquals("2023-08-14", correspondenceDTO.getDateUntil().toString());
 		assertEquals("P004", correspondenceDTO.getPatientFileId());
 		assertEquals("Melquisedeque", correspondenceDTO.getDoctorFirstName());
 		assertEquals("Nascimento", correspondenceDTO.getDoctorLastName());
-		assertEquals("[chirurgie thoracique, chirurgie vasculaire]", correspondenceDTO.getDoctorSpecialties().toString());
+		assertEquals("[chirurgie thoracique, chirurgie vasculaire]",
+				correspondenceDTO.getDoctorSpecialties().toString());
 	}
-	
+
 	@Test
 	public void testFindCorrespondenceFailureCorrespondenceDoesNotExist() {
-		
+
 		uuid = UUID.randomUUID();
-		
+
 		assertFalse(correspondenceDAO.existsById(uuid));
-		
-		FinderException ex = assertThrows(FinderException.class, () -> patientFileService.findCorrespondence(uuid.toString()));
-		
+
+		FinderException ex = assertThrows(FinderException.class,
+				() -> patientFileService.findCorrespondence(uuid.toString()));
+
 		assertEquals("correspondence not found", ex.getMessage());
 	}
-	
+
 	@Test
 	public void testFindCorrespondencesByPatientFileIdFound3() {
-		
+
 		List<CorrespondenceDTO> correspondencesDTO = patientFileService.findCorrespondencesByPatientFileId("P001");
-		
+
 		assertEquals(3, correspondencesDTO.size());
 		assertEquals("2023-05-02", correspondencesDTO.get(0).getDateUntil().toString());
 		assertEquals("e1eb3425-d257-4c5e-8600-b125731c458c", correspondencesDTO.get(1).getId().toString());
 		assertEquals("D011", correspondencesDTO.get(2).getDoctorId());
 	}
-	
+
 	@Test
 	public void testFindCorrespondencesByPatientFileIdFound0() {
 
 		List<CorrespondenceDTO> correspondencesDTO = patientFileService.findCorrespondencesByPatientFileId("P055");
-		
+
 		assertEquals(0, correspondencesDTO.size());
 	}
-	
+
 	@Test
 	public void testFindDiseaseSuccess() {
-		
+
 		diseaseDTO = assertDoesNotThrow(() -> patientFileService.findDisease("J01"));
-		
+
 		assertEquals("J01", diseaseDTO.getId());
 		assertEquals("Sinusite aiguë", diseaseDTO.getDescription());
 	}
-	
+
 	@Test
 	public void testFindDiseaseFailureDiseaseDoesNotExist() {
-		
+
 		FinderException ex = assertThrows(FinderException.class, () -> patientFileService.findDisease("J000"));
-		
+
 		assertEquals("disease not found", ex.getMessage());
 	}
-	
+
 	@Test
 	public void testFindMedicalActSuccess() {
-		
+
 		medicalActDTO = assertDoesNotThrow(() -> patientFileService.findMedicalAct("HCAE201"));
-		
+
 		assertEquals("HCAE201", medicalActDTO.getId());
-		assertEquals("Dilatation de sténose du conduit d'une glande salivaire par endoscopie [sialendoscopie] ", medicalActDTO.getDescription());
+		assertEquals("Dilatation de sténose du conduit d'une glande salivaire par endoscopie [sialendoscopie] ",
+				medicalActDTO.getDescription());
 	}
-	
+
 	@Test
 	public void testFindMedicalActFailureMedicalActDoesNotExist() {
-		
+
 		FinderException ex = assertThrows(FinderException.class, () -> patientFileService.findMedicalAct("H000000"));
-		
+
 		assertEquals("medical act not found", ex.getMessage());
 	}
-	
+
 	@Test
 	public void testFindDiseasesByIdOrDescriptionFound8() {
-		
+
 		List<DiseaseDTO> diseasesDTO = patientFileService.findDiseasesByIdOrDescription("sinusite", 10);
-		
+
 		assertEquals(8, diseasesDTO.size());
 	}
 
 	@Test
 	public void testFindDiseasesByIdOrDescriptionFound0() {
-		
+
 		List<DiseaseDTO> diseasesDTO = patientFileService.findDiseasesByIdOrDescription("mas", 10);
-		
+
 		assertEquals(0, diseasesDTO.size());
 	}
 
 	@Test
 	public void testFindDiseasesByIdOrDescriptionSearchStringIsBlank() {
-		
+
 		List<DiseaseDTO> diseasesDTO = patientFileService.findDiseasesByIdOrDescription("", 10);
-		
+
 		assertEquals(0, diseasesDTO.size());
 	}
 
 	@Test
 	public void testFindMedicalActsByIdOrDescriptionFound9() {
-		
+
 		List<MedicalActDTO> medicalActsDTO = patientFileService.findMedicalActsByIdOrDescription("radio", 10);
-		
+
 		assertEquals(9, medicalActsDTO.size());
 	}
 
 	@Test
 	public void testFindMedicalActsByIdOrDescriptionFound0() {
-		
+
 		List<MedicalActDTO> medicalActsDTO = patientFileService.findMedicalActsByIdOrDescription("rid", 10);
-		
+
 		assertEquals(0, medicalActsDTO.size());
 	}
 
 	@Test
 	public void testFindMedicalActsByIdOrDescriptionSearchStringIsBlank() {
-		
+
 		List<MedicalActDTO> medicalActsDTO = patientFileService.findMedicalActsByIdOrDescription("", 10);
-		
+
 		assertEquals(0, medicalActsDTO.size());
+	}
+
+	@Test
+	public void testCreateMailSuccess() {
+
+		count = patientFileItemDAO.count();
+		
+		LocalDate now = LocalDate.now();
+		
+		assertNull(mailDTO.getId());
+		
+		mailDTO.setDate(now);
+		mailDTO.setComments("comments on this mail");
+		mailDTO.setAuthoringDoctorId("D001");
+		mailDTO.setPatientFileId("P001");
+		mailDTO.setText("text of this mail");
+		mailDTO.setRecipientDoctorId("D002");
+
+		authoringDoctor = doctorDAO.findById(mailDTO.getAuthoringDoctorId()).get();
+		recipientDoctor = doctorDAO.findById(mailDTO.getRecipientDoctorId()).get();
+
+		PatientFileItemDTO patientFileItemDTOResponse = assertDoesNotThrow(
+				() -> patientFileService.createPatientFileItem(mailDTO));
+		
+		assertEquals(count + 1, patientFileItemDAO.count());
+		
+		assertNotNull(patientFileItemDTOResponse.getId());
+		assertEquals(now, patientFileItemDTOResponse.getDate());
+		assertEquals(mailDTO.getComments(), patientFileItemDTOResponse.getComments());
+		assertEquals(authoringDoctor.getId(), patientFileItemDTOResponse.getAuthoringDoctorId());
+		assertEquals(authoringDoctor.getFirstname(), patientFileItemDTOResponse.getAuthoringDoctorFirstname());
+		assertEquals(authoringDoctor.getLastname(), patientFileItemDTOResponse.getAuthoringDoctorLastname());
+		assertEquals(mailDTO.getPatientFileId(), patientFileItemDTOResponse.getPatientFileId());
+		assertTrue(patientFileItemDTOResponse instanceof MailDTO);
+		assertEquals(mailDTO.getText(), ((MailDTO) patientFileItemDTOResponse).getText());
+		assertEquals(recipientDoctor.getId(), ((MailDTO) patientFileItemDTOResponse).getRecipientDoctorId());
+		assertEquals(recipientDoctor.getFirstname(), ((MailDTO) patientFileItemDTOResponse).getRecipientDoctorFirstname());
+		assertEquals(recipientDoctor.getLastname(), ((MailDTO) patientFileItemDTOResponse).getRecipientDoctorLastname());
+	}
+
+	@Test
+	public void testCreatePrescriptionFailureDoctorDoesNotExist() {
+
+		prescriptionDTO.setAuthoringDoctorId("D003");
+
+		count = patientFileItemDAO.count();
+
+		CreateException ex = assertThrows(CreateException.class,
+				() -> patientFileService.createPatientFileItem(prescriptionDTO));
+
+		assertTrue(ex.getMessage().startsWith("patient file item could not be created: "));
+
+		assertEquals(count, patientFileItemDAO.count());
 	}
 
 }

@@ -16,15 +16,18 @@ import fr.cnam.stefangeorgesco.dmp.domain.dao.DiseaseDAO;
 import fr.cnam.stefangeorgesco.dmp.domain.dao.DoctorDAO;
 import fr.cnam.stefangeorgesco.dmp.domain.dao.MedicalActDAO;
 import fr.cnam.stefangeorgesco.dmp.domain.dao.PatientFileDAO;
+import fr.cnam.stefangeorgesco.dmp.domain.dao.PatientFileItemDAO;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.CorrespondenceDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.DiseaseDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.MedicalActDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.PatientFileDTO;
+import fr.cnam.stefangeorgesco.dmp.domain.dto.PatientFileItemDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.model.Correspondence;
 import fr.cnam.stefangeorgesco.dmp.domain.model.Disease;
 import fr.cnam.stefangeorgesco.dmp.domain.model.Doctor;
 import fr.cnam.stefangeorgesco.dmp.domain.model.MedicalAct;
 import fr.cnam.stefangeorgesco.dmp.domain.model.PatientFile;
+import fr.cnam.stefangeorgesco.dmp.domain.model.PatientFileItem;
 import fr.cnam.stefangeorgesco.dmp.exception.domain.ApplicationException;
 import fr.cnam.stefangeorgesco.dmp.exception.domain.CreateException;
 import fr.cnam.stefangeorgesco.dmp.exception.domain.DuplicateKeyException;
@@ -46,18 +49,24 @@ public class PatientFileService {
 
 	@Autowired
 	private CorrespondenceDAO correspondenceDAO;
-	
+
 	@Autowired
 	private DiseaseDAO diseaseDAO;
-	
+
 	@Autowired
 	private MedicalActDAO medicalActDAO;
+
+	@Autowired
+	private PatientFileItemDAO patientFileItemDAO;
 
 	@Autowired
 	private ModelMapper commonModelMapper;
 
 	@Autowired
 	private ModelMapper patientFileModelMapper;
+
+	@Autowired
+	private MapperService mapperService;
 
 	@Autowired
 	private BCryptPasswordEncoder bCryptPasswordEncoder;
@@ -212,7 +221,7 @@ public class PatientFileService {
 	}
 
 	public DiseaseDTO findDisease(String id) throws FinderException {
-		
+
 		Optional<Disease> optionalDisease = diseaseDAO.findById(id);
 
 		if (optionalDisease.isPresent()) {
@@ -223,7 +232,7 @@ public class PatientFileService {
 	}
 
 	public MedicalActDTO findMedicalAct(String id) throws FinderException {
-		
+
 		Optional<MedicalAct> optionalMedicalAct = medicalActDAO.findById(id);
 
 		if (optionalMedicalAct.isPresent()) {
@@ -234,7 +243,7 @@ public class PatientFileService {
 	}
 
 	public List<DiseaseDTO> findDiseasesByIdOrDescription(String q, int limit) {
-		
+
 		if ("".equals(q)) {
 			return new ArrayList<>();
 		}
@@ -248,7 +257,7 @@ public class PatientFileService {
 	}
 
 	public List<MedicalActDTO> findMedicalActsByIdOrDescription(String q, int limit) {
-		
+
 		if ("".equals(q)) {
 			return new ArrayList<>();
 		}
@@ -259,6 +268,23 @@ public class PatientFileService {
 				.map(medicalAct -> commonModelMapper.map(medicalAct, MedicalActDTO.class)).collect(Collectors.toList());
 
 		return medicalActsDTO;
+	}
+
+	public PatientFileItemDTO createPatientFileItem(PatientFileItemDTO patientFileItemDTO) throws CreateException {
+
+		PatientFileItem patientFileItem = mapperService.mapToEntity(patientFileItemDTO);
+
+		try {
+			patientFileItem = patientFileItemDAO.save(patientFileItem);
+		} catch (Exception e) {
+			throw new CreateException("patient file item could not be created: " + e.getMessage());
+		}
+		
+		patientFileItem = patientFileItemDAO.findById(patientFileItem.getId()).get();
+		
+		PatientFileItemDTO respsonse = mapperService.mapToDTO(patientFileItem);
+
+		return respsonse;
 	}
 
 }

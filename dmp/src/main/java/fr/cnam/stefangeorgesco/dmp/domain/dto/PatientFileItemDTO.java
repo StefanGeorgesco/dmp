@@ -4,7 +4,6 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PastOrPresent;
 
@@ -34,7 +33,6 @@ public abstract class PatientFileItemDTO {
 
 	private String comments;
 
-	@NotBlank(message = "authoring doctor id is mandatory")
 	private String authoringDoctorId;
 
 	private String authoringDoctorFirstname;
@@ -43,7 +41,6 @@ public abstract class PatientFileItemDTO {
 
 	private List<String> authoringDoctorSpecialties;
 
-	@NotBlank(message = "patient file id is mandatory")
 	private String patientFileId;
 
 }

@@ -36,17 +36,22 @@ import fr.cnam.stefangeorgesco.dmp.domain.dao.DiseaseDAO;
 import fr.cnam.stefangeorgesco.dmp.domain.dao.DoctorDAO;
 import fr.cnam.stefangeorgesco.dmp.domain.dao.MedicalActDAO;
 import fr.cnam.stefangeorgesco.dmp.domain.dao.PatientFileDAO;
+import fr.cnam.stefangeorgesco.dmp.domain.dao.PatientFileItemDAO;
+import fr.cnam.stefangeorgesco.dmp.domain.dto.ActDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.AddressDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.CorrespondenceDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.DiseaseDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.MedicalActDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.PatientFileDTO;
+import fr.cnam.stefangeorgesco.dmp.domain.dto.PatientFileItemDTO;
+import fr.cnam.stefangeorgesco.dmp.domain.model.Act;
 import fr.cnam.stefangeorgesco.dmp.domain.model.Address;
 import fr.cnam.stefangeorgesco.dmp.domain.model.Correspondence;
 import fr.cnam.stefangeorgesco.dmp.domain.model.Disease;
 import fr.cnam.stefangeorgesco.dmp.domain.model.Doctor;
 import fr.cnam.stefangeorgesco.dmp.domain.model.MedicalAct;
 import fr.cnam.stefangeorgesco.dmp.domain.model.PatientFile;
+import fr.cnam.stefangeorgesco.dmp.domain.model.PatientFileItem;
 import fr.cnam.stefangeorgesco.dmp.domain.model.Specialty;
 import fr.cnam.stefangeorgesco.dmp.exception.domain.CheckException;
 import fr.cnam.stefangeorgesco.dmp.exception.domain.DuplicateKeyException;
@@ -73,6 +78,9 @@ public class PatientFileServiceTest {
 	
 	@MockBean
 	private MedicalActDAO medicalActDAO;
+	
+	@MockBean
+	private PatientFileItemDAO patientFileItemDAO;
 
 	@Autowired
 	private PatientFileService patientFileService;
@@ -103,7 +111,10 @@ public class PatientFileServiceTest {
 
 	@Autowired
 	private CorrespondenceDTO correspondenceDTOResponse;
-
+	
+	@Autowired
+	private ActDTO actDTO;
+	
 	@Autowired
 	private Specialty specialty1;
 
@@ -159,12 +170,17 @@ public class PatientFileServiceTest {
 	private Correspondence foundCorrespondence2;
 
 	@Autowired
+	private Act act;
+	
+	@Autowired
 	private BCryptPasswordEncoder bCryptPasswordEncoder;
 
 	private ArgumentCaptor<PatientFile> patientFileCaptor = ArgumentCaptor.forClass(PatientFile.class);
 
 	private ArgumentCaptor<Correspondence> correspondenceCaptor = ArgumentCaptor.forClass(Correspondence.class);
 
+	private ArgumentCaptor<PatientFileItem> patientFileItemCaptor = ArgumentCaptor.forClass(PatientFileItem.class);
+	
 	private UUID uuid;
 
 	@BeforeEach
@@ -230,6 +246,13 @@ public class PatientFileServiceTest {
 		correspondenceDTO.setDateUntil(LocalDate.now().plusDays(1));
 		correspondenceDTO.setDoctorId("D002");
 		correspondenceDTO.setPatientFileId("ID_1");
+		
+		medicalActDTO.setId("HBSD001");
+		actDTO.setDate(LocalDate.now());
+		actDTO.setComments("act comment");
+		actDTO.setAuthoringDoctorId("D001");
+		actDTO.setPatientFileId("P001");
+		actDTO.setMedicalActDTO(medicalActDTO);
 		
 		persistentCorrespondence.setDateUntil(LocalDate.of(2022, 07, 29));
 		persistentCorrespondence.setDoctor(doctor2);
@@ -508,8 +531,8 @@ public class PatientFileServiceTest {
 
 	@Test
 	public void testCreateCorrespondenceSuccess() {
+		
 		uuid = UUID.randomUUID();
-
 		persistentCorrespondence.setId(uuid);
 		persistentCorrespondence.setDateUntil(correspondenceDTO.getDateUntil());
 
@@ -643,7 +666,7 @@ public class PatientFileServiceTest {
 	}
 	
 	@Test
-	void testFindDiseasesByIdOrDescriptionFound2() {
+	public void testFindDiseasesByIdOrDescriptionFound2() {
 		
 		when(diseaseDAO.findByIdOrDescription("sinusite", 10)).thenReturn(List.of(disease1, disease2));
 		
@@ -657,7 +680,7 @@ public class PatientFileServiceTest {
 	}
 
 	@Test
-	void testFindMedicalActsByIdOrDescriptionFound2() {
+	public void testFindMedicalActsByIdOrDescriptionFound2() {
 		
 		when(medicalActDAO.findByIdOrDescription("radio", 10)).thenReturn(List.of(medicalAct1, medicalAct2));
 		
@@ -668,6 +691,49 @@ public class PatientFileServiceTest {
 		assertEquals(2, medicalActsDTO.size());
 		assertEquals("MA001", medicalActsDTO.get(0).getId());
 		assertEquals("Medical act 1", medicalActsDTO.get(0).getDescription());
+	}
+	
+	@Test
+	public void testCreateActSuccess() {
+
+		uuid = UUID.randomUUID();
+		act.setId(uuid);
+		act.setDate(actDTO.getDate());
+		act.setComments(actDTO.getComments());
+		act.setAuthoringDoctor(doctor1);
+		patientFile1.setId("P001");
+		act.setPatientFile(patientFile1);
+		act.setMedicalAct(medicalAct1);
+
+		when(patientFileItemDAO.save(patientFileItemCaptor.capture())).thenReturn(act);
+		when(patientFileItemDAO.findById(any(UUID.class))).thenReturn(Optional.of(act));
+
+		PatientFileItemDTO patientFileItemDTOResponse = assertDoesNotThrow(
+				() -> patientFileService.createPatientFileItem(actDTO));
+
+		verify(patientFileItemDAO, times(1)).save(any(Act.class));
+		verify(patientFileItemDAO, times(1)).findById(any(UUID.class));
+
+		PatientFileItem savedPatientFileItem = patientFileItemCaptor.getValue();
+		
+		assertEquals(null, savedPatientFileItem.getId());
+		assertEquals(actDTO.getDate(), savedPatientFileItem.getDate());
+		assertEquals(actDTO.getComments(), savedPatientFileItem.getComments());
+		assertEquals(actDTO.getAuthoringDoctorId(), savedPatientFileItem.getAuthoringDoctor().getId());
+		assertEquals(actDTO.getPatientFileId(), savedPatientFileItem.getPatientFile().getId());
+		assertTrue(savedPatientFileItem instanceof Act);
+		assertEquals(actDTO.getMedicalActDTO().getId(), ((Act) savedPatientFileItem).getMedicalAct().getId());
+		
+		assertEquals(uuid, patientFileItemDTOResponse.getId());
+		assertEquals(act.getDate(), patientFileItemDTOResponse.getDate());
+		assertEquals(act.getComments(), patientFileItemDTOResponse.getComments());
+		assertEquals(act.getAuthoringDoctor().getId(), patientFileItemDTOResponse.getAuthoringDoctorId());
+		assertEquals(act.getAuthoringDoctor().getFirstname(), patientFileItemDTOResponse.getAuthoringDoctorFirstname());
+		assertEquals(act.getAuthoringDoctor().getLastname(), patientFileItemDTOResponse.getAuthoringDoctorLastname());
+		assertEquals(act.getPatientFile().getId(), patientFileItemDTOResponse.getPatientFileId());
+		assertTrue(patientFileItemDTOResponse instanceof ActDTO);
+		assertEquals(act.getMedicalAct().getId(), ((ActDTO) patientFileItemDTOResponse).getMedicalActDTO().getId());
+		assertEquals(act.getMedicalAct().getDescription(), ((ActDTO) patientFileItemDTOResponse).getMedicalActDTO().getDescription());
 	}
 
 }

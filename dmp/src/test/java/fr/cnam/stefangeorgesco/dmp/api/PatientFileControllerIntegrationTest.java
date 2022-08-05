@@ -6,6 +6,7 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.hasLength;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.doNothing;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -38,11 +39,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import fr.cnam.stefangeorgesco.dmp.domain.dao.CorrespondenceDAO;
 import fr.cnam.stefangeorgesco.dmp.domain.dao.DiseaseDAO;
+import fr.cnam.stefangeorgesco.dmp.domain.dao.DoctorDAO;
 import fr.cnam.stefangeorgesco.dmp.domain.dao.MedicalActDAO;
 import fr.cnam.stefangeorgesco.dmp.domain.dao.PatientFileDAO;
+import fr.cnam.stefangeorgesco.dmp.domain.dao.PatientFileItemDAO;
+import fr.cnam.stefangeorgesco.dmp.domain.dto.ActDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.AddressDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.CorrespondenceDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.DoctorDTO;
+import fr.cnam.stefangeorgesco.dmp.domain.dto.MedicalActDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.PatientFileDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.SpecialtyDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.model.Address;
@@ -58,6 +63,8 @@ import fr.cnam.stefangeorgesco.dmp.domain.service.RNIPPService;
 		@Sql(scripts = "/sql/create-correspondences.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
 		@Sql(scripts = "/sql/create-diseases.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
 		@Sql(scripts = "/sql/create-medical-acts.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
+		@Sql(scripts = "/sql/create-patient-file-items.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
+		@Sql(scripts = "/sql/delete-patient-file-items.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD),
 		@Sql(scripts = "/sql/delete-diseases.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD),
 		@Sql(scripts = "/sql/delete-medical-acts.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD),
 		@Sql(scripts = "/sql/delete-correspondences.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD),
@@ -80,7 +87,13 @@ public class PatientFileControllerIntegrationTest {
 	private PatientFileDAO patientFileDAO;
 
 	@Autowired
+	private DoctorDAO doctorDAO;
+
+	@Autowired
 	private CorrespondenceDAO correspondenceDAO;
+
+	@Autowired
+	private PatientFileItemDAO patientFileItemDAO;
 
 	@Autowired
 	private DiseaseDAO diseaseDAO;
@@ -107,10 +120,19 @@ public class PatientFileControllerIntegrationTest {
 	private CorrespondenceDTO correspondenceDTO;
 
 	@Autowired
+	private MedicalActDTO medicalActDTO;
+
+	@Autowired
+	private ActDTO actDTO;
+
+	@Autowired
 	private Address address;
 
 	@Autowired
 	private Doctor doctor;
+
+	@Autowired
+	private Doctor authoringDoctor;
 
 	@Autowired
 	private PatientFile patientFile;
@@ -510,8 +532,8 @@ public class PatientFileControllerIntegrationTest {
 		count = correspondenceDAO.count();
 
 		mockMvc.perform(post("/patient-file/P001/correspondence").contentType(MediaType.APPLICATION_JSON)
-				.content(objectMapper.writeValueAsString(correspondenceDTO))).andExpect(status().isBadRequest())
-				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+				.content(objectMapper.writeValueAsString(correspondenceDTO)))
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON)).andExpect(status().isBadRequest())
 				.andExpect(jsonPath("$.message", is("trying to create correspondence for referring doctor")));
 
 		assertEquals(count, correspondenceDAO.count());
@@ -521,21 +543,27 @@ public class PatientFileControllerIntegrationTest {
 	@WithUserDetails("eric") // ROLE_PATIENT
 	public void testCreateCorrespondanceFailureBadRolePatient() throws Exception {
 
-		mockMvc.perform(post("/patient-file/P001/correspondence")).andExpect(status().isForbidden());
+		mockMvc.perform(post("/patient-file/P001/correspondence").contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(correspondenceDTO)))
+				.andExpect(status().isForbidden());
 	}
 
 	@Test
 	@WithUserDetails("admin") // ROLE_ADMIN
 	public void testCreateCorrespondanceFailureBadRoleAdmin() throws Exception {
 
-		mockMvc.perform(post("/patient-file/P001/correspondence")).andExpect(status().isForbidden());
+		mockMvc.perform(post("/patient-file/P001/correspondence").contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(correspondenceDTO)))
+				.andExpect(status().isForbidden());
 	}
 
 	@Test
 	@WithAnonymousUser
 	public void testCreateCorrespondanceFailureUnauthenticatedUser() throws Exception {
 
-		mockMvc.perform(post("/patient-file/P001/correspondence")).andExpect(status().isUnauthorized());
+		mockMvc.perform(post("/patient-file/P001/correspondence").contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(correspondenceDTO)))
+				.andExpect(status().isUnauthorized());
 	}
 
 	@Test
@@ -684,7 +712,7 @@ public class PatientFileControllerIntegrationTest {
 
 	@Test
 	@WithUserDetails("user") // "D001", ROLE_DOCTOR
-	public void testFindCorrespondancesByPatientFileIdFailureUserCorrespondanceExpired() throws Exception {
+	public void testFindCorrespondancesByPatientFileIdFailureCorrespondenceExpired() throws Exception {
 
 		mockMvc.perform(get("/patient-file/P013/correspondence"))
 				.andExpect(content().contentType(MediaType.APPLICATION_JSON)).andExpect(status().isNotFound())
@@ -980,6 +1008,193 @@ public class PatientFileControllerIntegrationTest {
 	public void testGetMedicalActsByIdOrDescriptionFailureUnauthenticatedUser() throws Exception {
 
 		mockMvc.perform(get("/medical-act?q=radio")).andExpect(status().isUnauthorized());
+	}
+
+	@Test
+	@WithUserDetails("user") // ROLE_DOCTOR, D001
+	public void testCreateActSuccessUserIsReferringDoctor() throws Exception {
+
+		count = patientFileItemDAO.count();
+
+		LocalDate now = LocalDate.now();
+
+		medicalActDTO.setId("HBSD001");
+		actDTO.setDate(now);
+		actDTO.setComments("comments on this act");
+		actDTO.setMedicalActDTO(medicalActDTO);
+
+		assertNull(actDTO.getId());
+		assertNull(actDTO.getAuthoringDoctorId());
+		assertNull(actDTO.getPatientFileId());
+
+		authoringDoctor = doctorDAO.findById("D001").get();
+
+		mockMvc.perform(post("/patient-file/P001/item").contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(actDTO))).andExpect(status().isCreated())
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON)).andExpect(jsonPath("$.@type", is("act")))
+				.andExpect(jsonPath("$.id", hasLength(36))).andExpect(jsonPath("$.date", is(now.toString())))
+				.andExpect(jsonPath("$.comments", is(actDTO.getComments())))
+				.andExpect(jsonPath("$.authoringDoctorId", is(authoringDoctor.getId())))
+				.andExpect(jsonPath("$.authoringDoctorFirstname", is(authoringDoctor.getFirstname())))
+				.andExpect(jsonPath("$.authoringDoctorLastname", is(authoringDoctor.getLastname())))
+				.andExpect(jsonPath("$.medicalAct.id", is(actDTO.getMedicalActDTO().getId())))
+				.andExpect(jsonPath("$.medicalAct.description",
+						is("Hémostase gingivoalvéolaire secondaire à une avulsion dentaire")))
+				.andExpect(jsonPath("$.patientFileId", is("P001")));
+
+		assertEquals(count + 1, patientFileItemDAO.count());
+	}
+
+	@Test
+	@WithUserDetails("user") // ROLE_DOCTOR, D001
+	public void testCreateActSuccessUserIsActiveCorrespondingDoctor() throws Exception {
+
+		count = patientFileItemDAO.count();
+
+		LocalDate now = LocalDate.now();
+
+		medicalActDTO.setId("HBSD001");
+		actDTO.setDate(now);
+		actDTO.setComments("comments on this act");
+		actDTO.setAuthoringDoctorId("D001");
+		actDTO.setMedicalActDTO(medicalActDTO);
+
+		assertNull(actDTO.getId());
+		assertNull(actDTO.getPatientFileId());
+
+		authoringDoctor = doctorDAO.findById(actDTO.getAuthoringDoctorId()).get();
+
+		mockMvc.perform(post("/patient-file/P006/item").contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(actDTO))).andExpect(status().isCreated())
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON)).andExpect(jsonPath("$.@type", is("act")))
+				.andExpect(jsonPath("$.id", hasLength(36))).andExpect(jsonPath("$.date", is(now.toString())))
+				.andExpect(jsonPath("$.comments", is(actDTO.getComments())))
+				.andExpect(jsonPath("$.authoringDoctorId", is(authoringDoctor.getId())))
+				.andExpect(jsonPath("$.authoringDoctorFirstname", is(authoringDoctor.getFirstname())))
+				.andExpect(jsonPath("$.authoringDoctorLastname", is(authoringDoctor.getLastname())))
+				.andExpect(jsonPath("$.medicalAct.id", is(actDTO.getMedicalActDTO().getId())))
+				.andExpect(jsonPath("$.medicalAct.description",
+						is("Hémostase gingivoalvéolaire secondaire à une avulsion dentaire")))
+				.andExpect(jsonPath("$.patientFileId", is("P006")));
+
+		assertEquals(count + 1, patientFileItemDAO.count());
+	}
+
+	@Test
+	@WithUserDetails("user") // ROLE_DOCTOR, D001
+	public void testCreateActFailureUserCorrespondanceExpired() throws Exception {
+
+		count = patientFileItemDAO.count();
+
+		LocalDate now = LocalDate.now();
+
+		medicalActDTO.setId("HBSD001");
+		actDTO.setDate(now);
+		actDTO.setComments("comments on this act");
+		actDTO.setAuthoringDoctorId("D001");
+		actDTO.setMedicalActDTO(medicalActDTO);
+
+		mockMvc.perform(post("/patient-file/P013/item").contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(actDTO)))
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON)).andExpect(status().isNotFound())
+				.andExpect(jsonPath("$.message", is("user is not referring nor corresponding doctor")));
+
+		assertEquals(count, patientFileItemDAO.count());
+	}
+
+	@Test
+	@WithUserDetails("user") // ROLE_DOCTOR, D001
+	public void testCreateActFailureUserIsNotReferringNorCorrespondingDoctor() throws Exception {
+
+		count = patientFileItemDAO.count();
+
+		LocalDate now = LocalDate.now();
+
+		medicalActDTO.setId("HBSD001");
+		actDTO.setDate(now);
+		actDTO.setComments("comments on this act");
+		actDTO.setAuthoringDoctorId("D001");
+		actDTO.setMedicalActDTO(medicalActDTO);
+
+		mockMvc.perform(post("/patient-file/P004/item").contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(actDTO)))
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON)).andExpect(status().isNotFound())
+				.andExpect(jsonPath("$.message", is("user is not referring nor corresponding doctor")));
+
+		assertEquals(count, patientFileItemDAO.count());
+	}
+
+	@Test
+	@WithUserDetails("user") // ROLE_DOCTOR, D001
+	public void testCreateActFailurePatientFileDoesNotExist() throws Exception {
+
+		count = patientFileItemDAO.count();
+
+		LocalDate now = LocalDate.now();
+
+		medicalActDTO.setId("HBSD001");
+		actDTO.setDate(now);
+		actDTO.setComments("comments on this act");
+		actDTO.setAuthoringDoctorId("D001");
+		actDTO.setMedicalActDTO(medicalActDTO);
+
+		mockMvc.perform(post("/patient-file/P002/item").contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(actDTO)))
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON)).andExpect(status().isNotFound())
+				.andExpect(jsonPath("$.message", is("patient file not found")));
+
+		assertEquals(count, patientFileItemDAO.count());
+	}
+
+	@Test
+	@WithUserDetails("eric") // ROLE_PATIENT
+	public void testCreatePatientFileItemFailureBadRolePatient() throws Exception {
+
+		LocalDate now = LocalDate.now();
+
+		medicalActDTO.setId("HBSD001");
+		actDTO.setDate(now);
+		actDTO.setComments("comments on this act");
+		actDTO.setAuthoringDoctorId("D001");
+		actDTO.setMedicalActDTO(medicalActDTO);
+
+		mockMvc.perform(post("/patient-file/P001/item").contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(actDTO)))
+				.andExpect(status().isForbidden());
+	}
+
+	@Test
+	@WithUserDetails("admin") // ROLE_ADMIN
+	public void testCreatePatientFileItemFailureBadRoleAdmin() throws Exception {
+
+		LocalDate now = LocalDate.now();
+
+		medicalActDTO.setId("HBSD001");
+		actDTO.setDate(now);
+		actDTO.setComments("comments on this act");
+		actDTO.setAuthoringDoctorId("D001");
+		actDTO.setMedicalActDTO(medicalActDTO);
+
+		mockMvc.perform(post("/patient-file/P001/item").contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(actDTO)))
+				.andExpect(status().isForbidden());
+	}
+
+	@Test
+	@WithAnonymousUser
+	public void testCreatePatientFileItemFailureUnauthenticatedUser() throws Exception {
+
+		LocalDate now = LocalDate.now();
+
+		medicalActDTO.setId("HBSD001");
+		actDTO.setDate(now);
+		actDTO.setComments("comments on this act");
+		actDTO.setAuthoringDoctorId("D001");
+		actDTO.setMedicalActDTO(medicalActDTO);
+
+		mockMvc.perform(post("/patient-file/P001/item").contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(actDTO)))
+				.andExpect(status().isUnauthorized());
 	}
 
 }
