@@ -103,7 +103,7 @@ CREATE TABLE `t_patient_file` (
 
 INSERT INTO `t_patient_file` VALUES ('P001', '1995-05-15', 'D001');
 INSERT INTO `t_patient_file` VALUES ('P004', '1978-02-26', 'D004');
-INSERT INTO `t_patient_file` VALUES ('P005', '1974-07-16', 'D005');
+INSERT INTO `t_patient_file` VALUES ('P005', '1974-07-16', 'D001');
 INSERT INTO `t_patient_file` VALUES ('P006', '1994-05-05', 'D004');
 INSERT INTO `t_patient_file` VALUES ('P007', '1991-07-28', 'D005');
 INSERT INTO `t_patient_file` VALUES ('P008', '1977-12-14', 'D004');

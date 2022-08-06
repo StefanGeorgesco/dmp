@@ -26,6 +26,7 @@ import org.springframework.test.context.jdbc.SqlGroup;
 
 import fr.cnam.stefangeorgesco.dmp.domain.dao.CorrespondenceDAO;
 import fr.cnam.stefangeorgesco.dmp.domain.dao.DoctorDAO;
+import fr.cnam.stefangeorgesco.dmp.domain.dao.MedicalActDAO;
 import fr.cnam.stefangeorgesco.dmp.domain.dao.PatientFileDAO;
 import fr.cnam.stefangeorgesco.dmp.domain.dao.PatientFileItemDAO;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.ActDTO;
@@ -52,6 +53,7 @@ import fr.cnam.stefangeorgesco.dmp.exception.domain.CheckException;
 import fr.cnam.stefangeorgesco.dmp.exception.domain.CreateException;
 import fr.cnam.stefangeorgesco.dmp.exception.domain.DuplicateKeyException;
 import fr.cnam.stefangeorgesco.dmp.exception.domain.FinderException;
+import fr.cnam.stefangeorgesco.dmp.exception.domain.UpdateException;
 
 @TestPropertySource("/application-test.properties")
 @SpringBootTest
@@ -80,9 +82,12 @@ public class PatientFileServiceIntegrationTest {
 
 	@Autowired
 	private CorrespondenceDAO correspondenceDAO;
-	
+
 	@Autowired
 	private PatientFileItemDAO patientFileItemDAO;
+
+	@Autowired
+	private MedicalActDAO medicalActDAO;
 
 	@Autowired
 	private PatientFileService patientFileService;
@@ -104,22 +109,22 @@ public class PatientFileServiceIntegrationTest {
 
 	@Autowired
 	private MedicalActDTO medicalActDTO;
-	
+
 	@Autowired
 	private ActDTO actDTO;
-	
+
 	@Autowired
 	private DiagnosisDTO diagnosisDTO;
 
 	@Autowired
 	private MailDTO mailDTO;
-	
+
 	@Autowired
 	private PrescriptionDTO prescriptionDTO;
-	
+
 	@Autowired
 	private SymptomDTO symptomDTO;
-	
+
 	private PatientFileItemDTO patientFileItemDTOResponse;
 
 	@Autowired
@@ -145,32 +150,32 @@ public class PatientFileServiceIntegrationTest {
 
 	@Autowired
 	private PatientFile persistentPatientFile;
-	
+
 	@Autowired
 	private Act act;
-	
+
 	@Autowired
 	private Diagnosis diagnosis;
-	
+
 	@Autowired
 	private Mail mail;
-	
+
 	@Autowired
 	private Prescription prescription;
-	
+
 	@Autowired
 	private Symptom symptom;
 
 	private long count;
 
 	private UUID uuid;
-	
+
 	private String id;
-	
+
 	private String comment;
-	
+
 	private String text;
-	
+
 	private String description;
 
 	@BeforeEach
@@ -206,7 +211,7 @@ public class PatientFileServiceIntegrationTest {
 		correspondenceDTO.setDateUntil(LocalDate.now().plusDays(1));
 		correspondenceDTO.setDoctorId("D002");
 		correspondenceDTO.setPatientFileId("P001");
-		
+
 		comment = "A comment";
 		text = "A text";
 		description = "A description";
@@ -583,11 +588,11 @@ public class PatientFileServiceIntegrationTest {
 	public void testCreateMailSuccess() {
 
 		count = patientFileItemDAO.count();
-		
+
 		LocalDate now = LocalDate.now();
-		
+
 		assertNull(mailDTO.getId());
-		
+
 		mailDTO.setDate(now);
 		mailDTO.setComments("comments on this mail");
 		mailDTO.setAuthoringDoctorId("D001");
@@ -600,9 +605,9 @@ public class PatientFileServiceIntegrationTest {
 
 		PatientFileItemDTO patientFileItemDTOResponse = assertDoesNotThrow(
 				() -> patientFileService.createPatientFileItem(mailDTO));
-		
+
 		assertEquals(count + 1, patientFileItemDAO.count());
-		
+
 		assertNotNull(patientFileItemDTOResponse.getId());
 		assertEquals(now, patientFileItemDTOResponse.getDate());
 		assertEquals(mailDTO.getComments(), patientFileItemDTOResponse.getComments());
@@ -613,8 +618,10 @@ public class PatientFileServiceIntegrationTest {
 		assertTrue(patientFileItemDTOResponse instanceof MailDTO);
 		assertEquals(mailDTO.getText(), ((MailDTO) patientFileItemDTOResponse).getText());
 		assertEquals(recipientDoctor.getId(), ((MailDTO) patientFileItemDTOResponse).getRecipientDoctorId());
-		assertEquals(recipientDoctor.getFirstname(), ((MailDTO) patientFileItemDTOResponse).getRecipientDoctorFirstname());
-		assertEquals(recipientDoctor.getLastname(), ((MailDTO) patientFileItemDTOResponse).getRecipientDoctorLastname());
+		assertEquals(recipientDoctor.getFirstname(),
+				((MailDTO) patientFileItemDTOResponse).getRecipientDoctorFirstname());
+		assertEquals(recipientDoctor.getLastname(),
+				((MailDTO) patientFileItemDTOResponse).getRecipientDoctorLastname());
 	}
 
 	@Test
@@ -631,23 +638,23 @@ public class PatientFileServiceIntegrationTest {
 
 		assertEquals(count, patientFileItemDAO.count());
 	}
-	
+
 	@Test
 	public void testUpdateActSuccess() {
-		
+
 		id = "HBQK389";
-		
+
 		uuid = UUID.fromString("1b57e70f-8eb0-4a97-99c6-5d44f138c22c");
-		
+
 		medicalActDTO.setId(id);
-		
+
 		actDTO.setId(uuid);
 		actDTO.setDate(LocalDate.now());
 		actDTO.setComments("comments on this act");
 		actDTO.setAuthoringDoctorId("D001");
 		actDTO.setPatientFileId("P001");
 		actDTO.setMedicalActDTO(medicalActDTO);
-		
+
 		act = (Act) patientFileItemDAO.findById(uuid).get();
 
 		assertNotEquals(comment, act.getComments());
@@ -658,7 +665,7 @@ public class PatientFileServiceIntegrationTest {
 		patientFileItemDTOResponse = assertDoesNotThrow(() -> patientFileService.updatePatientFileItem(actDTO));
 
 		act = (Act) patientFileItemDAO.findById(uuid).get();
-		
+
 		assertEquals(comment, act.getComments());
 		assertEquals(id, act.getMedicalAct().getId());
 		assertEquals(
@@ -672,20 +679,92 @@ public class PatientFileServiceIntegrationTest {
 	}
 
 	@Test
+	public void testUpdateActFailureMedicalActDoesNotExist() {
+
+		id = "HBQK389Z"; // does not exist
+
+		uuid = UUID.fromString("1b57e70f-8eb0-4a97-99c6-5d44f138c22c");
+
+		medicalActDTO.setId(id);
+
+		actDTO.setId(uuid);
+		actDTO.setDate(LocalDate.now());
+		actDTO.setComments("comments on this act");
+		actDTO.setAuthoringDoctorId("D001");
+		actDTO.setPatientFileId("P001");
+		actDTO.setMedicalActDTO(medicalActDTO);
+		actDTO.setComments(comment);
+
+		assertFalse(medicalActDAO.existsById(id));
+
+		UpdateException ex = assertThrows(UpdateException.class,
+				() -> patientFileService.updatePatientFileItem(actDTO));
+		
+		assertTrue(ex.getMessage().contains("patient file item could not be updated"));
+	}
+
+	@Test
+	public void testUpdateActFailureActDoesNotExist() {
+
+		id = "HBQK389";
+
+		uuid = UUID.fromString("1b57e70f-8eb0-4a97-99c6-5d44f138c22");  // does not exist
+
+		medicalActDTO.setId(id);
+
+		actDTO.setId(uuid);
+		actDTO.setDate(LocalDate.now());
+		actDTO.setComments("comments on this act");
+		actDTO.setAuthoringDoctorId("D001");
+		actDTO.setPatientFileId("P001");
+		actDTO.setMedicalActDTO(medicalActDTO);
+		actDTO.setComments(comment);
+
+		assertFalse(patientFileItemDAO.existsById(uuid));
+
+		FinderException ex = assertThrows(FinderException.class,
+				() -> patientFileService.updatePatientFileItem(actDTO));
+		
+		assertTrue(ex.getMessage().contains("patient file item not found"));
+	}
+
+	@Test
+	public void testUpdateActFailureWrongType() {
+
+		id = "HBQK389";
+
+		uuid = UUID.fromString("707b71f1-0bbd-46ec-b79c-c9717bd6b2cd"); // type Diagnosis
+
+		medicalActDTO.setId(id);
+
+		actDTO.setId(uuid);
+		actDTO.setDate(LocalDate.now());
+		actDTO.setComments("comments on this act");
+		actDTO.setAuthoringDoctorId("D001");
+		actDTO.setPatientFileId("P001");
+		actDTO.setMedicalActDTO(medicalActDTO);
+		actDTO.setComments(comment);
+
+		 UpdateException ex =  assertThrows(UpdateException.class, () -> patientFileService.updatePatientFileItem(actDTO));
+		 
+		 assertEquals("patient file items types do not match", ex.getMessage());
+	}
+
+	@Test
 	public void testUpdateDiagnosisSuccess() {
-		
+
 		id = "J011";
-		
+
 		uuid = UUID.fromString("707b71f1-0bbd-46ec-b79c-c9717bd6b2cd");
-		
+
 		diseaseDTO.setId(id);
-		
+
 		diagnosisDTO.setId(uuid);
 		diagnosisDTO.setDate(LocalDate.now());
 		diagnosisDTO.setAuthoringDoctorId("D001");
 		diagnosisDTO.setPatientFileId("P001");
 		diagnosisDTO.setDiseaseDTO(diseaseDTO);
-		
+
 		diagnosis = (Diagnosis) patientFileItemDAO.findById(uuid).get();
 
 		assertNotEquals(comment, diagnosis.getComments());
@@ -696,30 +775,48 @@ public class PatientFileServiceIntegrationTest {
 		patientFileItemDTOResponse = assertDoesNotThrow(() -> patientFileService.updatePatientFileItem(diagnosisDTO));
 
 		diagnosis = (Diagnosis) patientFileItemDAO.findById(uuid).get();
-		
+
 		assertEquals(comment, diagnosis.getComments());
 		assertEquals(id, diagnosis.getDisease().getId());
-		assertEquals(
-				"Sinusite frontale aiguë",
-				diagnosis.getDisease().getDescription());
+		assertEquals("Sinusite frontale aiguë", diagnosis.getDisease().getDescription());
 		assertEquals(comment, patientFileItemDTOResponse.getComments());
 		assertEquals(id, ((DiagnosisDTO) patientFileItemDTOResponse).getDiseaseDTO().getId());
-		assertEquals(
-				"Sinusite frontale aiguë",
+		assertEquals("Sinusite frontale aiguë",
 				((DiagnosisDTO) patientFileItemDTOResponse).getDiseaseDTO().getDescription());
 	}
 
 	@Test
+	public void testUpdateDiagnosisFailureWrongType() {
+
+		id = "J011";
+
+		uuid = UUID.fromString("3ab3d311-585c-498e-aaca-728c00beb86e"); // type Mail
+
+		diseaseDTO.setId(id);
+
+		diagnosisDTO.setId(uuid);
+		diagnosisDTO.setDate(LocalDate.now());
+		diagnosisDTO.setAuthoringDoctorId("D001");
+		diagnosisDTO.setPatientFileId("P001");
+		diagnosisDTO.setDiseaseDTO(diseaseDTO);
+		diagnosisDTO.setComments(comment);
+
+		 UpdateException ex =  assertThrows(UpdateException.class, () -> patientFileService.updatePatientFileItem(diagnosisDTO));
+		 
+		 assertEquals("patient file items types do not match", ex.getMessage());
+	}
+
+	@Test
 	public void testUpdateMailSuccess() {
-		
+
 		id = "D013";
-		
+
 		uuid = UUID.fromString("3ab3d311-585c-498e-aaca-728c00beb86e");
-		
+
 		mailDTO.setId(uuid);
 		mailDTO.setDate(LocalDate.now());
 		mailDTO.setPatientFileId("P001");
-		
+
 		mail = (Mail) patientFileItemDAO.findById(uuid).get();
 
 		assertNotEquals(comment, mail.getComments());
@@ -733,27 +830,43 @@ public class PatientFileServiceIntegrationTest {
 		patientFileItemDTOResponse = assertDoesNotThrow(() -> patientFileService.updatePatientFileItem(mailDTO));
 
 		mail = (Mail) patientFileItemDAO.findById(uuid).get();
-		
+
 		assertEquals(comment, mail.getComments());
 		assertEquals(id, mail.getRecipientDoctor().getId());
-		assertEquals(
-				"Hansen",
-				mail.getRecipientDoctor().getLastname());
+		assertEquals("Hansen", mail.getRecipientDoctor().getLastname());
 		assertEquals(comment, patientFileItemDTOResponse.getComments());
 		assertEquals(id, ((MailDTO) patientFileItemDTOResponse).getRecipientDoctorId());
-		assertEquals(
-				"Hansen",
-				((MailDTO) patientFileItemDTOResponse).getRecipientDoctorLastname());
+		assertEquals("Hansen", ((MailDTO) patientFileItemDTOResponse).getRecipientDoctorLastname());
 	}
+
+	@Test
+	public void testUpdateMailFailureWrongType() {
+
+		id = "D013";
+
+		uuid = UUID.fromString("31571533-a9d4-4b10-ac46-8afe0247e6cd"); // type Prescription
+
+		mailDTO.setId(uuid);
+		mailDTO.setDate(LocalDate.now());
+		mailDTO.setPatientFileId("P001");
+		mailDTO.setComments(comment);
+		mailDTO.setText(text);
+		mailDTO.setRecipientDoctorId(id);
+
+		 UpdateException ex =  assertThrows(UpdateException.class, () -> patientFileService.updatePatientFileItem(mailDTO));
+		 
+		 assertEquals("patient file items types do not match", ex.getMessage());
+	}
+
 	@Test
 	public void testUpdatePrescriptionSuccess() {
-		
+
 		uuid = UUID.fromString("31571533-a9d4-4b10-ac46-8afe0247e6cd");
-		
+
 		prescriptionDTO.setId(uuid);
 		prescriptionDTO.setDate(LocalDate.now());
 		prescriptionDTO.setPatientFileId("P001");
-		
+
 		prescription = (Prescription) patientFileItemDAO.findById(uuid).get();
 
 		assertNotEquals(comment, prescription.getComments());
@@ -762,25 +875,42 @@ public class PatientFileServiceIntegrationTest {
 		prescriptionDTO.setComments(comment);
 		prescriptionDTO.setDescription(description);
 
-		patientFileItemDTOResponse = assertDoesNotThrow(() -> patientFileService.updatePatientFileItem(prescriptionDTO));
+		patientFileItemDTOResponse = assertDoesNotThrow(
+				() -> patientFileService.updatePatientFileItem(prescriptionDTO));
 
 		prescription = (Prescription) patientFileItemDAO.findById(uuid).get();
-		
+
 		assertEquals(comment, prescription.getComments());
 		assertEquals(description, prescription.getDescription());
 		assertEquals(comment, patientFileItemDTOResponse.getComments());
 		assertEquals(description, ((PrescriptionDTO) patientFileItemDTOResponse).getDescription());
 	}
-	
+
+	@Test
+	public void testUpdatePrescriptionFailureWrongType() {
+
+		uuid = UUID.fromString("142763cf-6eeb-47a5-b8f8-8ec85f0025c4"); // type Symptom
+
+		prescriptionDTO.setId(uuid);
+		prescriptionDTO.setDate(LocalDate.now());
+		prescriptionDTO.setPatientFileId("P001");
+		prescriptionDTO.setComments(comment);
+		prescriptionDTO.setDescription(description);
+
+		 UpdateException ex =  assertThrows(UpdateException.class, () -> patientFileService.updatePatientFileItem(prescriptionDTO));
+		 
+		 assertEquals("patient file items types do not match", ex.getMessage());
+	}
+
 	@Test
 	public void testUpdateSymptomSuccess() {
-		
+
 		uuid = UUID.fromString("142763cf-6eeb-47a5-b8f8-8ec85f0025c4");
-		
+
 		symptomDTO.setId(uuid);
 		symptomDTO.setDate(LocalDate.now());
 		symptomDTO.setPatientFileId("P001");
-		
+
 		symptom = (Symptom) patientFileItemDAO.findById(uuid).get();
 
 		assertNotEquals(comment, symptom.getComments());
@@ -792,11 +922,27 @@ public class PatientFileServiceIntegrationTest {
 		patientFileItemDTOResponse = assertDoesNotThrow(() -> patientFileService.updatePatientFileItem(symptomDTO));
 
 		symptom = (Symptom) patientFileItemDAO.findById(uuid).get();
-		
+
 		assertEquals(comment, symptom.getComments());
 		assertEquals(description, symptom.getDescription());
 		assertEquals(comment, patientFileItemDTOResponse.getComments());
 		assertEquals(description, ((SymptomDTO) patientFileItemDTOResponse).getDescription());
+	}
+
+	@Test
+	public void testUpdateSymptomFailureWrongType() {
+
+		uuid = UUID.fromString("1b57e70f-8eb0-4a97-99c6-5d44f138c22c"); // type Act
+
+		symptomDTO.setId(uuid);
+		symptomDTO.setDate(LocalDate.now());
+		symptomDTO.setPatientFileId("P001");
+		symptomDTO.setComments(comment);
+		symptomDTO.setDescription(description);
+
+		 UpdateException ex =  assertThrows(UpdateException.class, () -> patientFileService.updatePatientFileItem(symptomDTO));
+		 
+		 assertEquals("patient file items types do not match", ex.getMessage());
 	}
 
 }

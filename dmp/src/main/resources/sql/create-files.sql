@@ -37,7 +37,7 @@ insert into t_doctor(id) values ('D013')
 
 insert into t_patient_file(id, date_of_birth, referring_doctor_id) values ('P001', '1995-05-15', 'D001')
 insert into t_patient_file(id, date_of_birth, referring_doctor_id) values ('P004', '1978-02-26', 'D004')
-insert into t_patient_file(id, date_of_birth, referring_doctor_id) values ('P005', '1974-07-16', 'D005')
+insert into t_patient_file(id, date_of_birth, referring_doctor_id) values ('P005', '1974-07-16', 'D001')
 insert into t_patient_file(id, date_of_birth, referring_doctor_id) values ('P006', '1994-05-05', 'D004')
 insert into t_patient_file(id, date_of_birth, referring_doctor_id) values ('P007', '1991-07-28', 'D005')
 insert into t_patient_file(id, date_of_birth, referring_doctor_id) values ('P008', '1977-12-14', 'D004')

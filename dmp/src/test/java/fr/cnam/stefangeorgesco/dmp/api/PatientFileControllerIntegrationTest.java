@@ -47,11 +47,14 @@ import fr.cnam.stefangeorgesco.dmp.domain.dto.ActDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.AddressDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.CorrespondenceDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.DoctorDTO;
+import fr.cnam.stefangeorgesco.dmp.domain.dto.MailDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.MedicalActDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.PatientFileDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.SpecialtyDTO;
+import fr.cnam.stefangeorgesco.dmp.domain.model.Act;
 import fr.cnam.stefangeorgesco.dmp.domain.model.Address;
 import fr.cnam.stefangeorgesco.dmp.domain.model.Doctor;
+import fr.cnam.stefangeorgesco.dmp.domain.model.Mail;
 import fr.cnam.stefangeorgesco.dmp.domain.model.PatientFile;
 import fr.cnam.stefangeorgesco.dmp.domain.service.RNIPPService;
 
@@ -124,6 +127,9 @@ public class PatientFileControllerIntegrationTest {
 
 	@Autowired
 	private ActDTO actDTO;
+	
+	@Autowired
+	private MailDTO mailDTO;
 
 	@Autowired
 	private Address address;
@@ -137,9 +143,19 @@ public class PatientFileControllerIntegrationTest {
 	@Autowired
 	private PatientFile patientFile;
 
+	@Autowired
+	private Act act;
+	
+	@Autowired
+	private Mail mail;
+
 	private long count;
 
 	private UUID uuid;
+
+	private String comment;
+	
+	private String text;
 
 	@BeforeEach
 	public void setup() {
@@ -186,6 +202,9 @@ public class PatientFileControllerIntegrationTest {
 
 		correspondenceDTO.setDateUntil(LocalDate.now().plusDays(1));
 		correspondenceDTO.setDoctorId("D002");
+
+		comment = "A comment";
+		text = "A text";
 	}
 
 	@Test
@@ -544,8 +563,7 @@ public class PatientFileControllerIntegrationTest {
 	public void testCreateCorrespondanceFailureBadRolePatient() throws Exception {
 
 		mockMvc.perform(post("/patient-file/P001/correspondence").contentType(MediaType.APPLICATION_JSON)
-				.content(objectMapper.writeValueAsString(correspondenceDTO)))
-				.andExpect(status().isForbidden());
+				.content(objectMapper.writeValueAsString(correspondenceDTO))).andExpect(status().isForbidden());
 	}
 
 	@Test
@@ -553,8 +571,7 @@ public class PatientFileControllerIntegrationTest {
 	public void testCreateCorrespondanceFailureBadRoleAdmin() throws Exception {
 
 		mockMvc.perform(post("/patient-file/P001/correspondence").contentType(MediaType.APPLICATION_JSON)
-				.content(objectMapper.writeValueAsString(correspondenceDTO)))
-				.andExpect(status().isForbidden());
+				.content(objectMapper.writeValueAsString(correspondenceDTO))).andExpect(status().isForbidden());
 	}
 
 	@Test
@@ -562,8 +579,7 @@ public class PatientFileControllerIntegrationTest {
 	public void testCreateCorrespondanceFailureUnauthenticatedUser() throws Exception {
 
 		mockMvc.perform(post("/patient-file/P001/correspondence").contentType(MediaType.APPLICATION_JSON)
-				.content(objectMapper.writeValueAsString(correspondenceDTO)))
-				.andExpect(status().isUnauthorized());
+				.content(objectMapper.writeValueAsString(correspondenceDTO))).andExpect(status().isUnauthorized());
 	}
 
 	@Test
@@ -1159,8 +1175,7 @@ public class PatientFileControllerIntegrationTest {
 		actDTO.setMedicalActDTO(medicalActDTO);
 
 		mockMvc.perform(post("/patient-file/P001/item").contentType(MediaType.APPLICATION_JSON)
-				.content(objectMapper.writeValueAsString(actDTO)))
-				.andExpect(status().isForbidden());
+				.content(objectMapper.writeValueAsString(actDTO))).andExpect(status().isForbidden());
 	}
 
 	@Test
@@ -1176,8 +1191,7 @@ public class PatientFileControllerIntegrationTest {
 		actDTO.setMedicalActDTO(medicalActDTO);
 
 		mockMvc.perform(post("/patient-file/P001/item").contentType(MediaType.APPLICATION_JSON)
-				.content(objectMapper.writeValueAsString(actDTO)))
-				.andExpect(status().isForbidden());
+				.content(objectMapper.writeValueAsString(actDTO))).andExpect(status().isForbidden());
 	}
 
 	@Test
@@ -1193,8 +1207,101 @@ public class PatientFileControllerIntegrationTest {
 		actDTO.setMedicalActDTO(medicalActDTO);
 
 		mockMvc.perform(post("/patient-file/P001/item").contentType(MediaType.APPLICATION_JSON)
-				.content(objectMapper.writeValueAsString(actDTO)))
-				.andExpect(status().isUnauthorized());
+				.content(objectMapper.writeValueAsString(actDTO))).andExpect(status().isUnauthorized());
+	}
+
+	@Test
+	@WithUserDetails("user") // ROLE_DOCTOR, D001
+	public void testUpdatePatientFileItemSuccessUserIsReferringAndAuthor() throws Exception {
+
+		uuid = UUID.fromString("1b57e70f-8eb0-4a97-99c6-5d44f138c22c");
+
+		LocalDate now = LocalDate.now();
+
+		medicalActDTO.setId("HBSD001");
+
+		actDTO.setId(UUID.randomUUID()); // not taken into account
+		actDTO.setDate(now); // can not be updated
+		actDTO.setComments(comment);
+		actDTO.setMedicalActDTO(medicalActDTO);
+		actDTO.setAuthoringDoctorId("D002"); // can not be updated
+		actDTO.setPatientFileId("P002"); // can not be updated
+
+		authoringDoctor = doctorDAO.findById("D001").get();
+
+		mockMvc.perform(put("/patient-file/P005/item/" + uuid.toString()).contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(actDTO))).andExpect(status().isOk())
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+				.andExpect(jsonPath("$.@type", is("act")))
+				.andExpect(jsonPath("$.id", hasLength(36)))
+				.andExpect(jsonPath("$.date", is("2021-10-11")))
+				.andExpect(jsonPath("$.comments", is(actDTO.getComments())))
+				.andExpect(jsonPath("$.authoringDoctorId", is(authoringDoctor.getId())))
+				.andExpect(jsonPath("$.authoringDoctorFirstname", is(authoringDoctor.getFirstname())))
+				.andExpect(jsonPath("$.authoringDoctorLastname", is(authoringDoctor.getLastname())))
+				.andExpect(jsonPath("$.medicalAct.id", is(actDTO.getMedicalActDTO().getId())))
+				.andExpect(jsonPath("$.medicalAct.description",
+						is("Hémostase gingivoalvéolaire secondaire à une avulsion dentaire")))
+				.andExpect(jsonPath("$.patientFileId", is("P005")));
+
+		act = (Act) patientFileItemDAO.findById(uuid).get();
+
+		assertEquals(comment, act.getComments());
+		assertEquals("2021-10-11", act.getDate().toString());
+		assertEquals(authoringDoctor.getId(), act.getAuthoringDoctor().getId());
+		assertEquals("HBSD001", act.getMedicalAct().getId());
+		assertEquals("Hémostase gingivoalvéolaire secondaire à une avulsion dentaire",
+				act.getMedicalAct().getDescription());
+		assertEquals("P005", act.getPatientFile().getId());
+	}
+
+	@Test
+	@WithUserDetails("user") // ROLE_DOCTOR, D001
+	public void testUpdatePatientFileItemSuccessUserIsActiveCorrespondentAndAuthor() throws Exception {
+
+		uuid = UUID.fromString("7f331dd1-0950-4991-964c-2383ba92699e");
+
+		LocalDate now = LocalDate.now();
+
+		mailDTO.setId(UUID.randomUUID()); // not taken into account
+		mailDTO.setDate(now); // can not be updated
+		mailDTO.setComments(comment);
+		mailDTO.setText(text);
+		mailDTO.setRecipientDoctorId("D004");
+		mailDTO.setAuthoringDoctorId("D002"); // can not be updated
+		mailDTO.setPatientFileId("P002"); // can not be updated
+
+		authoringDoctor = doctorDAO.findById("D001").get();
+
+		mockMvc.perform(put("/patient-file/P006/item/" + uuid.toString()).contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(mailDTO))).andExpect(status().isOk())
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+				.andExpect(jsonPath("$.@type", is("mail")))
+				.andExpect(jsonPath("$.id", hasLength(36)))
+				.andExpect(jsonPath("$.date", is("2022-05-27")))
+				.andExpect(jsonPath("$.comments", is(mailDTO.getComments())))
+				.andExpect(jsonPath("$.authoringDoctorId", is(authoringDoctor.getId())))
+				.andExpect(jsonPath("$.authoringDoctorFirstname", is(authoringDoctor.getFirstname())))
+				.andExpect(jsonPath("$.authoringDoctorLastname", is(authoringDoctor.getLastname())))
+				.andExpect(jsonPath("$.text", is(text)))
+				.andExpect(jsonPath("$.recipientDoctorId", is("D004")))
+				.andExpect(jsonPath("$.recipientDoctorFirstname", is("Leah")))
+				.andExpect(jsonPath("$.recipientDoctorLastname", is("Little")))
+				.andExpect(jsonPath("$.recipientDoctorSpecialties", hasSize(1)))
+				.andExpect(jsonPath("$.recipientDoctorSpecialties[0]", is("gériatrie")))
+				.andExpect(jsonPath("$.patientFileId", is("P006")));
+
+		mail = (Mail) patientFileItemDAO.findById(uuid).get();
+
+		assertEquals(comment, mail.getComments());
+		assertEquals("2022-05-27", mail.getDate().toString());
+		assertEquals(text, mail.getText());
+		assertEquals("D004", mail.getRecipientDoctor().getId());
+		assertEquals("Leah", mail.getRecipientDoctor().getFirstname());
+		assertEquals("Little", mail.getRecipientDoctor().getLastname());
+		assertEquals("gériatrie", mail.getRecipientDoctor().getSpecialties().iterator().next().getDescription());
+		assertEquals(authoringDoctor.getId(), mail.getAuthoringDoctor().getId());
+		assertEquals("P006", mail.getPatientFile().getId());
 	}
 
 }

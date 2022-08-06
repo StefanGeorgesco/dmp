@@ -132,7 +132,7 @@ public class PatientFileController {
 		PatientFileDTO patientFileDTO = patientFileService.findPatientFile(id);
 
 		String referringDoctorId = patientFileDTO.getReferringDoctorId();
-		
+
 		List<CorrespondenceDTO> correspondencesDTO = patientFileService.findCorrespondencesByPatientFileId(id);
 
 		LocalDate now = LocalDate.now();
@@ -152,6 +152,17 @@ public class PatientFileController {
 
 		return ResponseEntity.status(HttpStatus.CREATED)
 				.body(patientFileService.createPatientFileItem(patientFileItemDTO));
+	}
+
+	@PutMapping("/patient-file/{patienfFileId}/item/{itemId}")
+	public ResponseEntity<PatientFileItemDTO> updatePatientFileItem(
+			@Valid @RequestBody PatientFileItemDTO patientFileItemDTO, @PathVariable String patienfFileId,
+			@PathVariable String itemId, Principal principal) throws ApplicationException {
+		
+		patientFileItemDTO.setId(UUID.fromString(itemId));
+
+		return ResponseEntity.status(HttpStatus.OK)
+				.body(patientFileService.updatePatientFileItem(patientFileItemDTO));
 	}
 
 	@DeleteMapping("/patient-file/{patientFileId}/correspondence/{correspondenceId}")

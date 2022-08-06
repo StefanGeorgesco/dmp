@@ -297,31 +297,40 @@ public class PatientFileService {
 		return respsonse;
 	}
 
-	public PatientFileItemDTO updatePatientFileItem(PatientFileItemDTO patientFileItemDTO) throws UpdateException {
+	public PatientFileItemDTO updatePatientFileItem(PatientFileItemDTO patientFileItemDTO) throws ApplicationException {
 
-		PatientFileItem patientFileItem = patientFileItemDAO.findById(patientFileItemDTO.getId()).get();
+		Optional<PatientFileItem> optionalPatientFileItem = patientFileItemDAO.findById(patientFileItemDTO.getId());
+		
+		if (optionalPatientFileItem.isEmpty()) {
+			throw new FinderException("patient file item not found");
+		}
+
+		PatientFileItem patientFileItem = optionalPatientFileItem.get();
 
 		patientFileItem.setComments(patientFileItemDTO.getComments());
 
-		if (patientFileItemDTO instanceof ActDTO) {
+		if (patientFileItemDTO instanceof ActDTO && patientFileItem instanceof Act) {
 			((Act) patientFileItem).getMedicalAct().setId(((ActDTO) patientFileItemDTO).getMedicalActDTO().getId());
-		} else if (patientFileItemDTO instanceof DiagnosisDTO) {
-			((Diagnosis) patientFileItem).getDisease().setId(((DiagnosisDTO) patientFileItemDTO).getDiseaseDTO().getId());
-		} else if (patientFileItemDTO instanceof MailDTO) {
+		} else if (patientFileItemDTO instanceof DiagnosisDTO && patientFileItem instanceof Diagnosis) {
+			((Diagnosis) patientFileItem).getDisease()
+					.setId(((DiagnosisDTO) patientFileItemDTO).getDiseaseDTO().getId());
+		} else if (patientFileItemDTO instanceof MailDTO && patientFileItem instanceof Mail) {
 			((Mail) patientFileItem).setText(((MailDTO) patientFileItemDTO).getText());
 			((Mail) patientFileItem).getRecipientDoctor().setId(((MailDTO) patientFileItemDTO).getRecipientDoctorId());
-		} else if (patientFileItemDTO instanceof PrescriptionDTO) {
+		} else if (patientFileItemDTO instanceof PrescriptionDTO && patientFileItem instanceof Prescription) {
 			((Prescription) patientFileItem).setDescription(((PrescriptionDTO) patientFileItemDTO).getDescription());
-		} else if (patientFileItemDTO instanceof SymptomDTO) {
+		} else if (patientFileItemDTO instanceof SymptomDTO && patientFileItem instanceof Symptom) {
 			((Symptom) patientFileItem).setDescription(((SymptomDTO) patientFileItemDTO).getDescription());
+		} else {
+			throw new UpdateException("patient file items types do not match");
 		}
-		
+
 		try {
 			patientFileItem = patientFileItemDAO.save(patientFileItem);
 		} catch (Exception e) {
 			throw new UpdateException("patient file item could not be updated: " + e.getMessage());
 		}
-		
+
 		PatientFileItemDTO response = mapperService.mapToDTO(patientFileItem);
 
 		return response;
