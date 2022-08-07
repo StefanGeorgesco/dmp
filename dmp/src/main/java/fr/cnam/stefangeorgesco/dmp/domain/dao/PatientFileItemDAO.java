@@ -7,5 +7,7 @@ import org.springframework.data.repository.CrudRepository;
 import fr.cnam.stefangeorgesco.dmp.domain.model.PatientFileItem;
 
 public interface PatientFileItemDAO extends CrudRepository<PatientFileItem, UUID> {
+
+	Iterable<PatientFileItem> findByPatientFileId(String patientFileId);
 	
 }

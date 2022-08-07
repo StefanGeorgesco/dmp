@@ -1,4 +1,4 @@
-	insert into t_patient_file_item(id, date, comments, authoring_doctor_id, patient_file_id) values('1b57e70f-8eb0-4a97-99c6-5d44f138c22c', '2021-10-11', 'Praesent varius est eget risus rhoncus eleifend.', 'D001', 'P005')
+insert into t_patient_file_item(id, date, comments, authoring_doctor_id, patient_file_id) values('1b57e70f-8eb0-4a97-99c6-5d44f138c22c', '2021-10-11', 'Praesent varius est eget risus rhoncus eleifend.', 'D001', 'P005')
 insert into t_patient_file_item(id, date, comments, authoring_doctor_id, patient_file_id) values('707b71f1-0bbd-46ec-b79c-c9717bd6b2cd', '2019-03-23', 'Phasellus id ligula nec risus vehicula rhoncus.', 'D009', 'P007')
 insert into t_patient_file_item(id, date, comments, authoring_doctor_id, patient_file_id) values('3ab3d311-585c-498e-aaca-728c00beb86e', '2021-02-03', 'Sed euismod felis et leo vestibulum, nec faucibus sapien pellentesque.', 'D004', 'P001')
 insert into t_patient_file_item(id, date, comments, authoring_doctor_id, patient_file_id) values('31571533-a9d4-4b10-ac46-8afe0247e6cd', '2020-12-26', 'Ut tincidunt risus sed ipsum egestas, aliquam facilisis velit commodo.', 'D002', 'P004')

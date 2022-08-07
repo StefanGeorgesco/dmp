@@ -4,8 +4,11 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -81,9 +84,9 @@ public class PatientFileItemDAOTest {
 	private long count;
 
 	private String comment;
-	
+
 	private String text;
-	
+
 	private String description;
 
 	private String id;
@@ -127,7 +130,7 @@ public class PatientFileItemDAOTest {
 		symptom.setAuthoringDoctor(authoringDoctor);
 		symptom.setPatientFile(patientFile);
 		symptom.setDescription("this prescription...");
-		
+
 		comment = "un commentaire";
 		text = "texte du message";
 		description = "description de l'élément";
@@ -263,31 +266,28 @@ public class PatientFileItemDAOTest {
 
 		assertNotEquals(comment, diagnosis.getComments());
 		assertNotEquals(id, diagnosis.getDisease().getId());
-		
+
 		diagnosis.setComments(comment);
 		diagnosis.getDisease().setId(id);
 
 		savedPatientFileItem = assertDoesNotThrow(() -> patientFileItemDAO.save(diagnosis));
-		
+
 		assertEquals(comment, savedPatientFileItem.getComments());
 		assertEquals(id, ((Diagnosis) savedPatientFileItem).getDisease().getId());
-		assertEquals(
-				"Sinusite frontale aiguë",
-				((Diagnosis) savedPatientFileItem).getDisease().getDescription());
+		assertEquals("Sinusite frontale aiguë", ((Diagnosis) savedPatientFileItem).getDisease().getDescription());
 	}
 
 	@Test
 	public void testPatientFileItemDAOSaveUpdateMailSuccess() {
-		
+
 		id = "D013";
-		
-		mail = (Mail) patientFileItemDAO.findById(UUID.fromString("3ab3d311-585c-498e-aaca-728c00beb86e"))
-				.get();
-		
+
+		mail = (Mail) patientFileItemDAO.findById(UUID.fromString("3ab3d311-585c-498e-aaca-728c00beb86e")).get();
+
 		assertNotEquals(comment, mail.getComments());
 		assertNotEquals(text, mail.getText());
 		assertNotEquals(id, mail.getRecipientDoctor().getId());
-		
+
 		mail.setComments(comment);
 		mail.setText(text);
 		mail.getRecipientDoctor().setId(id);
@@ -301,31 +301,30 @@ public class PatientFileItemDAOTest {
 
 	@Test
 	public void testPatientFileItemDAOSaveUpdatePrescriptionSuccess() {
-		
-		prescription = (Prescription) patientFileItemDAO.findById(UUID.fromString("31571533-a9d4-4b10-ac46-8afe0247e6cd"))
-				.get();
-		
+
+		prescription = (Prescription) patientFileItemDAO
+				.findById(UUID.fromString("31571533-a9d4-4b10-ac46-8afe0247e6cd")).get();
+
 		assertNotEquals(comment, prescription.getComments());
 		assertNotEquals(description, prescription.getDescription());
-		
+
 		prescription.setComments(comment);
 		prescription.setDescription(description);
 
 		savedPatientFileItem = assertDoesNotThrow(() -> patientFileItemDAO.save(prescription));
-		
+
 		assertEquals(comment, savedPatientFileItem.getComments());
 		assertEquals(description, ((Prescription) savedPatientFileItem).getDescription());
 	}
 
 	@Test
 	public void testPatientFileItemDAOSaveUpdateSymptomSuccess() {
-		
-		symptom = (Symptom) patientFileItemDAO.findById(UUID.fromString("142763cf-6eeb-47a5-b8f8-8ec85f0025c4"))
-				.get();
+
+		symptom = (Symptom) patientFileItemDAO.findById(UUID.fromString("142763cf-6eeb-47a5-b8f8-8ec85f0025c4")).get();
 
 		assertNotEquals(comment, symptom.getComments());
 		assertNotEquals(description, symptom.getDescription());
-		
+
 		symptom.setComments(comment);
 		symptom.setDescription(description);
 
@@ -333,6 +332,20 @@ public class PatientFileItemDAOTest {
 
 		assertEquals(comment, savedPatientFileItem.getComments());
 		assertEquals(description, ((Symptom) savedPatientFileItem).getDescription());
-}
+	}
+	
+	@Test
+	public void testPatientFileItemDAOFindByPatientFileIdFound10() {
+		
+		List<PatientFileItem> patientFileItemsList = new ArrayList<>();
+		
+		Iterable<PatientFileItem> patientFileItems = patientFileItemDAO.findByPatientFileId("P005");
+		
+		patientFileItems.forEach(patientFileItemsList::add);
+		
+		assertEquals(10, patientFileItemsList.size());
+		assertTrue(patientFileItemsList.get(0) instanceof Act);
+		assertTrue(patientFileItemsList.get(9) instanceof Symptom);
+	}
 
 }

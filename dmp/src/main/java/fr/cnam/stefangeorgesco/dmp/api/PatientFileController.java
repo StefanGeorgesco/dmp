@@ -152,6 +152,30 @@ public class PatientFileController {
 		return ResponseEntity.status(HttpStatus.CREATED)
 				.body(patientFileService.createPatientFileItem(patientFileItemDTO));
 	}
+	
+	@GetMapping("/patient-file/{id}/item")
+	public ResponseEntity<List<PatientFileItemDTO>> findPatientFileItemsByPatientFileId(@PathVariable String id, Principal principal) throws FinderException {
+		
+		String userId = userService.findUserByUsername(principal.getName()).getId();
+
+		String referringDoctorId = patientFileService.findPatientFile(id).getReferringDoctorId();
+
+		List<CorrespondenceDTO> correspondencesDTO = patientFileService.findCorrespondencesByPatientFileId(id);
+
+		LocalDate now = LocalDate.now();
+
+		boolean userIsReferringDoctor = userId.equals(referringDoctorId);
+
+		boolean userIsCorrespondingDoctor = correspondencesDTO.stream()
+				.filter(correspondence -> correspondence.getDateUntil().compareTo(now) >= 0)
+				.map(CorrespondenceDTO::getDoctorId).collect(Collectors.toList()).contains(userId);
+
+		if (!userIsReferringDoctor && !userIsCorrespondingDoctor) {
+			throw new FinderException("user is not referring nor corresponding doctor");
+		}
+		
+		return ResponseEntity.ok(patientFileService.findPatientFileItemsByPatientFileId(id));
+	}
 
 	@PutMapping("/patient-file/{patienfFileId}/item/{itemId}")
 	public ResponseEntity<PatientFileItemDTO> updatePatientFileItem(

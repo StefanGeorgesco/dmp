@@ -296,7 +296,7 @@ public class PatientFileService {
 	public PatientFileItemDTO updatePatientFileItem(PatientFileItemDTO patientFileItemDTO) throws ApplicationException {
 
 		Optional<PatientFileItem> optionalPatientFileItem = patientFileItemDAO.findById(patientFileItemDTO.getId());
-		
+
 		if (optionalPatientFileItem.isEmpty()) {
 			throw new FinderException("patient file item not found");
 		}
@@ -333,14 +333,24 @@ public class PatientFileService {
 	}
 
 	public PatientFileItemDTO findPatientFileItem(UUID uuid) throws FinderException {
-		
+
 		Optional<PatientFileItem> optionalPatientFileItem = patientFileItemDAO.findById(uuid);
-		
+
 		if (optionalPatientFileItem.isPresent()) {
 			return mapperService.mapToDTO(optionalPatientFileItem.get());
 		} else {
 			throw new FinderException("patient file item not found");
 		}
+	}
+
+	public List<PatientFileItemDTO> findPatientFileItemsByPatientFileId(String patientFileId) {
+
+		Iterable<PatientFileItem> patientFileItems = patientFileItemDAO.findByPatientFileId(patientFileId);
+
+		List<PatientFileItemDTO> patientFileItemsDTO = ((List<PatientFileItem>) patientFileItems).stream()
+				.map(item -> mapperService.mapToDTO(item)).collect(Collectors.toList());
+
+		return patientFileItemsDTO;
 	}
 
 }

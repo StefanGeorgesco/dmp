@@ -333,6 +333,44 @@ public class PatientFileServiceTest {
 		foundCorrespondence2.setDateUntil(LocalDate.of(2022, 9, 05));
 		foundCorrespondence2.setDoctor(doctor2);
 		foundCorrespondence2.setPatientFile(patientFile2);
+
+		uuid = UUID.randomUUID();
+
+		act.setId(uuid);
+		act.setDate(actDTO.getDate());
+		act.setComments(actDTO.getComments());
+		act.setAuthoringDoctor(doctor1);
+		act.setPatientFile(patientFile1);
+		act.setMedicalAct(medicalAct1);
+
+		diagnosis.setId(uuid);
+		diagnosis.setDate(actDTO.getDate());
+		diagnosis.setComments(actDTO.getComments());
+		diagnosis.setAuthoringDoctor(doctor1);
+		diagnosis.setPatientFile(patientFile1);
+		diagnosis.setDisease(disease1);
+
+		mail.setId(uuid);
+		mail.setDate(actDTO.getDate());
+		mail.setComments(actDTO.getComments());
+		mail.setAuthoringDoctor(doctor1);
+		mail.setPatientFile(patientFile1);
+		mail.setText("A text");
+		mail.setRecipientDoctor(doctor2);
+
+		prescription.setId(uuid);
+		prescription.setDate(actDTO.getDate());
+		prescription.setComments(actDTO.getComments());
+		prescription.setAuthoringDoctor(doctor1);
+		prescription.setPatientFile(patientFile1);
+		prescription.setDescription("A prescription description");
+
+		symptom.setId(uuid);
+		symptom.setDate(actDTO.getDate());
+		symptom.setComments(actDTO.getComments());
+		symptom.setAuthoringDoctor(doctor1);
+		symptom.setPatientFile(patientFile1);
+		symptom.setDescription("A symptom description");
 	}
 
 	@Test
@@ -500,9 +538,9 @@ public class PatientFileServiceTest {
 		when(patientFileItemDAO.findById(uuid)).thenReturn(Optional.ofNullable(null));
 
 		FinderException ex = assertThrows(FinderException.class, () -> patientFileService.findPatientFileItem(uuid));
-		
+
 		verify(patientFileItemDAO, times(1)).findById(uuid);
-		
+
 		assertEquals("patient file item not found", ex.getMessage());
 	}
 
@@ -809,14 +847,7 @@ public class PatientFileServiceTest {
 	@Test
 	public void testCreateActSuccess() {
 
-		uuid = UUID.randomUUID();
-		act.setId(uuid);
-		act.setDate(actDTO.getDate());
-		act.setComments(actDTO.getComments());
-		act.setAuthoringDoctor(doctor1);
 		patientFile1.setId("P001");
-		act.setPatientFile(patientFile1);
-		act.setMedicalAct(medicalAct1);
 
 		when(patientFileItemDAO.save(patientFileItemCaptor.capture())).thenReturn(act);
 		when(patientFileItemDAO.findById(uuid)).thenReturn(Optional.of(act));
@@ -852,7 +883,6 @@ public class PatientFileServiceTest {
 
 	@Test
 	public void testUpdateActSuccess() {
-		uuid = UUID.randomUUID();
 
 		actDTO.setId(uuid);
 
@@ -899,7 +929,6 @@ public class PatientFileServiceTest {
 
 	@Test
 	public void testUpdateDiagnosisSuccess() {
-		uuid = UUID.randomUUID();
 
 		diagnosisDTO.setId(uuid);
 
@@ -948,7 +977,6 @@ public class PatientFileServiceTest {
 
 	@Test
 	public void testUpdateMailSuccess() {
-		uuid = UUID.randomUUID();
 
 		mailDTO.setId(uuid);
 
@@ -995,7 +1023,6 @@ public class PatientFileServiceTest {
 
 	@Test
 	public void testUpdatePrescriptionSuccess() {
-		uuid = UUID.randomUUID();
 
 		prescriptionDTO.setId(uuid);
 
@@ -1041,7 +1068,6 @@ public class PatientFileServiceTest {
 
 	@Test
 	public void testUpdateSymptomSuccess() {
-		uuid = UUID.randomUUID();
 
 		symptomDTO.setId(uuid);
 
@@ -1085,4 +1111,34 @@ public class PatientFileServiceTest {
 		assertEquals(symptomDTO.getDescription(), ((SymptomDTO) patientFileItemDTOResponse).getDescription());
 	}
 
+	@Test
+	public void testFindPatientFileItemsByPatientFileIdFound5() {
+
+		when(patientFileItemDAO.findByPatientFileId("P001"))
+				.thenReturn(List.of(act, diagnosis, mail, prescription, symptom));
+
+		List<PatientFileItemDTO> patientFileItemsDTO = patientFileService.findPatientFileItemsByPatientFileId("P001");
+		
+		verify(patientFileItemDAO, times(1)).findByPatientFileId("P001");
+		
+		assertEquals(5, patientFileItemsDTO.size());
+		assertTrue(patientFileItemsDTO.get(0) instanceof ActDTO);
+		assertTrue(patientFileItemsDTO.get(1) instanceof DiagnosisDTO);
+		assertTrue(patientFileItemsDTO.get(2) instanceof MailDTO);
+		assertTrue(patientFileItemsDTO.get(3) instanceof PrescriptionDTO);
+		assertTrue(patientFileItemsDTO.get(4) instanceof SymptomDTO);
+	}
+
+	@Test
+	public void testFindPatientFileItemsByPatientFileIdFound0() {
+
+		when(patientFileItemDAO.findByPatientFileId("P027"))
+				.thenReturn(List.of());
+
+		List<PatientFileItemDTO> patientFileItemsDTO = patientFileService.findPatientFileItemsByPatientFileId("P001");
+		
+		verify(patientFileItemDAO, times(1)).findByPatientFileId("P001");
+		
+		assertEquals(0, patientFileItemsDTO.size());
+	}
 }

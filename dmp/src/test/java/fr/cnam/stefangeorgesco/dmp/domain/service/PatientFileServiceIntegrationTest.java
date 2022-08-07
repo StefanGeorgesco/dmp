@@ -977,5 +977,22 @@ public class PatientFileServiceIntegrationTest {
 		
 		assertEquals("patient file item not found", ex.getMessage());
 	}
+	
+	@Test
+	public void testFindPatientFileItemsByPatientFileIdFound10() {
+		
+		List<PatientFileItemDTO> patientFileItemsDTO = patientFileService.findPatientFileItemsByPatientFileId("P005");
+		
+		assertEquals(10, patientFileItemsDTO.size());
+		assertTrue(patientFileItemsDTO.get(1) instanceof DiagnosisDTO);
+	}
+
+	@Test
+	public void testFindPatientFileItemsByPatientFileIdFound0() {
+		
+		List<PatientFileItemDTO> patientFileItemsDTO = patientFileService.findPatientFileItemsByPatientFileId("P014");
+		
+		assertEquals(0, patientFileItemsDTO.size());
+	}
 
 }

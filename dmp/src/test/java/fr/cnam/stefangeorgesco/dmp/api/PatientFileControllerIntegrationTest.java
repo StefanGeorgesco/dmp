@@ -567,8 +567,8 @@ public class PatientFileControllerIntegrationTest {
 		count = correspondenceDAO.count();
 
 		mockMvc.perform(post("/patient-file/P001/correspondence").contentType(MediaType.APPLICATION_JSON)
-				.content(objectMapper.writeValueAsString(correspondenceDTO)))
-				.andExpect(content().contentType(MediaType.APPLICATION_JSON)).andExpect(status().isBadRequest())
+				.content(objectMapper.writeValueAsString(correspondenceDTO))).andExpect(status().isBadRequest())
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
 				.andExpect(jsonPath("$.message", is("trying to create correspondence for referring doctor")));
 
 		assertEquals(count, correspondenceDAO.count());
@@ -718,8 +718,8 @@ public class PatientFileControllerIntegrationTest {
 	@WithUserDetails("user") // "D001", ROLE_DOCTOR
 	public void testFindCorrespondancesByPatientFileIdSuccessUserIsReferringDoctor() throws Exception {
 
-		mockMvc.perform(get("/patient-file/P001/correspondence"))
-				.andExpect(content().contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk())
+		mockMvc.perform(get("/patient-file/P001/correspondence")).andExpect(status().isOk())
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
 				.andExpect(jsonPath("$", hasSize(3)))
 				.andExpect(jsonPath("$[0].id", is("5b17ffa7-81e2-43ac-9246-7cab5b2f0f6b")))
 				.andExpect(jsonPath("$[0].doctorId", is("D002")))
@@ -732,8 +732,8 @@ public class PatientFileControllerIntegrationTest {
 	@WithUserDetails("user") // "D001", ROLE_DOCTOR
 	public void testFindCorrespondancesByPatientFileIdSuccessUserIsActiveCorrespondingDoctor() throws Exception {
 
-		mockMvc.perform(get("/patient-file/P006/correspondence"))
-				.andExpect(content().contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk())
+		mockMvc.perform(get("/patient-file/P006/correspondence")).andExpect(status().isOk())
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
 				.andExpect(jsonPath("$", hasSize(2)))
 				.andExpect(jsonPath("$[1].id", is("8ea37abc-052d-4bc3-9aa1-f9a47e366e11")))
 				.andExpect(jsonPath("$[1].doctorId", is("D001")))
@@ -746,8 +746,8 @@ public class PatientFileControllerIntegrationTest {
 	@WithUserDetails("user") // "D001", ROLE_DOCTOR
 	public void testFindCorrespondancesByPatientFileIdFailureCorrespondenceExpired() throws Exception {
 
-		mockMvc.perform(get("/patient-file/P013/correspondence"))
-				.andExpect(content().contentType(MediaType.APPLICATION_JSON)).andExpect(status().isNotFound())
+		mockMvc.perform(get("/patient-file/P013/correspondence")).andExpect(status().isNotFound())
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
 				.andExpect(jsonPath("$.message", is("user is not referring nor corresponding doctor")));
 	}
 
@@ -756,8 +756,8 @@ public class PatientFileControllerIntegrationTest {
 	public void testFindCorrespondancesByPatientFileIdReturns0UserIsNotReferringNorCorrespondingDoctor()
 			throws Exception {
 
-		mockMvc.perform(get("/patient-file/P004/correspondence"))
-				.andExpect(content().contentType(MediaType.APPLICATION_JSON)).andExpect(status().isNotFound())
+		mockMvc.perform(get("/patient-file/P004/correspondence")).andExpect(status().isNotFound())
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
 				.andExpect(jsonPath("$.message", is("user is not referring nor corresponding doctor")));
 	}
 
@@ -786,8 +786,8 @@ public class PatientFileControllerIntegrationTest {
 	@WithUserDetails("eric") // ROLE_PATIENT, P001
 	public void testFindPatientCorrespondancesSuccess() throws Exception {
 
-		mockMvc.perform(get("/patient-file/details/correspondence"))
-				.andExpect(content().contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk())
+		mockMvc.perform(get("/patient-file/details/correspondence")).andExpect(status().isOk())
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
 				.andExpect(jsonPath("$", hasSize(3)))
 				.andExpect(jsonPath("$[0].id", is("5b17ffa7-81e2-43ac-9246-7cab5b2f0f6b")))
 				.andExpect(jsonPath("$[0].doctorId", is("D002")))
@@ -1127,8 +1127,8 @@ public class PatientFileControllerIntegrationTest {
 		actDTO.setMedicalActDTO(medicalActDTO);
 
 		mockMvc.perform(post("/patient-file/P013/item").contentType(MediaType.APPLICATION_JSON)
-				.content(objectMapper.writeValueAsString(actDTO)))
-				.andExpect(content().contentType(MediaType.APPLICATION_JSON)).andExpect(status().isNotFound())
+				.content(objectMapper.writeValueAsString(actDTO))).andExpect(status().isNotFound())
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
 				.andExpect(jsonPath("$.message", is("user is not referring nor corresponding doctor")));
 
 		assertEquals(count, patientFileItemDAO.count());
@@ -1149,8 +1149,8 @@ public class PatientFileControllerIntegrationTest {
 		actDTO.setMedicalActDTO(medicalActDTO);
 
 		mockMvc.perform(post("/patient-file/P004/item").contentType(MediaType.APPLICATION_JSON)
-				.content(objectMapper.writeValueAsString(actDTO)))
-				.andExpect(content().contentType(MediaType.APPLICATION_JSON)).andExpect(status().isNotFound())
+				.content(objectMapper.writeValueAsString(actDTO))).andExpect(status().isNotFound())
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
 				.andExpect(jsonPath("$.message", is("user is not referring nor corresponding doctor")));
 
 		assertEquals(count, patientFileItemDAO.count());
@@ -1171,8 +1171,8 @@ public class PatientFileControllerIntegrationTest {
 		actDTO.setMedicalActDTO(medicalActDTO);
 
 		mockMvc.perform(post("/patient-file/P002/item").contentType(MediaType.APPLICATION_JSON)
-				.content(objectMapper.writeValueAsString(actDTO)))
-				.andExpect(content().contentType(MediaType.APPLICATION_JSON)).andExpect(status().isNotFound())
+				.content(objectMapper.writeValueAsString(actDTO))).andExpect(status().isNotFound())
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
 				.andExpect(jsonPath("$.message", is("patient file not found")));
 
 		assertEquals(count, patientFileItemDAO.count());
@@ -1536,6 +1536,72 @@ public class PatientFileControllerIntegrationTest {
 
 		mockMvc.perform(put("/patient-file/P005/item/" + uuid.toString()).contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(actDTO))).andExpect(status().isUnauthorized());
+	}
+	
+	@Test
+	@WithUserDetails("user") // D001, ROLE_DOCTOR
+	public void testFindPatientFileItemsByPatientFileIdSuccessUserIsReferringDoctor() throws Exception {
+		
+		mockMvc.perform(get("/patient-file/P005/item"))
+		.andExpect(status().isOk())
+		.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+		.andExpect(jsonPath("$", hasSize(10)))
+		.andExpect(jsonPath("$[1].@type", is("diagnosis")));
+	}
+
+	@Test
+	@WithUserDetails("user") // D001, ROLE_DOCTOR
+	public void testFindPatientFileItemsByPatientFileIdSuccessUserIsActiveCorrespondingDoctor() throws Exception {
+		
+		mockMvc.perform(get("/patient-file/P006/item"))
+		.andExpect(status().isOk())
+		.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+		.andExpect(jsonPath("$", hasSize(9)))
+		.andExpect(jsonPath("$[1].@type", is("symptom")));
+	}
+	
+	@Test
+	@WithUserDetails("user") // D001, ROLE_DOCTOR
+	public void testFindPatientFileItemsByPatientFileIdFailureCorrespondenceExpired() throws Exception {
+		
+		mockMvc.perform(get("/patient-file/P013/item"))
+		.andExpect(status().isNotFound())
+		.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+		.andExpect(jsonPath("$.message", is("user is not referring nor corresponding doctor")));
+	}
+
+	@Test
+	@WithUserDetails("user") // D001, ROLE_DOCTOR
+	public void testFindPatientFileItemsByPatientFileIdFailureUserIsNotReferringNorCorrespondingDoctor() throws Exception {
+		
+		mockMvc.perform(get("/patient-file/P012/item"))
+		.andExpect(status().isNotFound())
+		.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+		.andExpect(jsonPath("$.message", is("user is not referring nor corresponding doctor")));
+	}
+
+	@Test
+	@WithUserDetails("eric") // ROLE_PATIENT
+	public void testFindPatientFileItemsByPatientFileIdFailureBadRolePatient() throws Exception {
+		
+		mockMvc.perform(get("/patient-file/P005/item"))
+		.andExpect(status().isForbidden());
+	}
+
+	@Test
+	@WithUserDetails("admin") // ROLE_ADMIN
+	public void testFindPatientFileItemsByPatientFileIdFailureBadRoleAdmin() throws Exception {
+		
+		mockMvc.perform(get("/patient-file/P005/item"))
+		.andExpect(status().isForbidden());
+	}
+
+	@Test
+	@WithAnonymousUser
+	public void testFindPatientFileItemsByPatientFileIdFailureUnauthenticatedUser() throws Exception {
+		
+		mockMvc.perform(get("/patient-file/P005/item"))
+		.andExpect(status().isUnauthorized());
 	}
 
 }
