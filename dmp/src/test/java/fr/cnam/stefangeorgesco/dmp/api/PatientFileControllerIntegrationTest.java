@@ -46,11 +46,15 @@ import fr.cnam.stefangeorgesco.dmp.domain.dao.PatientFileItemDAO;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.ActDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.AddressDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.CorrespondenceDTO;
+import fr.cnam.stefangeorgesco.dmp.domain.dto.DiagnosisDTO;
+import fr.cnam.stefangeorgesco.dmp.domain.dto.DiseaseDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.DoctorDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.MailDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.MedicalActDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.PatientFileDTO;
+import fr.cnam.stefangeorgesco.dmp.domain.dto.PrescriptionDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.SpecialtyDTO;
+import fr.cnam.stefangeorgesco.dmp.domain.dto.SymptomDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.model.Act;
 import fr.cnam.stefangeorgesco.dmp.domain.model.Address;
 import fr.cnam.stefangeorgesco.dmp.domain.model.Doctor;
@@ -127,9 +131,21 @@ public class PatientFileControllerIntegrationTest {
 
 	@Autowired
 	private ActDTO actDTO;
-	
+
 	@Autowired
 	private MailDTO mailDTO;
+
+	@Autowired
+	private DiseaseDTO diseaseDTO;
+
+	@Autowired
+	private DiagnosisDTO diagnosisDTO;
+	
+	@Autowired
+	private PrescriptionDTO prescriptionDTO;
+	
+	@Autowired
+	private SymptomDTO symptomDTO;
 
 	@Autowired
 	private Address address;
@@ -145,7 +161,7 @@ public class PatientFileControllerIntegrationTest {
 
 	@Autowired
 	private Act act;
-	
+
 	@Autowired
 	private Mail mail;
 
@@ -154,7 +170,7 @@ public class PatientFileControllerIntegrationTest {
 	private UUID uuid;
 
 	private String comment;
-	
+
 	private String text;
 
 	@BeforeEach
@@ -1231,10 +1247,8 @@ public class PatientFileControllerIntegrationTest {
 
 		mockMvc.perform(put("/patient-file/P005/item/" + uuid.toString()).contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(actDTO))).andExpect(status().isOk())
-				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
-				.andExpect(jsonPath("$.@type", is("act")))
-				.andExpect(jsonPath("$.id", hasLength(36)))
-				.andExpect(jsonPath("$.date", is("2021-10-11")))
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON)).andExpect(jsonPath("$.@type", is("act")))
+				.andExpect(jsonPath("$.id", hasLength(36))).andExpect(jsonPath("$.date", is("2021-10-11")))
 				.andExpect(jsonPath("$.comments", is(actDTO.getComments())))
 				.andExpect(jsonPath("$.authoringDoctorId", is(authoringDoctor.getId())))
 				.andExpect(jsonPath("$.authoringDoctorFirstname", is(authoringDoctor.getFirstname())))
@@ -1275,16 +1289,13 @@ public class PatientFileControllerIntegrationTest {
 
 		mockMvc.perform(put("/patient-file/P006/item/" + uuid.toString()).contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(mailDTO))).andExpect(status().isOk())
-				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
-				.andExpect(jsonPath("$.@type", is("mail")))
-				.andExpect(jsonPath("$.id", hasLength(36)))
-				.andExpect(jsonPath("$.date", is("2022-05-27")))
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON)).andExpect(jsonPath("$.@type", is("mail")))
+				.andExpect(jsonPath("$.id", hasLength(36))).andExpect(jsonPath("$.date", is("2022-05-27")))
 				.andExpect(jsonPath("$.comments", is(mailDTO.getComments())))
 				.andExpect(jsonPath("$.authoringDoctorId", is(authoringDoctor.getId())))
 				.andExpect(jsonPath("$.authoringDoctorFirstname", is(authoringDoctor.getFirstname())))
 				.andExpect(jsonPath("$.authoringDoctorLastname", is(authoringDoctor.getLastname())))
-				.andExpect(jsonPath("$.text", is(text)))
-				.andExpect(jsonPath("$.recipientDoctorId", is("D004")))
+				.andExpect(jsonPath("$.text", is(text))).andExpect(jsonPath("$.recipientDoctorId", is("D004")))
 				.andExpect(jsonPath("$.recipientDoctorFirstname", is("Leah")))
 				.andExpect(jsonPath("$.recipientDoctorLastname", is("Little")))
 				.andExpect(jsonPath("$.recipientDoctorSpecialties", hasSize(1)))
@@ -1302,6 +1313,166 @@ public class PatientFileControllerIntegrationTest {
 		assertEquals("gériatrie", mail.getRecipientDoctor().getSpecialties().iterator().next().getDescription());
 		assertEquals(authoringDoctor.getId(), mail.getAuthoringDoctor().getId());
 		assertEquals("P006", mail.getPatientFile().getId());
+	}
+
+	@Test
+	@WithUserDetails("user") // ROLE_DOCTOR, D001
+	public void testUpdatePatientFileItemUserIsReferringAndAuthorFailureWrongPayloadType() throws Exception {
+
+		uuid = UUID.fromString("1b57e70f-8eb0-4a97-99c6-5d44f138c22c"); // type Act
+
+		LocalDate now = LocalDate.now();
+
+		medicalActDTO.setId("HBSD001");
+
+		mailDTO.setId(UUID.randomUUID());
+		mailDTO.setDate(now);
+		mailDTO.setComments(comment);
+		mailDTO.setText(text);
+		mailDTO.setRecipientDoctorId("D004");
+		mailDTO.setAuthoringDoctorId("D002");
+		mailDTO.setPatientFileId("P002");
+
+		mockMvc.perform(put("/patient-file/P005/item/" + uuid.toString()).contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(mailDTO))).andExpect(status().isConflict())
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+				.andExpect(jsonPath("$.message", is("patient file items types do not match")));
+	}
+
+	@Test
+	@WithUserDetails("user") // ROLE_DOCTOR, D001
+	public void testUpdatePatientFileItemUserIsReferringAndAuthorFailurePatientFileItemDoesNotExist() throws Exception {
+
+		uuid = UUID.fromString("1b57e70f-8eb0-4a97-99c6-5d44f138c22"); // does not exist
+
+		LocalDate now = LocalDate.now();
+
+		medicalActDTO.setId("HBSD001");
+
+		actDTO.setId(UUID.randomUUID()); // not taken into account
+		actDTO.setDate(now); // can not be updated
+		actDTO.setComments(comment);
+		actDTO.setMedicalActDTO(medicalActDTO);
+		actDTO.setAuthoringDoctorId("D002"); // can not be updated
+		actDTO.setPatientFileId("P002"); // can not be updated
+
+		mockMvc.perform(put("/patient-file/P005/item/" + uuid.toString()).contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(actDTO))).andExpect(status().isNotFound())
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+				.andExpect(jsonPath("$.message", is("patient file item not found")));
+	}
+
+	@Test
+	@WithUserDetails("user") // ROLE_DOCTOR, D001
+	public void testUpdatePatientFileItemFailureUserIsReferringButNotAuthor() throws Exception {
+
+		uuid = UUID.fromString("c793da7f-5ca8-41f5-a0f0-1cc77b34b6fe");
+
+		LocalDate now = LocalDate.now();
+
+		diseaseDTO.setId("J010");
+
+		diagnosisDTO.setId(UUID.randomUUID());
+		diagnosisDTO.setDate(now);
+		diagnosisDTO.setComments(comment);
+		diagnosisDTO.setDiseaseDTO(diseaseDTO);
+		diagnosisDTO.setAuthoringDoctorId("D002");
+		diagnosisDTO.setPatientFileId("P002");
+
+		mockMvc.perform(put("/patient-file/P005/item/" + uuid.toString()).contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(diagnosisDTO))).andExpect(status().isConflict())
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+				.andExpect(jsonPath("$.message",
+						is("user is not the author of patient file item and can not modify it")));
+	}
+
+	@Test
+	@WithUserDetails("user") // ROLE_DOCTOR, D001
+	public void testUpdatePatientFileItemFailureUserIsActiveCorrespondentButNotAuthor() throws Exception {
+
+		uuid = UUID.fromString("643bce5b-9c74-4e6f-8ae2-5809a31bedb4");
+
+		LocalDate now = LocalDate.now();
+
+		prescriptionDTO.setId(UUID.randomUUID());
+		prescriptionDTO.setDate(now);
+		prescriptionDTO.setComments(comment);
+		prescriptionDTO.setDescription("prescription description");
+		prescriptionDTO.setAuthoringDoctorId("D002");
+		prescriptionDTO.setPatientFileId("P002");	
+
+		mockMvc.perform(put("/patient-file/P006/item/" + uuid.toString()).contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(prescriptionDTO))).andExpect(status().isConflict())
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+				.andExpect(jsonPath("$.message", is("user is not the author of patient file item and can not modify it")));
+	}
+
+	@Test
+	@WithUserDetails("user") // ROLE_DOCTOR, D001
+	public void testUpdatePatientFileItemFailureUserIsCorrespondentAndAuthorButNotActiveCorrespondent() throws Exception {
+
+		uuid = UUID.fromString("142763cf-6eeb-47a5-b8f8-8ec85f0025c4");
+
+		LocalDate now = LocalDate.now();
+
+		symptomDTO.setId(UUID.randomUUID());
+		symptomDTO.setDate(now);
+		symptomDTO.setComments(comment);
+		symptomDTO.setDescription("symptom description");
+		symptomDTO.setAuthoringDoctorId("D002");
+		symptomDTO.setPatientFileId("P002");	
+
+		mockMvc.perform(put("/patient-file/P013/item/" + uuid.toString()).contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(symptomDTO))).andExpect(status().isNotFound())
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+				.andExpect(jsonPath("$.message", is("user is not referring nor corresponding doctor")));
+	}
+
+	@Test
+	@WithUserDetails("user") // ROLE_DOCTOR, D001
+	public void testUpdatePatientFileItemFailureUserIsNotReferringNorCorrespondingDoctor() throws Exception {
+
+		uuid = UUID.fromString("b7bdb6e4-da4b-47f9-9b67-cfd67567aaca");
+
+		LocalDate now = LocalDate.now();
+
+		diseaseDTO.setId("J010");
+
+		diagnosisDTO.setId(UUID.randomUUID());
+		diagnosisDTO.setDate(now);
+		diagnosisDTO.setComments(comment);
+		diagnosisDTO.setDiseaseDTO(diseaseDTO);
+		diagnosisDTO.setAuthoringDoctorId("D002");
+		diagnosisDTO.setPatientFileId("P002");
+
+		mockMvc.perform(put("/patient-file/P012/item/" + uuid.toString()).contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(diagnosisDTO))).andExpect(status().isNotFound())
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+				.andExpect(jsonPath("$.message",
+						is("user is not referring nor corresponding doctor")));
+	}
+
+	@Test
+	@WithUserDetails("user") // ROLE_DOCTOR, D001
+	public void testUpdatePatientFileItemUserIsReferringAndAuthorFailurePatientFileItemAndPatientFileDontMatch() throws Exception {
+
+		uuid = UUID.fromString("1b57e70f-8eb0-4a97-99c6-5d44f138c22c"); // P005
+
+		LocalDate now = LocalDate.now();
+
+		medicalActDTO.setId("HBSD001");
+
+		actDTO.setId(UUID.randomUUID());
+		actDTO.setDate(now);
+		actDTO.setComments(comment);
+		actDTO.setMedicalActDTO(medicalActDTO);
+		actDTO.setAuthoringDoctorId("D002");
+		actDTO.setPatientFileId("P002");
+
+		mockMvc.perform(put("/patient-file/P001/item/" + uuid.toString()).contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(actDTO))).andExpect(status().isNotFound())
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+				.andExpect(jsonPath("$.message", is("patient file item not found for patient file 'P001'")));
 	}
 
 }

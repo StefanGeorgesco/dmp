@@ -32,6 +32,7 @@ import fr.cnam.stefangeorgesco.dmp.domain.service.PatientFileService;
 import fr.cnam.stefangeorgesco.dmp.exception.domain.ApplicationException;
 import fr.cnam.stefangeorgesco.dmp.exception.domain.CreateException;
 import fr.cnam.stefangeorgesco.dmp.exception.domain.FinderException;
+import fr.cnam.stefangeorgesco.dmp.exception.domain.UpdateException;
 
 @RestController
 public class PatientFileController {
@@ -129,9 +130,7 @@ public class PatientFileController {
 
 		String userId = userService.findUserByUsername(principal.getName()).getId();
 
-		PatientFileDTO patientFileDTO = patientFileService.findPatientFile(id);
-
-		String referringDoctorId = patientFileDTO.getReferringDoctorId();
+		String referringDoctorId = patientFileService.findPatientFile(id).getReferringDoctorId();
 
 		List<CorrespondenceDTO> correspondencesDTO = patientFileService.findCorrespondencesByPatientFileId(id);
 
@@ -148,7 +147,7 @@ public class PatientFileController {
 		}
 
 		patientFileItemDTO.setAuthoringDoctorId(userId);
-		patientFileItemDTO.setPatientFileId(patientFileDTO.getId());
+		patientFileItemDTO.setPatientFileId(id);
 
 		return ResponseEntity.status(HttpStatus.CREATED)
 				.body(patientFileService.createPatientFileItem(patientFileItemDTO));
@@ -159,10 +158,41 @@ public class PatientFileController {
 			@Valid @RequestBody PatientFileItemDTO patientFileItemDTO, @PathVariable String patienfFileId,
 			@PathVariable String itemId, Principal principal) throws ApplicationException {
 		
-		patientFileItemDTO.setId(UUID.fromString(itemId));
+		String userId = userService.findUserByUsername(principal.getName()).getId();
+		
+		UUID patientFileItemId = UUID.fromString(itemId);
+		
+		patientFileItemDTO.setId(patientFileItemId);
 
-		return ResponseEntity.status(HttpStatus.OK)
-				.body(patientFileService.updatePatientFileItem(patientFileItemDTO));
+		PatientFileItemDTO storedPatientFileItemDTO = patientFileService.findPatientFileItem(patientFileItemId);
+		
+		if (!patienfFileId.equals(storedPatientFileItemDTO.getPatientFileId())) {
+			throw new FinderException("patient file item not found for patient file '" + patienfFileId + "'"); 
+		}
+		
+		boolean userIsAuthor = userId.equals(storedPatientFileItemDTO.getAuthoringDoctorId());
+		
+		if (!userIsAuthor) {
+			throw new UpdateException("user is not the author of patient file item and can not modify it");
+		}
+		
+		String referringDoctorId = patientFileService.findPatientFile(patienfFileId).getReferringDoctorId();
+
+		List<CorrespondenceDTO> correspondencesDTO = patientFileService.findCorrespondencesByPatientFileId(patienfFileId);
+
+		LocalDate now = LocalDate.now();
+
+		boolean userIsReferringDoctor = userId.equals(referringDoctorId);
+
+		boolean userIsCorrespondingDoctor = correspondencesDTO.stream()
+				.filter(correspondence -> correspondence.getDateUntil().compareTo(now) >= 0)
+				.map(CorrespondenceDTO::getDoctorId).collect(Collectors.toList()).contains(userId);
+
+		if (!userIsReferringDoctor && !userIsCorrespondingDoctor) {
+			throw new FinderException("user is not referring nor corresponding doctor");
+		}
+
+		return ResponseEntity.ok(patientFileService.updatePatientFileItem(patientFileItemDTO));
 	}
 
 	@DeleteMapping("/patient-file/{patientFileId}/correspondence/{correspondenceId}")
@@ -177,10 +207,10 @@ public class PatientFileController {
 			throw new CreateException("user is not referring doctor");
 		}
 
-		CorrespondenceDTO correspondenceDTO = patientFileService.findCorrespondence(correspondenceId);
+		CorrespondenceDTO storedCorrespondenceDTO = patientFileService.findCorrespondence(correspondenceId);
 
-		if (!correspondenceDTO.getPatientFileId().equals(patientFileDTO.getId())) {
-			throw new FinderException("correspondence not found for patient file '" + patientFileDTO.getId() + "'");
+		if (!patientFileId.equals(storedCorrespondenceDTO.getPatientFileId())) {
+			throw new FinderException("correspondence not found for patient file '" + patientFileId + "'");
 		}
 
 		patientFileService.deleteCorrespondence(UUID.fromString(correspondenceId));
