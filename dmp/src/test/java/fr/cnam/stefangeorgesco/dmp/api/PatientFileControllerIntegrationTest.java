@@ -1604,4 +1604,39 @@ public class PatientFileControllerIntegrationTest {
 		.andExpect(status().isUnauthorized());
 	}
 
+	@Test
+	@WithUserDetails("eric") // P001, ROLE_DOCTOR
+	public void testFindPatientPatientFileItemsSuccess() throws Exception {
+		
+		mockMvc.perform(get("/patient-file/details/item"))
+		.andExpect(status().isOk())
+		.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+		.andExpect(jsonPath("$", hasSize(9)))
+		.andExpect(jsonPath("$[1].@type", is("prescription")));
+	}
+
+	@Test
+	@WithUserDetails("admin") // ROLE_ADMIN
+	public void testFindPatientPatientFileItemsFailureBadRoleAdmin() throws Exception {
+		
+		mockMvc.perform(get("/patient-file/details/item"))
+		.andExpect(status().isForbidden());
+	}
+
+	@Test
+	@WithUserDetails("user") // ROLE_DOCTOR
+	public void testFindPatientPatientFileItemsFailureBadRoleDoctor() throws Exception {
+		
+		mockMvc.perform(get("/patient-file/details/item"))
+		.andExpect(status().isForbidden());
+	}
+
+	@Test
+	@WithAnonymousUser
+	public void testFindPatientPatientFileItemsFailureUnauthenticatedUser() throws Exception {
+		
+		mockMvc.perform(get("/patient-file/details/item"))
+		.andExpect(status().isUnauthorized());
+	}
+
 }

@@ -73,6 +73,24 @@ public class PatientFileController {
 		return ResponseEntity.ok(patientFileService.findPatientFile(userDTO.getId()));
 	}
 
+	@GetMapping("/patient-file/details/correspondence")
+	public ResponseEntity<List<CorrespondenceDTO>> findPatientCorrespondences(Principal principal)
+			throws FinderException {
+
+		String userId = userService.findUserByUsername(principal.getName()).getId();
+
+		return ResponseEntity.ok(patientFileService.findCorrespondencesByPatientFileId(userId));
+	}
+
+	@GetMapping("/patient-file/details/item")
+	public ResponseEntity<List<PatientFileItemDTO>> findPatientPatientFileItems(Principal principal)
+			throws FinderException {
+
+		String userId = userService.findUserByUsername(principal.getName()).getId();
+
+		return ResponseEntity.ok(patientFileService.findPatientFileItemsByPatientFileId(userId));
+	}
+
 	@GetMapping("/patient-file/{id}")
 	public ResponseEntity<PatientFileDTO> getPatientFileDetails(@PathVariable String id, Principal principal)
 			throws ApplicationException {
@@ -268,15 +286,6 @@ public class PatientFileController {
 
 		return ResponseEntity.ok(correspondencesDTO);
 
-	}
-
-	@GetMapping("/patient-file/details/correspondence")
-	public ResponseEntity<List<CorrespondenceDTO>> findPatientCorrespondences(Principal principal)
-			throws FinderException {
-
-		String userId = userService.findUserByUsername(principal.getName()).getId();
-
-		return ResponseEntity.ok(patientFileService.findCorrespondencesByPatientFileId(userId));
 	}
 
 	@GetMapping("/disease/{id}")

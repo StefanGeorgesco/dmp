@@ -58,6 +58,7 @@ public class WebSecurityConfig {
 						.mvcMatchers(HttpMethod.GET, "/patient-file/details").hasRole("PATIENT")
 						.mvcMatchers(HttpMethod.PUT, "/patient-file/details").hasRole("PATIENT")
 						.mvcMatchers(HttpMethod.GET, "/patient-file/details/correspondence").hasRole("PATIENT")
+						.mvcMatchers(HttpMethod.GET, "/patient-file/details/item").hasRole("PATIENT")
 						.mvcMatchers(HttpMethod.PUT, "/patient-file/{id}/referring-doctor").hasRole("ADMIN")
 						.mvcMatchers(HttpMethod.GET, "/doctor/{id}").authenticated()
 						.mvcMatchers(HttpMethod.GET, "/patient-file/{id}").hasAnyRole("ADMIN", "DOCTOR")
