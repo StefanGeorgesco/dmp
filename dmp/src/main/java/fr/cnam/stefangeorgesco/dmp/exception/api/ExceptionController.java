@@ -18,8 +18,6 @@ import fr.cnam.stefangeorgesco.dmp.exception.domain.UpdateException;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.validation.FieldError;
 
 @ControllerAdvice
@@ -61,17 +59,6 @@ public class ExceptionController {
 		response.setMessage(ex.getMessage());
 
 		return ResponseEntity.status(status).body(response);
-	}
-
-	@ResponseStatus(HttpStatus.UNAUTHORIZED)
-	@ExceptionHandler({ BadCredentialsException.class, UsernameNotFoundException.class })
-	public RestResponse handleBadCredentialsException(BadCredentialsException ex) {
-		RestResponse response = new RestResponse();
-		response.setStatus(HttpStatus.UNAUTHORIZED.value());
-		response.setMessage(ex.getMessage());
-
-		return response;
-
 	}
 
 	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
