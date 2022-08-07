@@ -109,7 +109,7 @@ public class PatientFileServiceIntegrationTest {
 
 	@Autowired
 	private MedicalActDTO medicalActDTO;
-
+	
 	@Autowired
 	private ActDTO actDTO;
 
@@ -943,6 +943,39 @@ public class PatientFileServiceIntegrationTest {
 		 UpdateException ex =  assertThrows(UpdateException.class, () -> patientFileService.updatePatientFileItem(symptomDTO));
 		 
 		 assertEquals("patient file items types do not match", ex.getMessage());
+	}
+	
+	@Test
+	public void testFindPatientFileItemSuccess() {
+		
+		uuid = UUID.fromString("142763cf-6eeb-47a5-b8f8-8ec85f0025c4");
+		
+		patientFileItemDTOResponse = assertDoesNotThrow(() -> patientFileService.findPatientFileItem(uuid));
+		
+		assertTrue(patientFileItemDTOResponse instanceof SymptomDTO);
+		
+		symptomDTO = (SymptomDTO) patientFileItemDTOResponse;
+		
+		assertEquals(uuid, symptomDTO.getId());
+		assertEquals("2022-05-07", symptomDTO.getDate().toString());
+		assertEquals("Ut posuere quam in placerat gravida.", symptomDTO.getComments());
+		assertEquals("D001", symptomDTO.getAuthoringDoctorId());
+		assertEquals("John", symptomDTO.getAuthoringDoctorFirstname());
+		assertEquals("Smith", symptomDTO.getAuthoringDoctorLastname());
+		assertEquals("P013", symptomDTO.getPatientFileId());
+		assertEquals("Lorem ipsum dolor sit amet, consectetur adipiscing elit.", symptomDTO.getDescription());
+	}
+	
+	@Test
+	public void testFindPatientFileItemFailurePatientFileItemDoesNotExist() {
+		
+		uuid = UUID.fromString("142763cf-6eeb-47a5-b8f8-8ec85f0025c");
+		
+		assertFalse(patientFileItemDAO.existsById(uuid));
+		
+		FinderException ex = assertThrows(FinderException.class, () -> patientFileService.findPatientFileItem(uuid));
+		
+		assertEquals("patient file item not found", ex.getMessage());
 	}
 
 }

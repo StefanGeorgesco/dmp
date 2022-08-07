@@ -208,15 +208,11 @@ public class PatientFileService {
 
 		Optional<Correspondence> optionalCorrespondence = correspondenceDAO.findById(UUID.fromString(id));
 
-		if (optionalCorrespondence.isEmpty()) {
+		if (optionalCorrespondence.isPresent()) {
+			return commonModelMapper.map(optionalCorrespondence.get(), CorrespondenceDTO.class);
+		} else {
 			throw new FinderException("correspondence not found");
 		}
-
-		Correspondence correspondence = optionalCorrespondence.get();
-
-		CorrespondenceDTO response = commonModelMapper.map(correspondence, CorrespondenceDTO.class);
-
-		return response;
 	}
 
 	public List<CorrespondenceDTO> findCorrespondencesByPatientFileId(String patientFileId) {
@@ -334,6 +330,17 @@ public class PatientFileService {
 		PatientFileItemDTO response = mapperService.mapToDTO(patientFileItem);
 
 		return response;
+	}
+
+	public PatientFileItemDTO findPatientFileItem(UUID uuid) throws FinderException {
+		
+		Optional<PatientFileItem> optionalPatientFileItem = patientFileItemDAO.findById(uuid);
+		
+		if (optionalPatientFileItem.isPresent()) {
+			return mapperService.mapToDTO(optionalPatientFileItem.get());
+		} else {
+			throw new FinderException("patient file item not found");
+		}
 	}
 
 }
