@@ -1475,4 +1475,67 @@ public class PatientFileControllerIntegrationTest {
 				.andExpect(jsonPath("$.message", is("patient file item not found for patient file 'P001'")));
 	}
 
+	@Test
+	@WithUserDetails("admin") // ROLE_ADMIN
+	public void testUpdatePatientFileItemFailureBadRoleAdmin() throws Exception {
+
+		uuid = UUID.fromString("1b57e70f-8eb0-4a97-99c6-5d44f138c22c");
+
+		LocalDate now = LocalDate.now();
+
+		medicalActDTO.setId("HBSD001");
+
+		actDTO.setId(UUID.randomUUID());
+		actDTO.setDate(now);
+		actDTO.setComments(comment);
+		actDTO.setMedicalActDTO(medicalActDTO);
+		actDTO.setAuthoringDoctorId("D002");
+		actDTO.setPatientFileId("P002");
+
+		mockMvc.perform(put("/patient-file/P005/item/" + uuid.toString()).contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(actDTO))).andExpect(status().isForbidden());
+	}
+
+	@Test
+	@WithUserDetails("eric") // ROLE_PATIENT
+	public void testUpdatePatientFileItemFailureBadRolePatient() throws Exception {
+
+		uuid = UUID.fromString("1b57e70f-8eb0-4a97-99c6-5d44f138c22c");
+
+		LocalDate now = LocalDate.now();
+
+		medicalActDTO.setId("HBSD001");
+
+		actDTO.setId(UUID.randomUUID());
+		actDTO.setDate(now);
+		actDTO.setComments(comment);
+		actDTO.setMedicalActDTO(medicalActDTO);
+		actDTO.setAuthoringDoctorId("D002");
+		actDTO.setPatientFileId("P002");
+
+		mockMvc.perform(put("/patient-file/P005/item/" + uuid.toString()).contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(actDTO))).andExpect(status().isForbidden());
+	}
+
+	@Test
+	@WithAnonymousUser
+	public void testUpdatePatientFileItemFailureUnauthenticatedUser() throws Exception {
+
+		uuid = UUID.fromString("1b57e70f-8eb0-4a97-99c6-5d44f138c22c");
+
+		LocalDate now = LocalDate.now();
+
+		medicalActDTO.setId("HBSD001");
+
+		actDTO.setId(UUID.randomUUID());
+		actDTO.setDate(now);
+		actDTO.setComments(comment);
+		actDTO.setMedicalActDTO(medicalActDTO);
+		actDTO.setAuthoringDoctorId("D002");
+		actDTO.setPatientFileId("P002");
+
+		mockMvc.perform(put("/patient-file/P005/item/" + uuid.toString()).contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(actDTO))).andExpect(status().isUnauthorized());
+	}
+
 }
