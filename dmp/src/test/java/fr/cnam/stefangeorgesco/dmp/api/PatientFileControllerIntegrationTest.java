@@ -3,6 +3,7 @@ package fr.cnam.stefangeorgesco.dmp.api;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.Matchers.hasLength;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -37,6 +38,8 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import fr.cnam.stefangeorgesco.dmp.authentication.domain.dao.UserDAO;
+import fr.cnam.stefangeorgesco.dmp.authentication.domain.model.User;
 import fr.cnam.stefangeorgesco.dmp.domain.dao.CorrespondenceDAO;
 import fr.cnam.stefangeorgesco.dmp.domain.dao.DiseaseDAO;
 import fr.cnam.stefangeorgesco.dmp.domain.dao.DoctorDAO;
@@ -89,6 +92,9 @@ public class PatientFileControllerIntegrationTest {
 
 	@MockBean
 	private RNIPPService rnippService;
+	
+	@Autowired
+	private UserDAO userDAO;
 
 	@Autowired
 	private PatientFileDAO patientFileDAO;
@@ -148,6 +154,9 @@ public class PatientFileControllerIntegrationTest {
 	private SymptomDTO symptomDTO;
 
 	@Autowired
+	private User user;
+
+	@Autowired
 	private Address address;
 
 	@Autowired
@@ -172,6 +181,8 @@ public class PatientFileControllerIntegrationTest {
 	private String comment;
 
 	private String text;
+	
+	private String id;
 
 	@BeforeEach
 	public void setup() {
@@ -221,7 +232,13 @@ public class PatientFileControllerIntegrationTest {
 
 		comment = "A comment";
 		text = "A text";
-	}
+
+		user.setId("D002");
+		user.setUsername("username");
+		user.setPassword("password");
+		user.setSecurityCode("code");
+		user.setRole("ROLE_DOCTOR");
+}
 
 	@Test
 	@WithUserDetails("user") // D001, ROLE_DOCTOR
@@ -1637,6 +1654,86 @@ public class PatientFileControllerIntegrationTest {
 		
 		mockMvc.perform(get("/patient-file/details/item"))
 		.andExpect(status().isUnauthorized());
+	}
+
+	@Test
+	@WithUserDetails("admin") // ROLE_ADMIN
+	public void testDeletePatientFileSuccessNoUser() throws Exception {
+		
+		id = "P005";
+
+		assertFalse(userDAO.existsById(id));
+
+		assertTrue(patientFileDAO.existsById(id));
+
+		mockMvc.perform(delete("/patient-file/" + id)).andExpect(status().isOk())
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON)).andExpect(jsonPath("$.status", is(200)))
+				.andExpect(jsonPath("$.message", is("patient file was deleted")));
+
+		assertFalse(patientFileDAO.existsById(id));
+	}
+
+	@Test
+	@WithUserDetails("admin") // ROLE_ADMIN
+	public void testDeletePatientFileSuccessUserPresent() throws Exception {
+
+		id = "P005";
+		
+		user.setId(id);
+		userDAO.save(user);
+		
+		assertTrue(userDAO.existsById(id));
+
+		assertTrue(patientFileDAO.existsById(id));
+
+		mockMvc.perform(delete("/patient-file/" + id)).andExpect(status().isOk())
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON)).andExpect(jsonPath("$.status", is(200)))
+				.andExpect(jsonPath("$.message", is("patient file was deleted")));
+
+		assertFalse(patientFileDAO.existsById(id));
+
+		assertFalse(userDAO.existsById(id));
+	}
+
+	@Test
+	@WithUserDetails("admin") // ROLE_ADMIN
+	public void testDeletePatientFileFailurePatientFileDoesNotExist() throws Exception {
+
+		id = "P002";
+		
+		assertFalse(patientFileDAO.existsById(id));
+
+		mockMvc.perform(delete("/patient-file/" + id)).andExpect(status().isConflict())
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+				.andExpect(jsonPath("$.status", is(409)))
+				.andExpect(jsonPath("$.message", startsWith("patient file could not be deleted: ")));
+	}
+
+	@Test
+	@WithUserDetails("user") // ROLE_DOCTOR
+	public void testDeletePatientFileFailureBadRolePatientFile() throws Exception {
+
+		id = "P005";
+		
+		mockMvc.perform(delete("/patient-file/" + id)).andExpect(status().isForbidden());
+	}
+
+	@Test
+	@WithUserDetails("eric") // ROLE_PATIENT
+	public void testDeletePatientFileFailureBadRolePatient() throws Exception {
+
+		id = "P005";
+		
+		mockMvc.perform(delete("/patient-file/" + id)).andExpect(status().isForbidden());
+	}
+
+	@Test
+	@WithAnonymousUser
+	public void testDeletePatientFileFailureUnauthenticatedUser() throws Exception {
+
+		id = "P005";
+		
+		mockMvc.perform(delete("/patient-file/" + id)).andExpect(status().isUnauthorized());
 	}
 
 }

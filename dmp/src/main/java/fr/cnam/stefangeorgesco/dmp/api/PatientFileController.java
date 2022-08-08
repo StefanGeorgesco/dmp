@@ -31,6 +31,7 @@ import fr.cnam.stefangeorgesco.dmp.domain.dto.PatientFileItemDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.service.PatientFileService;
 import fr.cnam.stefangeorgesco.dmp.exception.domain.ApplicationException;
 import fr.cnam.stefangeorgesco.dmp.exception.domain.CreateException;
+import fr.cnam.stefangeorgesco.dmp.exception.domain.DeleteException;
 import fr.cnam.stefangeorgesco.dmp.exception.domain.FinderException;
 import fr.cnam.stefangeorgesco.dmp.exception.domain.UpdateException;
 
@@ -96,6 +97,16 @@ public class PatientFileController {
 			throws ApplicationException {
 
 		return ResponseEntity.ok(patientFileService.findPatientFile(id));
+	}
+
+	@DeleteMapping("/patient-file/{id}")
+	public ResponseEntity<RestResponse> deletePatientFile(@PathVariable String id) throws DeleteException {
+
+		patientFileService.deletePatientFile(id);
+
+		RestResponse response = new RestResponse(HttpStatus.OK.value(), "patient file was deleted");
+
+		return ResponseEntity.ok(response);
 	}
 
 	@PutMapping("/patient-file/{id}/referring-doctor")

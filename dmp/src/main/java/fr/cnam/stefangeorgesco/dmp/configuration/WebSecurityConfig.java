@@ -65,6 +65,7 @@ public class WebSecurityConfig {
 						.mvcMatchers(HttpMethod.DELETE, "/doctor/{id}").hasRole("ADMIN")
 						.mvcMatchers(HttpMethod.GET, "/doctor").hasAnyRole("ADMIN", "DOCTOR")
 						.mvcMatchers(HttpMethod.GET, "/patient-file").hasAnyRole("ADMIN", "DOCTOR")
+						.mvcMatchers(HttpMethod.DELETE, "/patient-file/{id}").hasRole("ADMIN")
 						.mvcMatchers(HttpMethod.GET, "/patient-file/{id}/correspondence").hasRole("DOCTOR")
 						.mvcMatchers(HttpMethod.POST, "/patient-file/{id}/correspondence").hasRole("DOCTOR")
 						.mvcMatchers(HttpMethod.POST, "/patient-file/{id}/item").hasRole("DOCTOR")
