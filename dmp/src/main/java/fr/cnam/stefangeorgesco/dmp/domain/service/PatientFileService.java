@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import fr.cnam.stefangeorgesco.dmp.authentication.domain.service.UserService;
 import fr.cnam.stefangeorgesco.dmp.domain.dao.CorrespondenceDAO;
 import fr.cnam.stefangeorgesco.dmp.domain.dao.DiseaseDAO;
 import fr.cnam.stefangeorgesco.dmp.domain.dao.DoctorDAO;
@@ -40,6 +41,7 @@ import fr.cnam.stefangeorgesco.dmp.domain.model.Prescription;
 import fr.cnam.stefangeorgesco.dmp.domain.model.Symptom;
 import fr.cnam.stefangeorgesco.dmp.exception.domain.ApplicationException;
 import fr.cnam.stefangeorgesco.dmp.exception.domain.CreateException;
+import fr.cnam.stefangeorgesco.dmp.exception.domain.DeleteException;
 import fr.cnam.stefangeorgesco.dmp.exception.domain.DuplicateKeyException;
 import fr.cnam.stefangeorgesco.dmp.exception.domain.FinderException;
 import fr.cnam.stefangeorgesco.dmp.exception.domain.UpdateException;
@@ -50,6 +52,9 @@ public class PatientFileService {
 
 	@Autowired
 	private RNIPPService rnippService;
+	
+	@Autowired
+	private UserService userService;
 
 	@Autowired
 	private PatientFileDAO patientFileDAO;
@@ -351,6 +356,24 @@ public class PatientFileService {
 				.map(item -> mapperService.mapToDTO(item)).collect(Collectors.toList());
 
 		return patientFileItemsDTO;
+	}
+
+	public void deletePatientFile(String patientFileId) throws DeleteException {
+		
+		correspondenceDAO.deleteAllByPatientFileId(patientFileId);
+		patientFileItemDAO.deleteAllByPatientFileId(patientFileId);
+		
+		try {
+			patientFileDAO.deleteById(patientFileId);
+		} catch (Exception e) {
+			throw new DeleteException("patient file could not be deleted: " + e.getMessage());
+		}
+		
+		try {
+			userService.deleteUser(patientFileId);
+		} catch (DeleteException e) {
+			System.out.println("no user associated to deleted patient file");
+		}
 	}
 
 }

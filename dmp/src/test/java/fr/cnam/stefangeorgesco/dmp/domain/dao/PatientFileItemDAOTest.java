@@ -333,19 +333,58 @@ public class PatientFileItemDAOTest {
 		assertEquals(comment, savedPatientFileItem.getComments());
 		assertEquals(description, ((Symptom) savedPatientFileItem).getDescription());
 	}
-	
+
 	@Test
 	public void testPatientFileItemDAOFindByPatientFileIdFound10() {
-		
+
 		List<PatientFileItem> patientFileItemsList = new ArrayList<>();
-		
+
 		Iterable<PatientFileItem> patientFileItems = patientFileItemDAO.findByPatientFileId("P005");
-		
+
 		patientFileItems.forEach(patientFileItemsList::add);
-		
+
 		assertEquals(10, patientFileItemsList.size());
 		assertTrue(patientFileItemsList.get(0) instanceof Act);
 		assertTrue(patientFileItemsList.get(9) instanceof Symptom);
 	}
 
+	@Test
+	public void testPatientFileItemDAODeleteAllByPatientFileIdSuccessDeleted9() {
+
+		List<PatientFileItem> patientFileItemsList = new ArrayList<>();
+
+		Iterable<PatientFileItem> patientFileItems = patientFileItemDAO.findByPatientFileId("P001");
+
+		patientFileItems.forEach(patientFileItemsList::add);
+
+		assertEquals(9, patientFileItemsList.size());
+
+		int number = patientFileItemDAO.deleteAllByPatientFileId("P001");
+
+		assertEquals(9, number);
+
+		patientFileItemsList = new ArrayList<>();
+
+		patientFileItems = patientFileItemDAO.findByPatientFileId("P001");
+
+		patientFileItems.forEach(patientFileItemsList::add);
+
+		assertEquals(0, patientFileItemsList.size());
+	}
+
+	@Test
+	public void testPatientFileItemDAODeleteAllByPatientFileIdSuccessDeleted0() {
+
+		List<PatientFileItem> patientFileItemsList = new ArrayList<>();
+
+		Iterable<PatientFileItem> patientFileItems = patientFileItemDAO.findByPatientFileId("P014");
+
+		patientFileItems.forEach(patientFileItemsList::add);
+
+		assertEquals(0, patientFileItemsList.size());
+
+		int number = patientFileItemDAO.deleteAllByPatientFileId("P014");
+
+		assertEquals(0, number);
+	}
 }

@@ -24,6 +24,8 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlGroup;
 
+import fr.cnam.stefangeorgesco.dmp.authentication.domain.dao.UserDAO;
+import fr.cnam.stefangeorgesco.dmp.authentication.domain.model.User;
 import fr.cnam.stefangeorgesco.dmp.domain.dao.CorrespondenceDAO;
 import fr.cnam.stefangeorgesco.dmp.domain.dao.DoctorDAO;
 import fr.cnam.stefangeorgesco.dmp.domain.dao.MedicalActDAO;
@@ -51,6 +53,7 @@ import fr.cnam.stefangeorgesco.dmp.domain.model.Specialty;
 import fr.cnam.stefangeorgesco.dmp.domain.model.Symptom;
 import fr.cnam.stefangeorgesco.dmp.exception.domain.CheckException;
 import fr.cnam.stefangeorgesco.dmp.exception.domain.CreateException;
+import fr.cnam.stefangeorgesco.dmp.exception.domain.DeleteException;
 import fr.cnam.stefangeorgesco.dmp.exception.domain.DuplicateKeyException;
 import fr.cnam.stefangeorgesco.dmp.exception.domain.FinderException;
 import fr.cnam.stefangeorgesco.dmp.exception.domain.UpdateException;
@@ -75,8 +78,11 @@ public class PatientFileServiceIntegrationTest {
 	private RNIPPService rnippService;
 
 	@Autowired
-	private DoctorDAO doctorDAO;
+	private UserDAO userDAO;
 
+	@Autowired
+	private DoctorDAO doctorDAO;
+	
 	@Autowired
 	private PatientFileDAO patientFileDAO;
 
@@ -129,6 +135,9 @@ public class PatientFileServiceIntegrationTest {
 
 	@Autowired
 	private CorrespondenceDTO correspondenceDTOResponse;
+	
+	@Autowired
+	private User user;
 
 	@Autowired
 	private Address address;
@@ -215,7 +224,13 @@ public class PatientFileServiceIntegrationTest {
 		comment = "A comment";
 		text = "A text";
 		description = "A description";
-	}
+
+		user.setId("P002");
+		user.setUsername("username");
+		user.setPassword("password");
+		user.setSecurityCode("code");
+		user.setRole("ROLE_PATIENT");
+}
 
 	@Test
 	public void testCreatePatientFileSuccess() throws CheckException {
@@ -1001,6 +1016,75 @@ public class PatientFileServiceIntegrationTest {
 		List<PatientFileItemDTO> patientFileItemsDTO = patientFileService.findPatientFileItemsByPatientFileId("P002");
 		
 		assertEquals(0, patientFileItemsDTO.size());
+	}
+	
+	@Test
+	public void testDeletePatientFileSuccessNoUser() {
+		
+		id = "P005";
+		
+		assertFalse(userDAO.existsById(id));
+		
+		assertTrue(patientFileDAO.existsById(id));
+		
+		List<CorrespondenceDTO> correspondenceDTOs = patientFileService.findCorrespondencesByPatientFileId(id);
+		List<PatientFileItemDTO> patientFileItemDTOs = patientFileService.findPatientFileItemsByPatientFileId(id);
+		
+		assertEquals(1, correspondenceDTOs.size());
+		assertEquals(10, patientFileItemDTOs.size());
+		
+		assertDoesNotThrow(() -> patientFileService.deletePatientFile(id));
+		
+		assertFalse(patientFileDAO.existsById(id));
+		
+		correspondenceDTOs = patientFileService.findCorrespondencesByPatientFileId(id);
+		patientFileItemDTOs = patientFileService.findPatientFileItemsByPatientFileId(id);
+		
+		assertEquals(0, correspondenceDTOs.size());
+		assertEquals(0, patientFileItemDTOs.size());
+	}
+
+	@Test
+	public void testDeletePatientFileSuccessUserPresent() {
+		
+		id = "P005";
+		
+		user.setId(id);
+		userDAO.save(user);
+		
+		assertTrue(userDAO.existsById(id));
+		
+		assertTrue(patientFileDAO.existsById(id));
+		
+		List<CorrespondenceDTO> correspondenceDTOs = patientFileService.findCorrespondencesByPatientFileId(id);
+		List<PatientFileItemDTO> patientFileItemDTOs = patientFileService.findPatientFileItemsByPatientFileId(id);
+		
+		assertEquals(1, correspondenceDTOs.size());
+		assertEquals(10, patientFileItemDTOs.size());
+		
+		assertDoesNotThrow(() -> patientFileService.deletePatientFile(id));
+		
+		assertFalse(patientFileDAO.existsById(id));
+		
+		correspondenceDTOs = patientFileService.findCorrespondencesByPatientFileId(id);
+		patientFileItemDTOs = patientFileService.findPatientFileItemsByPatientFileId(id);
+		
+		assertEquals(0, correspondenceDTOs.size());
+		assertEquals(0, patientFileItemDTOs.size());
+		
+		assertFalse(userDAO.existsById(id));
+	}
+	
+	@Test
+	public void testDeletePatientFileFailurePatientFileDoesNotExist() {
+		
+		id = "P002";
+		
+		assertFalse(userDAO.existsById(id));
+		
+		DeleteException ex = assertThrows(DeleteException.class, () -> patientFileService.deletePatientFile(id));
+		
+		assertTrue(ex.getMessage().startsWith("patient file could not be deleted"));
 	}
 
 }

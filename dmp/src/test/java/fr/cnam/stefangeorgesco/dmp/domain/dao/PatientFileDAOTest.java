@@ -1,5 +1,6 @@
 package fr.cnam.stefangeorgesco.dmp.domain.dao;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
@@ -28,6 +29,8 @@ import fr.cnam.stefangeorgesco.dmp.domain.model.PatientFile;
 @SpringBootTest
 @SqlGroup({ @Sql(scripts = "/sql/create-specialties.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
 		@Sql(scripts = "/sql/create-files.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
+		@Sql(scripts = "/sql/create-correspondences.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
+		@Sql(scripts = "/sql/delete-correspondences.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD),
 		@Sql(scripts = "/sql/delete-files.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD),
 		@Sql(scripts = "/sql/delete-specialties.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD) })
 public class PatientFileDAOTest {
@@ -190,6 +193,31 @@ public class PatientFileDAOTest {
 		patientFiles.forEach(patientFilesList::add);
 
 		assertEquals(0, patientFilesList.size());
+	}
+	
+	@Test
+	public void testPatientFileDAODeleteSuccess() {
+		assertTrue(patientFileDAO.existsById("P014"));
+		
+		assertDoesNotThrow(() -> patientFileDAO.deleteById("P014"));
+		
+		assertFalse(patientFileDAO.existsById("P014"));
+	}
+	
+	@Test
+	public void testPatientFileDAODeleteFailurePatientFileIsReferredTo() {
+		assertTrue(patientFileDAO.existsById("P001"));
+		
+		assertThrows(RuntimeException.class, () -> patientFileDAO.deleteById("P001"));
+		
+		assertTrue(patientFileDAO.existsById("P001"));
+	}
+
+	@Test
+	public void testPatientFileDAODeleteFailurePatientFileDoesNotExist() {
+		assertFalse(patientFileDAO.existsById("P002"));
+		
+		assertThrows(RuntimeException.class, () -> patientFileDAO.deleteById("P002"));
 	}
 
 }

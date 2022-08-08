@@ -142,4 +142,44 @@ public class CorrespondenceDAOTest {
 
 		assertEquals(0, correspondenceList.size());
 	}
+	
+	@Test
+	public void testCorrespondenceDAODeleteAllByPatientFileIdSuccessDeleted3() {
+		
+		List<Correspondence> correspondenceList = new ArrayList<>();
+
+		Iterable<Correspondence> correspondences = correspondenceDAO.findByPatientFileId("P001");
+
+		correspondences.forEach(correspondenceList::add);
+
+		assertEquals(3, correspondenceList.size());
+		
+		int number = correspondenceDAO.deleteAllByPatientFileId("P001");
+		
+		assertEquals(3, number);
+		
+		correspondenceList = new ArrayList<>();
+		
+		correspondences = correspondenceDAO.findByPatientFileId("P001");
+		
+		correspondences.forEach(correspondenceList::add);
+
+		assertEquals(0, correspondenceList.size());
+	}
+	
+	@Test
+	public void testCorrespondenceDAODeleteAllByPatientFileIdSuccessDeleted0() {
+		
+		List<Correspondence> correspondenceList = new ArrayList<>();
+
+		Iterable<Correspondence> correspondences = correspondenceDAO.findByPatientFileId("P014");
+
+		correspondences.forEach(correspondenceList::add);
+
+		assertEquals(0, correspondenceList.size());
+		
+		int number = correspondenceDAO.deleteAllByPatientFileId("P014");
+		
+		assertEquals(0, number);
+	}
 }

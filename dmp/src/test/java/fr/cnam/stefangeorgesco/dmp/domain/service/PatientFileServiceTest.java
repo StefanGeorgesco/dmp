@@ -31,6 +31,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.context.TestPropertySource;
 
+import fr.cnam.stefangeorgesco.dmp.authentication.domain.service.UserService;
 import fr.cnam.stefangeorgesco.dmp.domain.dao.CorrespondenceDAO;
 import fr.cnam.stefangeorgesco.dmp.domain.dao.DiseaseDAO;
 import fr.cnam.stefangeorgesco.dmp.domain.dao.DoctorDAO;
@@ -62,6 +63,7 @@ import fr.cnam.stefangeorgesco.dmp.domain.model.Prescription;
 import fr.cnam.stefangeorgesco.dmp.domain.model.Specialty;
 import fr.cnam.stefangeorgesco.dmp.domain.model.Symptom;
 import fr.cnam.stefangeorgesco.dmp.exception.domain.CheckException;
+import fr.cnam.stefangeorgesco.dmp.exception.domain.DeleteException;
 import fr.cnam.stefangeorgesco.dmp.exception.domain.DuplicateKeyException;
 import fr.cnam.stefangeorgesco.dmp.exception.domain.FinderException;
 
@@ -71,6 +73,9 @@ public class PatientFileServiceTest {
 
 	@MockBean
 	private RNIPPService rnippService;
+
+	@MockBean
+	private UserService userService;
 
 	@MockBean
 	private PatientFileDAO patientFileDAO;
@@ -1118,9 +1123,9 @@ public class PatientFileServiceTest {
 				.thenReturn(List.of(act, diagnosis, mail, prescription, symptom));
 
 		List<PatientFileItemDTO> patientFileItemsDTO = patientFileService.findPatientFileItemsByPatientFileId("P001");
-		
+
 		verify(patientFileItemDAO, times(1)).findByPatientFileId("P001");
-		
+
 		assertEquals(5, patientFileItemsDTO.size());
 		assertTrue(patientFileItemsDTO.get(0) instanceof ActDTO);
 		assertTrue(patientFileItemsDTO.get(1) instanceof DiagnosisDTO);
@@ -1132,13 +1137,59 @@ public class PatientFileServiceTest {
 	@Test
 	public void testFindPatientFileItemsByPatientFileIdFound0() {
 
-		when(patientFileItemDAO.findByPatientFileId("P027"))
-				.thenReturn(List.of());
+		when(patientFileItemDAO.findByPatientFileId("P027")).thenReturn(List.of());
 
-		List<PatientFileItemDTO> patientFileItemsDTO = patientFileService.findPatientFileItemsByPatientFileId("P001");
-		
-		verify(patientFileItemDAO, times(1)).findByPatientFileId("P001");
-		
+		List<PatientFileItemDTO> patientFileItemsDTO = patientFileService.findPatientFileItemsByPatientFileId("P027");
+
+		verify(patientFileItemDAO, times(1)).findByPatientFileId("P027");
+
 		assertEquals(0, patientFileItemsDTO.size());
 	}
+
+	@Test
+	public void testDeletePatientFileSuccessNoUser() throws DeleteException {
+		when(correspondenceDAO.deleteAllByPatientFileId("P001")).thenReturn(3);
+		when(patientFileItemDAO.deleteAllByPatientFileId("P001")).thenReturn(9);
+		doNothing().when(patientFileDAO).deleteById("P001");
+		doThrow(new DeleteException("user could not be deleted")).when(userService).deleteUser("P001");
+
+		assertDoesNotThrow(() -> patientFileService.deletePatientFile("P001"));
+
+		verify(correspondenceDAO, times(1)).deleteAllByPatientFileId("P001");
+		verify(patientFileItemDAO, times(1)).deleteAllByPatientFileId("P001");
+		verify(patientFileDAO, times(1)).deleteById("P001");
+		verify(userService, times(1)).deleteUser("P001");
+	}
+	
+	@Test
+	public void testDeletePatientFileSuccessUserPresent() throws DeleteException {
+		when(correspondenceDAO.deleteAllByPatientFileId("P001")).thenReturn(3);
+		when(patientFileItemDAO.deleteAllByPatientFileId("P001")).thenReturn(9);
+		doNothing().when(patientFileDAO).deleteById("P001");
+		doNothing().when(userService).deleteUser("P001");
+
+		assertDoesNotThrow(() -> patientFileService.deletePatientFile("P001"));
+
+		verify(correspondenceDAO, times(1)).deleteAllByPatientFileId("P001");
+		verify(patientFileItemDAO, times(1)).deleteAllByPatientFileId("P001");
+		verify(patientFileDAO, times(1)).deleteById("P001");
+		verify(userService, times(1)).deleteUser("P001");
+	}
+	
+	@Test
+	public void testDeletePatientFileFailurePatientFileDoesNotExist() throws DeleteException {
+		when(correspondenceDAO.deleteAllByPatientFileId("P001")).thenReturn(0);
+		when(patientFileItemDAO.deleteAllByPatientFileId("P001")).thenReturn(0);
+		doThrow(new RuntimeException("...")).when(patientFileDAO).deleteById("P001");
+		doThrow(new DeleteException("user could not be deleted")).when(userService).deleteUser("P001");
+
+		DeleteException ex = assertThrows(DeleteException.class, () -> patientFileService.deletePatientFile("P001"));
+
+		verify(correspondenceDAO, times(1)).deleteAllByPatientFileId("P001");
+		verify(patientFileItemDAO, times(1)).deleteAllByPatientFileId("P001");
+		verify(patientFileDAO, times(1)).deleteById("P001");
+		verify(userService, times(0)).deleteUser("P001");
+		assertEquals("patient file could not be deleted: ...", ex.getMessage());
+	}
+	
 }
