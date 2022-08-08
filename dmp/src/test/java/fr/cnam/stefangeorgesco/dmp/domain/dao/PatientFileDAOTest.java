@@ -161,7 +161,7 @@ public class PatientFileDAOTest {
 
 		patientFiles.forEach(patientFilesList::add);
 
-		assertEquals(4, patientFilesList.size());
+		assertEquals(5, patientFilesList.size());
 		assertEquals("P001", patientFilesList.get(0).getId());
 		assertEquals("P005", patientFilesList.get(1).getId());
 		assertEquals("P011", patientFilesList.get(2).getId());
@@ -177,7 +177,7 @@ public class PatientFileDAOTest {
 
 		patientFiles.forEach(patientFilesList::add);
 
-		assertEquals(11, patientFilesList.size());
+		assertEquals(12, patientFilesList.size());
 	}
 
 	@Test

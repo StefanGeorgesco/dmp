@@ -349,7 +349,7 @@ public class PatientFileServiceIntegrationTest {
 
 		List<PatientFileDTO> patientFiles = patientFileService.findPatientFilesByIdOrFirstnameOrLastname("ma");
 
-		assertEquals(4, patientFiles.size());
+		assertEquals(5, patientFiles.size());
 		assertEquals("P001", patientFiles.get(0).getId());
 		assertEquals("P005", patientFiles.get(1).getId());
 		assertEquals("P011", patientFiles.get(2).getId());
@@ -361,7 +361,7 @@ public class PatientFileServiceIntegrationTest {
 
 		List<PatientFileDTO> patientFiles = patientFileService.findPatientFilesByIdOrFirstnameOrLastname("P0");
 
-		assertEquals(11, patientFiles.size());
+		assertEquals(12, patientFiles.size());
 	}
 
 	@Test
@@ -988,9 +988,17 @@ public class PatientFileServiceIntegrationTest {
 	}
 
 	@Test
-	public void testFindPatientFileItemsByPatientFileIdFound0() {
+	public void testFindPatientFileItemsByPatientFileIdFound0PatientFileHasNoItems() {
 		
 		List<PatientFileItemDTO> patientFileItemsDTO = patientFileService.findPatientFileItemsByPatientFileId("P014");
+		
+		assertEquals(0, patientFileItemsDTO.size());
+	}
+
+	@Test
+	public void testFindPatientFileItemsByPatientFileIdFound0PatientFileDoesNotExist() {
+		
+		List<PatientFileItemDTO> patientFileItemsDTO = patientFileService.findPatientFileItemsByPatientFileId("P002");
 		
 		assertEquals(0, patientFileItemsDTO.size());
 	}

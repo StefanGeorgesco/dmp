@@ -21,6 +21,7 @@ insert into t_file(id, firstname, lastname, phone, email, street1, street2, city
 insert into t_file(id, firstname, lastname, phone, email, street1, street2, city, state, zipcode, country, security_code) values ('P011', 'Marie-Louise', 'Leroux', '077 177 95 66', 'marie-louise.leroux@example.com', '2556 Rue Dumenge', 'street 2', 'Savigny', '', '8618', 'Switzerland', '000')
 insert into t_file(id, firstname, lastname, phone, email, street1, street2, city, state, zipcode, country, security_code) values ('P012', 'Julio', 'Bernard', '077 202 55 32', 'julio.bernard@example.com', '1492 Place des 44 Enfants D Izieu', 'street 2', 'Kernenried', '', '8314', 'Switzerland', '000')
 insert into t_file(id, firstname, lastname, phone, email, street1, street2, city, state, zipcode, country, security_code) values ('P013', 'Magnus', 'Jensen', '19776685', 'magnus.jensen@example.com', '165 Bakkevænget', 'street 2', 'Stenderup', '', '19960', 'Denmark', '000')
+insert into t_file(id, firstname, lastname, phone, email, street1, street2, city, state, zipcode, country, security_code) values ('P014', 'Fatih', 'Toraman', '(608)-401-2304', 'fatih.toraman@example.com', '2051 Şehitler Cd', 'street 2', 'Bingöl', '', '63992', 'Turkey', '000')
 
 insert into t_doctor(id) values ('D001')
 insert into t_doctor(id) values ('D002')
@@ -46,6 +47,7 @@ insert into t_patient_file(id, date_of_birth, referring_doctor_id) values ('P010
 insert into t_patient_file(id, date_of_birth, referring_doctor_id) values ('P011', '2000-11-30', 'D005')
 insert into t_patient_file(id, date_of_birth, referring_doctor_id) values ('P012', '1962-06-29', 'D004')
 insert into t_patient_file(id, date_of_birth, referring_doctor_id) values ('P013', '1986-02-27', 'D005')
+insert into t_patient_file(id, date_of_birth, referring_doctor_id) values ('P014', '1999-05-22', 'D001')
 
 insert into t_doctor_specialty(doctor_id, specialty_id) values ('D001', 'S001')
 insert into t_doctor_specialty(doctor_id, specialty_id) values ('D001', 'S024')

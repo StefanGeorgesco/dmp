@@ -39,6 +39,7 @@ INSERT INTO `t_file` VALUES ('P010', 'Susan', 'Edwards', '031-909-2200', 'susan.
 INSERT INTO `t_file` VALUES ('P011', 'Marie-Louise', 'Leroux', '077 177 95 66', 'marie-louise.leroux@example.com', '2556 Rue Dumenge', 'street 2', 'Savigny', '', '8618', 'Switzerland', '000');
 INSERT INTO `t_file` VALUES ('P012', 'Julio', 'Bernard', '077 202 55 32', 'julio.bernard@example.com', '1492 Place des 44 Enfants D Izieu', 'street 2', 'Kernenried', '', '8314', 'Switzerland', '000');
 INSERT INTO `t_file` VALUES ('P013', 'Magnus', 'Jensen', '19776685', 'magnus.jensen@example.com', '165 Bakkevænget', 'street 2', 'Stenderup', '', '19960', 'Denmark', '000');
+INSERT INTO `t_file` VALUES ('P014', 'Fatih', 'Toraman', '(608)-401-2304', 'fatih.toraman@example.com', '2051 Şehitler Cd', 'street 2', 'Bingöl', '', '63992', 'Turkey', '000');
 
 DROP TABLE IF EXISTS `t_doctor`;
 
@@ -112,3 +113,4 @@ INSERT INTO `t_patient_file` VALUES ('P010', '1946-02-17', 'D004');
 INSERT INTO `t_patient_file` VALUES ('P011', '2000-11-30', 'D005');
 INSERT INTO `t_patient_file` VALUES ('P012', '1962-06-29', 'D004');
 INSERT INTO `t_patient_file` VALUES ('P013', '1986-02-27', 'D005');
+INSERT INTO `t_patient_file` VALUES ('P014', '1999-05-22', 'D001');
