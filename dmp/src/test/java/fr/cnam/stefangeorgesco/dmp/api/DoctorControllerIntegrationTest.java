@@ -2,6 +2,7 @@ package fr.cnam.stefangeorgesco.dmp.api;
 
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -47,11 +48,11 @@ import fr.cnam.stefangeorgesco.dmp.domain.model.Specialty;
 @AutoConfigureMockMvc
 @SpringBootTest
 @SqlGroup({ @Sql(scripts = "/sql/create-specialties.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
-	@Sql(scripts = "/sql/create-files.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
-	@Sql(scripts = "/sql/delete-files.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD),
-	@Sql(scripts = "/sql/delete-specialties.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD),
-	@Sql(scripts = "/sql/create-users.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
-	@Sql(scripts = "/sql/delete-users.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD) })
+		@Sql(scripts = "/sql/create-files.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
+		@Sql(scripts = "/sql/delete-files.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD),
+		@Sql(scripts = "/sql/delete-specialties.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD),
+		@Sql(scripts = "/sql/create-users.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
+		@Sql(scripts = "/sql/delete-users.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD) })
 public class DoctorControllerIntegrationTest {
 
 	@Autowired
@@ -62,10 +63,10 @@ public class DoctorControllerIntegrationTest {
 
 	@Autowired
 	private DoctorDAO doctorDAO;
-	
+
 	@Autowired
 	private SpecialtyDAO specialtyDAO;
-	
+
 	@Autowired
 	private UserDAO userDAO;
 
@@ -144,7 +145,7 @@ public class DoctorControllerIntegrationTest {
 		doctor.setSpecialties(specialties);
 		doctor.setAddress(address);
 		doctor.setSecurityCode("code");
-		
+
 		user.setId("D002");
 		user.setUsername("username");
 		user.setPassword("password");
@@ -419,14 +420,13 @@ public class DoctorControllerIntegrationTest {
 	public void testDeleteDoctorSuccessNoUser() throws Exception {
 
 		assertFalse(userDAO.existsById("D002"));
-		
+
 		assertTrue(doctorDAO.existsById("D002"));
 
 		mockMvc.perform(delete("/doctor/D002")).andExpect(status().isOk())
-				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
-				.andExpect(jsonPath("$.status", is(200)))
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON)).andExpect(jsonPath("$.status", is(200)))
 				.andExpect(jsonPath("$.message", is("doctor was deleted")));
-		
+
 		assertFalse(doctorDAO.existsById("D002"));
 	}
 
@@ -435,20 +435,31 @@ public class DoctorControllerIntegrationTest {
 	public void testDeleteDoctorSuccessUserPresent() throws Exception {
 
 		userDAO.save(user);
-		
+
 		assertTrue(userDAO.existsById("D002"));
-		
+
 		assertTrue(doctorDAO.existsById("D002"));
 
 		mockMvc.perform(delete("/doctor/D002")).andExpect(status().isOk())
-				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
-				.andExpect(jsonPath("$.status", is(200)))
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON)).andExpect(jsonPath("$.status", is(200)))
 				.andExpect(jsonPath("$.message", is("doctor was deleted")));
-		
+
 		assertFalse(doctorDAO.existsById("D002"));
 
 		assertFalse(userDAO.existsById("D002"));
-}
+	}
+
+	@Test
+	@WithUserDetails("admin") // ROLE_ADMIN
+	public void testDeleteDoctorFailureDoctorDoesNotExist() throws Exception {
+
+		assertFalse(doctorDAO.existsById("D003"));
+
+		mockMvc.perform(delete("/doctor/D003")).andExpect(status().isConflict())
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+				.andExpect(jsonPath("$.status", is(409)))
+				.andExpect(jsonPath("$.message", startsWith("doctor could not be deleted: ")));
+	}
 
 	@Test
 	@WithUserDetails("user") // ROLE_DOCTOR
@@ -470,50 +481,44 @@ public class DoctorControllerIntegrationTest {
 
 		mockMvc.perform(delete("/doctor/D002")).andExpect(status().isUnauthorized());
 	}
-	
+
 	@Test
 	@WithUserDetails("admin") // ROLE_ADMIN
 	public void testFindDoctorsByIdOrFirstnameOrLastnameSuccessFound2UserIsAdmin() throws Exception {
 		mockMvc.perform(get("/doctor?q=el")).andExpect(status().isOk())
-		.andExpect(content().contentType(MediaType.APPLICATION_JSON))
-		.andExpect(jsonPath("$", hasSize(2)))
-		.andExpect(jsonPath("$[0].id", is("D010")))
-		.andExpect(jsonPath("$[1].id", is("D012")));
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON)).andExpect(jsonPath("$", hasSize(2)))
+				.andExpect(jsonPath("$[0].id", is("D010"))).andExpect(jsonPath("$[1].id", is("D012")));
 	}
-	
+
 	@Test
 	@WithUserDetails("admin") // ROLE_ADMIN
 	public void testFindDoctorsByIdOrFirstnameOrLastnameSuccessFound0() throws Exception {
 		mockMvc.perform(get("/doctor?q=za")).andExpect(status().isOk())
-		.andExpect(content().contentType(MediaType.APPLICATION_JSON))
-		.andExpect(jsonPath("$", hasSize(0)));
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON)).andExpect(jsonPath("$", hasSize(0)));
 	}
-	
+
 	@Test
 	@WithUserDetails("admin") // ROLE_ADMIN
 	public void testFindDoctorsByIdOrFirstnameOrLastnameSuccessFound0SearchStringIsBlank() throws Exception {
 		mockMvc.perform(get("/doctor?q=")).andExpect(status().isOk())
-		.andExpect(content().contentType(MediaType.APPLICATION_JSON))
-		.andExpect(jsonPath("$", hasSize(0)));
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON)).andExpect(jsonPath("$", hasSize(0)));
 	}
-	
+
 	@Test
 	@WithUserDetails("user") // ROLE_DOCTOR
 	public void testFindDoctorsByIdOrFirstnameOrLastnameSuccessFound2UserIsDoctor() throws Exception {
 		mockMvc.perform(get("/doctor?q=el")).andExpect(status().isOk())
-		.andExpect(content().contentType(MediaType.APPLICATION_JSON))
-		.andExpect(jsonPath("$", hasSize(2)))
-		.andExpect(jsonPath("$[0].id", is("D010")))
-		.andExpect(jsonPath("$[1].id", is("D012")));
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON)).andExpect(jsonPath("$", hasSize(2)))
+				.andExpect(jsonPath("$[0].id", is("D010"))).andExpect(jsonPath("$[1].id", is("D012")));
 	}
-	
+
 	@Test
 	@WithUserDetails("admin") // ROLE_ADMIN
 	public void testFindDoctorsByIdOrFirstnameOrLastnameFailureMissingQParam() throws Exception {
 		mockMvc.perform(get("/doctor?question=el")).andExpect(status().isInternalServerError())
-		.andExpect(content().contentType(MediaType.APPLICATION_JSON));
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON));
 	}
-	
+
 	@Test
 	@WithUserDetails("eric") // ROLE_PATIENT
 	public void testFindDoctorsByIdOrFirstnameOrLastnameFailureBadRolePatient() throws Exception {
@@ -527,7 +532,7 @@ public class DoctorControllerIntegrationTest {
 
 		mockMvc.perform(get("/doctor?q=el")).andExpect(status().isUnauthorized());
 	}
-	
+
 	@Test
 	@WithUserDetails("admin") // ROLE_ADMIN
 	public void testGetSpecialtyByIdSuccessUserIsAdmin() throws Exception {
@@ -535,8 +540,7 @@ public class DoctorControllerIntegrationTest {
 		assertTrue(specialtyDAO.existsById("S003"));
 
 		mockMvc.perform(get("/specialty/S003")).andExpect(status().isOk())
-				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
-				.andExpect(jsonPath("$.id", is("S003")))
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON)).andExpect(jsonPath("$.id", is("S003")))
 				.andExpect(jsonPath("$.description", is("anesthésiologie")));
 	}
 
@@ -577,62 +581,59 @@ public class DoctorControllerIntegrationTest {
 
 		mockMvc.perform(get("/specialty/S003")).andExpect(status().isUnauthorized());
 	}
-	
+
 	@Test
 	@WithUserDetails("admin") // ROLE_ADMIN
 	public void testGetSpecialtiesByIdOrDescriptionFound8UserIsAdmin() throws Exception {
-		
+
 		mockMvc.perform(get("/specialty?q=chirur")).andExpect(status().isOk())
-		.andExpect(content().contentType(MediaType.APPLICATION_JSON))
-		.andExpect(jsonPath("$", hasSize(8)))
-		.andExpect(jsonPath("$[2].id", is("S008")))
-		.andExpect(jsonPath("$[2].description", is("chirurgie générale")));
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON)).andExpect(jsonPath("$", hasSize(8)))
+				.andExpect(jsonPath("$[2].id", is("S008")))
+				.andExpect(jsonPath("$[2].description", is("chirurgie générale")));
 	}
 
 	@Test
 	@WithUserDetails("admin") // ROLE_ADMIN
 	public void testGetSpecialtiesByIdOrDescriptionFound0UserIsAdmin() throws Exception {
-		
+
 		mockMvc.perform(get("/specialty?q=tu")).andExpect(status().isOk())
-		.andExpect(content().contentType(MediaType.APPLICATION_JSON))
-		.andExpect(jsonPath("$", hasSize(0)));
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON)).andExpect(jsonPath("$", hasSize(0)));
 	}
 
 	@Test
 	@WithUserDetails("admin") // ROLE_ADMIN
 	public void testGetSpecialtiesByIdOrDescriptionFound0SearchStringIsBlankUserIsAdmin() throws Exception {
-		
+
 		mockMvc.perform(get("/specialty?q=")).andExpect(status().isOk())
-		.andExpect(content().contentType(MediaType.APPLICATION_JSON))
-		.andExpect(jsonPath("$", hasSize(0)));
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON)).andExpect(jsonPath("$", hasSize(0)));
 	}
 
 	@Test
 	@WithUserDetails("admin") // ROLE_ADMIN
 	public void testGetSpecialtiesByIdOrDescriptionErrorQSearchStringIsAbsentUserIsAdmin() throws Exception {
-		
+
 		mockMvc.perform(get("/specialty")).andExpect(status().isInternalServerError())
-		.andExpect(content().contentType(MediaType.APPLICATION_JSON));
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON));
 	}
 
 	@Test
 	@WithUserDetails("user") // ROLE_DOCTOR
 	public void testGetSpecialtiesByIdOrDescriptionFailureUserIsDoctor() throws Exception {
-		
+
 		mockMvc.perform(get("/specialty?q=chirur")).andExpect(status().isForbidden());
 	}
 
 	@Test
 	@WithUserDetails("eric") // ROLE_PATIENT
 	public void testGetSpecialtiesByIdOrDescriptionFailureUserIsPatient() throws Exception {
-		
+
 		mockMvc.perform(get("/specialty?q=chirur")).andExpect(status().isForbidden());
 	}
 
 	@Test
 	@WithAnonymousUser
 	public void testGetSpecialtiesByIdOrDescriptionFailureUnauthenticatedUser() throws Exception {
-		
+
 		mockMvc.perform(get("/specialty?q=chirur")).andExpect(status().isUnauthorized());
 	}
 
