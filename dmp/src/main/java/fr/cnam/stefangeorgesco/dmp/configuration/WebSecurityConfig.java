@@ -32,12 +32,12 @@ public class WebSecurityConfig {
 	@Bean
 	SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
 
-		http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and().cors()
-				.configurationSource(new CorsConfigurationSource() {
+		http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+				.and().cors().configurationSource(new CorsConfigurationSource() {
 					@Override
 					public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
 						CorsConfiguration config = new CorsConfiguration();
-						config.setAllowedOrigins(Collections.singletonList(frontEndUrl));
+						config.setAllowedOriginPatterns(Collections.singletonList(frontEndUrl));
 						config.setAllowedMethods(Collections.singletonList("*"));
 						config.setAllowCredentials(true);
 						config.setAllowedHeaders(Collections.singletonList("*"));
@@ -45,7 +45,8 @@ public class WebSecurityConfig {
 						config.setMaxAge(3600L);
 						return config;
 					}
-				}).and().csrf().disable()
+				})
+				.and().csrf().disable()
 				.addFilterBefore(new JWTTokenValidatorFilter(), BasicAuthenticationFilter.class)
 				.addFilterAfter(new JWTTokenGeneratorFilter(), BasicAuthenticationFilter.class)
 				.authorizeHttpRequests((auth) -> auth
