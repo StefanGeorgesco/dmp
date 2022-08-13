@@ -16,30 +16,30 @@ CREATE TABLE `t_file` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB;
 
-INSERT INTO `t_file` VALUES ('D001', 'John', 'Smith', '0123456789', 'john.smith@doctors.com', '1 baker street', '', 'London', '', '99999', 'United Kingdom', '45');
-INSERT INTO `t_file` VALUES ('P001', 'Eric', 'Martin', '0101010101', 'eric.martin@free.fr', '1 rue de la Paix', '', 'Paris', '', '75001', 'France', '0000');
-INSERT INTO `t_file` VALUES ('D002', 'Jean', 'Dupont', '9999999999', 'jean.dupont@docteurs.fr', '15 rue de Vaugirard', '', 'Paris', '', '75015', 'France', '999');
-INSERT INTO `t_file` VALUES ('D004', 'Leah', 'Little', '061-074-7258', 'leah.little@example.com', '2727 The Avenue', 'street 2', 'Nenagh', '', '47362', 'Ireland', '000');
-INSERT INTO `t_file` VALUES ('D005', 'Vivienne', 'Roy', '077 793 50 38', 'vivienne.roy@example.com', '1661 Rue du Village', 'street 2', 'Lichtensteig', '', '2126', 'Switzerland', '000');
-INSERT INTO `t_file` VALUES ('D006', 'Vukašin', 'Adamović', '016-3028-125', 'vukasin.adamovic@example.com', '6351 Bresjačka', 'street 2', 'Senta', '', '95114', 'Serbia', '000');
-INSERT INTO `t_file` VALUES ('D007', 'Eugenio', 'Olvera', '(615) 831 6362', 'eugenio.olvera@example.com', '3234 Circunvalación Bhután', 'street 2', 'Comalcalco', '', '47519', 'Mexico', '000');
-INSERT INTO `t_file` VALUES ('D008', 'Darko', 'RatkovićRistić', '025-7372-402', 'darko.ratkovicristic@example.com', '1607 Dragiše Kašikovića', 'street 2', 'Boljevac', '', '14541', 'Serbia', '000');
-INSERT INTO `t_file` VALUES ('D009', 'Peppi', 'Seppanen', '09-720-887', 'peppi.seppanen@example.com', '7237 Hämeenkatu', 'street 2', 'Lempäälä', '', '34397', 'Finland', '000');
-INSERT INTO `t_file` VALUES ('D010', 'Rachel', 'Richards', '013873 97383', 'rachel.richards@example.com', '6294 St. John’S Road', 'street 2', 'Cambridge', '', 'WJ1 8LF', 'United Kingdom', '000');
-INSERT INTO `t_file` VALUES ('D011', 'Bill', 'Carlson', '071-524-4134', 'bill.carlson@example.com', '2581 Mill Lane', 'street 2', 'Trim', '', '15049', 'Ireland', '000');
-INSERT INTO `t_file` VALUES ('D012', 'Melquisedeque', 'Nascimento', '(21) 5214-4747', 'melquisedeque.nascimento@example.com', '2155 Rua Santa Luzia ', 'street 2', 'Olinda', '', '51415', 'Brazil', '000');
-INSERT INTO `t_file` VALUES ('D013', 'Luke', 'Hansen', '061-855-6303', 'luke.hansen@example.com', '1201 Grange Road', 'street 2', 'Gorey', '', '71364', 'Ireland', '000');
-INSERT INTO `t_file` VALUES ('P004', 'Roelf', 'Verwijmeren', '(089) 8518423', 'roelf.verwijmeren@example.com', '7481 Keerderstraat', 'street 2', 'Spijk Gld', '', '4951 XC', 'Netherlands', '000');
-INSERT INTO `t_file` VALUES ('P005', 'Martha', 'Welch', '00-1044-2420', 'martha.welch@example.com', '2186 Blossom Hill Rd', 'street 2', 'Dubbo', '', '1178', 'Australia', '000');
-INSERT INTO `t_file` VALUES ('P006', 'Lyubomila', 'Kalnickiy', '(098) A93-0296', 'lyubomila.kalnickiy@example.com', '1406 Mikoli Gastello', 'street 2', 'Irpin', '', '45431', 'Ukraine', '000');
-INSERT INTO `t_file` VALUES ('P007', 'Phoebe', 'Clarke', '(183)-791-1522', 'phoebe.clarke@example.com', '5100 Weymouth Road', 'street 2', 'Wellington', '', '54665', 'New Zealand', '000');
-INSERT INTO `t_file` VALUES ('P008', 'Sami', 'Mjønes', '32959974', 'sami.mjones@example.com', '7467 Midtoddveien', 'street 2', 'Vear', '', '9365', 'Norway', '000');
-INSERT INTO `t_file` VALUES ('P009', 'Alvaro', 'Canales', '(666) 146 7433', 'alvaro.canales@example.com', '1413 Circunvalación Tamaulipas', 'street 2', 'Morelos Cañada', '', '85598', 'Mexico', '000');
-INSERT INTO `t_file` VALUES ('P010', 'Susan', 'Edwards', '031-909-2200', 'susan.edwards@example.com', '4577 Patrick Street', 'street 2', 'Wexford', '', '11051', 'Ireland', '000');
-INSERT INTO `t_file` VALUES ('P011', 'Marie-Louise', 'Leroux', '077 177 95 66', 'marie-louise.leroux@example.com', '2556 Rue Dumenge', 'street 2', 'Savigny', '', '8618', 'Switzerland', '000');
-INSERT INTO `t_file` VALUES ('P012', 'Julio', 'Bernard', '077 202 55 32', 'julio.bernard@example.com', '1492 Place des 44 Enfants D Izieu', 'street 2', 'Kernenried', '', '8314', 'Switzerland', '000');
-INSERT INTO `t_file` VALUES ('P013', 'Magnus', 'Jensen', '19776685', 'magnus.jensen@example.com', '165 Bakkevænget', 'street 2', 'Stenderup', '', '19960', 'Denmark', '000');
-INSERT INTO `t_file` VALUES ('P014', 'Fatih', 'Toraman', '(608)-401-2304', 'fatih.toraman@example.com', '2051 Şehitler Cd', 'street 2', 'Bingöl', '', '63992', 'Turkey', '000');
+INSERT INTO `t_file` VALUES ('D001', 'John', 'Smith', '0123456789', 'john.smith@doctors.com', '1 baker street', '', 'London', '', '99999', 'United Kingdom', '$2a$12$8QR0h6V/yp78HDbENpF2welnrf9mXlhsIfNPoXxREKoN.geg8d/YG');
+INSERT INTO `t_file` VALUES ('P001', 'jean', 'Martin', '0101010101', 'jean.martin@free.fr', '1 rue de la Paix', '', 'Paris', '', '75001', 'France', '$2a$12$8QR0h6V/yp78HDbENpF2welnrf9mXlhsIfNPoXxREKoN.geg8d/YG');
+INSERT INTO `t_file` VALUES ('D002', 'Jean', 'Dupont', '9999999999', 'jean.dupont@docteurs.fr', '15 rue de Vaugirard', '', 'Paris', '', '75015', 'France', '$2a$12$8QR0h6V/yp78HDbENpF2welnrf9mXlhsIfNPoXxREKoN.geg8d/YG');
+INSERT INTO `t_file` VALUES ('D004', 'Leah', 'Little', '061-074-7258', 'leah.little@example.com', '2727 The Avenue', 'street 2', 'Nenagh', '', '47362', 'Ireland', '$2a$12$8QR0h6V/yp78HDbENpF2welnrf9mXlhsIfNPoXxREKoN.geg8d/YG');
+INSERT INTO `t_file` VALUES ('D005', 'Vivienne', 'Roy', '077 793 50 38', 'vivienne.roy@example.com', '1661 Rue du Village', 'street 2', 'Lichtensteig', '', '2126', 'Switzerland', '$2a$12$8QR0h6V/yp78HDbENpF2welnrf9mXlhsIfNPoXxREKoN.geg8d/YG');
+INSERT INTO `t_file` VALUES ('D006', 'Vukašin', 'Adamović', '016-3028-125', 'vukasin.adamovic@example.com', '6351 Bresjačka', 'street 2', 'Senta', '', '95114', 'Serbia', '$2a$12$8QR0h6V/yp78HDbENpF2welnrf9mXlhsIfNPoXxREKoN.geg8d/YG');
+INSERT INTO `t_file` VALUES ('D007', 'Eugenio', 'Olvera', '(615) 831 6362', 'eugenio.olvera@example.com', '3234 Circunvalación Bhután', 'street 2', 'Comalcalco', '', '47519', 'Mexico', '$2a$12$8QR0h6V/yp78HDbENpF2welnrf9mXlhsIfNPoXxREKoN.geg8d/YG');
+INSERT INTO `t_file` VALUES ('D008', 'Darko', 'RatkovićRistić', '025-7372-402', 'darko.ratkovicristic@example.com', '1607 Dragiše Kašikovića', 'street 2', 'Boljevac', '', '14541', 'Serbia', '$2a$12$8QR0h6V/yp78HDbENpF2welnrf9mXlhsIfNPoXxREKoN.geg8d/YG');
+INSERT INTO `t_file` VALUES ('D009', 'Peppi', 'Seppanen', '09-720-887', 'peppi.seppanen@example.com', '7237 Hämeenkatu', 'street 2', 'Lempäälä', '', '34397', 'Finland', '$2a$12$8QR0h6V/yp78HDbENpF2welnrf9mXlhsIfNPoXxREKoN.geg8d/YG');
+INSERT INTO `t_file` VALUES ('D010', 'Rachel', 'Richards', '013873 97383', 'rachel.richards@example.com', '6294 St. John’S Road', 'street 2', 'Cambridge', '', 'WJ1 8LF', 'United Kingdom', '$2a$12$8QR0h6V/yp78HDbENpF2welnrf9mXlhsIfNPoXxREKoN.geg8d/YG');
+INSERT INTO `t_file` VALUES ('D011', 'Bill', 'Carlson', '071-524-4134', 'bill.carlson@example.com', '2581 Mill Lane', 'street 2', 'Trim', '', '15049', 'Ireland', '$2a$12$8QR0h6V/yp78HDbENpF2welnrf9mXlhsIfNPoXxREKoN.geg8d/YG');
+INSERT INTO `t_file` VALUES ('D012', 'Melquisedeque', 'Nascimento', '(21) 5214-4747', 'melquisedeque.nascimento@example.com', '2155 Rua Santa Luzia ', 'street 2', 'Olinda', '', '51415', 'Brazil', '$2a$12$8QR0h6V/yp78HDbENpF2welnrf9mXlhsIfNPoXxREKoN.geg8d/YG');
+INSERT INTO `t_file` VALUES ('D013', 'Luke', 'Hansen', '061-855-6303', 'luke.hansen@example.com', '1201 Grange Road', 'street 2', 'Gorey', '', '71364', 'Ireland', '$2a$12$8QR0h6V/yp78HDbENpF2welnrf9mXlhsIfNPoXxREKoN.geg8d/YG');
+INSERT INTO `t_file` VALUES ('P004', 'Roelf', 'Verwijmeren', '(089) 8518423', 'roelf.verwijmeren@example.com', '7481 Keerderstraat', 'street 2', 'Spijk Gld', '', '4951 XC', 'Netherlands', '$2a$12$8QR0h6V/yp78HDbENpF2welnrf9mXlhsIfNPoXxREKoN.geg8d/YG');
+INSERT INTO `t_file` VALUES ('P005', 'Martha', 'Welch', '00-1044-2420', 'martha.welch@example.com', '2186 Blossom Hill Rd', 'street 2', 'Dubbo', '', '1178', 'Australia', '$2a$12$8QR0h6V/yp78HDbENpF2welnrf9mXlhsIfNPoXxREKoN.geg8d/YG');
+INSERT INTO `t_file` VALUES ('P006', 'Lyubomila', 'Kalnickiy', '(098) A93-0296', 'lyubomila.kalnickiy@example.com', '1406 Mikoli Gastello', 'street 2', 'Irpin', '', '45431', 'Ukraine', '$2a$12$8QR0h6V/yp78HDbENpF2welnrf9mXlhsIfNPoXxREKoN.geg8d/YG');
+INSERT INTO `t_file` VALUES ('P007', 'Phoebe', 'Clarke', '(183)-791-1522', 'phoebe.clarke@example.com', '5100 Weymouth Road', 'street 2', 'Wellington', '', '54665', 'New Zealand', '$2a$12$8QR0h6V/yp78HDbENpF2welnrf9mXlhsIfNPoXxREKoN.geg8d/YG');
+INSERT INTO `t_file` VALUES ('P008', 'Sami', 'Mjønes', '32959974', 'sami.mjones@example.com', '7467 Midtoddveien', 'street 2', 'Vear', '', '9365', 'Norway', '$2a$12$8QR0h6V/yp78HDbENpF2welnrf9mXlhsIfNPoXxREKoN.geg8d/YG');
+INSERT INTO `t_file` VALUES ('P009', 'Alvaro', 'Canales', '(666) 146 7433', 'alvaro.canales@example.com', '1413 Circunvalación Tamaulipas', 'street 2', 'Morelos Cañada', '', '85598', 'Mexico', '$2a$12$8QR0h6V/yp78HDbENpF2welnrf9mXlhsIfNPoXxREKoN.geg8d/YG');
+INSERT INTO `t_file` VALUES ('P010', 'Susan', 'Edwards', '031-909-2200', 'susan.edwards@example.com', '4577 Patrick Street', 'street 2', 'Wexford', '', '11051', 'Ireland', '$2a$12$8QR0h6V/yp78HDbENpF2welnrf9mXlhsIfNPoXxREKoN.geg8d/YG');
+INSERT INTO `t_file` VALUES ('P011', 'Marie-Louise', 'Leroux', '077 177 95 66', 'marie-louise.leroux@example.com', '2556 Rue Dumenge', 'street 2', 'Savigny', '', '8618', 'Switzerland', '$2a$12$8QR0h6V/yp78HDbENpF2welnrf9mXlhsIfNPoXxREKoN.geg8d/YG');
+INSERT INTO `t_file` VALUES ('P012', 'Julio', 'Bernard', '077 202 55 32', 'julio.bernard@example.com', '1492 Place des 44 Enfants D Izieu', 'street 2', 'Kernenried', '', '8314', 'Switzerland', '$2a$12$8QR0h6V/yp78HDbENpF2welnrf9mXlhsIfNPoXxREKoN.geg8d/YG');
+INSERT INTO `t_file` VALUES ('P013', 'Magnus', 'Jensen', '19776685', 'magnus.jensen@example.com', '165 Bakkevænget', 'street 2', 'Stenderup', '', '19960', 'Denmark', '$2a$12$8QR0h6V/yp78HDbENpF2welnrf9mXlhsIfNPoXxREKoN.geg8d/YG');
+INSERT INTO `t_file` VALUES ('P014', 'Fatih', 'Toraman', '(608)-401-2304', 'fatih.toraman@example.com', '2051 Şehitler Cd', 'street 2', 'Bingöl', '', '63992', 'Turkey', '$2a$12$8QR0h6V/yp78HDbENpF2welnrf9mXlhsIfNPoXxREKoN.geg8d/YG');
 
 DROP TABLE IF EXISTS `t_doctor`;
 

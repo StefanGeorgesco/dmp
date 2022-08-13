@@ -1,4 +1,4 @@
+A001	admin			admin			ADMIN
 D001	user			1234			DOCTOR
 D002	doc				doctor			DOCTOR
 P001	jean			12345			PATIENT
-A001	admin			admin			ADMIN
