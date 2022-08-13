@@ -158,8 +158,21 @@ public class DoctorService {
 		if ("".equals(string)) {
 			return new ArrayList<>();
 		}
+		
+		if (string == null) {
+			string = "";
+		}
 
 		Iterable<Specialty> specialties = specialtyDAO.findByIdOrDescription(string);
+
+		List<SpecialtyDTO> specialtiesDTO = ((List<Specialty>) specialties).stream()
+				.map(specialty -> commonModelMapper.map(specialty, SpecialtyDTO.class)).collect(Collectors.toList());
+
+		return specialtiesDTO;
+	}
+
+	public List<SpecialtyDTO> findAllSpecialties() {
+		Iterable<Specialty> specialties = specialtyDAO.findAll();
 
 		List<SpecialtyDTO> specialtiesDTO = ((List<Specialty>) specialties).stream()
 				.map(specialty -> commonModelMapper.map(specialty, SpecialtyDTO.class)).collect(Collectors.toList());

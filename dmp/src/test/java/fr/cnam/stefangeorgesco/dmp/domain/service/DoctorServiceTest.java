@@ -430,4 +430,18 @@ public class DoctorServiceTest {
 		assertEquals("First specialty", specialtiesDTO.get(0).getDescription());
 	}
 
+	@Test
+	void testFindSpecialtiesFound2() {
+		
+		when(specialtyDAO.findAll()).thenReturn(List.of(specialty1, specialty2));
+		
+		List<SpecialtyDTO> specialtiesDTO = doctorService.findAllSpecialties();
+		
+		verify(specialtyDAO, times(1)).findAll();
+		
+		assertEquals(2, specialtiesDTO.size());
+		assertEquals("S001", specialtiesDTO.get(0).getId());
+		assertEquals("First specialty", specialtiesDTO.get(0).getDescription());
+	}
+
 }

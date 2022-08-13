@@ -356,4 +356,12 @@ public class DoctorServiceIntegrationTest {
 		assertEquals(0, specialtiesDTO.size());
 	}
 
+	@Test
+	public void testFindAllSpecialtiesFound45() {
+		
+		List<SpecialtyDTO> specialtiesDTO = doctorService.findAllSpecialties();
+		
+		assertEquals(45, specialtiesDTO.size());
+	}
+
 }

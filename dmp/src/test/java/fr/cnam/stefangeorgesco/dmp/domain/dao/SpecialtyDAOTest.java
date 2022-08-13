@@ -73,5 +73,17 @@ public class SpecialtyDAOTest {
 		
 		assertEquals(0, specialtiesList.size());
 	}
+	
+	@Test
+	public void testSpecialtyDAOFindAll() {
+		
+		List<Specialty> specialtiesList = new ArrayList<>();
+		
+		Iterable<Specialty> specialties = specialtyDAO.findAll();
+		
+		specialties.forEach(specialtiesList::add);
+		
+		assertEquals(45, specialtiesList.size());
+	}
 
 }

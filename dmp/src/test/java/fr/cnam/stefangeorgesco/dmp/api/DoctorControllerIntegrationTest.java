@@ -610,10 +610,12 @@ public class DoctorControllerIntegrationTest {
 
 	@Test
 	@WithUserDetails("admin") // ROLE_ADMIN
-	public void testGetSpecialtiesByIdOrDescriptionErrorQSearchStringIsAbsentUserIsAdmin() throws Exception {
+	public void testGetSpecialtiesSuccessUserIsAdmin() throws Exception {
 
-		mockMvc.perform(get("/specialty")).andExpect(status().isInternalServerError())
-				.andExpect(content().contentType(MediaType.APPLICATION_JSON));
+		mockMvc.perform(get("/specialty")).andExpect(status().isOk())
+		.andExpect(content().contentType(MediaType.APPLICATION_JSON)).andExpect(jsonPath("$", hasSize(45)))
+		.andExpect(jsonPath("$[2].id", is("S003")))
+		.andExpect(jsonPath("$[2].description", is("anesthésiologie")));
 	}
 
 	@Test
