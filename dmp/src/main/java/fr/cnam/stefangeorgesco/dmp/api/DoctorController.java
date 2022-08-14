@@ -92,7 +92,11 @@ public class DoctorController {
 	@GetMapping("/specialty")
 	public ResponseEntity<List<SpecialtyDTO>> getSpecialties(@RequestParam(required = false) String q) throws FinderException {
 		
-		return ResponseEntity.ok(doctorService.findSpecialtiesByIdOrDescription(q));
+		if (q == null) {
+            return ResponseEntity.ok(doctorService.findAllSpecialties());
+        } else {
+            return ResponseEntity.ok(doctorService.findSpecialtiesByIdOrDescription(q));
+        }
 	}
 
 }

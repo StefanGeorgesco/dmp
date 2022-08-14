@@ -159,10 +159,6 @@ public class DoctorService {
 			return new ArrayList<>();
 		}
 		
-		if (string == null) {
-			string = "";
-		}
-
 		Iterable<Specialty> specialties = specialtyDAO.findByIdOrDescription(string);
 
 		List<SpecialtyDTO> specialtiesDTO = ((List<Specialty>) specialties).stream()
