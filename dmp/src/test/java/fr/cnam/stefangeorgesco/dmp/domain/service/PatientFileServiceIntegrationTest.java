@@ -412,8 +412,8 @@ public class PatientFileServiceIntegrationTest {
 		assertEquals(correspondenceDTO.getDateUntil(), correspondenceDTOResponse.getDateUntil());
 		assertEquals(correspondenceDTO.getDoctorId(), correspondenceDTOResponse.getDoctorId());
 		assertEquals(correspondenceDTO.getPatientFileId(), correspondenceDTOResponse.getPatientFileId());
-		assertEquals(doctor.getFirstname(), correspondenceDTOResponse.getDoctorFirstName());
-		assertEquals(doctor.getLastname(), correspondenceDTOResponse.getDoctorLastName());
+		assertEquals(doctor.getFirstname(), correspondenceDTOResponse.getDoctorFirstname());
+		assertEquals(doctor.getLastname(), correspondenceDTOResponse.getDoctorLastname());
 		assertEquals(doctor.getSpecialties().stream().map(Specialty::getDescription).collect(Collectors.toList()),
 				correspondenceDTOResponse.getDoctorSpecialties());
 
@@ -478,8 +478,8 @@ public class PatientFileServiceIntegrationTest {
 
 		assertEquals("2023-08-14", correspondenceDTO.getDateUntil().toString());
 		assertEquals("P004", correspondenceDTO.getPatientFileId());
-		assertEquals("Melquisedeque", correspondenceDTO.getDoctorFirstName());
-		assertEquals("Nascimento", correspondenceDTO.getDoctorLastName());
+		assertEquals("Melquisedeque", correspondenceDTO.getDoctorFirstname());
+		assertEquals("Nascimento", correspondenceDTO.getDoctorLastname());
 		assertEquals("[chirurgie thoracique, chirurgie vasculaire]",
 				correspondenceDTO.getDoctorSpecialties().toString());
 	}

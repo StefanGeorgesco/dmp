@@ -24,9 +24,9 @@ public class CorrespondenceDTO {
 	@NotBlank(message = "doctor is mandatory")
 	private String doctorId;
 	
-	private String doctorFirstName;
+	private String doctorFirstname;
 
-	private String doctorLastName;
+	private String doctorLastname;
 	
 	private List<String> doctorSpecialties;
 

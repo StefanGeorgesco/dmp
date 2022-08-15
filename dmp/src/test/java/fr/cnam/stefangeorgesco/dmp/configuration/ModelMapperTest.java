@@ -351,8 +351,8 @@ public class ModelMapperTest {
 		assertEquals(correspondence.getDateUntil(), correspondenceDTO.getDateUntil());
 		assertEquals(correspondence.getPatientFile().getId(), correspondenceDTO.getPatientFileId());
 		assertEquals(correspondence.getDoctor().getId(), correspondenceDTO.getDoctorId());
-		assertEquals(correspondence.getDoctor().getFirstname(), correspondenceDTO.getDoctorFirstName());
-		assertEquals(correspondence.getDoctor().getLastname(), correspondenceDTO.getDoctorLastName());
+		assertEquals(correspondence.getDoctor().getFirstname(), correspondenceDTO.getDoctorFirstname());
+		assertEquals(correspondence.getDoctor().getLastname(), correspondenceDTO.getDoctorLastname());
 		assertEquals(correspondence.getDoctor().getSpecialties().stream().map(Specialty::getDescription)
 				.collect(Collectors.toList()), correspondenceDTO.getDoctorSpecialties());
 	}

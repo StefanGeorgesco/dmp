@@ -710,8 +710,8 @@ public class PatientFileServiceTest {
 		assertEquals(correspondenceDTO.getPatientFileId(), correspondenceDTOResponse.getPatientFileId());
 		assertEquals(persistentCorrespondence.getDoctor().getId(), correspondenceDTOResponse.getDoctorId());
 		assertEquals(persistentCorrespondence.getDoctor().getFirstname(),
-				correspondenceDTOResponse.getDoctorFirstName());
-		assertEquals(persistentCorrespondence.getDoctor().getLastname(), correspondenceDTOResponse.getDoctorLastName());
+				correspondenceDTOResponse.getDoctorFirstname());
+		assertEquals(persistentCorrespondence.getDoctor().getLastname(), correspondenceDTOResponse.getDoctorLastname());
 		assertEquals(persistentCorrespondence.getDoctor().getSpecialties().stream().map(Specialty::getDescription)
 				.collect(Collectors.toList()), correspondenceDTOResponse.getDoctorSpecialties());
 	}
@@ -746,8 +746,8 @@ public class PatientFileServiceTest {
 		assertEquals(persistentCorrespondence.getPatientFile().getId(), correspondenceDTOResponse.getPatientFileId());
 		assertEquals(persistentCorrespondence.getDoctor().getId(), correspondenceDTOResponse.getDoctorId());
 		assertEquals(persistentCorrespondence.getDoctor().getFirstname(),
-				correspondenceDTOResponse.getDoctorFirstName());
-		assertEquals(persistentCorrespondence.getDoctor().getLastname(), correspondenceDTOResponse.getDoctorLastName());
+				correspondenceDTOResponse.getDoctorFirstname());
+		assertEquals(persistentCorrespondence.getDoctor().getLastname(), correspondenceDTOResponse.getDoctorLastname());
 		assertEquals(persistentCorrespondence.getDoctor().getSpecialties().stream().map(Specialty::getDescription)
 				.collect(Collectors.toList()), correspondenceDTOResponse.getDoctorSpecialties());
 	}

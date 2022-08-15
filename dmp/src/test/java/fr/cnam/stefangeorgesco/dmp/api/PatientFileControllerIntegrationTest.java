@@ -537,8 +537,8 @@ public class PatientFileControllerIntegrationTest {
 				.content(objectMapper.writeValueAsString(correspondenceDTO))).andExpect(status().isCreated())
 				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
 				.andExpect(jsonPath("$.dateUntil", is(correspondenceDTO.getDateUntil().toString())))
-				.andExpect(jsonPath("$.doctorId", is("D002"))).andExpect(jsonPath("$.doctorFirstName", is("Jean")))
-				.andExpect(jsonPath("$.doctorLastName", is("Dupont")))
+				.andExpect(jsonPath("$.doctorId", is("D002"))).andExpect(jsonPath("$.doctorFirstname", is("Jean")))
+				.andExpect(jsonPath("$.doctorLastname", is("Dupont")))
 				.andExpect(jsonPath("$.doctorSpecialties", hasSize(2)))
 				.andExpect(jsonPath("$.doctorSpecialties[0]", is("chirurgie vasculaire")))
 				.andExpect(jsonPath("$.doctorSpecialties[1]", is("neurochirurgie")))
@@ -740,8 +740,8 @@ public class PatientFileControllerIntegrationTest {
 				.andExpect(jsonPath("$", hasSize(3)))
 				.andExpect(jsonPath("$[0].id", is("5b17ffa7-81e2-43ac-9246-7cab5b2f0f6b")))
 				.andExpect(jsonPath("$[0].doctorId", is("D002")))
-				.andExpect(jsonPath("$[0].doctorFirstName", is("Jean")))
-				.andExpect(jsonPath("$[0].doctorLastName", is("Dupont")))
+				.andExpect(jsonPath("$[0].doctorFirstname", is("Jean")))
+				.andExpect(jsonPath("$[0].doctorLastname", is("Dupont")))
 				.andExpect(jsonPath("$[0].dateUntil", is("2023-05-02")));
 	}
 
@@ -754,8 +754,8 @@ public class PatientFileControllerIntegrationTest {
 				.andExpect(jsonPath("$", hasSize(2)))
 				.andExpect(jsonPath("$[1].id", is("8ea37abc-052d-4bc3-9aa1-f9a47e366e11")))
 				.andExpect(jsonPath("$[1].doctorId", is("D001")))
-				.andExpect(jsonPath("$[1].doctorFirstName", is("John")))
-				.andExpect(jsonPath("$[1].doctorLastName", is("Smith")))
+				.andExpect(jsonPath("$[1].doctorFirstname", is("John")))
+				.andExpect(jsonPath("$[1].doctorLastname", is("Smith")))
 				.andExpect(jsonPath("$[1].dateUntil", is("2027-05-07")));
 	}
 
@@ -808,8 +808,8 @@ public class PatientFileControllerIntegrationTest {
 				.andExpect(jsonPath("$", hasSize(3)))
 				.andExpect(jsonPath("$[0].id", is("5b17ffa7-81e2-43ac-9246-7cab5b2f0f6b")))
 				.andExpect(jsonPath("$[0].doctorId", is("D002")))
-				.andExpect(jsonPath("$[0].doctorFirstName", is("Jean")))
-				.andExpect(jsonPath("$[0].doctorLastName", is("Dupont")))
+				.andExpect(jsonPath("$[0].doctorFirstname", is("Jean")))
+				.andExpect(jsonPath("$[0].doctorLastname", is("Dupont")))
 				.andExpect(jsonPath("$[0].dateUntil", is("2023-05-02")));
 	}
 
