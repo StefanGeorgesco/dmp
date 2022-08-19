@@ -370,6 +370,8 @@ public class PatientFileControllerIntegrationTest {
 				.andExpect(jsonPath("$.firstname", is("Eric")))
 				.andExpect(jsonPath("$.address.street1", is("1 rue de la Paix")))
 				.andExpect(jsonPath("$.referringDoctorId", is("D001")))
+				.andExpect(jsonPath("$.referringDoctorFirstname", is("John")))
+				.andExpect(jsonPath("$.referringDoctorLastname", is("Smith")))
 				.andExpect(jsonPath("$.dateOfBirth", is("1995-05-15")))
 				.andExpect(jsonPath("$.securityCode").doesNotExist());
 	}
@@ -401,6 +403,8 @@ public class PatientFileControllerIntegrationTest {
 				.andExpect(jsonPath("$.firstname", is("Eric")))
 				.andExpect(jsonPath("$.address.street1", is("1 rue de la Paix")))
 				.andExpect(jsonPath("$.referringDoctorId", is("D001")))
+				.andExpect(jsonPath("$.referringDoctorFirstname", is("John")))
+				.andExpect(jsonPath("$.referringDoctorLastname", is("Smith")))
 				.andExpect(jsonPath("$.dateOfBirth", is("1995-05-15")))
 				.andExpect(jsonPath("$.securityCode").doesNotExist());
 	}
@@ -418,6 +422,8 @@ public class PatientFileControllerIntegrationTest {
 				.andExpect(jsonPath("$.firstname", is("Eric")))
 				.andExpect(jsonPath("$.address.street1", is("1 rue de la Paix")))
 				.andExpect(jsonPath("$.referringDoctorId", is("D001")))
+				.andExpect(jsonPath("$.referringDoctorFirstname", is("John")))
+				.andExpect(jsonPath("$.referringDoctorLastname", is("Smith")))
 				.andExpect(jsonPath("$.dateOfBirth", is("1995-05-15")))
 				.andExpect(jsonPath("$.securityCode").doesNotExist());
 	}

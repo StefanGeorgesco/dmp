@@ -320,6 +320,8 @@ public class ModelMapperTest {
 		assertEquals(patientFile.getAddress().getCity(), patientFileDTO.getAddressDTO().getCity());
 		assertEquals(patientFile.getAddress().getCountry(), patientFileDTO.getAddressDTO().getCountry());
 		assertEquals(patientFile.getReferringDoctor().getId(), patientFileDTO.getReferringDoctorId());
+		assertEquals(patientFile.getReferringDoctor().getFirstname(), patientFileDTO.getReferringDoctorFirstname());
+		assertEquals(patientFile.getReferringDoctor().getLastname(), patientFileDTO.getReferringDoctorLastname());
 		assertEquals(null, patientFileDTO.getSecurityCode());
 	}
 

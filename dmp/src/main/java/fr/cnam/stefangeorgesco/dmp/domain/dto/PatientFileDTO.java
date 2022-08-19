@@ -20,4 +20,8 @@ public class PatientFileDTO extends FileDTO {
 
 	private String referringDoctorId;
 	
+	private String referringDoctorFirstname;
+	
+	private String referringDoctorLastname;
+	
 }
