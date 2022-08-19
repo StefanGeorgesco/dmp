@@ -178,7 +178,7 @@ public class ModelMapperTest {
 		doctor1.setAddress(address);
 		doctor1.setSpecialties(List.of(specialty1, specialty2));
 		patientFile.setId("P001");
-}
+	}
 
 	@Test
 	public void testModelMapperUserDTO2User() {
@@ -322,6 +322,8 @@ public class ModelMapperTest {
 		assertEquals(patientFile.getReferringDoctor().getId(), patientFileDTO.getReferringDoctorId());
 		assertEquals(patientFile.getReferringDoctor().getFirstname(), patientFileDTO.getReferringDoctorFirstname());
 		assertEquals(patientFile.getReferringDoctor().getLastname(), patientFileDTO.getReferringDoctorLastname());
+		assertEquals(patientFile.getReferringDoctor().getSpecialties().stream().map(Specialty::getDescription)
+				.collect(Collectors.toList()).toString(), patientFileDTO.getReferringDoctorSpecialties().toString());
 		assertEquals(null, patientFileDTO.getSecurityCode());
 	}
 

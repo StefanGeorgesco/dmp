@@ -1,6 +1,7 @@
 package fr.cnam.stefangeorgesco.dmp.domain.dto;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PastOrPresent;
@@ -24,4 +25,5 @@ public class PatientFileDTO extends FileDTO {
 	
 	private String referringDoctorLastname;
 	
+	private List<String> referringDoctorSpecialties;
 }

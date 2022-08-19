@@ -405,6 +405,8 @@ public class PatientFileControllerIntegrationTest {
 				.andExpect(jsonPath("$.referringDoctorId", is("D001")))
 				.andExpect(jsonPath("$.referringDoctorFirstname", is("John")))
 				.andExpect(jsonPath("$.referringDoctorLastname", is("Smith")))
+				.andExpect(jsonPath("$.referringDoctorSpecialties", hasSize(2)))
+				.andExpect(jsonPath("$.referringDoctorSpecialties[1]", is("médecine générale")))
 				.andExpect(jsonPath("$.dateOfBirth", is("1995-05-15")))
 				.andExpect(jsonPath("$.securityCode").doesNotExist());
 	}
