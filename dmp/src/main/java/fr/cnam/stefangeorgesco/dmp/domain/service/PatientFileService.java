@@ -337,6 +337,11 @@ public class PatientFileService {
 		return response;
 	}
 
+	public void deletePatientFileItem(UUID uuid) {
+		
+		patientFileItemDAO.deleteById(uuid);
+	}
+
 	public PatientFileItemDTO findPatientFileItem(UUID uuid) throws FinderException {
 
 		Optional<PatientFileItem> optionalPatientFileItem = patientFileItemDAO.findById(uuid);

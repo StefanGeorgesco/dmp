@@ -181,10 +181,11 @@ public class PatientFileController {
 		return ResponseEntity.status(HttpStatus.CREATED)
 				.body(patientFileService.createPatientFileItem(patientFileItemDTO));
 	}
-	
+
 	@GetMapping("/patient-file/{id}/item")
-	public ResponseEntity<List<PatientFileItemDTO>> findPatientFileItemsByPatientFileId(@PathVariable String id, Principal principal) throws FinderException {
-		
+	public ResponseEntity<List<PatientFileItemDTO>> findPatientFileItemsByPatientFileId(@PathVariable String id,
+			Principal principal) throws FinderException {
+
 		String userId = userService.findUserByUsername(principal.getName()).getId();
 
 		String referringDoctorId = patientFileService.findPatientFile(id).getReferringDoctorId();
@@ -202,7 +203,7 @@ public class PatientFileController {
 		if (!userIsReferringDoctor && !userIsCorrespondingDoctor) {
 			throw new FinderException("user is not referring nor corresponding doctor");
 		}
-		
+
 		return ResponseEntity.ok(patientFileService.findPatientFileItemsByPatientFileId(id));
 	}
 
@@ -210,28 +211,29 @@ public class PatientFileController {
 	public ResponseEntity<PatientFileItemDTO> updatePatientFileItem(
 			@Valid @RequestBody PatientFileItemDTO patientFileItemDTO, @PathVariable String patienfFileId,
 			@PathVariable String itemId, Principal principal) throws ApplicationException {
-		
+
 		String userId = userService.findUserByUsername(principal.getName()).getId();
-		
+
 		UUID patientFileItemId = UUID.fromString(itemId);
-		
+
 		patientFileItemDTO.setId(patientFileItemId);
 
 		PatientFileItemDTO storedPatientFileItemDTO = patientFileService.findPatientFileItem(patientFileItemId);
-		
+
 		if (!patienfFileId.equals(storedPatientFileItemDTO.getPatientFileId())) {
-			throw new FinderException("patient file item not found for patient file '" + patienfFileId + "'"); 
+			throw new FinderException("patient file item not found for patient file '" + patienfFileId + "'");
 		}
-		
+
 		boolean userIsAuthor = userId.equals(storedPatientFileItemDTO.getAuthoringDoctorId());
-		
+
 		if (!userIsAuthor) {
 			throw new UpdateException("user is not the author of patient file item and can not modify it");
 		}
-		
+
 		String referringDoctorId = patientFileService.findPatientFile(patienfFileId).getReferringDoctorId();
 
-		List<CorrespondenceDTO> correspondencesDTO = patientFileService.findCorrespondencesByPatientFileId(patienfFileId);
+		List<CorrespondenceDTO> correspondencesDTO = patientFileService
+				.findCorrespondencesByPatientFileId(patienfFileId);
 
 		LocalDate now = LocalDate.now();
 
@@ -246,6 +248,51 @@ public class PatientFileController {
 		}
 
 		return ResponseEntity.ok(patientFileService.updatePatientFileItem(patientFileItemDTO));
+	}
+
+	@DeleteMapping("/patient-file/{patienfFileId}/item/{itemId}")
+	public ResponseEntity<RestResponse> deletePatientFileItem(@PathVariable String patienfFileId,
+			@PathVariable String itemId, Principal principal) throws ApplicationException {
+
+		String userId = userService.findUserByUsername(principal.getName()).getId();
+
+		UUID patientFileItemId = UUID.fromString(itemId);
+
+		PatientFileItemDTO storedPatientFileItemDTO = patientFileService.findPatientFileItem(patientFileItemId);
+
+		if (!patienfFileId.equals(storedPatientFileItemDTO.getPatientFileId())) {
+			throw new FinderException("patient file item not found for patient file '" + patienfFileId + "'");
+		}
+
+		boolean userIsAuthor = userId.equals(storedPatientFileItemDTO.getAuthoringDoctorId());
+
+		if (!userIsAuthor) {
+			throw new UpdateException("user is not the author of patient file item and can not delete it");
+		}
+
+		String referringDoctorId = patientFileService.findPatientFile(patienfFileId).getReferringDoctorId();
+
+		List<CorrespondenceDTO> correspondencesDTO = patientFileService
+				.findCorrespondencesByPatientFileId(patienfFileId);
+
+		LocalDate now = LocalDate.now();
+
+		boolean userIsReferringDoctor = userId.equals(referringDoctorId);
+
+		boolean userIsCorrespondingDoctor = correspondencesDTO.stream()
+				.filter(correspondence -> correspondence.getDateUntil().compareTo(now) >= 0)
+				.map(CorrespondenceDTO::getDoctorId).collect(Collectors.toList()).contains(userId);
+
+		if (!userIsReferringDoctor && !userIsCorrespondingDoctor) {
+			throw new FinderException("user is not referring nor corresponding doctor");
+		}
+
+		patientFileService.deletePatientFileItem(patientFileItemId);
+		
+		RestResponse response = new RestResponse(HttpStatus.OK.value(), "patient file item was deleted");
+
+		return ResponseEntity.ok(response);
+
 	}
 
 	@DeleteMapping("/patient-file/{patientFileId}/correspondence/{correspondenceId}")

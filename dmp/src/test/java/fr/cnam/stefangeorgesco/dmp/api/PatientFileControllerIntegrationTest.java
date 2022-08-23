@@ -1564,6 +1564,168 @@ public class PatientFileControllerIntegrationTest {
 	}
 	
 	@Test
+	@WithUserDetails("user") // ROLE_DOCTOR, D001
+	public void testDeletePatientFileItemSuccessUserIsReferringAndAuthor() throws Exception {
+
+		count = patientFileItemDAO.count();
+
+		uuid = UUID.fromString("1b57e70f-8eb0-4a97-99c6-5d44f138c22c");
+
+		assertTrue(patientFileItemDAO.existsById(uuid));
+
+		mockMvc.perform(delete("/patient-file/P005/item/" + uuid.toString())).andExpect(status().isOk())
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON)).andExpect(jsonPath("$.status", is(200)))
+				.andExpect(jsonPath("$.message", is("patient file item was deleted")));
+
+		assertEquals(count - 1, patientFileItemDAO.count());
+		assertFalse(patientFileItemDAO.existsById(uuid));
+	}
+
+	@Test
+	@WithUserDetails("user") // ROLE_DOCTOR, D001
+	public void testDeletePatientFileItemSuccessUserIsActiveCorrespondentAndAuthor() throws Exception {
+
+		count = patientFileItemDAO.count();
+
+		uuid = UUID.fromString("7f331dd1-0950-4991-964c-2383ba92699e");
+
+		assertTrue(patientFileItemDAO.existsById(uuid));
+
+		mockMvc.perform(delete("/patient-file/P006/item/" + uuid.toString())).andExpect(status().isOk())
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON)).andExpect(jsonPath("$.status", is(200)))
+				.andExpect(jsonPath("$.message", is("patient file item was deleted")));
+
+		assertEquals(count - 1, patientFileItemDAO.count());
+		assertFalse(patientFileItemDAO.existsById(uuid));
+	}
+
+	@Test
+	@WithUserDetails("user") // ROLE_DOCTOR, D001
+	public void testDeletePatientFileItemUserIsReferringAndAuthorFailurePatientFileItemDoesNotExist() throws Exception {
+
+		count = patientFileItemDAO.count();
+
+		uuid = UUID.fromString("1b57e70f-8eb0-4a97-99c6-5d44f138c22"); // does not exist
+
+		assertFalse(patientFileItemDAO.existsById(uuid));
+
+		mockMvc.perform(delete("/patient-file/P005/item/" + uuid.toString())).andExpect(status().isNotFound())
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+				.andExpect(jsonPath("$.message", is("patient file item not found")));
+
+		assertEquals(count, patientFileItemDAO.count());
+	}
+
+	@Test
+	@WithUserDetails("user") // ROLE_DOCTOR, D001
+	public void testDeletePatientFileItemFailureUserIsReferringButNotAuthor() throws Exception {
+
+		count = patientFileItemDAO.count();
+
+		uuid = UUID.fromString("c793da7f-5ca8-41f5-a0f0-1cc77b34b6fe");
+
+		mockMvc.perform(delete("/patient-file/P005/item/" + uuid.toString())).andExpect(status().isConflict())
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON)).andExpect(
+						jsonPath("$.message", is("user is not the author of patient file item and can not delete it")));
+
+		assertEquals(count, patientFileItemDAO.count());
+		assertTrue(patientFileItemDAO.existsById(uuid));
+}
+
+	@Test
+	@WithUserDetails("user") // ROLE_DOCTOR, D001
+	public void testDeletePatientFileItemFailureUserIsActiveCorrespondentButNotAuthor() throws Exception {
+
+		count = patientFileItemDAO.count();
+
+		uuid = UUID.fromString("643bce5b-9c74-4e6f-8ae2-5809a31bedb4");
+
+		mockMvc.perform(delete("/patient-file/P006/item/" + uuid.toString())).andExpect(status().isConflict())
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON)).andExpect(
+						jsonPath("$.message", is("user is not the author of patient file item and can not delete it")));
+
+		assertEquals(count, patientFileItemDAO.count());
+		assertTrue(patientFileItemDAO.existsById(uuid));
+	}
+
+	@Test
+	@WithUserDetails("user") // ROLE_DOCTOR, D001
+	public void testDeletePatientFileItemFailureUserIsCorrespondentAndAuthorButNotActiveCorrespondent()
+			throws Exception {
+
+		count = patientFileItemDAO.count();
+
+		uuid = UUID.fromString("142763cf-6eeb-47a5-b8f8-8ec85f0025c4");
+
+		mockMvc.perform(delete("/patient-file/P013/item/" + uuid.toString())).andExpect(status().isNotFound())
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+				.andExpect(jsonPath("$.message", is("user is not referring nor corresponding doctor")));
+
+		assertEquals(count, patientFileItemDAO.count());
+		assertTrue(patientFileItemDAO.existsById(uuid));
+}
+
+	@Test
+	@WithUserDetails("user") // ROLE_DOCTOR, D001
+	public void testDeletePatientFileItemFailureUserIsNotReferringNorCorrespondingDoctor() throws Exception {
+
+		count = patientFileItemDAO.count();
+
+		uuid = UUID.fromString("b7bdb6e4-da4b-47f9-9b67-cfd67567aaca");
+
+		mockMvc.perform(delete("/patient-file/P012/item/" + uuid.toString())).andExpect(status().isNotFound())
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+				.andExpect(jsonPath("$.message", is("user is not referring nor corresponding doctor")));
+
+		assertEquals(count, patientFileItemDAO.count());
+		assertTrue(patientFileItemDAO.existsById(uuid));
+}
+
+	@Test
+	@WithUserDetails("user") // ROLE_DOCTOR, D001
+	public void testDeletePatientFileItemUserIsReferringAndAuthorFailurePatientFileItemAndPatientFileDontMatch()
+			throws Exception {
+
+		count = patientFileItemDAO.count();
+
+		uuid = UUID.fromString("1b57e70f-8eb0-4a97-99c6-5d44f138c22c"); // P005
+
+		mockMvc.perform(delete("/patient-file/P001/item/" + uuid.toString())).andExpect(status().isNotFound())
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+				.andExpect(jsonPath("$.message", is("patient file item not found for patient file 'P001'")));
+
+		assertEquals(count, patientFileItemDAO.count());
+		assertTrue(patientFileItemDAO.existsById(uuid));
+}
+
+	@Test
+	@WithUserDetails("admin") // ROLE_ADMIN
+	public void testDeletePatientFileItemFailureBadRoleAdmin() throws Exception {
+
+		uuid = UUID.fromString("1b57e70f-8eb0-4a97-99c6-5d44f138c22c");
+
+		mockMvc.perform(delete("/patient-file/P005/item/" + uuid.toString())).andExpect(status().isForbidden());
+	}
+
+	@Test
+	@WithUserDetails("eric") // ROLE_PATIENT
+	public void testDeletePatientFileItemFailureBadRolePatient() throws Exception {
+
+		uuid = UUID.fromString("1b57e70f-8eb0-4a97-99c6-5d44f138c22c");
+
+		mockMvc.perform(delete("/patient-file/P005/item/" + uuid.toString())).andExpect(status().isForbidden());
+	}
+
+	@Test
+	@WithAnonymousUser
+	public void testDeletePatientFileItemFailureUnauthenticatedUser() throws Exception {
+
+		uuid = UUID.fromString("1b57e70f-8eb0-4a97-99c6-5d44f138c22c");
+
+		mockMvc.perform(delete("/patient-file/P005/item/" + uuid.toString())).andExpect(status().isUnauthorized());
+	}
+
+	@Test
 	@WithUserDetails("user") // D001, ROLE_DOCTOR
 	public void testFindPatientFileItemsByPatientFileIdSuccessUserIsReferringDoctor() throws Exception {
 		

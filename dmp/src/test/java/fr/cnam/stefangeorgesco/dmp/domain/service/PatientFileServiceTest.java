@@ -1117,6 +1117,18 @@ public class PatientFileServiceTest {
 	}
 
 	@Test
+	public void testDeletePatientFileItemSuccess() {
+
+		uuid = UUID.randomUUID();
+
+		doNothing().when(patientFileItemDAO).deleteById(uuid);
+
+		patientFileService.deletePatientFileItem(uuid);
+
+		verify(patientFileItemDAO, times(1)).deleteById(uuid);
+	}
+
+	@Test
 	public void testFindPatientFileItemsByPatientFileIdFound5() {
 
 		when(patientFileItemDAO.findByPatientFileId("P001"))

@@ -961,6 +961,22 @@ public class PatientFileServiceIntegrationTest {
 	}
 	
 	@Test
+	public void testDeletePatientFileItemSuccess() {
+
+		uuid = UUID.fromString("83b2f235-f183-4144-8eb8-2e4cac07d434");
+
+		count = patientFileItemDAO.count();
+
+		assertTrue(patientFileItemDAO.existsById(uuid));
+
+		patientFileService.deletePatientFileItem(uuid);
+
+		assertFalse(patientFileItemDAO.existsById(uuid));
+
+		assertEquals(count - 1, patientFileItemDAO.count());
+	}
+
+	@Test
 	public void testFindPatientFileItemSuccess() {
 		
 		uuid = UUID.fromString("142763cf-6eeb-47a5-b8f8-8ec85f0025c4");

@@ -2,6 +2,7 @@ package fr.cnam.stefangeorgesco.dmp.domain.dao;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -90,6 +91,8 @@ public class PatientFileItemDAOTest {
 	private String description;
 
 	private String id;
+
+	private UUID uuid;
 
 	@BeforeEach
 	public void setUp() {
@@ -332,6 +335,22 @@ public class PatientFileItemDAOTest {
 
 		assertEquals(comment, savedPatientFileItem.getComments());
 		assertEquals(description, ((Symptom) savedPatientFileItem).getDescription());
+	}
+	
+	@Test
+	public void testPatientFileItemDAODeleteByIdSuccess() {
+
+		uuid = UUID.fromString("c793da7f-5ca8-41f5-a0f0-1cc77b34b6fe");
+
+		count = patientFileItemDAO.count();
+
+		assertTrue(patientFileItemDAO.existsById(uuid));
+
+		patientFileItemDAO.deleteById(uuid);
+
+		assertFalse(patientFileItemDAO.existsById(uuid));
+
+		assertEquals(count - 1, patientFileItemDAO.count());
 	}
 
 	@Test
