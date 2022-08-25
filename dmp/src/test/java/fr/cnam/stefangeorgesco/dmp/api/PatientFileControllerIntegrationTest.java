@@ -269,7 +269,7 @@ public class PatientFileControllerIntegrationTest {
 		mockMvc.perform(post("/patient-file").contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(patientFileDTO))).andExpect(status().isConflict())
 				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
-				.andExpect(jsonPath("$.message", is("patient file already exists")));
+				.andExpect(jsonPath("$.message", is("Le dossier patient existe déjà.")));
 	}
 
 	@Test
@@ -564,7 +564,7 @@ public class PatientFileControllerIntegrationTest {
 		mockMvc.perform(post("/patient-file/P002/correspondence").contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(correspondenceDTO))).andExpect(status().isNotFound())
 				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
-				.andExpect(jsonPath("$.message", is("patient file not found")));
+				.andExpect(jsonPath("$.message", is("Dossier patient non trouvé.")));
 
 		assertEquals(count, correspondenceDAO.count());
 	}
@@ -578,7 +578,7 @@ public class PatientFileControllerIntegrationTest {
 		mockMvc.perform(post("/patient-file/P004/correspondence").contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(correspondenceDTO))).andExpect(status().isBadRequest())
 				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
-				.andExpect(jsonPath("$.message", is("user is not referring doctor")));
+				.andExpect(jsonPath("$.message", is("L'utilisateur n'est pas le médecin référent.")));
 
 		assertEquals(count, correspondenceDAO.count());
 	}
@@ -594,7 +594,7 @@ public class PatientFileControllerIntegrationTest {
 		mockMvc.perform(post("/patient-file/P001/correspondence").contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(correspondenceDTO))).andExpect(status().isBadRequest())
 				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
-				.andExpect(jsonPath("$.message", is("trying to create correspondence for referring doctor")));
+				.andExpect(jsonPath("$.message", is("Impossible de créer une correspondance pour le médecin référent.")));
 
 		assertEquals(count, correspondenceDAO.count());
 	}
@@ -635,7 +635,7 @@ public class PatientFileControllerIntegrationTest {
 
 		mockMvc.perform(delete("/patient-file/P001/correspondence/" + uuid.toString())).andExpect(status().isOk())
 				.andExpect(content().contentType(MediaType.APPLICATION_JSON)).andExpect(jsonPath("$.status", is(200)))
-				.andExpect(jsonPath("$.message", is("correspondence was deleted")));
+				.andExpect(jsonPath("$.message", is("La correspondance a bien été supprimée.")));
 
 		assertEquals(count - 1, correspondenceDAO.count());
 		assertFalse(correspondenceDAO.existsById(uuid));
@@ -654,7 +654,7 @@ public class PatientFileControllerIntegrationTest {
 		mockMvc.perform(delete("/patient-file/P004/correspondence/" + uuid.toString())
 				.contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(correspondenceDTO)))
 				.andExpect(status().isBadRequest()).andExpect(content().contentType(MediaType.APPLICATION_JSON))
-				.andExpect(jsonPath("$.message", is("user is not referring doctor")));
+				.andExpect(jsonPath("$.message", is("L'utilisateur n'est pas le médecin référent.")));
 
 		assertEquals(count, correspondenceDAO.count());
 		assertTrue(correspondenceDAO.existsById(uuid));
@@ -673,7 +673,7 @@ public class PatientFileControllerIntegrationTest {
 		mockMvc.perform(delete("/patient-file/P001/correspondence/" + uuid.toString())
 				.contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(correspondenceDTO)))
 				.andExpect(status().isNotFound()).andExpect(content().contentType(MediaType.APPLICATION_JSON))
-				.andExpect(jsonPath("$.message", is("correspondence not found for patient file 'P001'")));
+				.andExpect(jsonPath("$.message", is("Correspondance non trouvée pour le dossier patient 'P001'")));
 
 		assertEquals(count, correspondenceDAO.count());
 		assertTrue(correspondenceDAO.existsById(uuid));
@@ -692,7 +692,7 @@ public class PatientFileControllerIntegrationTest {
 		mockMvc.perform(delete("/patient-file/P001/correspondence/" + uuid.toString())
 				.contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(correspondenceDTO)))
 				.andExpect(status().isNotFound()).andExpect(content().contentType(MediaType.APPLICATION_JSON))
-				.andExpect(jsonPath("$.message", is("correspondence not found")));
+				.andExpect(jsonPath("$.message", is("Correspondance non trouvée.")));
 
 		assertEquals(count, correspondenceDAO.count());
 	}
@@ -773,7 +773,7 @@ public class PatientFileControllerIntegrationTest {
 
 		mockMvc.perform(get("/patient-file/P013/correspondence")).andExpect(status().isNotFound())
 				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
-				.andExpect(jsonPath("$.message", is("user is not referring nor corresponding doctor")));
+				.andExpect(jsonPath("$.message", is("L'utilisateur n'est pas le médecin référent ou correspondant.")));
 	}
 
 	@Test
@@ -783,7 +783,7 @@ public class PatientFileControllerIntegrationTest {
 
 		mockMvc.perform(get("/patient-file/P004/correspondence")).andExpect(status().isNotFound())
 				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
-				.andExpect(jsonPath("$.message", is("user is not referring nor corresponding doctor")));
+				.andExpect(jsonPath("$.message", is("L'utilisateur n'est pas le médecin référent ou correspondant.")));
 	}
 
 	@Test
@@ -861,7 +861,7 @@ public class PatientFileControllerIntegrationTest {
 
 		mockMvc.perform(get("/disease/J000")).andExpect(status().isNotFound())
 				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
-				.andExpect(jsonPath("$.message", is("disease not found")));
+				.andExpect(jsonPath("$.message", is("Maladie non trouvée.")));
 	}
 
 	@Test
@@ -974,7 +974,7 @@ public class PatientFileControllerIntegrationTest {
 
 		mockMvc.perform(get("/medical-act/H000000")).andExpect(status().isNotFound())
 				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
-				.andExpect(jsonPath("$.message", is("medical act not found")));
+				.andExpect(jsonPath("$.message", is("Acte médical non trouvé.")));
 	}
 
 	@Test
@@ -1154,7 +1154,7 @@ public class PatientFileControllerIntegrationTest {
 		mockMvc.perform(post("/patient-file/P013/item").contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(actDTO))).andExpect(status().isNotFound())
 				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
-				.andExpect(jsonPath("$.message", is("user is not referring nor corresponding doctor")));
+				.andExpect(jsonPath("$.message", is("L'utilisateur n'est pas le médecin référent ou correspondant.")));
 
 		assertEquals(count, patientFileItemDAO.count());
 	}
@@ -1176,7 +1176,7 @@ public class PatientFileControllerIntegrationTest {
 		mockMvc.perform(post("/patient-file/P004/item").contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(actDTO))).andExpect(status().isNotFound())
 				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
-				.andExpect(jsonPath("$.message", is("user is not referring nor corresponding doctor")));
+				.andExpect(jsonPath("$.message", is("L'utilisateur n'est pas le médecin référent ou correspondant.")));
 
 		assertEquals(count, patientFileItemDAO.count());
 	}
@@ -1198,7 +1198,7 @@ public class PatientFileControllerIntegrationTest {
 		mockMvc.perform(post("/patient-file/P002/item").contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(actDTO))).andExpect(status().isNotFound())
 				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
-				.andExpect(jsonPath("$.message", is("patient file not found")));
+				.andExpect(jsonPath("$.message", is("Dossier patient non trouvé.")));
 
 		assertEquals(count, patientFileItemDAO.count());
 	}
@@ -1384,7 +1384,7 @@ public class PatientFileControllerIntegrationTest {
 		mockMvc.perform(put("/patient-file/P005/item/" + uuid.toString()).contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(actDTO))).andExpect(status().isNotFound())
 				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
-				.andExpect(jsonPath("$.message", is("patient file item not found")));
+				.andExpect(jsonPath("$.message", is("Elément de dossier patient non trouvé.")));
 	}
 
 	@Test
@@ -1408,7 +1408,7 @@ public class PatientFileControllerIntegrationTest {
 				.content(objectMapper.writeValueAsString(diagnosisDTO))).andExpect(status().isConflict())
 				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
 				.andExpect(jsonPath("$.message",
-						is("user is not the author of patient file item and can not modify it")));
+						is("L'utilisateur n'est pas l'auteur de l'élément de dossier patient et ne peut pas le modifier.")));
 	}
 
 	@Test
@@ -1429,7 +1429,7 @@ public class PatientFileControllerIntegrationTest {
 		mockMvc.perform(put("/patient-file/P006/item/" + uuid.toString()).contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(prescriptionDTO))).andExpect(status().isConflict())
 				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
-				.andExpect(jsonPath("$.message", is("user is not the author of patient file item and can not modify it")));
+				.andExpect(jsonPath("$.message", is("L'utilisateur n'est pas l'auteur de l'élément de dossier patient et ne peut pas le modifier.")));
 	}
 
 	@Test
@@ -1450,7 +1450,7 @@ public class PatientFileControllerIntegrationTest {
 		mockMvc.perform(put("/patient-file/P013/item/" + uuid.toString()).contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(symptomDTO))).andExpect(status().isNotFound())
 				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
-				.andExpect(jsonPath("$.message", is("user is not referring nor corresponding doctor")));
+				.andExpect(jsonPath("$.message", is("L'utilisateur n'est pas le médecin référent ou correspondant.")));
 	}
 
 	@Test
@@ -1474,7 +1474,7 @@ public class PatientFileControllerIntegrationTest {
 				.content(objectMapper.writeValueAsString(diagnosisDTO))).andExpect(status().isNotFound())
 				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
 				.andExpect(jsonPath("$.message",
-						is("user is not referring nor corresponding doctor")));
+						is("L'utilisateur n'est pas le médecin référent ou correspondant.")));
 	}
 
 	@Test
@@ -1497,7 +1497,7 @@ public class PatientFileControllerIntegrationTest {
 		mockMvc.perform(put("/patient-file/P001/item/" + uuid.toString()).contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(actDTO))).andExpect(status().isNotFound())
 				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
-				.andExpect(jsonPath("$.message", is("patient file item not found for patient file 'P001'")));
+				.andExpect(jsonPath("$.message", is("Elément de dossier patient non trouvé pour le dossier patient 'P001'")));
 	}
 
 	@Test
@@ -1575,7 +1575,7 @@ public class PatientFileControllerIntegrationTest {
 
 		mockMvc.perform(delete("/patient-file/P005/item/" + uuid.toString())).andExpect(status().isOk())
 				.andExpect(content().contentType(MediaType.APPLICATION_JSON)).andExpect(jsonPath("$.status", is(200)))
-				.andExpect(jsonPath("$.message", is("patient file item was deleted")));
+				.andExpect(jsonPath("$.message", is("L'élément de dossier patient a bien été supprimé.")));
 
 		assertEquals(count - 1, patientFileItemDAO.count());
 		assertFalse(patientFileItemDAO.existsById(uuid));
@@ -1593,7 +1593,7 @@ public class PatientFileControllerIntegrationTest {
 
 		mockMvc.perform(delete("/patient-file/P006/item/" + uuid.toString())).andExpect(status().isOk())
 				.andExpect(content().contentType(MediaType.APPLICATION_JSON)).andExpect(jsonPath("$.status", is(200)))
-				.andExpect(jsonPath("$.message", is("patient file item was deleted")));
+				.andExpect(jsonPath("$.message", is("L'élément de dossier patient a bien été supprimé.")));
 
 		assertEquals(count - 1, patientFileItemDAO.count());
 		assertFalse(patientFileItemDAO.existsById(uuid));
@@ -1611,7 +1611,7 @@ public class PatientFileControllerIntegrationTest {
 
 		mockMvc.perform(delete("/patient-file/P005/item/" + uuid.toString())).andExpect(status().isNotFound())
 				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
-				.andExpect(jsonPath("$.message", is("patient file item not found")));
+				.andExpect(jsonPath("$.message", is("Elément de dossier patient non trouvé.")));
 
 		assertEquals(count, patientFileItemDAO.count());
 	}
@@ -1626,7 +1626,7 @@ public class PatientFileControllerIntegrationTest {
 
 		mockMvc.perform(delete("/patient-file/P005/item/" + uuid.toString())).andExpect(status().isConflict())
 				.andExpect(content().contentType(MediaType.APPLICATION_JSON)).andExpect(
-						jsonPath("$.message", is("user is not the author of patient file item and can not delete it")));
+						jsonPath("$.message", is("L'utilisateur n'est pas l'auteur de l'élément de dossier patient et ne peut pas le supprimer.")));
 
 		assertEquals(count, patientFileItemDAO.count());
 		assertTrue(patientFileItemDAO.existsById(uuid));
@@ -1642,7 +1642,7 @@ public class PatientFileControllerIntegrationTest {
 
 		mockMvc.perform(delete("/patient-file/P006/item/" + uuid.toString())).andExpect(status().isConflict())
 				.andExpect(content().contentType(MediaType.APPLICATION_JSON)).andExpect(
-						jsonPath("$.message", is("user is not the author of patient file item and can not delete it")));
+						jsonPath("$.message", is("L'utilisateur n'est pas l'auteur de l'élément de dossier patient et ne peut pas le supprimer.")));
 
 		assertEquals(count, patientFileItemDAO.count());
 		assertTrue(patientFileItemDAO.existsById(uuid));
@@ -1659,7 +1659,7 @@ public class PatientFileControllerIntegrationTest {
 
 		mockMvc.perform(delete("/patient-file/P013/item/" + uuid.toString())).andExpect(status().isNotFound())
 				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
-				.andExpect(jsonPath("$.message", is("user is not referring nor corresponding doctor")));
+				.andExpect(jsonPath("$.message", is("L'utilisateur n'est pas le médecin référent ou correspondant.")));
 
 		assertEquals(count, patientFileItemDAO.count());
 		assertTrue(patientFileItemDAO.existsById(uuid));
@@ -1675,7 +1675,7 @@ public class PatientFileControllerIntegrationTest {
 
 		mockMvc.perform(delete("/patient-file/P012/item/" + uuid.toString())).andExpect(status().isNotFound())
 				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
-				.andExpect(jsonPath("$.message", is("user is not referring nor corresponding doctor")));
+				.andExpect(jsonPath("$.message", is("L'utilisateur n'est pas le médecin référent ou correspondant.")));
 
 		assertEquals(count, patientFileItemDAO.count());
 		assertTrue(patientFileItemDAO.existsById(uuid));
@@ -1692,7 +1692,7 @@ public class PatientFileControllerIntegrationTest {
 
 		mockMvc.perform(delete("/patient-file/P001/item/" + uuid.toString())).andExpect(status().isNotFound())
 				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
-				.andExpect(jsonPath("$.message", is("patient file item not found for patient file 'P001'")));
+				.andExpect(jsonPath("$.message", is("Elément de dossier patient non trouvé pour le dossier patient 'P001'")));
 
 		assertEquals(count, patientFileItemDAO.count());
 		assertTrue(patientFileItemDAO.existsById(uuid));
@@ -1754,7 +1754,7 @@ public class PatientFileControllerIntegrationTest {
 		mockMvc.perform(get("/patient-file/P013/item"))
 		.andExpect(status().isNotFound())
 		.andExpect(content().contentType(MediaType.APPLICATION_JSON))
-		.andExpect(jsonPath("$.message", is("user is not referring nor corresponding doctor")));
+		.andExpect(jsonPath("$.message", is("L'utilisateur n'est pas le médecin référent ou correspondant.")));
 	}
 
 	@Test
@@ -1764,7 +1764,7 @@ public class PatientFileControllerIntegrationTest {
 		mockMvc.perform(get("/patient-file/P012/item"))
 		.andExpect(status().isNotFound())
 		.andExpect(content().contentType(MediaType.APPLICATION_JSON))
-		.andExpect(jsonPath("$.message", is("user is not referring nor corresponding doctor")));
+		.andExpect(jsonPath("$.message", is("L'utilisateur n'est pas le médecin référent ou correspondant.")));
 	}
 
 	@Test
@@ -1838,7 +1838,7 @@ public class PatientFileControllerIntegrationTest {
 
 		mockMvc.perform(delete("/patient-file/" + id)).andExpect(status().isOk())
 				.andExpect(content().contentType(MediaType.APPLICATION_JSON)).andExpect(jsonPath("$.status", is(200)))
-				.andExpect(jsonPath("$.message", is("patient file was deleted")));
+				.andExpect(jsonPath("$.message", is("Le dossier patient a bien été supprimé.")));
 
 		assertFalse(patientFileDAO.existsById(id));
 	}
@@ -1858,7 +1858,7 @@ public class PatientFileControllerIntegrationTest {
 
 		mockMvc.perform(delete("/patient-file/" + id)).andExpect(status().isOk())
 				.andExpect(content().contentType(MediaType.APPLICATION_JSON)).andExpect(jsonPath("$.status", is(200)))
-				.andExpect(jsonPath("$.message", is("patient file was deleted")));
+				.andExpect(jsonPath("$.message", is("Le dossier patient a bien été supprimé.")));
 
 		assertFalse(patientFileDAO.existsById(id));
 
@@ -1876,7 +1876,7 @@ public class PatientFileControllerIntegrationTest {
 		mockMvc.perform(delete("/patient-file/" + id)).andExpect(status().isConflict())
 				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
 				.andExpect(jsonPath("$.status", is(409)))
-				.andExpect(jsonPath("$.message", startsWith("patient file could not be deleted: ")));
+				.andExpect(jsonPath("$.message", startsWith("Le dossier patient n'a pas pu être supprimé : ")));
 	}
 
 	@Test

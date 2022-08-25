@@ -43,17 +43,17 @@ public class UserService {
 	public void createAccount(UserDTO userDTO) throws ApplicationException {
 
 		if (userDAO.existsById(userDTO.getId())) {
-			throw new DuplicateKeyException("user account already exists");
+			throw new DuplicateKeyException("Le compte utilisateur existe déjà.");
 		}
 		
 		if (userDAO.existsByUsername(userDTO.getUsername())) {
-			throw new DuplicateKeyException("username already exists");
+			throw new DuplicateKeyException("Le nom d'utilisateur existe déjà.");
 		};
 
 		Optional<File> optionalFile = fileDAO.findById(userDTO.getId());
 
 		if (optionalFile.isEmpty()) {
-			throw new FinderException("file does not exist");
+			throw new FinderException("Le dossier n'existe pas.");
 		}
 
 		File file = optionalFile.get();
@@ -73,7 +73,7 @@ public class UserService {
 		try {
 			userDAO.save(user);
 		} catch (RuntimeException e) {
-			throw new CreateException("user could not be created: " + e.getMessage());
+			throw new CreateException("Le compte utilisateur n'a pas pu être créé : " + e.getMessage());
 		}
 	}
 
@@ -83,7 +83,7 @@ public class UserService {
 		if (optionalUser.isPresent()) {
 			return userModelMapper.map(optionalUser.get(), UserDTO.class);
 		} else {
-			throw new FinderException("user not found");
+			throw new FinderException("Compte utilisateur non trouvé.");
 		}
 		
 	}
@@ -92,7 +92,7 @@ public class UserService {
 		try {
 			userDAO.deleteById(id);
 		} catch (Exception e) {
-			throw new DeleteException("user could not be deleted: ");
+			throw new DeleteException("Le compte utilisateur n'a pas pu être supprimé.");
 		}
 	}
 

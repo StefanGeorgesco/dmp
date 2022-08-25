@@ -49,7 +49,7 @@ public class DoctorService {
 	public DoctorDTO createDoctor(DoctorDTO doctorDTO) throws ApplicationException {
 
 		if (doctorDAO.existsById(doctorDTO.getId())) {
-			throw new DuplicateKeyException("doctor already exists");
+			throw new DuplicateKeyException("Le dossier de médecin existe déjà.");
 		}
 
 		doctorDTO.setSecurityCode(PasswordGenerator.generatePassword());
@@ -60,7 +60,7 @@ public class DoctorService {
 			if (optionalSpecialty.isPresent()) {
 				specialtyDTO.setDescription(optionalSpecialty.get().getDescription());
 			} else {
-				throw new FinderException("specialty does not exist");
+				throw new FinderException("La spécialité n'existe pas.");
 			}
 		}
 
@@ -71,7 +71,7 @@ public class DoctorService {
 		try {
 			doctorDAO.save(doctor);
 		} catch (Exception e) {
-			throw new CreateException("doctor could not be created:" + e.getMessage());
+			throw new CreateException("Le dossier de médecin n'a pas pu être créé :" + e.getMessage());
 		}
 
 		return doctorDTO;
@@ -84,7 +84,7 @@ public class DoctorService {
 		if (optionalDoctor.isPresent()) {
 			return doctorModelMapper.map(optionalDoctor.get(), DoctorDTO.class);
 		} else {
-			throw new FinderException("doctor not found");
+			throw new FinderException("Le dossier de médecin n'a pas été trouvé.");
 		}
 
 	}
@@ -103,7 +103,7 @@ public class DoctorService {
 		try {
 			doctorDAO.save(doctor);
 		} catch (Exception e) {
-			throw new UpdateException("doctor could not be updated: " + e.getMessage());
+			throw new UpdateException("Le dossier de médecin n'a pas pu être modifié : " + e.getMessage());
 		}
 
 		DoctorDTO response = doctorModelMapper.map(doctor, DoctorDTO.class);
@@ -116,13 +116,13 @@ public class DoctorService {
 		try {
 			doctorDAO.deleteById(id);
 		} catch (Exception e) {
-			throw new DeleteException("doctor could not be deleted: " + e.getMessage());
+			throw new DeleteException("Le dossier de médecin n'a pas pu être supprimé : " + e.getMessage());
 		}
 
 		try {
 			userService.deleteUser(id);
 		} catch (DeleteException e) {
-			System.out.println("no user associated to deleted doctor");
+			System.out.println("Pas de compte utilisateur associé au dossier de médecin supprimé.");
 		}
 
 	}
@@ -148,7 +148,7 @@ public class DoctorService {
 		if (optionalSpecialty.isPresent()) {
 			return commonModelMapper.map(optionalSpecialty.get(), SpecialtyDTO.class);
 		} else {
-			throw new FinderException("specialty not found");
+			throw new FinderException("Spécialité non trouvée.");
 		}
 
 	}

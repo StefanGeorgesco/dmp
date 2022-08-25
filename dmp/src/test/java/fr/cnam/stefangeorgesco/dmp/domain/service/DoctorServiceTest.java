@@ -211,7 +211,7 @@ public class DoctorServiceTest {
 		verify(doctorDAO, times(1)).existsById(doctorDTO.getId());
 		verify(doctorDAO, times(0)).save(any(Doctor.class));
 
-		assertEquals("doctor already exists", ex.getMessage());
+		assertEquals("Le dossier de médecin existe déjà.", ex.getMessage());
 	}
 
 	@Test
@@ -309,7 +309,7 @@ public class DoctorServiceTest {
 		
 		verify(doctorDAO, times(1)).findById("D001");
 		
-		assertEquals("doctor not found", ex.getMessage());
+		assertEquals("Le dossier de médecin n'a pas été trouvé.", ex.getMessage());
 	}
 	
 	@Test
@@ -343,7 +343,7 @@ public class DoctorServiceTest {
 		
 		verify(doctorDAO, times(1)).deleteById("D003");
 		verify(userService, times(0)).deleteUser("D003");
-		assertEquals("doctor could not be deleted: ...", ex.getMessage());
+		assertEquals("Le dossier de médecin n'a pas pu être supprimé : ...", ex.getMessage());
 	}
 
 	@Test
@@ -413,7 +413,7 @@ public class DoctorServiceTest {
 		
 		FinderException ex = assertThrows(FinderException.class, () -> doctorService.findSpecialty(specialty1.getId()));
 		
-		assertEquals("specialty not found", ex.getMessage());
+		assertEquals("Spécialité non trouvée.", ex.getMessage());
 	}
 	
 	@Test

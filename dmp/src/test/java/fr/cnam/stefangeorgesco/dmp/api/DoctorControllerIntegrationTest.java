@@ -187,7 +187,7 @@ public class DoctorControllerIntegrationTest {
 		mockMvc.perform(post("/doctor").contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(doctorDTO))).andExpect(status().isConflict())
 				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
-				.andExpect(jsonPath("$.message", is("doctor already exists")));
+				.andExpect(jsonPath("$.message", is("Le dossier de médecin existe déjà.")));
 	}
 
 	@Test
@@ -264,7 +264,7 @@ public class DoctorControllerIntegrationTest {
 		mockMvc.perform(post("/doctor").contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(doctorDTO))).andExpect(status().isNotFound())
 				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
-				.andExpect(jsonPath("$.message", is("specialty does not exist")));
+				.andExpect(jsonPath("$.message", is("La spécialité n'existe pas.")));
 
 		assertFalse(doctorDAO.existsById("D003"));
 	}
@@ -425,7 +425,7 @@ public class DoctorControllerIntegrationTest {
 
 		mockMvc.perform(delete("/doctor/D002")).andExpect(status().isOk())
 				.andExpect(content().contentType(MediaType.APPLICATION_JSON)).andExpect(jsonPath("$.status", is(200)))
-				.andExpect(jsonPath("$.message", is("doctor was deleted")));
+				.andExpect(jsonPath("$.message", is("Le dossier de médecin a bien été supprimé.")));
 
 		assertFalse(doctorDAO.existsById("D002"));
 	}
@@ -442,7 +442,7 @@ public class DoctorControllerIntegrationTest {
 
 		mockMvc.perform(delete("/doctor/D002")).andExpect(status().isOk())
 				.andExpect(content().contentType(MediaType.APPLICATION_JSON)).andExpect(jsonPath("$.status", is(200)))
-				.andExpect(jsonPath("$.message", is("doctor was deleted")));
+				.andExpect(jsonPath("$.message", is("Le dossier de médecin a bien été supprimé.")));
 
 		assertFalse(doctorDAO.existsById("D002"));
 
@@ -458,7 +458,7 @@ public class DoctorControllerIntegrationTest {
 		mockMvc.perform(delete("/doctor/D003")).andExpect(status().isConflict())
 				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
 				.andExpect(jsonPath("$.status", is(409)))
-				.andExpect(jsonPath("$.message", startsWith("doctor could not be deleted: ")));
+				.andExpect(jsonPath("$.message", startsWith("Le dossier de médecin n'a pas pu être supprimé : ")));
 	}
 
 	@Test
@@ -552,7 +552,7 @@ public class DoctorControllerIntegrationTest {
 
 		mockMvc.perform(get("/specialty/S103")).andExpect(status().isNotFound())
 				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
-				.andExpect(jsonPath("$.message", is("specialty not found")));
+				.andExpect(jsonPath("$.message", is("Spécialité non trouvée.")));
 	}
 
 	@Test

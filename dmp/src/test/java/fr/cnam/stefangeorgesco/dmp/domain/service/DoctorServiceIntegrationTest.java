@@ -149,7 +149,7 @@ public class DoctorServiceIntegrationTest {
 		DuplicateKeyException ex = assertThrows(DuplicateKeyException.class,
 				() -> doctorService.createDoctor(doctorDTO));
 
-		assertEquals("doctor already exists", ex.getMessage());
+		assertEquals("Le dossier de médecin existe déjà.", ex.getMessage());
 	}
 
 	@Test
@@ -228,7 +228,7 @@ public class DoctorServiceIntegrationTest {
 
 		FinderException ex = assertThrows(FinderException.class, () -> doctorService.findDoctor("D003"));
 
-		assertEquals("doctor not found", ex.getMessage());
+		assertEquals("Le dossier de médecin n'a pas été trouvé.", ex.getMessage());
 	}
 
 	@Test
@@ -266,7 +266,7 @@ public class DoctorServiceIntegrationTest {
 
 		DeleteException ex = assertThrows(DeleteException.class, () -> doctorService.deleteDoctor("D003"));
 
-		assertTrue(ex.getMessage().startsWith("doctor could not be deleted: "));
+		assertTrue(ex.getMessage().startsWith("Le dossier de médecin n'a pas pu être supprimé : "));
 	}
 
 	@Test
@@ -276,7 +276,7 @@ public class DoctorServiceIntegrationTest {
 
 		DeleteException ex = assertThrows(DeleteException.class, () -> doctorService.deleteDoctor("D001"));
 
-		assertTrue(ex.getMessage().startsWith("doctor could not be deleted: "));
+		assertTrue(ex.getMessage().startsWith("Le dossier de médecin n'a pas pu être supprimé : "));
 
 		assertTrue(doctorDAO.existsById("D001"));
 	}
@@ -329,7 +329,7 @@ public class DoctorServiceIntegrationTest {
 		
 		FinderException ex = assertThrows(FinderException.class, () -> doctorService.findSpecialty("S145"));
 		
-		assertEquals("specialty not found", ex.getMessage());
+		assertEquals("Spécialité non trouvée.", ex.getMessage());
 	}
 	
 	@Test

@@ -91,7 +91,7 @@ public class PatientFileService {
 		rnippService.checkPatientData(patientFileDTO);
 
 		if (patientFileDAO.existsById(patientFileDTO.getId())) {
-			throw new DuplicateKeyException("patient file already exists");
+			throw new DuplicateKeyException("Le dossier patient existe déjà.");
 		}
 
 		patientFileDTO.setSecurityCode(PasswordGenerator.generatePassword());
@@ -103,7 +103,7 @@ public class PatientFileService {
 		try {
 			patientFileDAO.save(patientFile);
 		} catch (Exception e) {
-			throw new CreateException("patient file could not be created: " + e.getMessage());
+			throw new CreateException("Le dossier patient n'a pas pu être créé : " + e.getMessage());
 		}
 
 		return patientFileDTO;
@@ -123,7 +123,7 @@ public class PatientFileService {
 		try {
 			patientFile = patientFileDAO.save(patientFile);
 		} catch (Exception e) {
-			throw new UpdateException("patient file could not be updated: " + e.getMessage());
+			throw new UpdateException("Le dossier patient n'a pas pu être modifié : " + e.getMessage());
 		}
 
 		PatientFileDTO response = patientFileModelMapper.map(patientFile, PatientFileDTO.class);
@@ -137,7 +137,7 @@ public class PatientFileService {
 		if (optionalPatientFile.isPresent()) {
 			return patientFileModelMapper.map(optionalPatientFile.get(), PatientFileDTO.class);
 		} else {
-			throw new FinderException("patient file not found");
+			throw new FinderException("Dossier patient non trouvé.");
 		}
 	}
 
@@ -146,7 +146,7 @@ public class PatientFileService {
 		Optional<PatientFile> optionalPatientFile = patientFileDAO.findById(patientFileDTO.getId());
 
 		if (optionalPatientFile.isEmpty()) {
-			throw new FinderException("patient file not found");
+			throw new FinderException("Dossier patient non trouvé.");
 		}
 
 		PatientFile patientFile = optionalPatientFile.get();
@@ -154,17 +154,16 @@ public class PatientFileService {
 		Optional<Doctor> optionalDoctor = doctorDAO.findById(patientFileDTO.getReferringDoctorId());
 
 		if (optionalDoctor.isEmpty()) {
-			throw new FinderException("doctor not found");
+			throw new FinderException("Dossier de médecin non trouvé.");
 		}
 
 		Doctor doctor = optionalDoctor.get();
-
 		patientFile.setReferringDoctor(doctor);
 
 		try {
 			patientFile = patientFileDAO.save(patientFile);
 		} catch (Exception e) {
-			throw new UpdateException("patient file could not be updated (referring docotor): " + e.getMessage());
+			throw new UpdateException("Le dossier patient n'a pas pu être modifié (médecin référent): " + e.getMessage());
 		}
 
 		PatientFileDTO response = patientFileModelMapper.map(patientFile, PatientFileDTO.class);
@@ -194,7 +193,7 @@ public class PatientFileService {
 		try {
 			correspondence = correspondenceDAO.save(correspondence);
 		} catch (Exception e) {
-			throw new CreateException("correspondence could not be created: " + e.getMessage());
+			throw new CreateException("La correspondance n'a pas pu être créé : " + e.getMessage());
 		}
 
 		correspondence = correspondenceDAO.findById(correspondence.getId()).get();
@@ -216,7 +215,7 @@ public class PatientFileService {
 		if (optionalCorrespondence.isPresent()) {
 			return commonModelMapper.map(optionalCorrespondence.get(), CorrespondenceDTO.class);
 		} else {
-			throw new FinderException("correspondence not found");
+			throw new FinderException("Correspondance non trouvée.");
 		}
 	}
 
@@ -238,7 +237,7 @@ public class PatientFileService {
 		if (optionalDisease.isPresent()) {
 			return commonModelMapper.map(optionalDisease.get(), DiseaseDTO.class);
 		} else {
-			throw new FinderException("disease not found");
+			throw new FinderException("Maladie non trouvée.");
 		}
 	}
 
@@ -249,7 +248,7 @@ public class PatientFileService {
 		if (optionalMedicalAct.isPresent()) {
 			return commonModelMapper.map(optionalMedicalAct.get(), MedicalActDTO.class);
 		} else {
-			throw new FinderException("medical act not found");
+			throw new FinderException("Acte médical non trouvé.");
 		}
 	}
 
@@ -288,7 +287,7 @@ public class PatientFileService {
 		try {
 			patientFileItem = patientFileItemDAO.save(patientFileItem);
 		} catch (Exception e) {
-			throw new CreateException("patient file item could not be created: " + e.getMessage());
+			throw new CreateException("L'élément de dossier patient n'a pas pu être créé : " + e.getMessage());
 		}
 
 		patientFileItem = patientFileItemDAO.findById(patientFileItem.getId()).get();
@@ -303,7 +302,7 @@ public class PatientFileService {
 		Optional<PatientFileItem> optionalPatientFileItem = patientFileItemDAO.findById(patientFileItemDTO.getId());
 
 		if (optionalPatientFileItem.isEmpty()) {
-			throw new FinderException("patient file item not found");
+			throw new FinderException("Elément de dossier patient non trouvé.");
 		}
 
 		PatientFileItem patientFileItem = optionalPatientFileItem.get();
@@ -349,7 +348,7 @@ public class PatientFileService {
 		if (optionalPatientFileItem.isPresent()) {
 			return mapperService.mapToDTO(optionalPatientFileItem.get());
 		} else {
-			throw new FinderException("patient file item not found");
+			throw new FinderException("Elément de dossier patient non trouvé.");
 		}
 	}
 
@@ -371,13 +370,13 @@ public class PatientFileService {
 		try {
 			patientFileDAO.deleteById(patientFileId);
 		} catch (Exception e) {
-			throw new DeleteException("patient file could not be deleted: " + e.getMessage());
+			throw new DeleteException("Le dossier patient n'a pas pu être supprimé : " + e.getMessage());
 		}
 		
 		try {
 			userService.deleteUser(patientFileId);
 		} catch (DeleteException e) {
-			System.out.println("no user associated to deleted patient file");
+			System.out.println("Pas de compte utilisateur associé au dossier patient supprimé");
 		}
 	}
 

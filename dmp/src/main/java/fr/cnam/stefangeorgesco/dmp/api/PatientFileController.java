@@ -104,7 +104,7 @@ public class PatientFileController {
 
 		patientFileService.deletePatientFile(id);
 
-		RestResponse response = new RestResponse(HttpStatus.OK.value(), "patient file was deleted");
+		RestResponse response = new RestResponse(HttpStatus.OK.value(), "Le dossier patient a bien été supprimé.");
 
 		return ResponseEntity.ok(response);
 	}
@@ -138,11 +138,11 @@ public class PatientFileController {
 		PatientFileDTO patientFileDTO = patientFileService.findPatientFile(id);
 
 		if (!userDTO.getId().equals(patientFileDTO.getReferringDoctorId())) {
-			throw new CreateException("user is not referring doctor");
+			throw new CreateException("L'utilisateur n'est pas le médecin référent.");
 		}
 
 		if (userDTO.getId().equals(correspondenceDTO.getDoctorId())) {
-			throw new CreateException("trying to create correspondence for referring doctor");
+			throw new CreateException("Impossible de créer une correspondance pour le médecin référent.");
 		}
 
 		correspondenceDTO.setPatientFileId(patientFileDTO.getId());
@@ -172,7 +172,7 @@ public class PatientFileController {
 				.map(CorrespondenceDTO::getDoctorId).collect(Collectors.toList()).contains(userId);
 
 		if (!userIsReferringDoctor && !userIsCorrespondingDoctor) {
-			throw new FinderException("user is not referring nor corresponding doctor");
+			throw new FinderException("L'utilisateur n'est pas le médecin référent ou correspondant.");
 		}
 
 		patientFileItemDTO.setAuthoringDoctorId(userId);
@@ -201,7 +201,7 @@ public class PatientFileController {
 				.map(CorrespondenceDTO::getDoctorId).collect(Collectors.toList()).contains(userId);
 
 		if (!userIsReferringDoctor && !userIsCorrespondingDoctor) {
-			throw new FinderException("user is not referring nor corresponding doctor");
+			throw new FinderException("L'utilisateur n'est pas le médecin référent ou correspondant.");
 		}
 
 		return ResponseEntity.ok(patientFileService.findPatientFileItemsByPatientFileId(id));
@@ -221,13 +221,13 @@ public class PatientFileController {
 		PatientFileItemDTO storedPatientFileItemDTO = patientFileService.findPatientFileItem(patientFileItemId);
 
 		if (!patienfFileId.equals(storedPatientFileItemDTO.getPatientFileId())) {
-			throw new FinderException("patient file item not found for patient file '" + patienfFileId + "'");
+			throw new FinderException("Elément de dossier patient non trouvé pour le dossier patient '" + patienfFileId + "'");
 		}
 
 		boolean userIsAuthor = userId.equals(storedPatientFileItemDTO.getAuthoringDoctorId());
 
 		if (!userIsAuthor) {
-			throw new UpdateException("user is not the author of patient file item and can not modify it");
+			throw new UpdateException("L'utilisateur n'est pas l'auteur de l'élément de dossier patient et ne peut pas le modifier.");
 		}
 
 		String referringDoctorId = patientFileService.findPatientFile(patienfFileId).getReferringDoctorId();
@@ -244,7 +244,7 @@ public class PatientFileController {
 				.map(CorrespondenceDTO::getDoctorId).collect(Collectors.toList()).contains(userId);
 
 		if (!userIsReferringDoctor && !userIsCorrespondingDoctor) {
-			throw new FinderException("user is not referring nor corresponding doctor");
+			throw new FinderException("L'utilisateur n'est pas le médecin référent ou correspondant.");
 		}
 
 		return ResponseEntity.ok(patientFileService.updatePatientFileItem(patientFileItemDTO));
@@ -261,13 +261,13 @@ public class PatientFileController {
 		PatientFileItemDTO storedPatientFileItemDTO = patientFileService.findPatientFileItem(patientFileItemId);
 
 		if (!patienfFileId.equals(storedPatientFileItemDTO.getPatientFileId())) {
-			throw new FinderException("patient file item not found for patient file '" + patienfFileId + "'");
+			throw new FinderException("Elément de dossier patient non trouvé pour le dossier patient '" + patienfFileId + "'");
 		}
 
 		boolean userIsAuthor = userId.equals(storedPatientFileItemDTO.getAuthoringDoctorId());
 
 		if (!userIsAuthor) {
-			throw new UpdateException("user is not the author of patient file item and can not delete it");
+			throw new UpdateException("L'utilisateur n'est pas l'auteur de l'élément de dossier patient et ne peut pas le supprimer.");
 		}
 
 		String referringDoctorId = patientFileService.findPatientFile(patienfFileId).getReferringDoctorId();
@@ -284,12 +284,12 @@ public class PatientFileController {
 				.map(CorrespondenceDTO::getDoctorId).collect(Collectors.toList()).contains(userId);
 
 		if (!userIsReferringDoctor && !userIsCorrespondingDoctor) {
-			throw new FinderException("user is not referring nor corresponding doctor");
+			throw new FinderException("L'utilisateur n'est pas le médecin référent ou correspondant.");
 		}
 
 		patientFileService.deletePatientFileItem(patientFileItemId);
 		
-		RestResponse response = new RestResponse(HttpStatus.OK.value(), "patient file item was deleted");
+		RestResponse response = new RestResponse(HttpStatus.OK.value(), "L'élément de dossier patient a bien été supprimé.");
 
 		return ResponseEntity.ok(response);
 
@@ -304,18 +304,18 @@ public class PatientFileController {
 		PatientFileDTO patientFileDTO = patientFileService.findPatientFile(patientFileId);
 
 		if (!userDTO.getId().equals(patientFileDTO.getReferringDoctorId())) {
-			throw new CreateException("user is not referring doctor");
+			throw new CreateException("L'utilisateur n'est pas le médecin référent.");
 		}
 
 		CorrespondenceDTO storedCorrespondenceDTO = patientFileService.findCorrespondence(correspondenceId);
 
 		if (!patientFileId.equals(storedCorrespondenceDTO.getPatientFileId())) {
-			throw new FinderException("correspondence not found for patient file '" + patientFileId + "'");
+			throw new FinderException("Correspondance non trouvée pour le dossier patient '" + patientFileId + "'");
 		}
 
 		patientFileService.deleteCorrespondence(UUID.fromString(correspondenceId));
 
-		RestResponse response = new RestResponse(HttpStatus.OK.value(), "correspondence was deleted");
+		RestResponse response = new RestResponse(HttpStatus.OK.value(), "La correspondance a bien été supprimée.");
 
 		return ResponseEntity.ok(response);
 	}
@@ -339,7 +339,7 @@ public class PatientFileController {
 				.map(CorrespondenceDTO::getDoctorId).collect(Collectors.toList()).contains(userId);
 
 		if (!userIsReferringDoctor && !userIsCorrespondingDoctor) {
-			throw new FinderException("user is not referring nor corresponding doctor");
+			throw new FinderException("L'utilisateur n'est pas le médecin référent ou correspondant.");
 		}
 
 		return ResponseEntity.ok(correspondencesDTO);

@@ -159,7 +159,7 @@ public class UserControllerIntegrationTest {
 				post("/user")
 				.contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(userDTO)))
 				.andExpect(status().isCreated()).andExpect(content().contentType(MediaType.APPLICATION_JSON))
-				.andExpect(jsonPath("$.message", is("user account was created")));
+				.andExpect(jsonPath("$.message", is("Le compte utilisateur a été créé.")));
 		
 		assertTrue(userDAO.existsById("doctorId"));
 	}
@@ -177,7 +177,7 @@ public class UserControllerIntegrationTest {
 				post("/user")
 				.contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(userDTO)))
 				.andExpect(status().isCreated()).andExpect(content().contentType(MediaType.APPLICATION_JSON))
-				.andExpect(jsonPath("$.message", is("user account was created")));
+				.andExpect(jsonPath("$.message", is("Le compte utilisateur a été créé.")));
 		
 		assertTrue(userDAO.existsById("patientFileId"));
 	}
@@ -214,7 +214,7 @@ public class UserControllerIntegrationTest {
 				post("/user")
 				.contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(userDTO)))
 				.andExpect(status().isConflict()).andExpect(content().contentType(MediaType.APPLICATION_JSON))
-				.andExpect(jsonPath("$.message", is("user account already exists")));
+				.andExpect(jsonPath("$.message", is("Le compte utilisateur existe déjà.")));
 		
 	}
 	
@@ -232,7 +232,7 @@ public class UserControllerIntegrationTest {
 				post("/user")
 				.contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(userDTO)))
 				.andExpect(status().isConflict()).andExpect(content().contentType(MediaType.APPLICATION_JSON))
-				.andExpect(jsonPath("$.message", is("username already exists")));
+				.andExpect(jsonPath("$.message", is("Le nom d'utilisateur existe déjà.")));
 		
 	}
 	
@@ -248,7 +248,7 @@ public class UserControllerIntegrationTest {
 				post("/user")
 				.contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(userDTO)))
 				.andExpect(status().isNotFound()).andExpect(content().contentType(MediaType.APPLICATION_JSON))
-				.andExpect(jsonPath("$.message", is("file does not exist")));
+				.andExpect(jsonPath("$.message", is("Le dossier n'existe pas.")));
 		
 		assertFalse(userDAO.existsById("patientFileId"));
 	}

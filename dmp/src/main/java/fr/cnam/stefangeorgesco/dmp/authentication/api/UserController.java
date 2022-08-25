@@ -25,7 +25,7 @@ public class UserController {
 		
 		userService.createAccount(userDTO);
 		
-		RestResponse response = new RestResponse(HttpStatus.CREATED.value(), "user account was created");
+		RestResponse response = new RestResponse(HttpStatus.CREATED.value(), "Le compte utilisateur a été créé.");
 		
 		return ResponseEntity.status(HttpStatus.CREATED).body(response);
 	}

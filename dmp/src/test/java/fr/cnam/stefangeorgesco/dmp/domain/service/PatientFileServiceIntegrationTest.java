@@ -252,7 +252,7 @@ public class PatientFileServiceIntegrationTest {
 		DuplicateKeyException ex = assertThrows(DuplicateKeyException.class,
 				() -> patientFileService.createPatientFile(patientFileDTO));
 
-		assertEquals("patient file already exists", ex.getMessage());
+		assertEquals("Le dossier patient existe déjà.", ex.getMessage());
 	}
 
 	@Test
@@ -315,7 +315,7 @@ public class PatientFileServiceIntegrationTest {
 
 		FinderException ex = assertThrows(FinderException.class, () -> patientFileService.findPatientFile("P002"));
 
-		assertEquals("patient file not found", ex.getMessage());
+		assertEquals("Dossier patient non trouvé.", ex.getMessage());
 	}
 
 	@Test
@@ -342,7 +342,7 @@ public class PatientFileServiceIntegrationTest {
 		FinderException ex = assertThrows(FinderException.class,
 				() -> patientFileService.updateReferringDoctor(patientFileDTO));
 
-		assertEquals("patient file not found", ex.getMessage());
+		assertEquals("Dossier patient non trouvé.", ex.getMessage());
 	}
 
 	@Test
@@ -356,7 +356,7 @@ public class PatientFileServiceIntegrationTest {
 		FinderException ex = assertThrows(FinderException.class,
 				() -> patientFileService.updateReferringDoctor(patientFileDTO));
 
-		assertEquals("doctor not found", ex.getMessage());
+		assertEquals("Dossier de médecin non trouvé.", ex.getMessage());
 	}
 
 	@Test
@@ -430,7 +430,7 @@ public class PatientFileServiceIntegrationTest {
 		CreateException ex = assertThrows(CreateException.class,
 				() -> patientFileService.createCorrespondence(correspondenceDTO));
 
-		assertTrue(ex.getMessage().startsWith("correspondence could not be created: "));
+		assertTrue(ex.getMessage().startsWith("La correspondance n'a pas pu être créé : "));
 
 		assertEquals(count, correspondenceDAO.count());
 	}
@@ -445,7 +445,7 @@ public class PatientFileServiceIntegrationTest {
 		CreateException ex = assertThrows(CreateException.class,
 				() -> patientFileService.createCorrespondence(correspondenceDTO));
 
-		assertTrue(ex.getMessage().startsWith("correspondence could not be created: "));
+		assertTrue(ex.getMessage().startsWith("La correspondance n'a pas pu être créé : "));
 
 		assertEquals(count, correspondenceDAO.count());
 	}
@@ -494,7 +494,7 @@ public class PatientFileServiceIntegrationTest {
 		FinderException ex = assertThrows(FinderException.class,
 				() -> patientFileService.findCorrespondence(uuid.toString()));
 
-		assertEquals("correspondence not found", ex.getMessage());
+		assertEquals("Correspondance non trouvée.", ex.getMessage());
 	}
 
 	@Test
@@ -530,7 +530,7 @@ public class PatientFileServiceIntegrationTest {
 
 		FinderException ex = assertThrows(FinderException.class, () -> patientFileService.findDisease("J000"));
 
-		assertEquals("disease not found", ex.getMessage());
+		assertEquals("Maladie non trouvée.", ex.getMessage());
 	}
 
 	@Test
@@ -548,7 +548,7 @@ public class PatientFileServiceIntegrationTest {
 
 		FinderException ex = assertThrows(FinderException.class, () -> patientFileService.findMedicalAct("H000000"));
 
-		assertEquals("medical act not found", ex.getMessage());
+		assertEquals("Acte médical non trouvé.", ex.getMessage());
 	}
 
 	@Test
@@ -649,7 +649,7 @@ public class PatientFileServiceIntegrationTest {
 		CreateException ex = assertThrows(CreateException.class,
 				() -> patientFileService.createPatientFileItem(prescriptionDTO));
 
-		assertTrue(ex.getMessage().startsWith("patient file item could not be created: "));
+		assertTrue(ex.getMessage().startsWith("L'élément de dossier patient n'a pas pu être créé : "));
 
 		assertEquals(count, patientFileItemDAO.count());
 	}
@@ -740,7 +740,7 @@ public class PatientFileServiceIntegrationTest {
 		FinderException ex = assertThrows(FinderException.class,
 				() -> patientFileService.updatePatientFileItem(actDTO));
 		
-		assertTrue(ex.getMessage().contains("patient file item not found"));
+		assertTrue(ex.getMessage().contains("Elément de dossier patient non trouvé."));
 	}
 
 	@Test
@@ -1006,7 +1006,7 @@ public class PatientFileServiceIntegrationTest {
 		
 		FinderException ex = assertThrows(FinderException.class, () -> patientFileService.findPatientFileItem(uuid));
 		
-		assertEquals("patient file item not found", ex.getMessage());
+		assertEquals("Elément de dossier patient non trouvé.", ex.getMessage());
 	}
 	
 	@Test
@@ -1100,7 +1100,7 @@ public class PatientFileServiceIntegrationTest {
 		
 		DeleteException ex = assertThrows(DeleteException.class, () -> patientFileService.deletePatientFile(id));
 		
-		assertTrue(ex.getMessage().startsWith("patient file could not be deleted"));
+		assertTrue(ex.getMessage().startsWith("Le dossier patient n'a pas pu être supprimé"));
 	}
 
 }

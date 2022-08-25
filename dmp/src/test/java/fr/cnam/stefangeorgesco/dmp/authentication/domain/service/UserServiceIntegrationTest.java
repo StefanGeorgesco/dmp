@@ -175,7 +175,7 @@ public class UserServiceIntegrationTest {
 		userDAO.save(user);
 
 		DuplicateKeyException ex = assertThrows(DuplicateKeyException.class, () -> userService.createAccount(userDTO));
-		assertEquals("user account already exists", ex.getMessage());
+		assertEquals("Le compte utilisateur existe déjà.", ex.getMessage());
 	}
 
 	@Test
@@ -192,7 +192,7 @@ public class UserServiceIntegrationTest {
 		userDTO.setSecurityCode("7890");
 
 		DuplicateKeyException ex = assertThrows(DuplicateKeyException.class, () -> userService.createAccount(userDTO));
-		assertEquals("user account already exists", ex.getMessage());
+		assertEquals("Le compte utilisateur existe déjà.", ex.getMessage());
 	}
 
 	@Test
@@ -206,7 +206,7 @@ public class UserServiceIntegrationTest {
 		userDAO.save(user);
 
 		DuplicateKeyException ex = assertThrows(DuplicateKeyException.class, () -> userService.createAccount(userDTO));
-		assertEquals("username already exists", ex.getMessage());
+		assertEquals("Le nom d'utilisateur existe déjà.", ex.getMessage());
 	}
 
 	@Test
@@ -223,7 +223,7 @@ public class UserServiceIntegrationTest {
 		userDTO.setSecurityCode("7890");
 
 		DuplicateKeyException ex = assertThrows(DuplicateKeyException.class, () -> userService.createAccount(userDTO));
-		assertEquals("username already exists", ex.getMessage());
+		assertEquals("Le nom d'utilisateur existe déjà.", ex.getMessage());
 	}
 
 	@Test
@@ -284,7 +284,7 @@ public class UserServiceIntegrationTest {
 	public void testFindUserByUsernameFailureUserDoesNotExist() {
 		FinderException ex = assertThrows(FinderException.class, () -> userService.findUserByUsername("user0"));
 
-		assertEquals("user not found", ex.getMessage());
+		assertEquals("Compte utilisateur non trouvé.", ex.getMessage());
 	}
 	
 	@Test
@@ -302,7 +302,7 @@ public class UserServiceIntegrationTest {
 		
 		DeleteException ex = assertThrows(DeleteException.class, () -> userService.deleteUser("D002"));
 		
-		assertTrue(ex.getMessage().startsWith("user could not be deleted: "));
+		assertTrue(ex.getMessage().startsWith("Le compte utilisateur n'a pas pu être supprimé."));
 	}
 
 }

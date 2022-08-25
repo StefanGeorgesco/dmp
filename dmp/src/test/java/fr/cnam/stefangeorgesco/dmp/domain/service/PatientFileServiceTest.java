@@ -429,7 +429,7 @@ public class PatientFileServiceTest {
 		verify(patientFileDAO, times(1)).existsById(patientFileDTO.getId());
 		verify(patientFileDAO, times(0)).save(any(PatientFile.class));
 
-		assertEquals("patient file already exists", ex.getMessage());
+		assertEquals("Le dossier patient existe déjà.", ex.getMessage());
 	}
 
 	@Test
@@ -501,7 +501,7 @@ public class PatientFileServiceTest {
 
 		verify(patientFileDAO, times(1)).findById("P003");
 
-		assertEquals("patient file not found", ex.getMessage());
+		assertEquals("Dossier patient non trouvé.", ex.getMessage());
 	}
 
 	@Test
@@ -546,7 +546,7 @@ public class PatientFileServiceTest {
 
 		verify(patientFileItemDAO, times(1)).findById(uuid);
 
-		assertEquals("patient file item not found", ex.getMessage());
+		assertEquals("Elément de dossier patient non trouvé.", ex.getMessage());
 	}
 
 	@Test
@@ -619,7 +619,7 @@ public class PatientFileServiceTest {
 		verify(doctorDAO, times(0)).findById(patientFileDTO.getReferringDoctorId());
 		verify(patientFileDAO, times(0)).save(any(PatientFile.class));
 
-		assertEquals("patient file not found", ex.getMessage());
+		assertEquals("Dossier patient non trouvé.", ex.getMessage());
 	}
 
 	@Test
@@ -636,7 +636,7 @@ public class PatientFileServiceTest {
 		verify(doctorDAO, times(1)).findById(patientFileDTO.getReferringDoctorId());
 		verify(patientFileDAO, times(0)).save(any(PatientFile.class));
 
-		assertEquals("doctor not found", ex.getMessage());
+		assertEquals("Dossier de médecin non trouvé.", ex.getMessage());
 	}
 
 	@Test
@@ -763,7 +763,7 @@ public class PatientFileServiceTest {
 
 		verify(correspondenceDAO, times(1)).findById(uuid);
 
-		assertEquals("correspondence not found", ex.getMessage());
+		assertEquals("Correspondance non trouvée.", ex.getMessage());
 	}
 
 	@Test
@@ -1201,7 +1201,7 @@ public class PatientFileServiceTest {
 		verify(patientFileItemDAO, times(1)).deleteAllByPatientFileId("P001");
 		verify(patientFileDAO, times(1)).deleteById("P001");
 		verify(userService, times(0)).deleteUser("P001");
-		assertEquals("patient file could not be deleted: ...", ex.getMessage());
+		assertEquals("Le dossier patient n'a pas pu être supprimé : ...", ex.getMessage());
 	}
 	
 }

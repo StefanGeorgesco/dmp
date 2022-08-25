@@ -72,7 +72,7 @@ public class DoctorController {
 
 		doctorService.deleteDoctor(id);
 
-		RestResponse response = new RestResponse(HttpStatus.OK.value(), "doctor was deleted");
+		RestResponse response = new RestResponse(HttpStatus.OK.value(), "Le dossier de médecin a bien été supprimé.");
 
 		return ResponseEntity.ok(response);
 	}

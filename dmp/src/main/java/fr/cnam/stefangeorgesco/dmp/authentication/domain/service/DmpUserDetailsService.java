@@ -25,7 +25,7 @@ public class DmpUserDetailsService implements UserDetailsService {
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		Optional<User> optionalUser = userDAO.findByUsername(username);
 		if (optionalUser.isEmpty()) {
-			throw new UsernameNotFoundException("User details not found for the user : " + username);
+			throw new UsernameNotFoundException("Pas d'utilisateur trouvé pour le nom d'utilisateur : " + username);
 		}
 
 		User user = optionalUser.get();

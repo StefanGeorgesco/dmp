@@ -129,7 +129,7 @@ public class UserServiceTest {
 		
 		DuplicateKeyException ex = assertThrows(DuplicateKeyException.class, () -> userService.createAccount(userDTO));
 		
-		assertEquals("user account already exists", ex.getMessage());
+		assertEquals("Le compte utilisateur existe déjà.", ex.getMessage());
 		verify(userDAO, times(0)).save(any(User.class));
 	}
 	
@@ -139,7 +139,7 @@ public class UserServiceTest {
 		
 		DuplicateKeyException ex = assertThrows(DuplicateKeyException.class, () -> userService.createAccount(userDTO));
 		
-		assertEquals("username already exists", ex.getMessage());
+		assertEquals("Le nom d'utilisateur existe déjà.", ex.getMessage());
 		verify(userDAO, times(0)).save(any(User.class));
 	}
 	
@@ -150,7 +150,7 @@ public class UserServiceTest {
 		
 		FinderException ex = assertThrows(FinderException.class, () -> userService.createAccount(userDTO));
 		
-		assertEquals("file does not exist", ex.getMessage());
+		assertEquals("Le dossier n'existe pas.", ex.getMessage());
 		verify(userDAO, times(0)).save(any(User.class));
 	}
 	
