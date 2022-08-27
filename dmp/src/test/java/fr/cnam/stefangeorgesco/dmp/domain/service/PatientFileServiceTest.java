@@ -1163,7 +1163,7 @@ public class PatientFileServiceTest {
 		when(correspondenceDAO.deleteAllByPatientFileId("P001")).thenReturn(3);
 		when(patientFileItemDAO.deleteAllByPatientFileId("P001")).thenReturn(9);
 		doNothing().when(patientFileDAO).deleteById("P001");
-		doThrow(new DeleteException("user could not be deleted")).when(userService).deleteUser("P001");
+		doThrow(new DeleteException("")).when(userService).deleteUser("P001");
 
 		assertDoesNotThrow(() -> patientFileService.deletePatientFile("P001"));
 
@@ -1192,8 +1192,8 @@ public class PatientFileServiceTest {
 	public void testDeletePatientFileFailurePatientFileDoesNotExist() throws DeleteException {
 		when(correspondenceDAO.deleteAllByPatientFileId("P001")).thenReturn(0);
 		when(patientFileItemDAO.deleteAllByPatientFileId("P001")).thenReturn(0);
-		doThrow(new RuntimeException("...")).when(patientFileDAO).deleteById("P001");
-		doThrow(new DeleteException("user could not be deleted")).when(userService).deleteUser("P001");
+		doThrow(new RuntimeException("")).when(patientFileDAO).deleteById("P001");
+		doThrow(new DeleteException("")).when(userService).deleteUser("P001");
 
 		DeleteException ex = assertThrows(DeleteException.class, () -> patientFileService.deletePatientFile("P001"));
 
@@ -1201,7 +1201,7 @@ public class PatientFileServiceTest {
 		verify(patientFileItemDAO, times(1)).deleteAllByPatientFileId("P001");
 		verify(patientFileDAO, times(1)).deleteById("P001");
 		verify(userService, times(0)).deleteUser("P001");
-		assertEquals("Le dossier patient n'a pas pu être supprimé : ...", ex.getMessage());
+		assertEquals("Le dossier patient n'a pas pu être supprimé.", ex.getMessage());
 	}
 	
 }

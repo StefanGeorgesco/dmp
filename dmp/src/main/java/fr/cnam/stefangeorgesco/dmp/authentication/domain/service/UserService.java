@@ -73,7 +73,7 @@ public class UserService {
 		try {
 			userDAO.save(user);
 		} catch (RuntimeException e) {
-			throw new CreateException("Le compte utilisateur n'a pas pu être créé : " + e.getMessage());
+			throw new CreateException("Le compte utilisateur n'a pas pu être créé.");
 		}
 	}
 

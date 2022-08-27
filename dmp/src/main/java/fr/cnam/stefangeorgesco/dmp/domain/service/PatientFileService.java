@@ -103,7 +103,7 @@ public class PatientFileService {
 		try {
 			patientFileDAO.save(patientFile);
 		} catch (Exception e) {
-			throw new CreateException("Le dossier patient n'a pas pu être créé : " + e.getMessage());
+			throw new CreateException("Le dossier patient n'a pas pu être créé.");
 		}
 
 		return patientFileDTO;
@@ -123,7 +123,7 @@ public class PatientFileService {
 		try {
 			patientFile = patientFileDAO.save(patientFile);
 		} catch (Exception e) {
-			throw new UpdateException("Le dossier patient n'a pas pu être modifié : " + e.getMessage());
+			throw new UpdateException("Le dossier patient n'a pas pu être modifié.");
 		}
 
 		PatientFileDTO response = patientFileModelMapper.map(patientFile, PatientFileDTO.class);
@@ -163,7 +163,7 @@ public class PatientFileService {
 		try {
 			patientFile = patientFileDAO.save(patientFile);
 		} catch (Exception e) {
-			throw new UpdateException("Le dossier patient n'a pas pu être modifié (médecin référent): " + e.getMessage());
+			throw new UpdateException("Le dossier patient n'a pas pu être modifié (médecin référent).");
 		}
 
 		PatientFileDTO response = patientFileModelMapper.map(patientFile, PatientFileDTO.class);
@@ -193,7 +193,7 @@ public class PatientFileService {
 		try {
 			correspondence = correspondenceDAO.save(correspondence);
 		} catch (Exception e) {
-			throw new CreateException("La correspondance n'a pas pu être créé : " + e.getMessage());
+			throw new CreateException("La correspondance n'a pas pu être créé.");
 		}
 
 		correspondence = correspondenceDAO.findById(correspondence.getId()).get();
@@ -287,7 +287,7 @@ public class PatientFileService {
 		try {
 			patientFileItem = patientFileItemDAO.save(patientFileItem);
 		} catch (Exception e) {
-			throw new CreateException("L'élément de dossier patient n'a pas pu être créé : " + e.getMessage());
+			throw new CreateException("L'élément de dossier patient n'a pas pu être créé.");
 		}
 
 		patientFileItem = patientFileItemDAO.findById(patientFileItem.getId()).get();
@@ -328,7 +328,7 @@ public class PatientFileService {
 		try {
 			patientFileItem = patientFileItemDAO.save(patientFileItem);
 		} catch (Exception e) {
-			throw new UpdateException("patient file item could not be updated: " + e.getMessage());
+			throw new UpdateException("L'élément de dossier patient n'a pas pu être modifié.");
 		}
 
 		PatientFileItemDTO response = mapperService.mapToDTO(patientFileItem);
@@ -370,7 +370,7 @@ public class PatientFileService {
 		try {
 			patientFileDAO.deleteById(patientFileId);
 		} catch (Exception e) {
-			throw new DeleteException("Le dossier patient n'a pas pu être supprimé : " + e.getMessage());
+			throw new DeleteException("Le dossier patient n'a pas pu être supprimé.");
 		}
 		
 		try {

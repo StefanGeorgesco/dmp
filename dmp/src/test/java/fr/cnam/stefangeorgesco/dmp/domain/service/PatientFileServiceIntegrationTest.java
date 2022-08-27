@@ -430,7 +430,7 @@ public class PatientFileServiceIntegrationTest {
 		CreateException ex = assertThrows(CreateException.class,
 				() -> patientFileService.createCorrespondence(correspondenceDTO));
 
-		assertTrue(ex.getMessage().startsWith("La correspondance n'a pas pu être créé : "));
+		assertEquals("La correspondance n'a pas pu être créé.", ex.getMessage());
 
 		assertEquals(count, correspondenceDAO.count());
 	}
@@ -445,7 +445,7 @@ public class PatientFileServiceIntegrationTest {
 		CreateException ex = assertThrows(CreateException.class,
 				() -> patientFileService.createCorrespondence(correspondenceDTO));
 
-		assertTrue(ex.getMessage().startsWith("La correspondance n'a pas pu être créé : "));
+		assertEquals("La correspondance n'a pas pu être créé.", ex.getMessage());
 
 		assertEquals(count, correspondenceDAO.count());
 	}
@@ -649,7 +649,7 @@ public class PatientFileServiceIntegrationTest {
 		CreateException ex = assertThrows(CreateException.class,
 				() -> patientFileService.createPatientFileItem(prescriptionDTO));
 
-		assertTrue(ex.getMessage().startsWith("L'élément de dossier patient n'a pas pu être créé : "));
+		assertEquals("L'élément de dossier patient n'a pas pu être créé.", ex.getMessage());
 
 		assertEquals(count, patientFileItemDAO.count());
 	}
@@ -715,7 +715,7 @@ public class PatientFileServiceIntegrationTest {
 		UpdateException ex = assertThrows(UpdateException.class,
 				() -> patientFileService.updatePatientFileItem(actDTO));
 		
-		assertTrue(ex.getMessage().contains("patient file item could not be updated"));
+		assertEquals("L'élément de dossier patient n'a pas pu être modifié.", ex.getMessage());
 	}
 
 	@Test
@@ -1100,7 +1100,7 @@ public class PatientFileServiceIntegrationTest {
 		
 		DeleteException ex = assertThrows(DeleteException.class, () -> patientFileService.deletePatientFile(id));
 		
-		assertTrue(ex.getMessage().startsWith("Le dossier patient n'a pas pu être supprimé"));
+		assertEquals("Le dossier patient n'a pas pu être supprimé.", ex.getMessage());
 	}
 
 }

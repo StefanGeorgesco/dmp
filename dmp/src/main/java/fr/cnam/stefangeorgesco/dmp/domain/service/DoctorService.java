@@ -71,7 +71,7 @@ public class DoctorService {
 		try {
 			doctorDAO.save(doctor);
 		} catch (Exception e) {
-			throw new CreateException("Le dossier de médecin n'a pas pu être créé :" + e.getMessage());
+			throw new CreateException("Le dossier de médecin n'a pas pu être créé.");
 		}
 
 		return doctorDTO;
@@ -103,7 +103,7 @@ public class DoctorService {
 		try {
 			doctorDAO.save(doctor);
 		} catch (Exception e) {
-			throw new UpdateException("Le dossier de médecin n'a pas pu être modifié : " + e.getMessage());
+			throw new UpdateException("Le dossier de médecin n'a pas pu être modifié.");
 		}
 
 		DoctorDTO response = doctorModelMapper.map(doctor, DoctorDTO.class);
@@ -116,7 +116,7 @@ public class DoctorService {
 		try {
 			doctorDAO.deleteById(id);
 		} catch (Exception e) {
-			throw new DeleteException("Le dossier de médecin n'a pas pu être supprimé : " + e.getMessage());
+			throw new DeleteException("Le dossier de médecin n'a pas pu être supprimé.");
 		}
 
 		try {

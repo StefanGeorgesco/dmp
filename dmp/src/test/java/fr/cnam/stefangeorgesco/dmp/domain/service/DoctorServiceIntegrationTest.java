@@ -266,7 +266,7 @@ public class DoctorServiceIntegrationTest {
 
 		DeleteException ex = assertThrows(DeleteException.class, () -> doctorService.deleteDoctor("D003"));
 
-		assertTrue(ex.getMessage().startsWith("Le dossier de médecin n'a pas pu être supprimé : "));
+		assertEquals("Le dossier de médecin n'a pas pu être supprimé.", ex.getMessage());
 	}
 
 	@Test
@@ -276,7 +276,7 @@ public class DoctorServiceIntegrationTest {
 
 		DeleteException ex = assertThrows(DeleteException.class, () -> doctorService.deleteDoctor("D001"));
 
-		assertTrue(ex.getMessage().startsWith("Le dossier de médecin n'a pas pu être supprimé : "));
+		assertEquals("Le dossier de médecin n'a pas pu être supprimé.", ex.getMessage());
 
 		assertTrue(doctorDAO.existsById("D001"));
 	}

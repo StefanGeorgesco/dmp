@@ -3,7 +3,6 @@ package fr.cnam.stefangeorgesco.dmp.api;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.Matchers.hasLength;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -1876,7 +1875,7 @@ public class PatientFileControllerIntegrationTest {
 		mockMvc.perform(delete("/patient-file/" + id)).andExpect(status().isConflict())
 				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
 				.andExpect(jsonPath("$.status", is(409)))
-				.andExpect(jsonPath("$.message", startsWith("Le dossier patient n'a pas pu être supprimé : ")));
+				.andExpect(jsonPath("$.message", is("Le dossier patient n'a pas pu être supprimé.")));
 	}
 
 	@Test

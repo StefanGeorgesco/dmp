@@ -315,7 +315,7 @@ public class DoctorServiceTest {
 	@Test
 	public void testDeleteDoctorSuccessNoUser() throws DeleteException {
 		doNothing().when(doctorDAO).deleteById("D002");
-		doThrow(new DeleteException("user could not be deleted")).when(userService).deleteUser("D002");
+		doThrow(new DeleteException("")).when(userService).deleteUser("D002");
 		
 		assertDoesNotThrow(() -> doctorService.deleteDoctor("D002"));
 		
@@ -336,14 +336,14 @@ public class DoctorServiceTest {
 	
 	@Test
 	public void testDeleteDoctorFailureDoctorDoesNotExist() throws DeleteException {
-		doThrow(new RuntimeException("...")).when(doctorDAO).deleteById("D003");
-		doThrow(new DeleteException("user could not be deleted")).when(userService).deleteUser("D003");
+		doThrow(new RuntimeException("")).when(doctorDAO).deleteById("D003");
+		doThrow(new DeleteException("")).when(userService).deleteUser("D003");
 		
 		DeleteException ex = assertThrows(DeleteException.class, () -> doctorService.deleteDoctor("D003"));
 		
 		verify(doctorDAO, times(1)).deleteById("D003");
 		verify(userService, times(0)).deleteUser("D003");
-		assertEquals("Le dossier de médecin n'a pas pu être supprimé : ...", ex.getMessage());
+		assertEquals("Le dossier de médecin n'a pas pu être supprimé.", ex.getMessage());
 	}
 
 	@Test

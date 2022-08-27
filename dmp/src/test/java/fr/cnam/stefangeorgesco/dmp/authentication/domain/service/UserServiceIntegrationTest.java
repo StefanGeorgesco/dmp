@@ -302,7 +302,7 @@ public class UserServiceIntegrationTest {
 		
 		DeleteException ex = assertThrows(DeleteException.class, () -> userService.deleteUser("D002"));
 		
-		assertTrue(ex.getMessage().startsWith("Le compte utilisateur n'a pas pu être supprimé."));
+		assertEquals("Le compte utilisateur n'a pas pu être supprimé.", ex.getMessage());
 	}
 
 }
