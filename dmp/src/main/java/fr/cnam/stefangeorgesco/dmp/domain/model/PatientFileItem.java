@@ -31,20 +31,20 @@ public abstract class PatientFileItem {
 	@Type(type="org.hibernate.type.UUIDCharType")
     private UUID id;
 
-	@NotNull(message = "patient file date is mandatory")
-	@PastOrPresent(message = "patient file item date must be in the past or today")
+	@NotNull(message = "La date de l'élément de dossier patient est obligatoire.")
+	@PastOrPresent(message = "La date de l'élément de dossier patient doit être dans le passé ou aujourd'hui.")
 	private LocalDate date;
 	
 	private String comments;
 	
 	@ManyToOne
 	@JoinColumn(name = "authoring_doctor_id")
-	@NotNull(message = "authoring doctor is mandatory")
+	@NotNull(message = "Le médecin auteur est obligatoire.")
 	private Doctor authoringDoctor;
 	
 	@ManyToOne
 	@JoinColumn(name = "patient_file_id")
-	@NotNull(message = "patient file is mandatory")
+	@NotNull(message = "Le dossier patient est obligatoire.")
 	private PatientFile patientFile;
 
 }

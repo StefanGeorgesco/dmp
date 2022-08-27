@@ -9,7 +9,7 @@ import lombok.Setter;
 @Setter
 public class SpecialtyDTO {
 	
-	@NotBlank(message = "id is mandatory")
+	@NotBlank(message = "L'identifiant est obligatoire.")
 	private String id;
 	
 	private String description;

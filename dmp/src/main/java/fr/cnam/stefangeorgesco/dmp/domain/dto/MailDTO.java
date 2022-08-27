@@ -10,10 +10,10 @@ import lombok.Setter;
 @Setter
 public class MailDTO extends PatientFileItemDTO {
 
-	@NotBlank(message = "mail text is mandatory")
+	@NotBlank(message = "Le texte du courrier est obligatoire.")
 	String text;
 
-	@NotBlank(message = "recipient doctor id is mandatory")
+	@NotBlank(message = "L'identifiant du médecin destinataire est obligatoire.")
 	private String recipientDoctorId;
 
 	private String recipientDoctorFirstname;

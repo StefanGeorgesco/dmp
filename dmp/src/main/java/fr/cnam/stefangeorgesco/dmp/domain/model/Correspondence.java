@@ -30,18 +30,18 @@ public class Correspondence {
     private UUID id;
 
 	@Column(name = "date_until")
-	@NotNull(message = "correspondence date is mandatory")
-	@Future(message = "correpondance date must be in the future")
+	@NotNull(message = "La date de la correspondance est obligatoire.")
+	@Future(message = "La date de la correspondance doit être dans le futur.")
 	private LocalDate dateUntil;
 
 	@ManyToOne
 	@JoinColumn(name = "doctor_id")
-	@NotNull(message = "doctor is mandatory")
+	@NotNull(message = "L'identifiant du médecin est obligatoire.")
 	private Doctor doctor;
 
 	@ManyToOne
 	@JoinColumn(name = "patient_file_id")
-	@NotNull(message = "patient file is mandatory")
+	@NotNull(message = "Le dossier patient est obligatoire.")
 	private PatientFile patientFile;
 
 }

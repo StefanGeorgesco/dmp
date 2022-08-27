@@ -50,7 +50,7 @@ public class UserTest {
 		Set<ConstraintViolation<User>> violations = validator.validate(user);
 
 		assertEquals(1, violations.size());
-		assertEquals("id is mandatory", violations.iterator().next().getMessage());
+		assertEquals("L'identifiant est obligatoire.", violations.iterator().next().getMessage());
 
 	}
 
@@ -62,7 +62,7 @@ public class UserTest {
 		Set<ConstraintViolation<User>> violations = validator.validate(user);
 
 		assertEquals(1, violations.size());
-		assertEquals("username is mandatory", violations.iterator().next().getMessage());
+		assertEquals("Le non utilisateur est obligatoire.", violations.iterator().next().getMessage());
 
 	}
 	
@@ -74,7 +74,7 @@ public class UserTest {
 		Set<ConstraintViolation<User>> violations = validator.validate(user);
 
 		assertEquals(1, violations.size());
-		assertEquals("password should at least be 4 characters long", violations.iterator().next().getMessage());
+		assertEquals("Le mot de passe doit contenir au moins 4 caractères.", violations.iterator().next().getMessage());
 
 	}
 	
@@ -86,7 +86,7 @@ public class UserTest {
 		Set<ConstraintViolation<User>> violations = validator.validate(user);
 
 		assertEquals(1, violations.size());
-		assertEquals("id is mandatory", violations.iterator().next().getMessage());
+		assertEquals("L'identifiant est obligatoire.", violations.iterator().next().getMessage());
 
 	}
 
@@ -98,7 +98,7 @@ public class UserTest {
 		Set<ConstraintViolation<User>> violations = validator.validate(user);
 
 		assertEquals(1, violations.size());
-		assertEquals("username is mandatory", violations.iterator().next().getMessage());
+		assertEquals("Le non utilisateur est obligatoire.", violations.iterator().next().getMessage());
 
 	}
 	
@@ -110,7 +110,7 @@ public class UserTest {
 		Set<ConstraintViolation<User>> violations = validator.validate(user);
 
 		assertEquals(1, violations.size());
-		assertEquals("password is mandatory", violations.iterator().next().getMessage());
+		assertEquals("Le mot de passe est obligatoire.", violations.iterator().next().getMessage());
 
 	}
 	

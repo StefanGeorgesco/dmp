@@ -156,13 +156,13 @@ public class UserServiceTest {
 	
 	@Test
 	public void testCreateDoctorAccountFailureCheckUserDataError() throws CheckException {
-		doThrow(new CheckException("data did not match")).when(doctor).checkUserData(userCaptor.capture(), any(PasswordEncoder.class));
+		doThrow(new CheckException("Les données ne correspondent pas.")).when(doctor).checkUserData(userCaptor.capture(), any(PasswordEncoder.class));
 		when(userDAO.existsById(userDTO.getId())).thenReturn(false);
 		when(fileDAO.findById(userDTO.getId())).thenReturn(Optional.of(doctor));
 		
 		CheckException ex = assertThrows(CheckException.class, () -> userService.createAccount(userDTO));
 		
-		assertEquals("data did not match", ex.getMessage());
+		assertEquals("Les données ne correspondent pas.", ex.getMessage());
 		
 		verify(userDAO, times(1)).existsById(userDTO.getId());
 		verify(fileDAO, times(1)).findById(userDTO.getId());
@@ -178,13 +178,13 @@ public class UserServiceTest {
 
 	@Test
 	public void testCreatePatientAccountFailureCheckUserDataError() throws CheckException {
-		doThrow(new CheckException("data did not match")).when(patientFile).checkUserData(userCaptor.capture(), any(PasswordEncoder.class));
+		doThrow(new CheckException("Les données ne correspondent pas.")).when(patientFile).checkUserData(userCaptor.capture(), any(PasswordEncoder.class));
 		when(userDAO.existsById(userDTO.getId())).thenReturn(false);
 		when(fileDAO.findById(userDTO.getId())).thenReturn(Optional.of(patientFile));
 		
 		CheckException ex = assertThrows(CheckException.class, () -> userService.createAccount(userDTO));
 		
-		assertEquals("data did not match", ex.getMessage());
+		assertEquals("Les données ne correspondent pas.", ex.getMessage());
 		
 		verify(userDAO, times(1)).existsById(userDTO.getId());
 		verify(fileDAO, times(1)).findById(userDTO.getId());

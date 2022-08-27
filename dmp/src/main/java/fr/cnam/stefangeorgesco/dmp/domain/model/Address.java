@@ -13,22 +13,22 @@ import lombok.Setter;
 @Setter
 public class Address {
 
-	@NotBlank(message = "invalid street1")
+	@NotBlank(message = "Champ 'street1' invalide.")
 	private String street1;
 	
-	@NotNull(message = "street2 should not be null")
+	@NotNull(message = "Le champ 'street2' ne doit pas être 'null'.")
 	private String street2 = "";
 	
-	@NotBlank(message = "invalid city")
+	@NotBlank(message = "Champ 'city' invalide.")
 	private String city;
 	
-	@NotNull(message = "state should not be null")
+	@NotNull(message = "Le champ 'state' ne doit pas être 'null'.")
 	private String state = "";
 	
-	@NotBlank(message = "invalid zipcode")
+	@NotBlank(message = "Champ 'zipcode' invalide.")
 	private String zipcode;
 	
-	@NotBlank(message = "invalid country")
+	@NotBlank(message = "Champ 'country' invalide.")
 	private String country;
 
 }

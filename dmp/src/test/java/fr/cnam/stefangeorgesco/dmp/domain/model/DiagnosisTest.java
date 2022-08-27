@@ -81,7 +81,7 @@ public class DiagnosisTest {
 		Set<ConstraintViolation<Diagnosis>> violations = validator.validate(diagnosis);
 
 		assertEquals(1, violations.size());
-		assertEquals("patient file item date must be in the past or today", violations.iterator().next().getMessage());
+		assertEquals("La date de l'élément de dossier patient doit être dans le passé ou aujourd'hui.", violations.iterator().next().getMessage());
 	}
 	
 	@Test
@@ -92,7 +92,7 @@ public class DiagnosisTest {
 		Set<ConstraintViolation<Diagnosis>> violations = validator.validate(diagnosis);
 
 		assertEquals(1, violations.size());
-		assertEquals("patient file date is mandatory", violations.iterator().next().getMessage());
+		assertEquals("La date de l'élément de dossier patient est obligatoire.", violations.iterator().next().getMessage());
 	}
 
 	@Test
@@ -103,7 +103,7 @@ public class DiagnosisTest {
 		Set<ConstraintViolation<Diagnosis>> violations = validator.validate(diagnosis);
 
 		assertEquals(1, violations.size());
-		assertEquals("authoring doctor is mandatory", violations.iterator().next().getMessage());
+		assertEquals("Le médecin auteur est obligatoire.", violations.iterator().next().getMessage());
 	}
 
 	@Test
@@ -114,7 +114,7 @@ public class DiagnosisTest {
 		Set<ConstraintViolation<Diagnosis>> violations = validator.validate(diagnosis);
 
 		assertEquals(1, violations.size());
-		assertEquals("patient file is mandatory", violations.iterator().next().getMessage());
+		assertEquals("Le dossier patient est obligatoire.", violations.iterator().next().getMessage());
 	}
 
 	@Test
@@ -125,7 +125,7 @@ public class DiagnosisTest {
 		Set<ConstraintViolation<Diagnosis>> violations = validator.validate(diagnosis);
 
 		assertEquals(1, violations.size());
-		assertEquals("disease is mandatory", violations.iterator().next().getMessage());
+		assertEquals("La maladie est obligatoire.", violations.iterator().next().getMessage());
 	}
 
 }

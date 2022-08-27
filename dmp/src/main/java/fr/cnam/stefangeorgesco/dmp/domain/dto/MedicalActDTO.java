@@ -9,7 +9,7 @@ import lombok.Setter;
 @Setter
 public class MedicalActDTO {
 
-	@NotBlank(message = "id is mandatory")
+	@NotBlank(message = "L'identifiant est obligatoire.")
 	private String id;
 	
 	private String description;

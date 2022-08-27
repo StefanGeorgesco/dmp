@@ -193,9 +193,9 @@ public class UserControllerIntegrationTest {
 				post("/user")
 				.contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(userDTO)))
 				.andExpect(status().isNotAcceptable()).andExpect(content().contentType(MediaType.APPLICATION_JSON))
-				.andExpect(jsonPath("$.id", is("id is mandatory")))
-				.andExpect(jsonPath("$.username", is("username is mandatory")))
-				.andExpect(jsonPath("$.password", is("password should at least be 4 characters long")));
+				.andExpect(jsonPath("$.id", is("L'identifiant est obligatoire.")))
+				.andExpect(jsonPath("$.username", is("Le non utilisateur est obligatoire.")))
+				.andExpect(jsonPath("$.password", is("Le mot de passe doit contenir au moins 4 caractères.")));
 		
 		assertFalse(userDAO.existsById("doctorId"));
 	}
@@ -262,7 +262,7 @@ public class UserControllerIntegrationTest {
 				post("/user")
 				.contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(userDTO)))
 				.andExpect(status().isBadRequest()).andExpect(content().contentType(MediaType.APPLICATION_JSON))
-				.andExpect(jsonPath("$.message", is("data did not match")));
+				.andExpect(jsonPath("$.message", is("Les données ne correspondent pas.")));
 		
 		assertFalse(userDAO.existsById("doctorId"));
 	}

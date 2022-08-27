@@ -17,11 +17,11 @@ public class CorrespondenceDTO {
 	
 	private UUID id;
 
-	@NotNull(message = "correspondence date is mandatory")
-	@Future(message = "correpondance date must be in the future")
+	@NotNull(message = "La date de la correspondance est obligatoire.")
+	@Future(message = "La date de la correspondance doit être dans le futur.")
 	private LocalDate dateUntil;
 
-	@NotBlank(message = "doctor is mandatory")
+	@NotBlank(message = "L'identifiant du médecin est obligatoire.")
 	private String doctorId;
 	
 	private String doctorFirstname;

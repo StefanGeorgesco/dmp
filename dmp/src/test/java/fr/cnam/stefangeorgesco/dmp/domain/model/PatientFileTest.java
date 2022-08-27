@@ -93,7 +93,7 @@ public class PatientFileTest {
 		Set<ConstraintViolation<PatientFile>> violations = validator.validate(patientFile);
 		
 		assertEquals(1, violations.size());
-		assertEquals("id is mandatory", violations.iterator().next().getMessage());
+		assertEquals("L'identifiant est obligatoire.", violations.iterator().next().getMessage());
 
 	}
 
@@ -105,7 +105,7 @@ public class PatientFileTest {
 		Set<ConstraintViolation<PatientFile>> violations = validator.validate(patientFile);
 		
 		assertEquals(1, violations.size());
-		assertEquals("firstname is mandatory", violations.iterator().next().getMessage());
+		assertEquals("Le prénom est obligatoire.", violations.iterator().next().getMessage());
 
 	}
 
@@ -117,7 +117,7 @@ public class PatientFileTest {
 		Set<ConstraintViolation<PatientFile>> violations = validator.validate(patientFile);
 		
 		assertEquals(1, violations.size());
-		assertEquals("lastname is mandatory", violations.iterator().next().getMessage());
+		assertEquals("Le nom est obligatoire.", violations.iterator().next().getMessage());
 
 	}
 
@@ -129,7 +129,7 @@ public class PatientFileTest {
 		Set<ConstraintViolation<PatientFile>> violations = validator.validate(patientFile);
 		
 		assertEquals(1, violations.size());
-		assertEquals("phone is mandatory", violations.iterator().next().getMessage());
+		assertEquals("Le numéro de téléphone est obligatoire.", violations.iterator().next().getMessage());
 
 	}
 
@@ -141,7 +141,7 @@ public class PatientFileTest {
 		Set<ConstraintViolation<PatientFile>> violations = validator.validate(patientFile);
 		
 		assertEquals(1, violations.size());
-		assertEquals("email must be given and respect format", violations.iterator().next().getMessage());
+		assertEquals("L'adresse email doit être fournie et respecter le format.", violations.iterator().next().getMessage());
 
 	}
 
@@ -153,7 +153,7 @@ public class PatientFileTest {
 		Set<ConstraintViolation<PatientFile>> violations = validator.validate(patientFile);
 		
 		assertEquals(1, violations.size());
-		assertEquals("id is mandatory", violations.iterator().next().getMessage());
+		assertEquals("L'identifiant est obligatoire.", violations.iterator().next().getMessage());
 
 	}
 
@@ -165,7 +165,7 @@ public class PatientFileTest {
 		Set<ConstraintViolation<PatientFile>> violations = validator.validate(patientFile);
 		
 		assertEquals(1, violations.size());
-		assertEquals("firstname is mandatory", violations.iterator().next().getMessage());
+		assertEquals("Le prénom est obligatoire.", violations.iterator().next().getMessage());
 
 	}
 
@@ -177,7 +177,7 @@ public class PatientFileTest {
 		Set<ConstraintViolation<PatientFile>> violations = validator.validate(patientFile);
 		
 		assertEquals(1, violations.size());
-		assertEquals("lastname is mandatory", violations.iterator().next().getMessage());
+		assertEquals("Le nom est obligatoire.", violations.iterator().next().getMessage());
 
 	}
 
@@ -189,7 +189,7 @@ public class PatientFileTest {
 		Set<ConstraintViolation<PatientFile>> violations = validator.validate(patientFile);
 		
 		assertEquals(1, violations.size());
-		assertEquals("phone is mandatory", violations.iterator().next().getMessage());
+		assertEquals("Le numéro de téléphone est obligatoire.", violations.iterator().next().getMessage());
 
 	}
 
@@ -201,7 +201,7 @@ public class PatientFileTest {
 		Set<ConstraintViolation<PatientFile>> violations = validator.validate(patientFile);
 		
 		assertEquals(1, violations.size());
-		assertEquals("email is mandatory", violations.iterator().next().getMessage());
+		assertEquals("L'adresse email est obligatoire.", violations.iterator().next().getMessage());
 
 	}
 
@@ -213,7 +213,7 @@ public class PatientFileTest {
 		Set<ConstraintViolation<PatientFile>> violations = validator.validate(patientFile);
 		
 		assertEquals(1, violations.size());
-		assertEquals("address is mandatory", violations.iterator().next().getMessage());
+		assertEquals("L'adresse est obligatoire.", violations.iterator().next().getMessage());
 
 	}
 
@@ -225,7 +225,7 @@ public class PatientFileTest {
 		Set<ConstraintViolation<PatientFile>> violations = validator.validate(patientFile);
 		
 		assertEquals(1, violations.size());
-		assertEquals("referring doctor is mandatory", violations.iterator().next().getMessage());
+		assertEquals("Le médecin référent est obligatoire.", violations.iterator().next().getMessage());
 
 	}
 
@@ -237,7 +237,7 @@ public class PatientFileTest {
 		Set<ConstraintViolation<PatientFile>> violations = validator.validate(patientFile);
 		
 		assertEquals(1, violations.size());
-		assertEquals("invalid street1", violations.iterator().next().getMessage());
+		assertEquals("Champ 'street1' invalide.", violations.iterator().next().getMessage());
 
 	}
 	
@@ -249,7 +249,7 @@ public class PatientFileTest {
 		Set<ConstraintViolation<PatientFile>> violations = validator.validate(patientFile);
 		
 		assertEquals(1, violations.size());
-		assertEquals("date of birth is mandatory", violations.iterator().next().getMessage());
+		assertEquals("La date de naissance est obligatoire.", violations.iterator().next().getMessage());
 
 	}
 
@@ -279,7 +279,7 @@ public class PatientFileTest {
 		Set<ConstraintViolation<PatientFile>> violations = validator.validate(patientFile);
 
 		assertEquals(1, violations.size());
-		assertEquals("date of birth must be in the past or today", violations.iterator().next().getMessage());
+		assertEquals("La date de naissance doit être dans le passé ou aujourd'hui.", violations.iterator().next().getMessage());
 	}
 	
 	@Test
@@ -295,7 +295,7 @@ public class PatientFileTest {
 		user = null;
 		
 		CheckException exception = assertThrows(CheckException.class,() -> patientFile.checkUserData(user, bCryptPasswordEncoder));
-		assertEquals("tried to check null user", exception.getMessage());
+		assertEquals("Impossible de vérifier un utilisateur 'null'.", exception.getMessage());
 		
 	}
 	
@@ -305,7 +305,7 @@ public class PatientFileTest {
 		user.setId(null);
 		
 		CheckException exception = assertThrows(CheckException.class,() -> patientFile.checkUserData(user, bCryptPasswordEncoder));
-		assertEquals("tried to check user with null id", exception.getMessage());
+		assertEquals("Impossible de vérifier un utilisateur avec un identifiant 'null'.", exception.getMessage());
 		
 	}
 	
@@ -315,7 +315,7 @@ public class PatientFileTest {
 		user.setSecurityCode(null);
 		
 		CheckException exception = assertThrows(CheckException.class,() -> patientFile.checkUserData(user, bCryptPasswordEncoder));
-		assertEquals("tried to check user with null security code", exception.getMessage());
+		assertEquals("Impossible de vérifier un utilisateur avec un code de sécurité 'null'.", exception.getMessage());
 		
 	}
 
@@ -325,7 +325,7 @@ public class PatientFileTest {
 		user.setId("userId");
 		
 		CheckException exception = assertThrows(CheckException.class,() -> patientFile.checkUserData(user, bCryptPasswordEncoder));
-		assertEquals("data did not match", exception.getMessage());
+		assertEquals("Les données ne correspondent pas.", exception.getMessage());
 		
 	}
 	
@@ -335,7 +335,7 @@ public class PatientFileTest {
 		user.setSecurityCode("01234567");
 		
 		CheckException exception = assertThrows(CheckException.class,() -> patientFile.checkUserData(user, bCryptPasswordEncoder));
-		assertEquals("data did not match", exception.getMessage());
+		assertEquals("Les données ne correspondent pas.", exception.getMessage());
 		
 	}
 	

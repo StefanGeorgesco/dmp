@@ -26,8 +26,8 @@ public class Doctor extends File {
 
 	@ManyToMany(fetch = FetchType.EAGER)
 	@JoinTable(name = "t_doctor_specialty", joinColumns = @JoinColumn(name = "doctor_id"), inverseJoinColumns = @JoinColumn(name = "specialty_id"))
-	@NotNull(message = "specialties are mandatory")
-	@Size(min = 1, message = "doctor must have at least one specialty")
+	@NotNull(message = "Les spécialités sont obligatoires.")
+	@Size(min = 1, message = "Le médecin doit avoir au moins une spécialité.")
 	private Collection<Specialty> specialties;
 
 }

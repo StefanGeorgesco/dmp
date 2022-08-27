@@ -197,7 +197,7 @@ public class DoctorControllerIntegrationTest {
 		mockMvc.perform(post("/doctor").contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(doctorDTO))).andExpect(status().isNotAcceptable())
 				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
-				.andExpect(jsonPath("$.firstname", is("firstname is mandatory")));
+				.andExpect(jsonPath("$.firstname", is("Le prénom est obligatoire.")));
 
 		assertFalse(doctorDAO.existsById("D003"));
 	}
@@ -210,7 +210,7 @@ public class DoctorControllerIntegrationTest {
 		mockMvc.perform(post("/doctor").contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(doctorDTO))).andExpect(status().isNotAcceptable())
 				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
-				.andExpect(jsonPath("$.address_street1", is("invalid street1")));
+				.andExpect(jsonPath("$.address_street1", is("Champ 'street1' invalide.")));
 
 		assertFalse(doctorDAO.existsById("D003"));
 	}
@@ -223,7 +223,7 @@ public class DoctorControllerIntegrationTest {
 		mockMvc.perform(post("/doctor").contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(doctorDTO))).andExpect(status().isNotAcceptable())
 				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
-				.andExpect(jsonPath("$.specialties", is("specialties are mandatory")));
+				.andExpect(jsonPath("$.specialties", is("Les spécialités sont obligatoires.")));
 
 		assertFalse(doctorDAO.existsById("D003"));
 	}
@@ -236,7 +236,7 @@ public class DoctorControllerIntegrationTest {
 		mockMvc.perform(post("/doctor").contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(doctorDTO))).andExpect(status().isNotAcceptable())
 				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
-				.andExpect(jsonPath("$.specialties", is("doctor must have at least one specialty")));
+				.andExpect(jsonPath("$.specialties", is("Le médecin doit avoir au moins une spécialité.")));
 
 		assertFalse(doctorDAO.existsById("D003"));
 	}
@@ -249,7 +249,7 @@ public class DoctorControllerIntegrationTest {
 		mockMvc.perform(post("/doctor").contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(doctorDTO))).andExpect(status().isNotAcceptable())
 				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
-				.andExpect(jsonPath("$.specialties0_id", is("id is mandatory")));
+				.andExpect(jsonPath("$.specialties0_id", is("L'identifiant est obligatoire.")));
 
 		assertFalse(doctorDAO.existsById("D003"));
 	}

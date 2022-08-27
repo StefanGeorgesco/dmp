@@ -54,7 +54,7 @@ public class AddressTest {
 		Set<ConstraintViolation<Address>> violations = validator.validate(address);
 
 		assertEquals(1, violations.size());
-		assertEquals("invalid street1", violations.iterator().next().getMessage());
+		assertEquals("Champ 'street1' invalide.", violations.iterator().next().getMessage());
 
 	}
 
@@ -66,7 +66,7 @@ public class AddressTest {
 		Set<ConstraintViolation<Address>> violations = validator.validate(address);
 
 		assertEquals(1, violations.size());
-		assertEquals("invalid city", violations.iterator().next().getMessage());
+		assertEquals("Champ 'city' invalide.", violations.iterator().next().getMessage());
 
 	}
 
@@ -78,7 +78,7 @@ public class AddressTest {
 		Set<ConstraintViolation<Address>> violations = validator.validate(address);
 
 		assertEquals(1, violations.size());
-		assertEquals("invalid zipcode", violations.iterator().next().getMessage());
+		assertEquals("Champ 'zipcode' invalide.", violations.iterator().next().getMessage());
 
 	}
 
@@ -90,7 +90,7 @@ public class AddressTest {
 		Set<ConstraintViolation<Address>> violations = validator.validate(address);
 
 		assertEquals(1, violations.size());
-		assertEquals("invalid country", violations.iterator().next().getMessage());
+		assertEquals("Champ 'country' invalide.", violations.iterator().next().getMessage());
 
 	}
 
@@ -102,7 +102,7 @@ public class AddressTest {
 		Set<ConstraintViolation<Address>> violations = validator.validate(address);
 
 		assertEquals(1, violations.size());
-		assertEquals("invalid street1", violations.iterator().next().getMessage());
+		assertEquals("Champ 'street1' invalide.", violations.iterator().next().getMessage());
 
 	}
 
@@ -114,7 +114,7 @@ public class AddressTest {
 		Set<ConstraintViolation<Address>> violations = validator.validate(address);
 
 		assertEquals(1, violations.size());
-		assertEquals("street2 should not be null", violations.iterator().next().getMessage());
+		assertEquals("Le champ 'street2' ne doit pas être 'null'.", violations.iterator().next().getMessage());
 
 	}
 
@@ -126,7 +126,7 @@ public class AddressTest {
 		Set<ConstraintViolation<Address>> violations = validator.validate(address);
 
 		assertEquals(1, violations.size());
-		assertEquals("invalid city", violations.iterator().next().getMessage());
+		assertEquals("Champ 'city' invalide.", violations.iterator().next().getMessage());
 	}
 
 	@Test
@@ -137,7 +137,7 @@ public class AddressTest {
 		Set<ConstraintViolation<Address>> violations = validator.validate(address);
 
 		assertEquals(1, violations.size());
-		assertEquals("state should not be null", violations.iterator().next().getMessage());
+		assertEquals("Le champ 'state' ne doit pas être 'null'.", violations.iterator().next().getMessage());
 	}
 
 	@Test
@@ -148,7 +148,7 @@ public class AddressTest {
 		Set<ConstraintViolation<Address>> violations = validator.validate(address);
 
 		assertEquals(1, violations.size());
-		assertEquals("invalid zipcode", violations.iterator().next().getMessage());
+		assertEquals("Champ 'zipcode' invalide.", violations.iterator().next().getMessage());
 
 	}
 
@@ -160,7 +160,7 @@ public class AddressTest {
 		Set<ConstraintViolation<Address>> violations = validator.validate(address);
 
 		assertEquals(1, violations.size());
-		assertEquals("invalid country", violations.iterator().next().getMessage());
+		assertEquals("Champ 'country' invalide.", violations.iterator().next().getMessage());
 
 	}
 

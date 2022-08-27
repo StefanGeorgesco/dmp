@@ -281,7 +281,7 @@ public class PatientFileControllerIntegrationTest {
 		mockMvc.perform(post("/patient-file").contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(patientFileDTO))).andExpect(status().isNotAcceptable())
 				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
-				.andExpect(jsonPath("$.lastname", is("lastname is mandatory")));
+				.andExpect(jsonPath("$.lastname", is("Le nom est obligatoire.")));
 
 		assertFalse(patientFileDAO.existsById("P002"));
 	}
@@ -296,7 +296,7 @@ public class PatientFileControllerIntegrationTest {
 		mockMvc.perform(post("/patient-file").contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(patientFileDTO))).andExpect(status().isNotAcceptable())
 				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
-				.andExpect(jsonPath("$.address_country", is("invalid country")));
+				.andExpect(jsonPath("$.address_country", is("Champ 'country' invalide.")));
 	}
 
 	@Test

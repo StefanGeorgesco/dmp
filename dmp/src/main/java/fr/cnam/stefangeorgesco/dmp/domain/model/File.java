@@ -28,24 +28,24 @@ import lombok.Setter;
 public abstract class File {
 
 	@Id
-	@NotBlank(message = "id is mandatory")
+	@NotBlank(message = "L'identifiant est obligatoire.")
 	protected String id;
 
-	@NotBlank(message = "firstname is mandatory")
+	@NotBlank(message = "Le prénom est obligatoire.")
 	protected String firstname;
 
-	@NotBlank(message = "lastname is mandatory")
+	@NotBlank(message = "Le nom est obligatoire.")
 	protected String lastname;
 
-	@NotBlank(message = "phone is mandatory")
+	@NotBlank(message = "Le numéro de téléphone est obligatoire.")
 	protected String phone;
 
-	@NotBlank(message = "email is mandatory")
-	@Email(message = "email must be given and respect format")
+	@NotBlank(message = "L'adresse email est obligatoire.")
+	@Email(message = "L'adresse email doit être fournie et respecter le format.")
 	protected String email;
 
 	@Embedded
-	@NotNull(message = "address is mandatory")
+	@NotNull(message = "L'adresse est obligatoire.")
 	@Valid
 	protected Address address;
 
@@ -55,19 +55,19 @@ public abstract class File {
 	public void checkUserData(User user, PasswordEncoder passwordEncoder) throws CheckException {
 		
 		if (user == null) {
-			throw new CheckException("tried to check null user");
+			throw new CheckException("Impossible de vérifier un utilisateur 'null'.");
 		}
 
 		if (user.getId() == null) {
-			throw new CheckException("tried to check user with null id");
+			throw new CheckException("Impossible de vérifier un utilisateur avec un identifiant 'null'.");
 		}
 
 		if (user.getSecurityCode() == null) {
-			throw new CheckException("tried to check user with null security code");
+			throw new CheckException("Impossible de vérifier un utilisateur avec un code de sécurité 'null'.");
 		}
 
 		if (!user.getId().equals(this.id) || !passwordEncoder.matches(user.getSecurityCode(), this.securityCode)) {
-			throw new CheckException("data did not match");
+			throw new CheckException("Les données ne correspondent pas.");
 		}
 
 	}

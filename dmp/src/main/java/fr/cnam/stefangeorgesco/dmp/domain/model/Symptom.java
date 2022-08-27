@@ -19,7 +19,7 @@ import lombok.Setter;
 public class Symptom extends PatientFileItem {
 	
 	@Column(length = 800)
-	@NotBlank(message = "symptom description is mandatory")
+	@NotBlank(message = "La description est obligatoire.")
 	private String description;
 
 }

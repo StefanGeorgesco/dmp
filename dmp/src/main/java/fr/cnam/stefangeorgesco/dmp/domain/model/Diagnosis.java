@@ -21,7 +21,7 @@ public class Diagnosis extends PatientFileItem {
 	
 	@ManyToOne
 	@JoinColumn(name = "disease_id")
-	@NotNull(message = "disease is mandatory")
+	@NotNull(message = "La maladie est obligatoire.")
 	private Disease disease;
 
 }

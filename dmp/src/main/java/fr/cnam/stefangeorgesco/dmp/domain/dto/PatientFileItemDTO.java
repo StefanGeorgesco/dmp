@@ -27,8 +27,8 @@ public abstract class PatientFileItemDTO {
 
 	private UUID id;
 
-	@NotNull(message = "patient file date is mandatory")
-	@PastOrPresent(message = "patient file item date must be in the past or today")
+	@NotNull(message = "La date de l'élément de dossier patient est obligatoire.")
+	@PastOrPresent(message = "La date de l'élément de dossier patient doit être dans le passé ou aujourd'hui.")
 	private LocalDate date;
 
 	private String comments;

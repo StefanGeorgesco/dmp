@@ -22,12 +22,12 @@ import lombok.Setter;
 public class Mail extends PatientFileItem {
 
 	@Column(length = 1000)
-	@NotBlank(message = "mail text is mandatory")
+	@NotBlank(message = "Le texte du courrier est obligatoire.")
 	String text;
 
 	@ManyToOne
 	@JoinColumn(name = "recipient_doctor_id")
-	@NotNull(message = "recipient doctor is mandatory")
+	@NotNull(message = "Le médecin destinataire est obligatoire.")
 	private Doctor recipientDoctor;
 
 }

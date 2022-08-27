@@ -16,11 +16,11 @@ import lombok.Setter;
 public class MedicalAct {
 	
 	@Id
-	@NotBlank(message = "id is mandatory")
+	@NotBlank(message = "L'identifiant est obligatoire.")
 	private String id;
 	
 	@Column(length = 800)
-	@NotBlank(message = "description is mandatory")
+	@NotBlank(message = "La description est obligatoire.")
 	private String description;
 
 }

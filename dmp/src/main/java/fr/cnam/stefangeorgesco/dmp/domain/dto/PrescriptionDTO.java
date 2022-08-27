@@ -9,7 +9,7 @@ import lombok.Setter;
 @Setter
 public class PrescriptionDTO extends PatientFileItemDTO {
 
-	@NotBlank(message = "prescription description is mandatory")
+	@NotBlank(message = "La description est obligatoire.")
 	private String description;
 
 }

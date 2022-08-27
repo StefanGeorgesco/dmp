@@ -14,23 +14,23 @@ import lombok.Setter;
 @Setter
 public class FileDTO {
 	
-	@NotBlank(message = "id is mandatory")
+	@NotBlank(message = "L'identifiant est obligatoire.")
 	protected String id;
 
-	@NotBlank(message = "firstname is mandatory")
+	@NotBlank(message = "Le prénom est obligatoire.")
 	protected String firstname;
 
-	@NotBlank(message = "lastname is mandatory")
+	@NotBlank(message = "Le nom est obligatoire.")
 	protected String lastname;
 
-	@NotBlank(message = "phone is mandatory")
+	@NotBlank(message = "Le numéro de téléphone est obligatoire.")
 	protected String phone;
 
-	@NotBlank(message = "email is mandatory")
-	@Email(message = "email must be given and respect format")
+	@NotBlank(message = "L'adresse email est obligatoire.")
+	@Email(message = "L'adresse email doit être fournie et respecter le format.")
 	protected String email;
 
-	@NotNull(message = "address is mandatory")
+	@NotNull(message = "L'adresse est obligatoire.")
 	@Valid
 	@JsonProperty("address")
 	protected AddressDTO addressDTO;

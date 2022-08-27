@@ -14,8 +14,8 @@ import lombok.Setter;
 @Setter
 public class PatientFileDTO extends FileDTO {
 	
-	@NotNull(message = "date of birth is mandatory")
-	@PastOrPresent(message = "date of birth must be in the past or today")
+	@NotNull(message = "La date de naissance est obligatoire.")
+	@PastOrPresent(message = "La date de naissance doit être dans le passé ou aujourd'hui.")
 	@JsonFormat(shape = JsonFormat.Shape.STRING)
 	private LocalDate dateOfBirth;
 

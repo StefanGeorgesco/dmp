@@ -12,7 +12,7 @@ import lombok.Setter;
 @Setter
 public class ActDTO extends PatientFileItemDTO {
 
-	@NotNull(message = "medical act is mandatory")
+	@NotNull(message = "L'acte médical est obligatoire.")
 	@Valid
 	@JsonProperty("medicalAct")
 	private MedicalActDTO medicalActDTO;

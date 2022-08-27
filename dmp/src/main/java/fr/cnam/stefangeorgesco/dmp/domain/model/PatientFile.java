@@ -23,14 +23,14 @@ import lombok.Setter;
 @Setter
 public class PatientFile extends File {
 
-	@NotNull(message = "date of birth is mandatory")
-	@PastOrPresent(message = "date of birth must be in the past or today")
+	@NotNull(message = "La date de naissance est obligatoire.")
+	@PastOrPresent(message = "La date de naissance doit être dans le passé ou aujourd'hui.")
 	@Column(name = "date_of_birth")
 	private LocalDate dateOfBirth;
 
 	@ManyToOne
 	@JoinColumn(name = "referring_doctor_id")
-	@NotNull(message = "referring doctor is mandatory")
+	@NotNull(message = "Le médecin référent est obligatoire.")
 	private Doctor referringDoctor;
 
 }

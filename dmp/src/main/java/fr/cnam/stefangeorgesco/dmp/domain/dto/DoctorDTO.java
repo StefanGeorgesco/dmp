@@ -15,8 +15,8 @@ import lombok.Setter;
 @Setter
 public class DoctorDTO extends FileDTO {
 	
-	@NotNull(message = "specialties are mandatory")
-	@Size(min = 1, message = "doctor must have at least one specialty")
+	@NotNull(message = "Les spécialités sont obligatoires.")
+	@Size(min = 1, message = "Le médecin doit avoir au moins une spécialité.")
 	@JsonProperty("specialties")
 	private Collection<@Valid SpecialtyDTO> specialtiesDTO;
 

@@ -21,7 +21,7 @@ public class Act extends PatientFileItem {
 	
 	@ManyToOne
 	@JoinColumn(name = "medical_act_id")
-	@NotNull(message = "medical act is mandatory")
+	@NotNull(message = "L'acte médical est obligatoire.")
 	private MedicalAct medicalAct;
 
 }

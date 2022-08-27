@@ -19,18 +19,18 @@ import lombok.Setter;
 public class User implements IUser {
 
 	@Id
-	@NotBlank(message = "id is mandatory")
+	@NotBlank(message = "L'identifiant est obligatoire.")
 	private String id;
 	
 	@Column(unique=true)
-	@NotBlank(message = "username is mandatory")
+	@NotBlank(message = "Le non utilisateur est obligatoire.")
 	private String username;
 	
 	@Column(nullable = false)
 	private String role;
 	
-	@NotBlank(message = "password is mandatory")
-	@Size(min=4, message = "password should at least be 4 characters long")
+	@NotBlank(message = "Le mot de passe est obligatoire.")
+	@Size(min=4, message = "Le mot de passe doit contenir au moins 4 caractères.")
 	private String password;
 	
 	@Column(name = "security_code", nullable = false)

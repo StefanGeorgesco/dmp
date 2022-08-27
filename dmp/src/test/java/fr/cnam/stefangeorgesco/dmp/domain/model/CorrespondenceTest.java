@@ -65,7 +65,7 @@ public class CorrespondenceTest {
 		Set<ConstraintViolation<Correspondence>> violations = validator.validate(correspondence);
 
 		assertEquals(1, violations.size());
-		assertEquals("correpondance date must be in the future", violations.iterator().next().getMessage());
+		assertEquals("La date de la correspondance doit être dans le futur.", violations.iterator().next().getMessage());
 	}
 
 	@Test
@@ -76,7 +76,7 @@ public class CorrespondenceTest {
 		Set<ConstraintViolation<Correspondence>> violations = validator.validate(correspondence);
 
 		assertEquals(1, violations.size());
-		assertEquals("correpondance date must be in the future", violations.iterator().next().getMessage());
+		assertEquals("La date de la correspondance doit être dans le futur.", violations.iterator().next().getMessage());
 	}
 
 	@Test
@@ -87,7 +87,7 @@ public class CorrespondenceTest {
 		Set<ConstraintViolation<Correspondence>> violations = validator.validate(correspondence);
 
 		assertEquals(1, violations.size());
-		assertEquals("correspondence date is mandatory", violations.iterator().next().getMessage());
+		assertEquals("La date de la correspondance est obligatoire.", violations.iterator().next().getMessage());
 	}
 	
 	@Test
@@ -98,7 +98,7 @@ public class CorrespondenceTest {
 		Set<ConstraintViolation<Correspondence>> violations = validator.validate(correspondence);
 
 		assertEquals(1, violations.size());
-		assertEquals("doctor is mandatory", violations.iterator().next().getMessage());
+		assertEquals("L'identifiant du médecin est obligatoire.", violations.iterator().next().getMessage());
 
 	}
 	
@@ -110,7 +110,7 @@ public class CorrespondenceTest {
 		Set<ConstraintViolation<Correspondence>> violations = validator.validate(correspondence);
 
 		assertEquals(1, violations.size());
-		assertEquals("patient file is mandatory", violations.iterator().next().getMessage());
+		assertEquals("Le dossier patient est obligatoire.", violations.iterator().next().getMessage());
 
 	}
 	

@@ -76,7 +76,7 @@ public class PrescriptionTest {
 		Set<ConstraintViolation<Prescription>> violations = validator.validate(prescription);
 
 		assertEquals(1, violations.size());
-		assertEquals("patient file item date must be in the past or today", violations.iterator().next().getMessage());
+		assertEquals("La date de l'élément de dossier patient doit être dans le passé ou aujourd'hui.", violations.iterator().next().getMessage());
 	}
 	
 	@Test
@@ -87,7 +87,7 @@ public class PrescriptionTest {
 		Set<ConstraintViolation<Prescription>> violations = validator.validate(prescription);
 
 		assertEquals(1, violations.size());
-		assertEquals("prescription description is mandatory", violations.iterator().next().getMessage());
+		assertEquals("La description est obligatoire.", violations.iterator().next().getMessage());
 	}
 
 	@Test
@@ -98,7 +98,7 @@ public class PrescriptionTest {
 		Set<ConstraintViolation<Prescription>> violations = validator.validate(prescription);
 
 		assertEquals(1, violations.size());
-		assertEquals("patient file date is mandatory", violations.iterator().next().getMessage());
+		assertEquals("La date de l'élément de dossier patient est obligatoire.", violations.iterator().next().getMessage());
 	}
 
 	@Test
@@ -109,7 +109,7 @@ public class PrescriptionTest {
 		Set<ConstraintViolation<Prescription>> violations = validator.validate(prescription);
 
 		assertEquals(1, violations.size());
-		assertEquals("authoring doctor is mandatory", violations.iterator().next().getMessage());
+		assertEquals("Le médecin auteur est obligatoire.", violations.iterator().next().getMessage());
 	}
 
 	@Test
@@ -120,7 +120,7 @@ public class PrescriptionTest {
 		Set<ConstraintViolation<Prescription>> violations = validator.validate(prescription);
 
 		assertEquals(1, violations.size());
-		assertEquals("patient file is mandatory", violations.iterator().next().getMessage());
+		assertEquals("Le dossier patient est obligatoire.", violations.iterator().next().getMessage());
 	}
 
 	@Test
@@ -131,7 +131,7 @@ public class PrescriptionTest {
 		Set<ConstraintViolation<Prescription>> violations = validator.validate(prescription);
 
 		assertEquals(1, violations.size());
-		assertEquals("prescription description is mandatory", violations.iterator().next().getMessage());
+		assertEquals("La description est obligatoire.", violations.iterator().next().getMessage());
 	}
 
 }

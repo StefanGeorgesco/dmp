@@ -51,7 +51,7 @@ public class MedicalActTest {
 		Set<ConstraintViolation<MedicalAct>> violations = validator.validate(medicalAct);
 		
 		assertEquals(1, violations.size());
-		assertEquals("id is mandatory", violations.iterator().next().getMessage());
+		assertEquals("L'identifiant est obligatoire.", violations.iterator().next().getMessage());
 	}
 
 	@Test
@@ -62,7 +62,7 @@ public class MedicalActTest {
 		Set<ConstraintViolation<MedicalAct>> violations = validator.validate(medicalAct);
 		
 		assertEquals(1, violations.size());
-		assertEquals("description is mandatory", violations.iterator().next().getMessage());
+		assertEquals("La description est obligatoire.", violations.iterator().next().getMessage());
 	}
 
 	@Test
@@ -73,7 +73,7 @@ public class MedicalActTest {
 		Set<ConstraintViolation<MedicalAct>> violations = validator.validate(medicalAct);
 		
 		assertEquals(1, violations.size());
-		assertEquals("id is mandatory", violations.iterator().next().getMessage());
+		assertEquals("L'identifiant est obligatoire.", violations.iterator().next().getMessage());
 	}
 
 	@Test
@@ -84,7 +84,7 @@ public class MedicalActTest {
 		Set<ConstraintViolation<MedicalAct>> violations = validator.validate(medicalAct);
 		
 		assertEquals(1, violations.size());
-		assertEquals("description is mandatory", violations.iterator().next().getMessage());
+		assertEquals("La description est obligatoire.", violations.iterator().next().getMessage());
 	}
 
 }
