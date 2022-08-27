@@ -79,4 +79,9 @@ jacocoTestReport {
 bootRun {
 	dependsOn flywayClean, flywayMigrate
 }
-	
+
+javadoc {
+	options {
+        encoding 'UTF-8'
+    }
+}
