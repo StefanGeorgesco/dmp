@@ -144,11 +144,11 @@ public class DoctorController {
 
 	/**
 	 * Gestionnaire des requêtes GET de récupération des dossiers de médecins
-	 * trouvés par une recherche à partir d'une chaîne de caractère.
+	 * trouvés par une recherche à partir d'une chaîne de caractères.
 	 * 
 	 * @param q la chaîne de caractère (String) utilisée pour la recherche, fournie
 	 *          en paramètre de requête.
-	 * @return une liste (List) d'objets
+	 * @return une liste ({@link java.util.List}) d'objets
 	 *         {@link fr.cnam.stefangeorgesco.dmp.domain.dto.DoctorDTO} représentant
 	 *         le résultat de la recherche, encapsulée dans un objet
 	 *         org.springframework.http.ResponseEntity.
@@ -180,11 +180,11 @@ public class DoctorController {
 
 	/**
 	 * Gestionnaire des requêtes GET de récupération des spécialités trouvées par
-	 * une recherche à partir d'une chaîne de caractère.
+	 * une recherche à partir d'une chaîne de caractères.
 	 * 
 	 * @param q la chaîne de caractère (String) utilisée pour la recherche, fournie
 	 *          en paramètre de requête.
-	 * @return une liste (List) d'objets
+	 * @return une liste ({@link java.util.List}) d'objets
 	 *         {@link fr.cnam.stefangeorgesco.dmp.domain.dto.SpecialtyDTO}
 	 *         représentant le résultat de la recherche, encapsulée dans un objet
 	 *         org.springframework.http.ResponseEntity.

@@ -225,11 +225,11 @@ public class PatientFileController {
 
 	/**
 	 * Gestionnaire des requêtes GET de récupération des dossiers patient trouvés
-	 * par une recherche à partir d'une chaîne de caractère.
+	 * par une recherche à partir d'une chaîne de caractères.
 	 * 
 	 * @param q la chaîne de caractère (String) utilisée pour la recherche, fournie
 	 *          en paramètre de requête.
-	 * @return une liste (List) d'objets
+	 * @return une liste ({@link java.util.List}) d'objets
 	 *         {@link fr.cnam.stefangeorgesco.dmp.domain.dto.PatientFileDTO}
 	 *         représentant le résultat de la recherche, encapsulée dans un objet
 	 *         org.springframework.http.ResponseEntity.
@@ -604,13 +604,13 @@ public class PatientFileController {
 
 	/**
 	 * Gestionnaire des requêtes GET de récupération des maladies trouvées par une
-	 * recherche à partir d'une chaîne de caractère.
+	 * recherche à partir d'une chaîne de caractères.
 	 * 
 	 * @param q     la chaîne de caractère (String) utilisée pour la recherche,
 	 *              fournie en paramètre de requête.
 	 * @param limit le nombre maximum d'objets récupérés, paramètre de requête
 	 *              optionel. Il est fixé à 30 par défaut.
-	 * @return une liste (List) d'objets
+	 * @return une liste ({@link java.util.List}) d'objets
 	 *         {@link fr.cnam.stefangeorgesco.dmp.domain.dto.DiseaseDTO}
 	 *         représentant le résultat de la recherche, encapsulée dans un objet
 	 *         org.springframework.http.ResponseEntity.
@@ -641,13 +641,13 @@ public class PatientFileController {
 
 	/**
 	 * Gestionnaire des requêtes GET de récupération des actes médicaux trouvés par
-	 * une recherche à partir d'une chaîne de caractère.
+	 * une recherche à partir d'une chaîne de caractères.
 	 * 
 	 * @param q     la chaîne de caractère (String) utilisée pour la recherche,
 	 *              fournie en paramètre de requête.
 	 * @param limit le nombre maximum d'objets récupérés, paramètre de requête
 	 *              optionel. Il est fixé à 30 par défaut.
-	 * @return une liste (List) d'objets
+	 * @return une liste ({@link java.util.List}) d'objets
 	 *         {@link fr.cnam.stefangeorgesco.dmp.domain.dto.MedicalActDTO}
 	 *         représentant le résultat de la recherche, encapsulée dans un objet
 	 *         org.springframework.http.ResponseEntity.
