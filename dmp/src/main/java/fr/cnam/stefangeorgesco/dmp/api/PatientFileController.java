@@ -35,6 +35,11 @@ import fr.cnam.stefangeorgesco.dmp.exception.domain.DeleteException;
 import fr.cnam.stefangeorgesco.dmp.exception.domain.FinderException;
 import fr.cnam.stefangeorgesco.dmp.exception.domain.UpdateException;
 
+/**
+* Contrôleur REST dédié aux dossiers patients et objets rattachés.
+* 
+* @author stefan georgesco
+ */
 @RestController
 public class PatientFileController {
 
@@ -44,6 +49,19 @@ public class PatientFileController {
 	@Autowired
 	private PatientFileService patientFileService;
 
+	/**
+	 * Gestionnaire des requêtes POST de création des dossiers patients.
+	 * @param patientFileDTO : l'objet
+	 * {@link fr.cnam.stefangeorgesco.dmp.domain.dto.PatientFileDTO} représentant le
+	 * dossier patient à créer. Le médecin référent du dossier patient est initialisé
+	 * avec le dossier de médecin associé à l'utilisateur connecté (authentifié).
+	 * @param principal : l'utilisateur authentifié.
+	 * @return : l'objet {@link fr.cnam.stefangeorgesco.dmp.domain.dto.PatientFileDTO}
+	 * représentant le dossier patient créé, encapsulé dans un objet
+	 * org.springframework.http.ResponseEntity avec le statut
+	 * {@link org.springframework.http.HttpStatus#CREATED} en case de succès.
+	 * @throws ApplicationException
+	 */
 	@PostMapping("/patient-file")
 	public ResponseEntity<PatientFileDTO> createPatientFile(@Valid @RequestBody PatientFileDTO patientFileDTO,
 			Principal principal) throws ApplicationException {
@@ -55,6 +73,19 @@ public class PatientFileController {
 		return ResponseEntity.status(HttpStatus.CREATED).body(patientFileService.createPatientFile(patientFileDTO));
 	}
 
+	/**
+	 * Gestionnaire des requêtes PUT de modification du dossier patient correspondant
+	 * à l'utilisateur connecté (authentifé).
+	 * @param patientFileDTO : l'objet
+	 * {@link fr.cnam.stefangeorgesco.dmp.domain.dto.PatientFileDTO} représentant le
+	 * dossier patient à modifier et les données à modifier.
+	 * @param principal : l'utilisateur authentifié.
+	 * @return : l'objet {@link fr.cnam.stefangeorgesco.dmp.domain.dto.PatientFileDTO}
+	 * représentant le dossier patient modifié, encapsulé dans un objet
+	 * org.springframework.http.ResponseEntity.
+	 * @throws ApplicationException
+	 * @see PatientFileService#updatePatientFile(PatientFileDTO)
+	 */
 	@PutMapping("/patient-file/details")
 	public ResponseEntity<PatientFileDTO> updatePatientFile(@Valid @RequestBody PatientFileDTO patientFileDTO,
 			Principal principal) throws ApplicationException {
@@ -66,6 +97,15 @@ public class PatientFileController {
 		return ResponseEntity.ok(patientFileService.updatePatientFile(patientFileDTO));
 	}
 
+	/**
+	 * Gestionnaire des requêtes GET de consultation du dossier patient
+	 * correspondant à l'utilisateur connecté (authentifé).
+	 * @param principal : l'utilisateur authentifié.
+	 * @return : l'objet {@link fr.cnam.stefangeorgesco.dmp.domain.dto.PatientFileDTO}
+	 * représentant le dossier patient consulté, encapsulé dans un objet
+	 * org.springframework.http.ResponseEntity.
+	 * @throws FinderException
+	 */
 	@GetMapping("/patient-file/details")
 	public ResponseEntity<PatientFileDTO> getPatientFileDetails(Principal principal) throws FinderException {
 
@@ -74,6 +114,16 @@ public class PatientFileController {
 		return ResponseEntity.ok(patientFileService.findPatientFile(userDTO.getId()));
 	}
 
+	/**
+	 * Gestionnaire des requêtes GET de récupération des correspondances associées au
+	 * dossier patient correspondant à l'utilisateur connecté (authentifé).
+	 * @param principal : l'utilisateur authentifié.
+	 * @return : la liste (List) d'objets
+	 * {@link fr.cnam.stefangeorgesco.dmp.domain.dto.CorrespondenceDTO} représentant
+	 * les correspondances demandées, encapsulée dans un objet
+	 * org.springframework.http.ResponseEntity.
+	 * @throws FinderException
+	 */
 	@GetMapping("/patient-file/details/correspondence")
 	public ResponseEntity<List<CorrespondenceDTO>> findPatientCorrespondences(Principal principal)
 			throws FinderException {
@@ -83,6 +133,16 @@ public class PatientFileController {
 		return ResponseEntity.ok(patientFileService.findCorrespondencesByPatientFileId(userId));
 	}
 
+	/**
+	 * Gestionnaire des requêtes GET de récupération des éléments médicaux associées au
+	 * dossier patient correspondant à l'utilisateur connecté (authentifé).
+	 * @param principal : l'utilisateur authentifié.
+	 * @return : la liste (List) d'objets
+	 * {@link fr.cnam.stefangeorgesco.dmp.domain.dto.PatientFileItemDTO} représentant
+	 * les éléments médicaux demandés, encapsulée dans un objet
+	 * org.springframework.http.ResponseEntity.
+	 * @throws FinderException
+	 */
 	@GetMapping("/patient-file/details/item")
 	public ResponseEntity<List<PatientFileItemDTO>> findPatientPatientFileItems(Principal principal)
 			throws FinderException {
@@ -92,13 +152,30 @@ public class PatientFileController {
 		return ResponseEntity.ok(patientFileService.findPatientFileItemsByPatientFileId(userId));
 	}
 
+	/**
+	 * Gestionnaire des requêtes GET de consultation du dossier patient désigné par
+	 * son identifiant.
+	 * @param id : l'identifiant du dossier patient, fourni en variable de chemin.
+	 * @return : l'objet {@link fr.cnam.stefangeorgesco.dmp.domain.dto.PatientFileDTO}
+	 * représentant le dossier patient consulté, encapsulé dans un objet
+	 * org.springframework.http.ResponseEntity.
+	 * @throws ApplicationException
+	 */
 	@GetMapping("/patient-file/{id}")
-	public ResponseEntity<PatientFileDTO> getPatientFileDetails(@PathVariable String id, Principal principal)
+	public ResponseEntity<PatientFileDTO> getPatientFileDetails(@PathVariable String id)
 			throws ApplicationException {
 
 		return ResponseEntity.ok(patientFileService.findPatientFile(id));
 	}
 
+	/**
+	 * Gestionnaire des requêtes DELETE de suppression du dossier patient désigné par
+	 * son identifiant.
+	 * @param id : l'identifiant du dossier patient, fourni en variable de chemin.
+	 * @return : une réponse {@link RestResponse} encapsulée dans un objet
+	 * org.springframework.http.ResponseEntity.
+	 * @throws DeleteException
+	 */
 	@DeleteMapping("/patient-file/{id}")
 	public ResponseEntity<RestResponse> deletePatientFile(@PathVariable String id) throws DeleteException {
 
@@ -109,6 +186,16 @@ public class PatientFileController {
 		return ResponseEntity.ok(response);
 	}
 
+	/**
+	 * Gestionnaire des requêtes PUT de modification du médecin référent du dossier patient
+	 * désingé par son identifiant.
+	 * @param id : l'identifiant du dossier patient, fourni en variable de chemin.
+	 * @param doctorDTO : le dossier de médecin du nouveau médecin référent.
+	 * @return : l'objet {@link fr.cnam.stefangeorgesco.dmp.domain.dto.PatientFileDTO}
+	 * représentant le dossier patient modifié, encapsulé dans un objet
+	 * org.springframework.http.ResponseEntity.
+	 * @throws ApplicationException
+	 */
 	@PutMapping("/patient-file/{id}/referring-doctor")
 	public ResponseEntity<PatientFileDTO> updateReferringDoctor(@PathVariable String id,
 			@Valid @RequestBody DoctorDTO doctorDTO) throws ApplicationException {
@@ -120,6 +207,16 @@ public class PatientFileController {
 		return ResponseEntity.ok(patientFileService.updateReferringDoctor(patientFileDTO));
 	}
 
+	/**
+	 * Gestionnaire des requêtes GET de récupération des dossiers patient trouvés par une
+	 * recherche à partir d'une chaîne de caractère.
+	 * @param q : la chaîne de caractère (String) utilisée pour la recherche,
+	 * fournie en paramètre de requête.
+	 * @return : une liste (List) d'objets
+	 * {@link fr.cnam.stefangeorgesco.dmp.domain.dto.PatientFileDTO} représentant le résultat
+	 * de la recherche, encapsulée dans un objet org.springframework.http.ResponseEntity.
+	 * @throws FinderException
+	 */
 	@GetMapping("/patient-file")
 	public ResponseEntity<List<PatientFileDTO>> findPatientFilesByIdOrFirstnameOrLastname(@RequestParam String q)
 			throws FinderException {
@@ -128,6 +225,21 @@ public class PatientFileController {
 				.body(patientFileService.findPatientFilesByIdOrFirstnameOrLastname(q));
 	}
 
+	/**
+	 * Gestionnaire des requêtes POST de création d'un correspondance associée au dossier
+	 * patient désigné par son identifiant. L'utilisateur doit être le médecin référent et
+	 * il ne peut pas créer une correspondance pour lui-même.
+	 * @param correspondenceDTO : l'objet
+	 * {@link fr.cnam.stefangeorgesco.dmp.domain.dto.CorrespondenceDTO} représentant la
+	 * correspondance à créer.
+	 * @param id : l'identifiant du dossier patient, fourni en variable de chemin.
+	 * @param principal : l'utilisateur authentifié.
+	 * @return : l'objet {@link fr.cnam.stefangeorgesco.dmp.domain.dto.CorrespondenceDTO}
+	 * représentant la correspondance créée, encapsulé dans un objet
+	 * org.springframework.http.ResponseEntity avec le statut
+	 * {@link org.springframework.http.HttpStatus#CREATED} en case de succès. 
+	 * @throws ApplicationException
+	 */
 	@PostMapping("/patient-file/{id}/correspondence")
 	public ResponseEntity<CorrespondenceDTO> createCorrespondence(
 			@Valid @RequestBody CorrespondenceDTO correspondenceDTO, @PathVariable String id, Principal principal)
@@ -152,6 +264,21 @@ public class PatientFileController {
 
 	}
 
+	/**
+	 * Gestionnaire des requêtes POST de création d'un élément médical associée au dossier
+	 * patient désigné par son identifiant. L'utilisateur doit être le médecin référent ou
+	 * un médecin correspondant (correspondance en cours de validité).
+	 * @param patientFileItemDTO : l'objet
+	 * {@link fr.cnam.stefangeorgesco.dmp.domain.dto.PatientFileItemDTO} représentant
+	 * l'élément médical à créer.
+	 * @param id : l'identifiant du dossier patient, fourni en variable de chemin.
+	 * @param principal : l'utilisateur authentifié.
+	 * @return : l'objet {@link fr.cnam.stefangeorgesco.dmp.domain.dto.PatientFileItemDTO}
+	 * représentant l'élément médical créé, encapsulé dans un objet
+	 * org.springframework.http.ResponseEntity avec le statut
+	 * {@link org.springframework.http.HttpStatus#CREATED} en case de succès.
+	 * @throws Exception
+	 */
 	@PostMapping("/patient-file/{id}/item")
 	public ResponseEntity<PatientFileItemDTO> createPatientFileItem(
 			@Valid @RequestBody PatientFileItemDTO patientFileItemDTO, @PathVariable String id, Principal principal)
@@ -182,6 +309,56 @@ public class PatientFileController {
 				.body(patientFileService.createPatientFileItem(patientFileItemDTO));
 	}
 
+	/**
+	 * Gestionnaire des requêtes GET de récupération des correspondances associées à un 
+	 * dossier patient désigné par son identifiant. L'utilisateur doit être le médecin
+	 * référent ou un médecin correspondant (correspondance en cours de validité).
+	 * @param id  : l'identifiant du dossier patient, fourni en variable de chemin.
+	 * @param principal : l'utilisateur authentifié.
+	 * @return : la liste (List) d'objets
+	 * {@link fr.cnam.stefangeorgesco.dmp.domain.dto.CorrespondenceDTO} représentant
+	 * les correspondances demandées, encapsulée dans un objet
+	 * org.springframework.http.ResponseEntity.
+	 * @throws FinderException
+	 */
+	@GetMapping("/patient-file/{id}/correspondence")
+	public ResponseEntity<List<CorrespondenceDTO>> findCorrespondencesByPatientFileId(@PathVariable String id,
+			Principal principal) throws FinderException {
+
+		String userId = userService.findUserByUsername(principal.getName()).getId();
+
+		String referringDoctorId = patientFileService.findPatientFile(id).getReferringDoctorId();
+
+		List<CorrespondenceDTO> correspondencesDTO = patientFileService.findCorrespondencesByPatientFileId(id);
+
+		LocalDate now = LocalDate.now();
+
+		boolean userIsReferringDoctor = userId.equals(referringDoctorId);
+
+		boolean userIsCorrespondingDoctor = correspondencesDTO.stream()
+				.filter(correspondence -> correspondence.getDateUntil().compareTo(now) >= 0)
+				.map(CorrespondenceDTO::getDoctorId).collect(Collectors.toList()).contains(userId);
+
+		if (!userIsReferringDoctor && !userIsCorrespondingDoctor) {
+			throw new FinderException("L'utilisateur n'est pas le médecin référent ou correspondant.");
+		}
+
+		return ResponseEntity.ok(correspondencesDTO);
+
+	}
+
+	/**
+	 * Gestionnaire des requêtes GET de récupération des éléménts médicaux associées à un 
+	 * dossier patient désigné par son identifiant. L'utilisateur doit être le médecin
+	 * référent ou un médecin correspondant (correspondance en cours de validité).
+	 * @param id  : l'identifiant du dossier patient, fourni en variable de chemin.
+	 * @param principal : l'utilisateur authentifié.
+	 * @return : la liste (List) d'objets
+	 * {@link fr.cnam.stefangeorgesco.dmp.domain.dto.PatientFileItemDTO} représentant
+	 * les éléments médicaux demandés, encapsulée dans un objet
+	 * org.springframework.http.ResponseEntity.
+	 * @throws FinderException
+	 */
 	@GetMapping("/patient-file/{id}/item")
 	public ResponseEntity<List<PatientFileItemDTO>> findPatientFileItemsByPatientFileId(@PathVariable String id,
 			Principal principal) throws FinderException {
@@ -207,6 +384,22 @@ public class PatientFileController {
 		return ResponseEntity.ok(patientFileService.findPatientFileItemsByPatientFileId(id));
 	}
 
+	/**
+	 * Gestionnaire des requêtes PUT de modification d'un élémént médical désigné par
+	 * son identifiant, associé au dossier patient désigné par son identifiant. L'utilisateur
+	 * doit être le médecin référent ou un médecin correspondant (correspondance en cours de
+	 * validité), et auteur de l'élément médical. 
+	 * @param patientFileItemDTO : l'objet
+	 * {@link fr.cnam.stefangeorgesco.dmp.domain.dto.PatientFileItemDTO} représentant
+	 * l'élément médical à modifier.
+	 * @param patienfFileId : l'identifiant du dossier patient, fourni en variable de chemin.
+	 * @param itemId : l'identifiant de l'élément médical, fourni en variable de chemin.
+	 * @param principal : l'utilisateur authentifié.
+	 * @return : l'objet {@link fr.cnam.stefangeorgesco.dmp.domain.dto.PatientFileItemDTO}
+	 * représentant l'élément médical modifié, encapsulé dans un objet
+	 * org.springframework.http.ResponseEntity.
+	 * @throws ApplicationException
+	 */
 	@PutMapping("/patient-file/{patienfFileId}/item/{itemId}")
 	public ResponseEntity<PatientFileItemDTO> updatePatientFileItem(
 			@Valid @RequestBody PatientFileItemDTO patientFileItemDTO, @PathVariable String patienfFileId,
@@ -250,6 +443,55 @@ public class PatientFileController {
 		return ResponseEntity.ok(patientFileService.updatePatientFileItem(patientFileItemDTO));
 	}
 
+	/**
+	 * Gestionnaire des requêtes DELETE de suppression d'un correspondance désingée par 
+	 * son identifiant, associée au dossier patient désigné par son identifiant.
+	 * L'utilisateur doit être le médecin référent.
+	 * @param patientFileId : l'identifiant du dossier patient, fourni en variable de chemin.
+	 * @param correspondenceId : l'identifiant de la correspondance, fournie en variable de
+	 * chemin.
+	 * @param principal : l'utilisateur authentifié.
+	 * @return : une réponse {@link RestResponse} encapsulée dans un objet
+	 * org.springframework.http.ResponseEntity.
+	 * @throws ApplicationException
+	 */
+	@DeleteMapping("/patient-file/{patientFileId}/correspondence/{correspondenceId}")
+	public ResponseEntity<RestResponse> deleteCorrespondence(@PathVariable String patientFileId,
+			@PathVariable String correspondenceId, Principal principal) throws ApplicationException {
+
+		UserDTO userDTO = userService.findUserByUsername(principal.getName());
+
+		PatientFileDTO patientFileDTO = patientFileService.findPatientFile(patientFileId);
+
+		if (!userDTO.getId().equals(patientFileDTO.getReferringDoctorId())) {
+			throw new CreateException("L'utilisateur n'est pas le médecin référent.");
+		}
+
+		CorrespondenceDTO storedCorrespondenceDTO = patientFileService.findCorrespondence(correspondenceId);
+
+		if (!patientFileId.equals(storedCorrespondenceDTO.getPatientFileId())) {
+			throw new FinderException("Correspondance non trouvée pour le dossier patient '" + patientFileId + "'");
+		}
+
+		patientFileService.deleteCorrespondence(UUID.fromString(correspondenceId));
+
+		RestResponse response = new RestResponse(HttpStatus.OK.value(), "La correspondance a bien été supprimée.");
+
+		return ResponseEntity.ok(response);
+	}
+
+	/**
+	 * Gestionnaire des requêtes DELETE de suppression d'un élémént médical désigné par
+	 * son identifiant, associé au dossier patient désigné par son identifiant. L'utilisateur
+	 * doit être le médecin référent ou un médecin correspondant (correspondance en cours de
+	 * validité), et auteur de l'élément médical.
+	 * @param patienfFileId : l'identifiant du dossier patient, fourni en variable de chemin.
+	 * @param itemId : l'identifiant de l'élément médical, fourni en variable de chemin.
+	 * @param principal : l'utilisateur authentifié.
+	 * @return : une réponse {@link RestResponse} encapsulée dans un objet
+	 * org.springframework.http.ResponseEntity.
+	 * @throws ApplicationException
+	 */
 	@DeleteMapping("/patient-file/{patienfFileId}/item/{itemId}")
 	public ResponseEntity<RestResponse> deletePatientFileItem(@PathVariable String patienfFileId,
 			@PathVariable String itemId, Principal principal) throws ApplicationException {
@@ -295,63 +537,32 @@ public class PatientFileController {
 
 	}
 
-	@DeleteMapping("/patient-file/{patientFileId}/correspondence/{correspondenceId}")
-	public ResponseEntity<RestResponse> deleteCorrespondence(@PathVariable String patientFileId,
-			@PathVariable String correspondenceId, Principal principal) throws ApplicationException {
-
-		UserDTO userDTO = userService.findUserByUsername(principal.getName());
-
-		PatientFileDTO patientFileDTO = patientFileService.findPatientFile(patientFileId);
-
-		if (!userDTO.getId().equals(patientFileDTO.getReferringDoctorId())) {
-			throw new CreateException("L'utilisateur n'est pas le médecin référent.");
-		}
-
-		CorrespondenceDTO storedCorrespondenceDTO = patientFileService.findCorrespondence(correspondenceId);
-
-		if (!patientFileId.equals(storedCorrespondenceDTO.getPatientFileId())) {
-			throw new FinderException("Correspondance non trouvée pour le dossier patient '" + patientFileId + "'");
-		}
-
-		patientFileService.deleteCorrespondence(UUID.fromString(correspondenceId));
-
-		RestResponse response = new RestResponse(HttpStatus.OK.value(), "La correspondance a bien été supprimée.");
-
-		return ResponseEntity.ok(response);
-	}
-
-	@GetMapping("/patient-file/{id}/correspondence")
-	public ResponseEntity<List<CorrespondenceDTO>> findCorrespondencesByPatientFileId(@PathVariable String id,
-			Principal principal) throws FinderException {
-
-		String userId = userService.findUserByUsername(principal.getName()).getId();
-
-		String referringDoctorId = patientFileService.findPatientFile(id).getReferringDoctorId();
-
-		List<CorrespondenceDTO> correspondencesDTO = patientFileService.findCorrespondencesByPatientFileId(id);
-
-		LocalDate now = LocalDate.now();
-
-		boolean userIsReferringDoctor = userId.equals(referringDoctorId);
-
-		boolean userIsCorrespondingDoctor = correspondencesDTO.stream()
-				.filter(correspondence -> correspondence.getDateUntil().compareTo(now) >= 0)
-				.map(CorrespondenceDTO::getDoctorId).collect(Collectors.toList()).contains(userId);
-
-		if (!userIsReferringDoctor && !userIsCorrespondingDoctor) {
-			throw new FinderException("L'utilisateur n'est pas le médecin référent ou correspondant.");
-		}
-
-		return ResponseEntity.ok(correspondencesDTO);
-
-	}
-
+	/**
+	 * Gestionnaire des requêtes GET de consultation d'une maladie désignée par son identifiant.
+	 * @param id : l'identifiant de la maladie, fourni en variable de chemin.
+	 * @return : un objet {@link fr.cnam.stefangeorgesco.dmp.domain.dto.DiseaseDTO}
+	 * représentant la maladie consultée, encapsulé dans un objet
+	 * org.springframework.http.ResponseEntity.
+	 * @throws FinderException
+	 */
 	@GetMapping("/disease/{id}")
 	public ResponseEntity<DiseaseDTO> getDisease(@PathVariable String id) throws FinderException {
 
 		return ResponseEntity.ok(patientFileService.findDisease(id));
 	}
 
+	/**
+	 * Gestionnaire des requêtes GET de récupération des maladies trouvées par une
+	 * recherche à partir d'une chaîne de caractère.
+	 * @param q : la chaîne de caractère (String) utilisée pour la recherche,
+	 * fournie en paramètre de requête.
+	 * @param limit : le nombre maximum d'objets récupérés, paramètre de requête optionel.
+	 * Il est fixé à 30 par défaut. 
+	 * @return : une liste (List) d'objets
+	 * {@link fr.cnam.stefangeorgesco.dmp.domain.dto.DiseaseDTO} représentant le résultat
+	 * de la recherche, encapsulée dans un objet org.springframework.http.ResponseEntity.
+	 * @throws FinderException
+	 */
 	@GetMapping("/disease")
 	public ResponseEntity<List<DiseaseDTO>> getDiseases(@RequestParam String q,
 			@RequestParam(required = false, defaultValue = "30") int limit) throws FinderException {
@@ -359,12 +570,32 @@ public class PatientFileController {
 		return ResponseEntity.ok(patientFileService.findDiseasesByIdOrDescription(q, limit));
 	}
 
+	/**
+	 * Gestionnaire des requêtes GET de consultation d'un acte médical désignée par son identifiant.
+	 * @param id : l'identifiant de l'élément médical, fourni en variable de chemin.
+	 * @return : un objet {@link fr.cnam.stefangeorgesco.dmp.domain.dto.MedicalActDTO}
+	 * représentant l'acte médical consulté, encapsulé dans un objet
+	 * org.springframework.http.ResponseEntity.
+	 * @throws FinderException
+	 */
 	@GetMapping("/medical-act/{id}")
 	public ResponseEntity<MedicalActDTO> getMedicalAct(@PathVariable String id) throws FinderException {
 
 		return ResponseEntity.ok(patientFileService.findMedicalAct(id));
 	}
 
+	/**
+	 * Gestionnaire des requêtes GET de récupération des actes médicaux trouvés par une
+	 * recherche à partir d'une chaîne de caractère.
+	 * @param q : la chaîne de caractère (String) utilisée pour la recherche,
+	 * fournie en paramètre de requête.
+	 * @param limit : le nombre maximum d'objets récupérés, paramètre de requête optionel.
+	 * Il est fixé à 30 par défaut.
+	 * @return : une liste (List) d'objets
+	 * {@link fr.cnam.stefangeorgesco.dmp.domain.dto.MedicalActDTO} représentant le résultat
+	 * de la recherche, encapsulée dans un objet org.springframework.http.ResponseEntity.
+	 * @throws FinderException
+	 */
 	@GetMapping("/medical-act")
 	public ResponseEntity<List<MedicalActDTO>> getMedicalActs(@RequestParam String q,
 			@RequestParam(required = false, defaultValue = "30") int limit) throws FinderException {
