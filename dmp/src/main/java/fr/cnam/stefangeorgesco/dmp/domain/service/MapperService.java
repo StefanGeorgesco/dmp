@@ -37,19 +37,19 @@ public class MapperService {
 	private Map<Class<? extends PatientFileItemDTO>, Class<? extends PatientFileItem>> returnEntityTypes;
 
 	private ModelMapper modelMapper;
-	
+
 	public MapperService() {
-		
-		returnDTOTypes  = new HashMap<>();
-		
+
+		returnDTOTypes = new HashMap<>();
+
 		returnDTOTypes.put(Mail.class, MailDTO.class);
 		returnDTOTypes.put(Diagnosis.class, DiagnosisDTO.class);
 		returnDTOTypes.put(Act.class, ActDTO.class);
 		returnDTOTypes.put(Prescription.class, PrescriptionDTO.class);
 		returnDTOTypes.put(Symptom.class, SymptomDTO.class);
-		
-		returnEntityTypes  = new HashMap<>();
-		
+
+		returnEntityTypes = new HashMap<>();
+
 		returnEntityTypes.put(MailDTO.class, Mail.class);
 		returnEntityTypes.put(DiagnosisDTO.class, Diagnosis.class);
 		returnEntityTypes.put(ActDTO.class, Act.class);
@@ -58,7 +58,7 @@ public class MapperService {
 	}
 
 	public PatientFileItemDTO mapToDTO(PatientFileItem item) {
-		
+
 		modelMapper = commonModelMapper;
 
 		if (item instanceof Diagnosis) {
@@ -66,12 +66,12 @@ public class MapperService {
 		} else if (item instanceof Act) {
 			modelMapper = actModelMapper;
 		}
-		
+
 		return modelMapper.map(item, returnDTOTypes.get(item.getClass()));
 	}
 
 	public PatientFileItem mapToEntity(PatientFileItemDTO itemDTO) {
-		
+
 		return commonModelMapper.map(itemDTO, returnEntityTypes.get(itemDTO.getClass()));
 	}
 }

@@ -20,14 +20,14 @@ import lombok.Setter;
 @Getter
 @Setter
 public class MedicalAct {
-	
+
 	/**
 	 * Identifiant, champ 'Code' de la nomenclature CCAM
 	 */
 	@Id
 	@NotBlank(message = "L'identifiant est obligatoire.")
 	private String id;
-	
+
 	/**
 	 * Champ 'Texte' de la nomenclature CCAM
 	 */

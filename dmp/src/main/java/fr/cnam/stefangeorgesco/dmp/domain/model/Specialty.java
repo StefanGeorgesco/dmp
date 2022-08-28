@@ -18,20 +18,20 @@ import lombok.Setter;
 @Getter
 @Setter
 public class Specialty {
-	
+
 	/**
 	 * Identifiant.
 	 */
 	@Id
 	@NotBlank(message = "L'identifiant est obligatoire.")
 	private String id;
-	
+
 	/**
 	 * Libellé.
 	 */
 	@NotBlank(message = "La description est obligatoire.")
 	private String description;
-	
+
 	/**
 	 * Représente la spécialité sous forme {@link java.lang.String}
 	 */

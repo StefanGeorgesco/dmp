@@ -22,15 +22,16 @@ import fr.cnam.stefangeorgesco.dmp.authentication.domain.service.UserService;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.DoctorDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.SpecialtyDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.service.DoctorService;
-import fr.cnam.stefangeorgesco.dmp.exception.domain.ApplicationException;
+import fr.cnam.stefangeorgesco.dmp.exception.domain.CreateException;
 import fr.cnam.stefangeorgesco.dmp.exception.domain.DeleteException;
 import fr.cnam.stefangeorgesco.dmp.exception.domain.FinderException;
+import fr.cnam.stefangeorgesco.dmp.exception.domain.UpdateException;
 
 /**
-* Contrôleur REST dédié aux médecins et aux spécialités des médecins.
-* 
-* @author Stéfan Georgesco    
-* 
+ * Contrôleur REST dédié aux médecins et aux spécialités des médecins.
+ * 
+ * @author Stéfan Georgesco
+ * 
  */
 @RestController
 public class DoctorController {
@@ -43,35 +44,43 @@ public class DoctorController {
 
 	/**
 	 * Gestionnaire des requêtes POST de création des dossiers de médecins.
-	 * @param doctorDTO l'objet {@link fr.cnam.stefangeorgesco.dmp.domain.dto.DoctorDTO}
-	 * représentant le dossier de médecin à créer.
+	 * 
+	 * @param doctorDTO l'objet
+	 *                  {@link fr.cnam.stefangeorgesco.dmp.domain.dto.DoctorDTO}
+	 *                  représentant le dossier de médecin à créer.
 	 * @return l'objet {@link fr.cnam.stefangeorgesco.dmp.domain.dto.DoctorDTO}
-	 * représentant le dossier de médecin créé, encapsulé dans un objet
-	 * org.springframework.http.ResponseEntity avec le statut
-	 * {@link org.springframework.http.HttpStatus#CREATED} en cas de succès.
-	 * @throws ApplicationException
+	 *         représentant le dossier de médecin créé, encapsulé dans un objet
+	 *         org.springframework.http.ResponseEntity avec le statut
+	 *         {@link org.springframework.http.HttpStatus#CREATED} en cas de succès.
+	 * @throws CreateException
+	 * @throws FinderException
 	 */
 	@PostMapping("/doctor")
-	public ResponseEntity<DoctorDTO> createDoctor(@Valid @RequestBody DoctorDTO doctorDTO) throws ApplicationException {
+	public ResponseEntity<DoctorDTO> createDoctor(@Valid @RequestBody DoctorDTO doctorDTO)
+			throws FinderException, CreateException {
 
 		return ResponseEntity.status(HttpStatus.CREATED).body(doctorService.createDoctor(doctorDTO));
 	}
 
 	/**
-	 * Gestionnaire des requêtes PUT de modification du dossier de médecin correspondant
-	 * à l'utilisateur connecté (authentifé).
-	 * @param doctorDTO l'objet {@link fr.cnam.stefangeorgesco.dmp.domain.dto.DoctorDTO}
-	 * représentant le dossier de médecin à modifier et les données à modifier.
+	 * Gestionnaire des requêtes PUT de modification du dossier de médecin
+	 * correspondant à l'utilisateur connecté (authentifé).
+	 * 
+	 * @param doctorDTO l'objet
+	 *                  {@link fr.cnam.stefangeorgesco.dmp.domain.dto.DoctorDTO}
+	 *                  représentant le dossier de médecin à modifier et les données
+	 *                  à modifier.
 	 * @param principal l'utilisateur authentifié.
 	 * @return l'objet {@link fr.cnam.stefangeorgesco.dmp.domain.dto.DoctorDTO}
-	 * représentant le dossier de médecin modifié, encapsulé dans un objet
-	 * org.springframework.http.ResponseEntity.
-	 * @throws ApplicationException
+	 *         représentant le dossier de médecin modifié, encapsulé dans un objet
+	 *         org.springframework.http.ResponseEntity.
+	 * @throws FinderException
+	 * @throws UpdateException
 	 * @see fr.cnam.stefangeorgesco.dmp.domain.service.DoctorService#updateDoctor(DoctorDTO)
 	 */
 	@PutMapping("/doctor/details")
 	public ResponseEntity<DoctorDTO> updateDoctor(@Valid @RequestBody DoctorDTO doctorDTO, Principal principal)
-			throws ApplicationException {
+			throws FinderException, UpdateException {
 
 		UserDTO userDTO = userService.findUserByUsername(principal.getName());
 
@@ -83,10 +92,11 @@ public class DoctorController {
 	/**
 	 * Gestionnaire des requêtes GET de consultation du dossier de médecin
 	 * correspondant à l'utilisateur connecté (authentifé).
+	 * 
 	 * @param principal l'utilisateur authentifié.
 	 * @return l'objet {@link fr.cnam.stefangeorgesco.dmp.domain.dto.DoctorDTO}
-	 * représentant le dossier de médecin consulté, encapsulé dans un objet
-	 * org.springframework.http.ResponseEntity.
+	 *         représentant le dossier de médecin consulté, encapsulé dans un objet
+	 *         org.springframework.http.ResponseEntity.
 	 * @throws FinderException
 	 */
 	@GetMapping("/doctor/details")
@@ -98,27 +108,28 @@ public class DoctorController {
 	}
 
 	/**
-	 * Gestionnaire des requêtes GET de consultation du dossier de médecin désigné par
-	 * son identifiant.
+	 * Gestionnaire des requêtes GET de consultation du dossier de médecin désigné
+	 * par son identifiant.
+	 * 
 	 * @param id l'identifiant du dossier de médecin, fourni en variable de chemin.
 	 * @return l'objet {@link fr.cnam.stefangeorgesco.dmp.domain.dto.DoctorDTO}
-	 * représentant le dossier de médecin consulté, encapsulé dans un objet
-	 * org.springframework.http.ResponseEntity.
+	 *         représentant le dossier de médecin consulté, encapsulé dans un objet
+	 *         org.springframework.http.ResponseEntity.
 	 * @throws FinderException
 	 */
 	@GetMapping("/doctor/{id}")
-	public ResponseEntity<DoctorDTO> getDoctor(@PathVariable String id)
-			throws FinderException {
+	public ResponseEntity<DoctorDTO> getDoctor(@PathVariable String id) throws FinderException {
 
 		return ResponseEntity.ok(doctorService.findDoctor(id));
 	}
 
 	/**
-	 * Gestionnaire des requêtes DELETE de suppression du dossier de médecin désigné par
-	 * son identifiant.
+	 * Gestionnaire des requêtes DELETE de suppression du dossier de médecin désigné
+	 * par son identifiant.
+	 * 
 	 * @param id l'identifiant du dossier de médecin, fourni en variable de chemin.
 	 * @return une réponse {@link RestResponse} encapsulée dans un objet
-	 * org.springframework.http.ResponseEntity.
+	 *         org.springframework.http.ResponseEntity.
 	 * @throws DeleteException
 	 */
 	@DeleteMapping("/doctor/{id}")
@@ -132,55 +143,62 @@ public class DoctorController {
 	}
 
 	/**
-	 * Gestionnaire des requêtes GET de récupération des dossiers de médecins trouvés par une
-	 * recherche à partir d'une chaîne de caractère.
-	 * @param q la chaîne de caractère (String) utilisée pour la recherche,
-	 * fournie en paramètre de requête.
+	 * Gestionnaire des requêtes GET de récupération des dossiers de médecins
+	 * trouvés par une recherche à partir d'une chaîne de caractère.
+	 * 
+	 * @param q la chaîne de caractère (String) utilisée pour la recherche, fournie
+	 *          en paramètre de requête.
 	 * @return une liste (List) d'objets
-	 * {@link fr.cnam.stefangeorgesco.dmp.domain.dto.DoctorDTO} représentant le résultat
-	 * de la recherche, encapsulée dans un objet org.springframework.http.ResponseEntity.
+	 *         {@link fr.cnam.stefangeorgesco.dmp.domain.dto.DoctorDTO} représentant
+	 *         le résultat de la recherche, encapsulée dans un objet
+	 *         org.springframework.http.ResponseEntity.
 	 * @throws FinderException
 	 * @see fr.cnam.stefangeorgesco.dmp.domain.service.DoctorService#findDoctorsByIdOrFirstnameOrLastname(String)
 	 */
 	@GetMapping("/doctor")
-	 public ResponseEntity<List<DoctorDTO>> findDoctorsByIdOrFirstnameOrLastname(@RequestParam String q) throws FinderException {
-		
+	public ResponseEntity<List<DoctorDTO>> findDoctorsByIdOrFirstnameOrLastname(@RequestParam String q)
+			throws FinderException {
+
 		return ResponseEntity.ok(doctorService.findDoctorsByIdOrFirstnameOrLastname(q));
-	 }
-	
+	}
+
 	/**
 	 * Gestionnaire des requêtes GET de consultation d'une spécialité médicale
 	 * désignée par son identifiant.
+	 * 
 	 * @param id l'identifiant de la spécialité, fourni en variable de chemin.
 	 * @return un objet {@link fr.cnam.stefangeorgesco.dmp.domain.dto.SpecialtyDTO}
-	 * représentant la spécialité consultée, encapsulé dans un objet
-	 * org.springframework.http.ResponseEntity.
+	 *         représentant la spécialité consultée, encapsulé dans un objet
+	 *         org.springframework.http.ResponseEntity.
 	 * @throws FinderException
 	 */
 	@GetMapping("/specialty/{id}")
 	public ResponseEntity<SpecialtyDTO> getSpecialty(@PathVariable String id) throws FinderException {
-		
+
 		return ResponseEntity.ok(doctorService.findSpecialty(id));
 	}
 
 	/**
-	 * Gestionnaire des requêtes GET de récupération des spécialités trouvées par une
-	 * recherche à partir d'une chaîne de caractère.
-	 * @param q la chaîne de caractère (String) utilisée pour la recherche,
-	 * fournie en paramètre de requête.
+	 * Gestionnaire des requêtes GET de récupération des spécialités trouvées par
+	 * une recherche à partir d'une chaîne de caractère.
+	 * 
+	 * @param q la chaîne de caractère (String) utilisée pour la recherche, fournie
+	 *          en paramètre de requête.
 	 * @return une liste (List) d'objets
-	 * {@link fr.cnam.stefangeorgesco.dmp.domain.dto.SpecialtyDTO} représentant le résultat
-	 * de la recherche, encapsulée dans un objet org.springframework.http.ResponseEntity.
+	 *         {@link fr.cnam.stefangeorgesco.dmp.domain.dto.SpecialtyDTO}
+	 *         représentant le résultat de la recherche, encapsulée dans un objet
+	 *         org.springframework.http.ResponseEntity.
 	 * @throws FinderException
 	 */
 	@GetMapping("/specialty")
-	public ResponseEntity<List<SpecialtyDTO>> getSpecialties(@RequestParam(required = false) String q) throws FinderException {
-		
+	public ResponseEntity<List<SpecialtyDTO>> getSpecialties(@RequestParam(required = false) String q)
+			throws FinderException {
+
 		if (q == null) {
-            return ResponseEntity.ok(doctorService.findAllSpecialties());
-        } else {
-            return ResponseEntity.ok(doctorService.findSpecialtiesByIdOrDescription(q));
-        }
+			return ResponseEntity.ok(doctorService.findAllSpecialties());
+		} else {
+			return ResponseEntity.ok(doctorService.findSpecialtiesByIdOrDescription(q));
+		}
 	}
 
 }

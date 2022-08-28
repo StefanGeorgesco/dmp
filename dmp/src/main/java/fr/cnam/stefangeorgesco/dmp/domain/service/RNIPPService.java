@@ -9,7 +9,7 @@ import fr.cnam.stefangeorgesco.dmp.exception.domain.CheckException;
 public class RNIPPService {
 
 	public void checkPatientData(PatientFileDTO patientFileDTO) throws CheckException {
-		
+
 	}
-	
+
 }

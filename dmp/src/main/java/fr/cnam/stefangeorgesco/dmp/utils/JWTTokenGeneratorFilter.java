@@ -25,7 +25,6 @@ import fr.cnam.stefangeorgesco.dmp.constants.SecurityConstants;
 
 public class JWTTokenGeneratorFilter extends OncePerRequestFilter {
 
-	
 	@Override
 	public void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
 			throws IOException, ServletException {
@@ -33,9 +32,8 @@ public class JWTTokenGeneratorFilter extends OncePerRequestFilter {
 		if (null != authentication) {
 			SecretKey key = Keys.hmacShaKeyFor(SecurityConstants.JWT_KEY.getBytes(StandardCharsets.UTF_8));
 			String jwt = Jwts.builder().setIssuer("fr.cnam.stefangeorgesco.dmp").setSubject("JWT Token")
-						.claim("username", authentication.getName())
-					  .claim("authorities", populateAuthorities(authentication.getAuthorities()))
-					  .setIssuedAt(new Date())
+					.claim("username", authentication.getName())
+					.claim("authorities", populateAuthorities(authentication.getAuthorities())).setIssuedAt(new Date())
 					.setExpiration(new Date((new Date()).getTime() + SecurityConstants.JWT_VALIDITY_PERIOD))
 					.signWith(key).compact();
 			response.setHeader(SecurityConstants.JWT_HEADER, jwt);
@@ -48,12 +46,12 @@ public class JWTTokenGeneratorFilter extends OncePerRequestFilter {
 	protected boolean shouldNotFilter(HttpServletRequest request) {
 		return !request.getMethod().equals("POST") || !request.getServletPath().equals("/login");
 	}
-	
+
 	private String populateAuthorities(Collection<? extends GrantedAuthority> collection) {
 		Set<String> authoritiesSet = new HashSet<>();
-        for (GrantedAuthority authority : collection) {
-        	authoritiesSet.add(authority.getAuthority());
-        }
-        return String.join(",", authoritiesSet);
+		for (GrantedAuthority authority : collection) {
+			authoritiesSet.add(authority.getAuthority());
+		}
+		return String.join(",", authoritiesSet);
 	}
 }

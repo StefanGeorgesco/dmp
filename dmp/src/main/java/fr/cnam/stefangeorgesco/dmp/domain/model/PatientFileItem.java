@@ -20,8 +20,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * Classe abstraite parente des entités représentant les éléments
- * médicaux des dossiers patients.
+ * Classe abstraite parente des entités représentant les éléments médicaux des
+ * dossiers patients.
  * 
  * @author Stéfan Georgesco
  *
@@ -38,8 +38,8 @@ public abstract class PatientFileItem {
 	 */
 	@Id
 	@GeneratedValue
-	@Type(type="org.hibernate.type.UUIDCharType")
-    private UUID id;
+	@Type(type = "org.hibernate.type.UUIDCharType")
+	private UUID id;
 
 	/**
 	 * Date de création de l'élément médical.
@@ -47,12 +47,12 @@ public abstract class PatientFileItem {
 	@NotNull(message = "La date de l'élément de dossier patient est obligatoire.")
 	@PastOrPresent(message = "La date de l'élément de dossier patient doit être dans le passé ou aujourd'hui.")
 	private LocalDate date;
-	
+
 	/**
 	 * Commentaires.
 	 */
 	private String comments;
-	
+
 	/**
 	 * Médecin auteur de l'élément médical.
 	 */
@@ -60,7 +60,7 @@ public abstract class PatientFileItem {
 	@JoinColumn(name = "authoring_doctor_id")
 	@NotNull(message = "Le médecin auteur est obligatoire.")
 	private Doctor authoringDoctor;
-	
+
 	/**
 	 * Dossier patient auquel l'élément médical est associé.
 	 */

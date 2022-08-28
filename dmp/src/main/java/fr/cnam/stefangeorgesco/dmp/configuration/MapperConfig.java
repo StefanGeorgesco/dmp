@@ -27,7 +27,9 @@ import fr.cnam.stefangeorgesco.dmp.domain.model.PatientFile;
 public class MapperConfig {
 
 	/**
-	 * Mappeur à utiliser pour tous les cas ne nécessitant pas un mappeur spécifique.
+	 * Mappeur à utiliser pour tous les cas ne nécessitant pas un mappeur
+	 * spécifique.
+	 * 
 	 * @return le bean mappeur
 	 */
 	@Bean
@@ -37,8 +39,9 @@ public class MapperConfig {
 
 	/**
 	 * Mappeur spécifique de conversion d'un objet
-	 * {@link fr.cnam.stefangeorgesco.dmp.domain.model.Doctor}
-	 * en objet {@link fr.cnam.stefangeorgesco.dmp.domain.dto.DoctorDTO}
+	 * {@link fr.cnam.stefangeorgesco.dmp.domain.model.Doctor} en objet
+	 * {@link fr.cnam.stefangeorgesco.dmp.domain.dto.DoctorDTO}
+	 * 
 	 * @return le bean mappeur
 	 */
 	@Bean
@@ -55,8 +58,9 @@ public class MapperConfig {
 
 	/**
 	 * Mappeur spécifique de conversion d'un objet
-	 * {@link fr.cnam.stefangeorgesco.dmp.domain.model.PatientFile}
-	 * en objet {@link fr.cnam.stefangeorgesco.dmp.domain.dto.PatientFileDTO}
+	 * {@link fr.cnam.stefangeorgesco.dmp.domain.model.PatientFile} en objet
+	 * {@link fr.cnam.stefangeorgesco.dmp.domain.dto.PatientFileDTO}
+	 * 
 	 * @return le bean mappeur
 	 */
 	@Bean
@@ -73,8 +77,9 @@ public class MapperConfig {
 
 	/**
 	 * Mappeur spécifique de conversion d'un objet
-	 * {@link fr.cnam.stefangeorgesco.dmp.domain.model.Diagnosis}
-	 * en objet {@link fr.cnam.stefangeorgesco.dmp.domain.dto.DiagnosisDTO}
+	 * {@link fr.cnam.stefangeorgesco.dmp.domain.model.Diagnosis} en objet
+	 * {@link fr.cnam.stefangeorgesco.dmp.domain.dto.DiagnosisDTO}
+	 * 
 	 * @return le bean mappeur
 	 */
 	@Bean
@@ -82,13 +87,15 @@ public class MapperConfig {
 		ModelMapper modelMapper = new ModelMapper();
 		TypeMap<Diagnosis, DiagnosisDTO> typeMap = modelMapper.createTypeMap(Diagnosis.class, DiagnosisDTO.class);
 		typeMap.addMapping(src -> src.getDisease(), DiagnosisDTO::setDiseaseDTO);
-		
+
 		return modelMapper;
 	}
 
 	/**
-	 * Mappeur spécifique de conversion d'un objet {@link fr.cnam.stefangeorgesco.dmp.domain.model.Act}
-	 * en objet {@link fr.cnam.stefangeorgesco.dmp.domain.dto.ActDTO}
+	 * Mappeur spécifique de conversion d'un objet
+	 * {@link fr.cnam.stefangeorgesco.dmp.domain.model.Act} en objet
+	 * {@link fr.cnam.stefangeorgesco.dmp.domain.dto.ActDTO}
+	 * 
 	 * @return le bean mappeur
 	 */
 	@Bean
@@ -96,14 +103,15 @@ public class MapperConfig {
 		ModelMapper modelMapper = new ModelMapper();
 		TypeMap<Act, ActDTO> typeMap = modelMapper.createTypeMap(Act.class, ActDTO.class);
 		typeMap.addMapping(src -> src.getMedicalAct(), ActDTO::setMedicalActDTO);
-		
+
 		return modelMapper;
 	}
 
 	/**
 	 * Mappeur spécifique de conversion d'un objet
-	 * {@link fr.cnam.stefangeorgesco.dmp.authentication.domain.model.User}
-	 * en objet {@link fr.cnam.stefangeorgesco.dmp.authentication.domain.dto.UserDTO}
+	 * {@link fr.cnam.stefangeorgesco.dmp.authentication.domain.model.User} en objet
+	 * {@link fr.cnam.stefangeorgesco.dmp.authentication.domain.dto.UserDTO}
+	 * 
 	 * @return le bean mappeur
 	 */
 	@Bean

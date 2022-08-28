@@ -6,7 +6,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * Objet de transfert de données représentant un acte médical de la nomenclature CCAM.
+ * Objet de transfert de données représentant un acte médical de la nomenclature
+ * CCAM.
  * 
  * @author Stéfan Georgesco
  *
@@ -20,7 +21,7 @@ public class MedicalActDTO {
 	 */
 	@NotBlank(message = "L'identifiant est obligatoire.")
 	private String id;
-	
+
 	/**
 	 * Champ 'Texte' de la nomenclature CCAM
 	 */

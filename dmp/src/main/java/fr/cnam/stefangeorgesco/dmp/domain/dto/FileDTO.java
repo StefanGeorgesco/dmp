@@ -11,8 +11,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * Classe abstraite parente des objets de transfert de données représentant les dossiers
- * patients et les dossiers de médecins.
+ * Classe abstraite parente des objets de transfert de données représentant les
+ * dossiers patients et les dossiers de médecins.
  * 
  * @author Stéfan Georgesco
  *
@@ -20,7 +20,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public abstract class FileDTO {
-	
+
 	@NotBlank(message = "L'identifiant est obligatoire.")
 	protected String id;
 
@@ -58,9 +58,9 @@ public abstract class FileDTO {
 	protected AddressDTO addressDTO;
 
 	/**
-	 * Code généré lors de la création du dossier (entité), permettant d'authentifier un
-	 * utilisateur lors de la création de son compte utilisateur et de valider
-	 * son association avec le dossier.
+	 * Code généré lors de la création du dossier (entité), permettant
+	 * d'authentifier un utilisateur lors de la création de son compte utilisateur
+	 * et de valider son association avec le dossier.
 	 */
 	protected String securityCode;
 

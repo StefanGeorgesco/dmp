@@ -32,8 +32,8 @@ public class WebSecurityConfig {
 	@Bean
 	SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
 
-		http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-				.and().cors().configurationSource(new CorsConfigurationSource() {
+		http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and().cors()
+				.configurationSource(new CorsConfigurationSource() {
 					@Override
 					public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
 						CorsConfiguration config = new CorsConfiguration();
@@ -45,15 +45,12 @@ public class WebSecurityConfig {
 						config.setMaxAge(3600L);
 						return config;
 					}
-				})
-				.and().csrf().disable()
+				}).and().csrf().disable()
 				.addFilterBefore(new JWTTokenValidatorFilter(), BasicAuthenticationFilter.class)
 				.addFilterAfter(new JWTTokenGeneratorFilter(), BasicAuthenticationFilter.class)
-				.authorizeHttpRequests((auth) -> auth
-						.mvcMatchers(HttpMethod.POST, "/login").permitAll()
-						.mvcMatchers(HttpMethod.POST, "/user").permitAll()
-						.mvcMatchers(HttpMethod.POST, "/doctor").hasRole("ADMIN")
-						.mvcMatchers(HttpMethod.POST, "/patient-file").hasRole("DOCTOR")
+				.authorizeHttpRequests((auth) -> auth.mvcMatchers(HttpMethod.POST, "/login").permitAll()
+						.mvcMatchers(HttpMethod.POST, "/user").permitAll().mvcMatchers(HttpMethod.POST, "/doctor")
+						.hasRole("ADMIN").mvcMatchers(HttpMethod.POST, "/patient-file").hasRole("DOCTOR")
 						.mvcMatchers(HttpMethod.GET, "/doctor/details").hasRole("DOCTOR")
 						.mvcMatchers(HttpMethod.PUT, "/doctor/details").hasRole("DOCTOR")
 						.mvcMatchers(HttpMethod.GET, "/patient-file/details").hasRole("PATIENT")
@@ -73,14 +70,14 @@ public class WebSecurityConfig {
 						.mvcMatchers(HttpMethod.GET, "/patient-file/{id}/item").hasRole("DOCTOR")
 						.mvcMatchers(HttpMethod.PUT, "/patient-file/{patienfFileId}/item/{itemId}").hasRole("DOCTOR")
 						.mvcMatchers(HttpMethod.DELETE, "/patient-file/{patienfFileId}/item/{itemId}").hasRole("DOCTOR")
-						.mvcMatchers(HttpMethod.DELETE, "/patient-file/{patientFileId}/correspondence/{correspondenceId}").hasRole("DOCTOR")
-						.mvcMatchers(HttpMethod.GET, "/specialty/{id}").hasRole("ADMIN")
+						.mvcMatchers(HttpMethod.DELETE,
+								"/patient-file/{patientFileId}/correspondence/{correspondenceId}")
+						.hasRole("DOCTOR").mvcMatchers(HttpMethod.GET, "/specialty/{id}").hasRole("ADMIN")
 						.mvcMatchers(HttpMethod.GET, "/specialty").hasRole("ADMIN")
 						.mvcMatchers(HttpMethod.GET, "/disease/{id}").hasRole("DOCTOR")
 						.mvcMatchers(HttpMethod.GET, "/disease").hasRole("DOCTOR")
 						.mvcMatchers(HttpMethod.GET, "/medical-act/{id}").hasRole("DOCTOR")
-						.mvcMatchers(HttpMethod.GET, "/medical-act").hasRole("DOCTOR")
-						.anyRequest().denyAll())
+						.mvcMatchers(HttpMethod.GET, "/medical-act").hasRole("DOCTOR").anyRequest().denyAll())
 				.httpBasic(Customizer.withDefaults());
 		return http.build();
 

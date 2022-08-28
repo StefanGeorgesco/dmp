@@ -6,7 +6,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * Objet de transfert de données représentant un symptôme observé par un médecin.
+ * Objet de transfert de données représentant un symptôme observé par un
+ * médecin.
  * 
  * @author Stéfan Georgesco
  *

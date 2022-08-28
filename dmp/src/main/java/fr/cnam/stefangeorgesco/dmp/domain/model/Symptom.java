@@ -23,7 +23,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class Symptom extends PatientFileItem {
-	
+
 	/**
 	 * Description du symptôme.
 	 */

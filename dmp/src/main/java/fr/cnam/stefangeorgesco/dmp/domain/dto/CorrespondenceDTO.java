@@ -12,7 +12,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * Objet de transfert de données représentant une correspondance avec un médecin.
+ * Objet de transfert de données représentant une correspondance avec un
+ * médecin.
  * 
  * @author Stéfan Georgesco
  *
@@ -20,7 +21,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class CorrespondenceDTO {
-	
+
 	private UUID id;
 
 	/**
@@ -35,7 +36,7 @@ public class CorrespondenceDTO {
 	 */
 	@NotBlank(message = "Identifiant du médecin est obligatoire.")
 	private String doctorId;
-	
+
 	/**
 	 * Prénom du médecin correspondant.
 	 */
@@ -45,7 +46,7 @@ public class CorrespondenceDTO {
 	 * Nom du médecin correspondant.
 	 */
 	private String doctorLastname;
-	
+
 	/**
 	 * Spécialités médicales du médecin correspondant (descriptions seulement).
 	 */

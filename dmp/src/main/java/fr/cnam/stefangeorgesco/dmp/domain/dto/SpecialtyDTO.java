@@ -14,13 +14,13 @@ import lombok.Setter;
 @Getter
 @Setter
 public class SpecialtyDTO {
-	
+
 	/**
 	 * Identifiant.
 	 */
 	@NotBlank(message = "L'identifiant est obligatoire.")
 	private String id;
-	
+
 	/**
 	 * Libellé.
 	 */

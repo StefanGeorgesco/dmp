@@ -33,15 +33,15 @@ public class MailDTO extends PatientFileItemDTO {
 	 * Prénom du médecin destinataire.
 	 */
 	private String recipientDoctorFirstname;
-	
+
 	/**
 	 * Nom du médecin destinataire.
 	 */
 	private String recipientDoctorLastname;
-	
+
 	/**
 	 * Spécialités médicales du médecin destinataire (descriptions seulement).
 	 */
 	private List<String> recipientDoctorSpecialties;
-	
+
 }

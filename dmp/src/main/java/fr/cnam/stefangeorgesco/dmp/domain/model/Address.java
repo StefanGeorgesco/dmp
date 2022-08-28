@@ -24,31 +24,31 @@ public class Address {
 	 */
 	@NotBlank(message = "Champ 'street1' invalide.")
 	private String street1;
-	
+
 	/**
 	 * Seconde ligne d'adresse.
 	 */
 	@NotNull(message = "Le champ 'street2' ne doit pas être 'null'.")
 	private String street2 = "";
-	
+
 	/**
 	 * Ville.
 	 */
 	@NotBlank(message = "Champ 'city' invalide.")
 	private String city;
-	
+
 	/**
 	 * Etat ou province.
 	 */
 	@NotNull(message = "Le champ 'state' ne doit pas être 'null'.")
 	private String state = "";
-	
+
 	/**
 	 * Code postal.
 	 */
 	@NotBlank(message = "Champ 'zipcode' invalide.")
 	private String zipcode;
-	
+
 	/**
 	 * Pays.
 	 */

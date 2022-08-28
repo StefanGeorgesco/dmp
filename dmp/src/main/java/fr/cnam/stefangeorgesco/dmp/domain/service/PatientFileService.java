@@ -40,7 +40,7 @@ import fr.cnam.stefangeorgesco.dmp.domain.model.PatientFile;
 import fr.cnam.stefangeorgesco.dmp.domain.model.PatientFileItem;
 import fr.cnam.stefangeorgesco.dmp.domain.model.Prescription;
 import fr.cnam.stefangeorgesco.dmp.domain.model.Symptom;
-import fr.cnam.stefangeorgesco.dmp.exception.domain.ApplicationException;
+import fr.cnam.stefangeorgesco.dmp.exception.domain.CheckException;
 import fr.cnam.stefangeorgesco.dmp.exception.domain.CreateException;
 import fr.cnam.stefangeorgesco.dmp.exception.domain.DeleteException;
 import fr.cnam.stefangeorgesco.dmp.exception.domain.DuplicateKeyException;
@@ -53,7 +53,7 @@ public class PatientFileService {
 
 	@Autowired
 	private RNIPPService rnippService;
-	
+
 	@Autowired
 	private UserService userService;
 
@@ -90,7 +90,7 @@ public class PatientFileService {
 	@Autowired
 	private BCryptPasswordEncoder bCryptPasswordEncoder;
 
-	public PatientFileDTO createPatientFile(PatientFileDTO patientFileDTO) throws ApplicationException {
+	public PatientFileDTO createPatientFile(PatientFileDTO patientFileDTO) throws CheckException, CreateException {
 
 		rnippService.checkPatientData(patientFileDTO);
 
@@ -145,7 +145,7 @@ public class PatientFileService {
 		}
 	}
 
-	public PatientFileDTO updateReferringDoctor(PatientFileDTO patientFileDTO) throws ApplicationException {
+	public PatientFileDTO updateReferringDoctor(PatientFileDTO patientFileDTO) throws FinderException, UpdateException {
 
 		Optional<PatientFile> optionalPatientFile = patientFileDAO.findById(patientFileDTO.getId());
 
@@ -301,7 +301,8 @@ public class PatientFileService {
 		return respsonse;
 	}
 
-	public PatientFileItemDTO updatePatientFileItem(PatientFileItemDTO patientFileItemDTO) throws ApplicationException {
+	public PatientFileItemDTO updatePatientFileItem(PatientFileItemDTO patientFileItemDTO)
+			throws FinderException, UpdateException {
 
 		Optional<PatientFileItem> optionalPatientFileItem = patientFileItemDAO.findById(patientFileItemDTO.getId());
 
@@ -341,7 +342,7 @@ public class PatientFileService {
 	}
 
 	public void deletePatientFileItem(UUID uuid) {
-		
+
 		patientFileItemDAO.deleteById(uuid);
 	}
 
@@ -367,16 +368,16 @@ public class PatientFileService {
 	}
 
 	public void deletePatientFile(String patientFileId) throws DeleteException {
-		
+
 		correspondenceDAO.deleteAllByPatientFileId(patientFileId);
 		patientFileItemDAO.deleteAllByPatientFileId(patientFileId);
-		
+
 		try {
 			patientFileDAO.deleteById(patientFileId);
 		} catch (Exception e) {
 			throw new DeleteException("Le dossier patient n'a pas pu être supprimé.");
 		}
-		
+
 		try {
 			userService.deleteUser(patientFileId);
 		} catch (DeleteException e) {

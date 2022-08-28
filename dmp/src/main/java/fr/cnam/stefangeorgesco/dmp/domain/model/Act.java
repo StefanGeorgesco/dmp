@@ -24,7 +24,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class Act extends PatientFileItem {
-	
+
 	/**
 	 * Acte médical de la nomenclature correspondant à l'acte dispensé.
 	 */

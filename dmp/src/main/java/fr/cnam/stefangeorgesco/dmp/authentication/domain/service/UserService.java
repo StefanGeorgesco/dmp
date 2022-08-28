@@ -15,7 +15,7 @@ import fr.cnam.stefangeorgesco.dmp.authentication.domain.model.User;
 import fr.cnam.stefangeorgesco.dmp.domain.dao.FileDAO;
 import fr.cnam.stefangeorgesco.dmp.domain.model.Doctor;
 import fr.cnam.stefangeorgesco.dmp.domain.model.File;
-import fr.cnam.stefangeorgesco.dmp.exception.domain.ApplicationException;
+import fr.cnam.stefangeorgesco.dmp.exception.domain.CheckException;
 import fr.cnam.stefangeorgesco.dmp.exception.domain.CreateException;
 import fr.cnam.stefangeorgesco.dmp.exception.domain.DeleteException;
 import fr.cnam.stefangeorgesco.dmp.exception.domain.DuplicateKeyException;
@@ -39,7 +39,7 @@ public class UserService {
 
 	@Autowired
 	ModelMapper commonModelMapper;
-	
+
 	@Autowired
 	ModelMapper userModelMapper;
 
@@ -47,24 +47,28 @@ public class UserService {
 	private BCryptPasswordEncoder bCryptPasswordEncoder;
 
 	/**
-	 * Service de création d'un compte utilisateur. Le service vérifie qu'un compte avec
-	 * le même identifiant ou le même nom d'utilsateur n'existe pas, qu'un dossier (de
-	 * médecin ou de patient) avec le même identifiant existe et que les données
-	 * fournies concordent avec ce dossier.
+	 * Service de création d'un compte utilisateur. Le service vérifie qu'un compte
+	 * avec le même identifiant ou le même nom d'utilsateur n'existe pas, qu'un
+	 * dossier (de médecin ou de patient) avec le même identifiant existe et que les
+	 * données fournies concordent avec ce dossier.
+	 * 
 	 * @param userDTO l'objet
-	 * {@link fr.cnam.stefangeorgesco.dmp.authentication.domain.dto.UserDTO} représentant
-	 * le compte utilisateur à créer.
-	 * @throws ApplicationException
+	 *                {@link fr.cnam.stefangeorgesco.dmp.authentication.domain.dto.UserDTO}
+	 *                représentant le compte utilisateur à créer.
+	 * @throws FinderException
+	 * @throws CheckException
+	 * @throws CreateException
 	 */
-	public void createAccount(UserDTO userDTO) throws ApplicationException {
+	public void createAccount(UserDTO userDTO) throws FinderException, CheckException, CreateException {
 
 		if (userDAO.existsById(userDTO.getId())) {
 			throw new DuplicateKeyException("Le compte utilisateur existe déjà.");
 		}
-		
+
 		if (userDAO.existsByUsername(userDTO.getUsername())) {
 			throw new DuplicateKeyException("Le nom d'utilisateur existe déjà.");
-		};
+		}
+		;
 
 		Optional<File> optionalFile = fileDAO.findById(userDTO.getId());
 
@@ -95,25 +99,28 @@ public class UserService {
 
 	/**
 	 * Service de recherche d'un compte utilisateur par nom d'utilisateur.
+	 * 
 	 * @param username le nom d'utilisateur du compte recherché.
-	 * @return l'objet {@link fr.cnam.stefangeorgesco.dmp.authentication.domain.dto.UserDTO}
-	 * représentant le compte utilisateur recherché, encapsulé dans un objet
-	 * org.springframework.http.ResponseEntity.
+	 * @return l'objet
+	 *         {@link fr.cnam.stefangeorgesco.dmp.authentication.domain.dto.UserDTO}
+	 *         représentant le compte utilisateur recherché, encapsulé dans un objet
+	 *         org.springframework.http.ResponseEntity.
 	 * @throws FinderException
 	 */
 	public UserDTO findUserByUsername(String username) throws FinderException {
 		Optional<User> optionalUser = userDAO.findByUsername(username);
-		
+
 		if (optionalUser.isPresent()) {
 			return userModelMapper.map(optionalUser.get(), UserDTO.class);
 		} else {
 			throw new FinderException("Compte utilisateur non trouvé.");
 		}
-		
+
 	}
 
 	/**
 	 * Service de suppression d'un compte utilisateur désigné par son identifiant.
+	 * 
 	 * @param id l'identifiant du compte utilisateur.
 	 * @throws DeleteException
 	 */

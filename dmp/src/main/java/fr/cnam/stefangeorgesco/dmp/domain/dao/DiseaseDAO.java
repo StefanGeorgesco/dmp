@@ -7,7 +7,8 @@ import org.springframework.data.repository.query.Param;
 import fr.cnam.stefangeorgesco.dmp.domain.model.Disease;
 
 /**
- * Repository pour les objets {@link fr.cnam.stefangeorgesco.dmp.domain.model.Disease}
+ * Repository pour les objets
+ * {@link fr.cnam.stefangeorgesco.dmp.domain.model.Disease}
  * 
  * @author Stéfan Georgesco
  *
@@ -15,13 +16,14 @@ import fr.cnam.stefangeorgesco.dmp.domain.model.Disease;
 public interface DiseaseDAO extends CrudRepository<Disease, String> {
 
 	/**
-	 * Recherche les maladies par recherche insensible à la casse de la présence d'une
-	 * sous-chaîne dans l'identifiant ou dans la description de la maladie.
+	 * Recherche les maladies par recherche insensible à la casse de la présence
+	 * d'une sous-chaîne dans l'identifiant ou dans la description de la maladie.
+	 * 
 	 * @param keyword la sous-chaîne de recherche.
-	 * @param limit le nombre maximum d'enregistrement retournés.
+	 * @param limit   le nombre maximum d'enregistrement retournés.
 	 * @return un {@link java.lang.Iterable} d'objets
-	 * {@link fr.cnam.stefangeorgesco.dmp.domain.model.Disease} représentant les maladies
-	 * trouvées.
+	 *         {@link fr.cnam.stefangeorgesco.dmp.domain.model.Disease} représentant
+	 *         les maladies trouvées.
 	 */
 	@Query(nativeQuery = true, value = "select distinct * from t_disease "
 			+ "where lower(t_disease.id) like lower(concat('%', :keyword,'%')) "

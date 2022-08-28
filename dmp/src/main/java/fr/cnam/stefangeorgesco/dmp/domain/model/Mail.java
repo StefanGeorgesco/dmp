@@ -15,8 +15,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * Entité représentant un courrier adressé par le médecin
- * référent à un autre médecin.
+ * Entité représentant un courrier adressé par le médecin référent à un autre
+ * médecin.
  * 
  * @author Stéfan Georgesco
  *

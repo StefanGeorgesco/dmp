@@ -19,7 +19,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class PatientFileDTO extends FileDTO {
-	
+
 	/**
 	 * Date de naissance du patient.
 	 */
@@ -32,17 +32,17 @@ public class PatientFileDTO extends FileDTO {
 	 * Identifiant du médecin référent.
 	 */
 	private String referringDoctorId;
-	
+
 	/**
 	 * Prénom du médecin référent.
 	 */
 	private String referringDoctorFirstname;
-	
+
 	/**
 	 * Nom du médecin référent.
 	 */
 	private String referringDoctorLastname;
-	
+
 	/**
 	 * Spécialités médicales du médecin référent (descriptions seulement).
 	 */

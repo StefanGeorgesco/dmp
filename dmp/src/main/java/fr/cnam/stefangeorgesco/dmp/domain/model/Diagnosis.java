@@ -24,7 +24,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class Diagnosis extends PatientFileItem {
-	
+
 	/**
 	 * Maladie de la nomenclature diagnostiquée.
 	 */

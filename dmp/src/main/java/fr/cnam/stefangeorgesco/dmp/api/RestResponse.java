@@ -7,7 +7,8 @@ import lombok.Setter;
 
 /**
  * Encapsulation des réponses REST lorsqu'aucun objet DTO ne doit être retourné.
- * @author Stéfan Georgesco    
+ * 
+ * @author Stéfan Georgesco
  * 
  */
 @Getter

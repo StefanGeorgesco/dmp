@@ -20,7 +20,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class DoctorDTO extends FileDTO {
-	
+
 	/**
 	 * Spécialités (objets de transfert de données) du médecin.
 	 */

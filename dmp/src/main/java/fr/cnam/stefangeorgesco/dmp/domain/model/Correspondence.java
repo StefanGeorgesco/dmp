@@ -32,8 +32,8 @@ public class Correspondence {
 
 	@Id
 	@GeneratedValue
-	@Type(type="org.hibernate.type.UUIDCharType")
-    private UUID id;
+	@Type(type = "org.hibernate.type.UUIDCharType")
+	private UUID id;
 
 	/**
 	 * Date limite d'effet de la correspondance.

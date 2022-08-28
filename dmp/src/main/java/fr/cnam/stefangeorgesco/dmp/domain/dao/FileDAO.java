@@ -5,7 +5,8 @@ import org.springframework.data.repository.CrudRepository;
 import fr.cnam.stefangeorgesco.dmp.domain.model.File;
 
 /**
- * Repository pour les objets {@link fr.cnam.stefangeorgesco.dmp.domain.model.File}
+ * Repository pour les objets
+ * {@link fr.cnam.stefangeorgesco.dmp.domain.model.File}
  * 
  * @author Stéfan Georgesco
  *

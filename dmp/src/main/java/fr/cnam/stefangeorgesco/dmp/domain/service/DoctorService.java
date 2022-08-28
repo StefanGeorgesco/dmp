@@ -18,7 +18,6 @@ import fr.cnam.stefangeorgesco.dmp.domain.dto.DoctorDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.SpecialtyDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.model.Doctor;
 import fr.cnam.stefangeorgesco.dmp.domain.model.Specialty;
-import fr.cnam.stefangeorgesco.dmp.exception.domain.ApplicationException;
 import fr.cnam.stefangeorgesco.dmp.exception.domain.CreateException;
 import fr.cnam.stefangeorgesco.dmp.exception.domain.DeleteException;
 import fr.cnam.stefangeorgesco.dmp.exception.domain.DuplicateKeyException;
@@ -27,7 +26,8 @@ import fr.cnam.stefangeorgesco.dmp.exception.domain.UpdateException;
 import fr.cnam.stefangeorgesco.dmp.utils.PasswordGenerator;
 
 /**
- * Classe de service pour la gestion des dossiers de médecins et des spécialités médicales.
+ * Classe de service pour la gestion des dossiers de médecins et des spécialités
+ * médicales.
  * 
  * @author Stéfan Georgesco
  *
@@ -37,7 +37,7 @@ public class DoctorService {
 
 	@Autowired
 	private UserService userService;
-	
+
 	@Autowired
 	private FileDAO fileDAO;
 
@@ -57,13 +57,18 @@ public class DoctorService {
 	private BCryptPasswordEncoder bCryptPasswordEncoder;
 
 	/**
-	 * Service de création d'un dossier de médecin. Le service qu'un dossier 
-	 * @param doctorDTO l'objet {@link fr.cnam.stefangeorgesco.dmp.domain.dto.DoctorDTO}
-	 * représentant le dossier de médecin à créer.
-	 * @return
-	 * @throws ApplicationException
+	 * Service de création d'un dossier de médecin. Le service vérifie qu'un dossier
+	 * avec le même identifiant n'existe pas et que les spécialités existent.
+	 * 
+	 * @param doctorDTO l'objet
+	 *                  {@link fr.cnam.stefangeorgesco.dmp.domain.dto.DoctorDTO}
+	 *                  représentant le dossier de médecin à créer.
+	 * @return un objet {@link fr.cnam.stefangeorgesco.dmp.domain.dto.DoctorDTO}
+	 *         représentant le dossier de médecin créé.
+	 * @throws FinderException
+	 * @throws CreateException
 	 */
-	public DoctorDTO createDoctor(DoctorDTO doctorDTO) throws ApplicationException {
+	public DoctorDTO createDoctor(DoctorDTO doctorDTO) throws FinderException, CreateException {
 
 		if (fileDAO.existsById(doctorDTO.getId())) {
 			throw new DuplicateKeyException("Un dossier avec cet identifiant existe déjà.");
@@ -171,11 +176,11 @@ public class DoctorService {
 	}
 
 	public List<SpecialtyDTO> findSpecialtiesByIdOrDescription(String string) {
-		
+
 		if ("".equals(string)) {
 			return new ArrayList<>();
 		}
-		
+
 		Iterable<Specialty> specialties = specialtyDAO.findByIdOrDescription(string);
 
 		List<SpecialtyDTO> specialtiesDTO = ((List<Specialty>) specialties).stream()

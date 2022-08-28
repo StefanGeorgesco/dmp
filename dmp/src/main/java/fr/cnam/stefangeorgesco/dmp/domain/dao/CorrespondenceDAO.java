@@ -8,7 +8,8 @@ import org.springframework.data.repository.CrudRepository;
 import fr.cnam.stefangeorgesco.dmp.domain.model.Correspondence;
 
 /**
- * Repository pour les objets {@link fr.cnam.stefangeorgesco.dmp.domain.model.Correspondence}
+ * Repository pour les objets
+ * {@link fr.cnam.stefangeorgesco.dmp.domain.model.Correspondence}
  * 
  * @author Stéfan Georgesco
  *

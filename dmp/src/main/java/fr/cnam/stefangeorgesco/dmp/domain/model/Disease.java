@@ -20,14 +20,14 @@ import lombok.Setter;
 @Getter
 @Setter
 public class Disease {
-	
+
 	/**
 	 * Identifiant, champ 'Code du diagnostic' de la nomenclature CIM 10
 	 */
 	@Id
 	@NotBlank(message = "L'identifiant est obligatoire.")
 	private String id;
-	
+
 	/**
 	 * Champ 'Libellé long' de la nomenclature CIM 10
 	 */

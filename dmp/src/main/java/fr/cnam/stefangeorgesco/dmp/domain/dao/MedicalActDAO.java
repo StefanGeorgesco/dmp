@@ -7,7 +7,8 @@ import org.springframework.data.repository.query.Param;
 import fr.cnam.stefangeorgesco.dmp.domain.model.MedicalAct;
 
 /**
- * Repository pour les objets {@link fr.cnam.stefangeorgesco.dmp.domain.model.MedicalAct}
+ * Repository pour les objets
+ * {@link fr.cnam.stefangeorgesco.dmp.domain.model.MedicalAct}
  * 
  * @author Stéfan Georgesco
  *
@@ -15,13 +16,15 @@ import fr.cnam.stefangeorgesco.dmp.domain.model.MedicalAct;
 public interface MedicalActDAO extends CrudRepository<MedicalAct, String> {
 
 	/**
-	 * Recherche les actes médicaux par recherche insensible à la casse de la présence d'une
-	 * sous-chaîne dans l'identifiant ou dans la description de l'acte médical.
+	 * Recherche les actes médicaux par recherche insensible à la casse de la
+	 * présence d'une sous-chaîne dans l'identifiant ou dans la description de
+	 * l'acte médical.
+	 * 
 	 * @param keyword la sous-chaîne de recherche.
-	 * @param limit le nombre maximum d'enregistrement retournés.
+	 * @param limit   le nombre maximum d'enregistrement retournés.
 	 * @return un {@link java.lang.Iterable} d'objets
-	 * {@link fr.cnam.stefangeorgesco.dmp.domain.model.MedicalAct} représentant les maladies
-	 * trouvées.
+	 *         {@link fr.cnam.stefangeorgesco.dmp.domain.model.MedicalAct}
+	 *         représentant les maladies trouvées.
 	 */
 	@Query(nativeQuery = true, value = "select distinct * from t_medical_act "
 			+ "where lower(t_medical_act.id) like lower(concat('%', :keyword,'%')) "

@@ -23,7 +23,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class Prescription extends PatientFileItem {
-	
+
 	/**
 	 * Contenu de la prescription.
 	 */

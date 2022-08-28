@@ -21,8 +21,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * Classe abstraite parente de entités représentant les dossiers patients et
- * les dossiers de médecins.
+ * Classe abstraite parente de entités représentant les dossiers patients et les
+ * dossiers de médecins.
  * 
  * @author Stéfan Georgesco
  *
@@ -73,21 +73,24 @@ public abstract class File {
 
 	/**
 	 * Code généré lors de la création du dossier, permettant d'authentifier un
-	 * utilisateur lors de la création de son compte utilisateur et de valider
-	 * son association avec le dossier.
+	 * utilisateur lors de la création de son compte utilisateur et de valider son
+	 * association avec le dossier.
 	 */
 	@Column(name = "security_code", nullable = false)
 	protected String securityCode;
-	
+
 	/**
-	 * Vérifie que les données de l'utilisateur concordent avec les données du dossier.
-	 * @param user l'utilisateur.
-	 * @param passwordEncoder l'encodeur à utiliser pour vérifier la concordance du code
-	 * de sécurité de l'utilisateur et du code de sécurité du dossier.
+	 * Vérifie que les données de l'utilisateur concordent avec les données du
+	 * dossier.
+	 * 
+	 * @param user            l'utilisateur.
+	 * @param passwordEncoder l'encodeur à utiliser pour vérifier la concordance du
+	 *                        code de sécurité de l'utilisateur et du code de
+	 *                        sécurité du dossier.
 	 * @throws CheckException
 	 */
 	public void checkUserData(User user, PasswordEncoder passwordEncoder) throws CheckException {
-		
+
 		if (user == null) {
 			throw new CheckException("Impossible de vérifier un utilisateur 'null'.");
 		}

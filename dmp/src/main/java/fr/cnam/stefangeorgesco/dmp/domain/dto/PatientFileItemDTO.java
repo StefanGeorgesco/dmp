@@ -15,8 +15,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /**
- * Classe abstraite parente des objets de transfert de données représentant les éléments
- * médicaux des dossiers patients.
+ * Classe abstraite parente des objets de transfert de données représentant les
+ * éléments médicaux des dossiers patients.
  * 
  * @author Stéfan Georgesco
  *
@@ -65,7 +65,8 @@ public abstract class PatientFileItemDTO {
 	private String authoringDoctorLastname;
 
 	/**
-	 * Spécialités médicales du médecin auteur de l'élément médical (descriptions seulement).
+	 * Spécialités médicales du médecin auteur de l'élément médical (descriptions
+	 * seulement).
 	 */
 	private List<String> authoringDoctorSpecialties;
 

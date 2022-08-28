@@ -9,7 +9,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * Objet de transfert de données représentant un diagnostic réalisé par un médecin.
+ * Objet de transfert de données représentant un diagnostic réalisé par un
+ * médecin.
  * 
  * @author Stéfan Georgesco
  *

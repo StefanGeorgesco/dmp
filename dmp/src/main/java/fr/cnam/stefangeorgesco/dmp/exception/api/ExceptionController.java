@@ -23,9 +23,9 @@ import org.springframework.validation.FieldError;
 @ControllerAdvice
 @RestController
 public class ExceptionController {
-	
+
 	private static Map<Class<? extends Throwable>, HttpStatus> map = new HashMap<>();
-	
+
 	static {
 		map.put(DuplicateKeyException.class, HttpStatus.CONFLICT);
 		map.put(FinderException.class, HttpStatus.NOT_FOUND);
@@ -38,8 +38,7 @@ public class ExceptionController {
 	public Map<String, String> handleValidationExceptions(MethodArgumentNotValidException ex) {
 		Map<String, String> errors = new HashMap<>();
 		ex.getBindingResult().getAllErrors().forEach((error) -> {
-			String fieldName = ((FieldError) error).getField()
-					.replaceAll("(DTO|\\[|\\])", "").replaceAll("[.]", "_");
+			String fieldName = ((FieldError) error).getField().replaceAll("(DTO|\\[|\\])", "").replaceAll("[.]", "_");
 			String errorMessage = error.getDefaultMessage();
 			errors.put(fieldName, errorMessage);
 		});
@@ -49,11 +48,11 @@ public class ExceptionController {
 	@ExceptionHandler(ApplicationException.class)
 	public ResponseEntity<RestResponse> handleApplicationException(ApplicationException ex) {
 		HttpStatus status = HttpStatus.BAD_REQUEST;
-		
+
 		if (map.get(ex.getClass()) != null) {
 			status = map.get(ex.getClass());
 		}
-		
+
 		RestResponse response = new RestResponse();
 		response.setStatus(status.value());
 		response.setMessage(ex.getMessage());

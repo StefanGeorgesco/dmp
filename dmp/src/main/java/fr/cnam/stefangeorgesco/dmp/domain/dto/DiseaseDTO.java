@@ -6,7 +6,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * Objet de transfert de données représentant une maladie de la nomenclature CIM 10.
+ * Objet de transfert de données représentant une maladie de la nomenclature CIM
+ * 10.
  * 
  * @author Stéfan Georgesco
  *
@@ -20,7 +21,7 @@ public class DiseaseDTO {
 	 */
 	@NotBlank(message = "L'identifiant est obligatoire.")
 	private String id;
-	
+
 	/**
 	 * Champ 'Libellé long' de la nomenclature CIM 10
 	 */
