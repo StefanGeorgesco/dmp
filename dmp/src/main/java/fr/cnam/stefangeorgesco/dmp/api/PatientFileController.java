@@ -60,7 +60,7 @@ public class PatientFileController {
 	 * @return l'objet {@link fr.cnam.stefangeorgesco.dmp.domain.dto.PatientFileDTO}
 	 * représentant le dossier patient créé, encapsulé dans un objet
 	 * org.springframework.http.ResponseEntity avec le statut
-	 * {@link org.springframework.http.HttpStatus#CREATED} en case de succès.
+	 * {@link org.springframework.http.HttpStatus#CREATED} en cas de succès.
 	 * @throws ApplicationException
 	 */
 	@PostMapping("/patient-file")
@@ -238,7 +238,7 @@ public class PatientFileController {
 	 * @return l'objet {@link fr.cnam.stefangeorgesco.dmp.domain.dto.CorrespondenceDTO}
 	 * représentant la correspondance créée, encapsulé dans un objet
 	 * org.springframework.http.ResponseEntity avec le statut
-	 * {@link org.springframework.http.HttpStatus#CREATED} en case de succès. 
+	 * {@link org.springframework.http.HttpStatus#CREATED} en cas de succès. 
 	 * @throws ApplicationException
 	 */
 	@PostMapping("/patient-file/{id}/correspondence")
@@ -277,7 +277,7 @@ public class PatientFileController {
 	 * @return l'objet {@link fr.cnam.stefangeorgesco.dmp.domain.dto.PatientFileItemDTO}
 	 * représentant l'élément médical créé, encapsulé dans un objet
 	 * org.springframework.http.ResponseEntity avec le statut
-	 * {@link org.springframework.http.HttpStatus#CREATED} en case de succès.
+	 * {@link org.springframework.http.HttpStatus#CREATED} en cas de succès.
 	 * @throws Exception
 	 */
 	@PostMapping("/patient-file/{id}/item")

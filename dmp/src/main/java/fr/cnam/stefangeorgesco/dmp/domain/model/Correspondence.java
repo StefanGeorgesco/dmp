@@ -18,6 +18,12 @@ import org.hibernate.annotations.Type;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * Entité représentant une correspondance avec un médecin.
+ * 
+ * @author Stéfan Georgesco
+ *
+ */
 @Entity
 @Table(name = "t_correspondence")
 @Getter
@@ -29,16 +35,25 @@ public class Correspondence {
 	@Type(type="org.hibernate.type.UUIDCharType")
     private UUID id;
 
+	/**
+	 * Date limite d'effet de la correspondance.
+	 */
 	@Column(name = "date_until")
 	@NotNull(message = "La date de la correspondance est obligatoire.")
 	@Future(message = "La date de la correspondance doit être dans le futur.")
 	private LocalDate dateUntil;
 
+	/**
+	 * Médecin correspondant.
+	 */
 	@ManyToOne
 	@JoinColumn(name = "doctor_id")
 	@NotNull(message = "L'identifiant du médecin est obligatoire.")
 	private Doctor doctor;
 
+	/**
+	 * Dossier patient auquel la correspondance est associée.
+	 */
 	@ManyToOne
 	@JoinColumn(name = "patient_file_id")
 	@NotNull(message = "Le dossier patient est obligatoire.")

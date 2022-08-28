@@ -12,6 +12,12 @@ import org.hibernate.annotations.OnDeleteAction;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * Entité représentant un acte dispensé par un médecin.
+ * 
+ * @author Stéfan Georgesco
+ *
+ */
 @Entity
 @Table(name = "t_act")
 @OnDelete(action = OnDeleteAction.CASCADE)
@@ -19,6 +25,9 @@ import lombok.Setter;
 @Setter
 public class Act extends PatientFileItem {
 	
+	/**
+	 * Acte médical de la nomenclature correspondant à l'acte dispensé.
+	 */
 	@ManyToOne
 	@JoinColumn(name = "medical_act_id")
 	@NotNull(message = "L'acte médical est obligatoire.")

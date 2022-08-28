@@ -7,7 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * Objet de transfert de données représentant l'utilisateur.
+ * Objet de transfert de données représentant un utilisateur.
  * 
  *  @author Stéfan Georgesco    
  *

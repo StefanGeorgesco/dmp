@@ -11,6 +11,12 @@ import org.hibernate.annotations.OnDeleteAction;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * Entité représentant un symptôme observé par un médecin.
+ * 
+ * @author Stéfan Georgesco
+ *
+ */
 @Entity
 @Table(name = "t_symptom")
 @OnDelete(action = OnDeleteAction.CASCADE)
@@ -18,6 +24,9 @@ import lombok.Setter;
 @Setter
 public class Symptom extends PatientFileItem {
 	
+	/**
+	 * Description du symptôme.
+	 */
 	@Column(length = 800)
 	@NotBlank(message = "La description est obligatoire.")
 	private String description;

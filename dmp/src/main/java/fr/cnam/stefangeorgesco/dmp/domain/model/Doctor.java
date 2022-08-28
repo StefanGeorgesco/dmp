@@ -17,6 +17,12 @@ import org.hibernate.annotations.OnDeleteAction;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * Entité représentant un dossier de médecin.
+ * 
+ * @author Stéfan Georgesco
+ *
+ */
 @Entity
 @Table(name = "t_doctor")
 @OnDelete(action = OnDeleteAction.CASCADE)
@@ -24,6 +30,9 @@ import lombok.Setter;
 @Setter
 public class Doctor extends File {
 
+	/**
+	 * Spécialités du médecin.
+	 */
 	@ManyToMany(fetch = FetchType.EAGER)
 	@JoinTable(name = "t_doctor_specialty", joinColumns = @JoinColumn(name = "doctor_id"), inverseJoinColumns = @JoinColumn(name = "specialty_id"))
 	@NotNull(message = "Les spécialités sont obligatoires.")

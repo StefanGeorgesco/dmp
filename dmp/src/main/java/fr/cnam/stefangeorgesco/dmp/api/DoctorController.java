@@ -48,7 +48,7 @@ public class DoctorController {
 	 * @return l'objet {@link fr.cnam.stefangeorgesco.dmp.domain.dto.DoctorDTO}
 	 * représentant le dossier de médecin créé, encapsulé dans un objet
 	 * org.springframework.http.ResponseEntity avec le statut
-	 * {@link org.springframework.http.HttpStatus#CREATED} en case de succès.
+	 * {@link org.springframework.http.HttpStatus#CREATED} en cas de succès.
 	 * @throws ApplicationException
 	 */
 	@PostMapping("/doctor")

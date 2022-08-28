@@ -16,6 +16,12 @@ import org.hibernate.annotations.OnDeleteAction;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * Entité représentant un dossier patient.
+ * 
+ * @author Stéfan Georgesco
+ *
+ */
 @Entity
 @Table(name = "t_patient_file")
 @OnDelete(action = OnDeleteAction.CASCADE)
@@ -23,11 +29,17 @@ import lombok.Setter;
 @Setter
 public class PatientFile extends File {
 
+	/**
+	 * Date de naissance du patient.
+	 */
 	@NotNull(message = "La date de naissance est obligatoire.")
 	@PastOrPresent(message = "La date de naissance doit être dans le passé ou aujourd'hui.")
 	@Column(name = "date_of_birth")
 	private LocalDate dateOfBirth;
 
+	/**
+	 * Médecin référent.
+	 */
 	@ManyToOne
 	@JoinColumn(name = "referring_doctor_id")
 	@NotNull(message = "Le médecin référent est obligatoire.")

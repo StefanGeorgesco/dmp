@@ -20,6 +20,13 @@ import fr.cnam.stefangeorgesco.dmp.exception.domain.CheckException;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * Classe abstraite parente de entités représentant les dossiers patients et
+ * les dossiers de médecins.
+ * 
+ * @author Stéfan Georgesco
+ *
+ */
 @Entity
 @Table(name = "t_file")
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -31,27 +38,54 @@ public abstract class File {
 	@NotBlank(message = "L'identifiant est obligatoire.")
 	protected String id;
 
+	/**
+	 * Prénom du patient ou du médecin.
+	 */
 	@NotBlank(message = "Le prénom est obligatoire.")
 	protected String firstname;
 
+	/**
+	 * Nom du patient ou du médecin.
+	 */
 	@NotBlank(message = "Le nom est obligatoire.")
 	protected String lastname;
 
+	/**
+	 * Numéro de téléphone du patient ou du médecin.
+	 */
 	@NotBlank(message = "Le numéro de téléphone est obligatoire.")
 	protected String phone;
 
+	/**
+	 * Adresse email du patient ou du médecin.
+	 */
 	@NotBlank(message = "L'adresse email est obligatoire.")
 	@Email(message = "L'adresse email doit être fournie et respecter le format.")
 	protected String email;
 
+	/**
+	 * Adresse postale du patient ou du médecin.
+	 */
 	@Embedded
 	@NotNull(message = "L'adresse est obligatoire.")
 	@Valid
 	protected Address address;
 
+	/**
+	 * Code généré lors de la création du dossier, permettant d'authentifier un
+	 * utilisateur lors de la création de son compte utilisateur et de valider
+	 * son association avec le dossier.
+	 */
 	@Column(name = "security_code", nullable = false)
 	protected String securityCode;
 	
+	/**
+	 * Vérifie que les données de l'utilisateur concordent avec les données du dossier.
+	 * @param user l'utilisateur.
+	 * @param passwordEncoder l'encodeur à utiliser pour vérifier la concordance du code
+	 * de sécurité de l'utilisateur et du code de sécurité du dossier.
+	 * @throws CheckException
+	 */
 	public void checkUserData(User user, PasswordEncoder passwordEncoder) throws CheckException {
 		
 		if (user == null) {

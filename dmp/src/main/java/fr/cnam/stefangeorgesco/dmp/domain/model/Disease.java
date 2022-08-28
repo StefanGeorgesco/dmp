@@ -9,16 +9,28 @@ import javax.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * Entité représentant une maladie de la nomenclature CIM 10.
+ * 
+ * @author Stéfan Georgesco
+ *
+ */
 @Entity
 @Table(name = "t_disease")
 @Getter
 @Setter
 public class Disease {
 	
+	/**
+	 * Identifiant, champ 'Code du diagnostic' de la nomenclature CIM 10
+	 */
 	@Id
 	@NotBlank(message = "L'identifiant est obligatoire.")
 	private String id;
 	
+	/**
+	 * Champ 'Libellé long' de la nomenclature CIM 10
+	 */
 	@Column(length = 320)
 	@NotBlank(message = "La description est obligatoire.")
 	private String description;

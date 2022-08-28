@@ -12,6 +12,12 @@ import org.hibernate.annotations.OnDeleteAction;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * Entité représentant un diagnostic réalisé par un médecin.
+ * 
+ * @author Stéfan Georgesco
+ *
+ */
 @Entity
 @Table(name = "t_diagnosis")
 @OnDelete(action = OnDeleteAction.CASCADE)
@@ -19,6 +25,9 @@ import lombok.Setter;
 @Setter
 public class Diagnosis extends PatientFileItem {
 	
+	/**
+	 * Maladie de la nomenclature diagnostiquée.
+	 */
 	@ManyToOne
 	@JoinColumn(name = "disease_id")
 	@NotNull(message = "La maladie est obligatoire.")

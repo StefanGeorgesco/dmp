@@ -14,6 +14,13 @@ import org.hibernate.annotations.OnDeleteAction;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * Entité représentant un courrier adressé par le médecin
+ * référent à un autre médecin.
+ * 
+ * @author Stéfan Georgesco
+ *
+ */
 @Entity
 @Table(name = "t_mail")
 @OnDelete(action = OnDeleteAction.CASCADE)
@@ -21,10 +28,16 @@ import lombok.Setter;
 @Setter
 public class Mail extends PatientFileItem {
 
+	/**
+	 * Texte du courrier.
+	 */
 	@Column(length = 1000)
 	@NotBlank(message = "Le texte du courrier est obligatoire.")
 	String text;
 
+	/**
+	 * Médecin destinataire.
+	 */
 	@ManyToOne
 	@JoinColumn(name = "recipient_doctor_id")
 	@NotNull(message = "Le médecin destinataire est obligatoire.")

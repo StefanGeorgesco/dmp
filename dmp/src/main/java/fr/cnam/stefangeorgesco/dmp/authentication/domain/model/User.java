@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /**
- * Objet du modèle d'authentification représentant l'utilisateur.
+ * Entité du modèle d'authentification représentant l'utilisateur.
  * 
  * @author Stéfan Georgesco
  *
