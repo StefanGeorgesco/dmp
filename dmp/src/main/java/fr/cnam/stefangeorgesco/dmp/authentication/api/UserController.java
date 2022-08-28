@@ -1,7 +1,10 @@
 package fr.cnam.stefangeorgesco.dmp.authentication.api;
 
+import java.security.Principal;
+
 import javax.validation.Valid;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +16,7 @@ import fr.cnam.stefangeorgesco.dmp.api.RestResponse;
 import fr.cnam.stefangeorgesco.dmp.authentication.domain.dto.UserDTO;
 import fr.cnam.stefangeorgesco.dmp.authentication.domain.service.UserService;
 import fr.cnam.stefangeorgesco.dmp.exception.domain.ApplicationException;
+import fr.cnam.stefangeorgesco.dmp.exception.domain.FinderException;
 
 @RestController
 public class UserController {
@@ -20,6 +24,9 @@ public class UserController {
 	@Autowired
 	UserService userService;
 	
+	@Autowired
+	ModelMapper userModelMapper;
+
 	@PostMapping("/user")
 	public ResponseEntity<RestResponse> createAccount(@Valid @RequestBody UserDTO userDTO) throws ApplicationException {
 		
@@ -28,6 +35,15 @@ public class UserController {
 		RestResponse response = new RestResponse(HttpStatus.CREATED.value(), "Le compte utilisateur a été créé.");
 		
 		return ResponseEntity.status(HttpStatus.CREATED).body(response);
+	}
+
+	@PostMapping("/login")
+	public ResponseEntity<UserDTO> login(Principal principal) throws FinderException {
+		
+		UserDTO userDTO = userModelMapper.map(userService.findUserByUsername(principal.getName()), UserDTO.class);
+
+		return ResponseEntity.ok(userDTO);
+
 	}
 
 }
