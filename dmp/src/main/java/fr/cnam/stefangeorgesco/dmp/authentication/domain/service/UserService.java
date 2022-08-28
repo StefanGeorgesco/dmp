@@ -21,6 +21,12 @@ import fr.cnam.stefangeorgesco.dmp.exception.domain.DeleteException;
 import fr.cnam.stefangeorgesco.dmp.exception.domain.DuplicateKeyException;
 import fr.cnam.stefangeorgesco.dmp.exception.domain.FinderException;
 
+/**
+ * Classe de service pour la gestion des utilisateurs.
+ * 
+ * @author Stéfan Georgesco
+ *
+ */
 @Service
 @Validated
 public class UserService {
@@ -40,6 +46,16 @@ public class UserService {
 	@Autowired
 	private BCryptPasswordEncoder bCryptPasswordEncoder;
 
+	/**
+	 * Service de création d'un compte utilisateur. Le service vérifie qu'un compte avec
+	 * le même identifiant ou le même nom d'utilsateur n'existe pas, qu'un dossier (de
+	 * médecin ou de patient) avec le même identifiant existe et que les données
+	 * fournies concordent avec ce dossier.
+	 * @param userDTO l'objet
+	 * {@link fr.cnam.stefangeorgesco.dmp.authentication.domain.dto.UserDTO} représentant
+	 * le compte utilisateur à créer.
+	 * @throws ApplicationException
+	 */
 	public void createAccount(UserDTO userDTO) throws ApplicationException {
 
 		if (userDAO.existsById(userDTO.getId())) {
@@ -77,6 +93,14 @@ public class UserService {
 		}
 	}
 
+	/**
+	 * Service de recherche d'un compte utilisateur par nom d'utilisateur.
+	 * @param username le nom d'utilisateur du compte recherché.
+	 * @return l'objet {@link fr.cnam.stefangeorgesco.dmp.authentication.domain.dto.UserDTO}
+	 * représentant le compte utilisateur recherché, encapsulé dans un objet
+	 * org.springframework.http.ResponseEntity.
+	 * @throws FinderException
+	 */
 	public UserDTO findUserByUsername(String username) throws FinderException {
 		Optional<User> optionalUser = userDAO.findByUsername(username);
 		
@@ -88,6 +112,11 @@ public class UserService {
 		
 	}
 
+	/**
+	 * Service de suppression d'un compte utilisateur désigné par son identifiant.
+	 * @param id l'identifiant du compte utilisateur.
+	 * @throws DeleteException
+	 */
 	public void deleteUser(String id) throws DeleteException {
 		try {
 			userDAO.deleteById(id);

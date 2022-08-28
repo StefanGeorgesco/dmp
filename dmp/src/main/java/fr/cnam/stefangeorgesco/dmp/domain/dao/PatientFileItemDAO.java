@@ -8,6 +8,12 @@ import org.springframework.data.repository.CrudRepository;
 
 import fr.cnam.stefangeorgesco.dmp.domain.model.PatientFileItem;
 
+/**
+ * Repository pour les objets {@link fr.cnam.stefangeorgesco.dmp.domain.model.PatientFileItem}
+ * 
+ * @author Stéfan Georgesco
+ *
+ */
 @Transactional
 public interface PatientFileItemDAO extends CrudRepository<PatientFileItem, UUID> {
 

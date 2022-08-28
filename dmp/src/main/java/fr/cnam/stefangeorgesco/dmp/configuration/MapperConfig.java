@@ -16,14 +16,31 @@ import fr.cnam.stefangeorgesco.dmp.domain.model.Diagnosis;
 import fr.cnam.stefangeorgesco.dmp.domain.model.Doctor;
 import fr.cnam.stefangeorgesco.dmp.domain.model.PatientFile;
 
+/**
+ * Classe de configuration des mappeurs de conversion entre les objets entités
+ * et les objets de transfert de données.
+ * 
+ * @author Stéfan Georgesco
+ *
+ */
 @Configuration
 public class MapperConfig {
 
+	/**
+	 * Mappeur à utiliser pour tous les cas ne nécessitant pas un mappeur spécifique.
+	 * @return le bean mappeur
+	 */
 	@Bean
 	public ModelMapper commonModelMapper() {
 		return new ModelMapper();
 	}
 
+	/**
+	 * Mappeur spécifique de conversion d'un objet
+	 * {@link fr.cnam.stefangeorgesco.dmp.domain.model.Doctor}
+	 * en objet {@link fr.cnam.stefangeorgesco.dmp.domain.dto.DoctorDTO}
+	 * @return le bean mappeur
+	 */
 	@Bean
 	public ModelMapper doctorModelMapper() {
 		ModelMapper modelMapper = new ModelMapper();
@@ -36,6 +53,12 @@ public class MapperConfig {
 		return modelMapper;
 	}
 
+	/**
+	 * Mappeur spécifique de conversion d'un objet
+	 * {@link fr.cnam.stefangeorgesco.dmp.domain.model.PatientFile}
+	 * en objet {@link fr.cnam.stefangeorgesco.dmp.domain.dto.PatientFileDTO}
+	 * @return le bean mappeur
+	 */
 	@Bean
 	public ModelMapper patientFileModelMapper() {
 		ModelMapper modelMapper = new ModelMapper();
@@ -48,6 +71,12 @@ public class MapperConfig {
 		return modelMapper;
 	}
 
+	/**
+	 * Mappeur spécifique de conversion d'un objet
+	 * {@link fr.cnam.stefangeorgesco.dmp.domain.model.Diagnosis}
+	 * en objet {@link fr.cnam.stefangeorgesco.dmp.domain.dto.DiagnosisDTO}
+	 * @return le bean mappeur
+	 */
 	@Bean
 	public ModelMapper diagnosisModelMapper() {
 		ModelMapper modelMapper = new ModelMapper();
@@ -57,6 +86,11 @@ public class MapperConfig {
 		return modelMapper;
 	}
 
+	/**
+	 * Mappeur spécifique de conversion d'un objet {@link fr.cnam.stefangeorgesco.dmp.domain.model.Act}
+	 * en objet {@link fr.cnam.stefangeorgesco.dmp.domain.dto.ActDTO}
+	 * @return le bean mappeur
+	 */
 	@Bean
 	public ModelMapper actModelMapper() {
 		ModelMapper modelMapper = new ModelMapper();
@@ -66,6 +100,12 @@ public class MapperConfig {
 		return modelMapper;
 	}
 
+	/**
+	 * Mappeur spécifique de conversion d'un objet
+	 * {@link fr.cnam.stefangeorgesco.dmp.authentication.domain.model.User}
+	 * en objet {@link fr.cnam.stefangeorgesco.dmp.authentication.domain.dto.UserDTO}
+	 * @return le bean mappeur
+	 */
 	@Bean
 	public ModelMapper userModelMapper() {
 		ModelMapper modelMapper = new ModelMapper();
