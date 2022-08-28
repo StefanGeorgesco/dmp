@@ -99,6 +99,14 @@ public class DoctorService {
 		return doctorDTO;
 	}
 
+	/**
+	 * Service de recherche d'un dossier de médecin par son identifiant.
+	 * 
+	 * @param id l'identifiant du dossier recherché.
+	 * @return un objet {@link fr.cnam.stefangeorgesco.dmp.domain.dto.DoctorDTO}
+	 *         représentant le dossier de médecin trouvé.
+	 * @throws FinderException
+	 */
 	public DoctorDTO findDoctor(String id) throws FinderException {
 
 		Optional<Doctor> optionalDoctor = doctorDAO.findById(id);
@@ -111,6 +119,17 @@ public class DoctorService {
 
 	}
 
+	/**
+	 * Service de modification d'un dossier de médecin.
+	 * 
+	 * @param doctorDTO l'objet
+	 *                  {@link fr.cnam.stefangeorgesco.dmp.domain.dto.DoctorDTO}
+	 *                  représentant le dossier de médecin à modifier et les données
+	 *                  modifiées.
+	 * @return un objet {@link fr.cnam.stefangeorgesco.dmp.domain.dto.DoctorDTO}
+	 *         représentant le dossier de médecin modifié.
+	 * @throws UpdateException
+	 */
 	public DoctorDTO updateDoctor(DoctorDTO doctorDTO) throws UpdateException {
 
 		Doctor doctor = doctorDAO.findById(doctorDTO.getId()).get();
@@ -133,6 +152,12 @@ public class DoctorService {
 		return response;
 	}
 
+	/**
+	 * Service de suppression d'un dossier de médecin désigné par son identifiant.
+	 * 
+	 * @param id l'identifiant du dossier à supprimer.
+	 * @throws DeleteException
+	 */
 	public void deleteDoctor(String id) throws DeleteException {
 
 		try {
@@ -149,6 +174,15 @@ public class DoctorService {
 
 	}
 
+	/**
+	 * Service de recherche de dossiers de médecins à partir d'une chaîne de
+	 * caractères.
+	 * 
+	 * @param string la chaîne de caractères de recherche.
+	 * @return une liste ({@link java.util.List}) d'objets
+	 *         {@link fr.cnam.stefangeorgesco.dmp.domain.dto.DoctorDTO} représentant
+	 *         les dossiers trouvés.
+	 */
 	public List<DoctorDTO> findDoctorsByIdOrFirstnameOrLastname(String string) {
 
 		if ("".equals(string)) {
@@ -163,6 +197,14 @@ public class DoctorService {
 		return doctorsDTO;
 	}
 
+	/**
+	 * Service de recherche d'une spécialité médicale par son identifiant.
+	 * 
+	 * @param id l'identifiant de la spécialité recherchée.
+	 * @return un objet {@link fr.cnam.stefangeorgesco.dmp.domain.dto.SpecialtyDTO}
+	 *         représentant la specialité trouvée.
+	 * @throws FinderException
+	 */
 	public SpecialtyDTO findSpecialty(String id) throws FinderException {
 
 		Optional<Specialty> optionalSpecialty = specialtyDAO.findById(id);
@@ -175,6 +217,14 @@ public class DoctorService {
 
 	}
 
+	/**
+	 * Service de recherche de spécialités à partir d'une chaîne de caractères.
+	 * 
+	 * @param string la chaîne de caractères de recherche.
+	 * @return une liste ({@link java.util.List}) d'objets
+	 *         {@link fr.cnam.stefangeorgesco.dmp.domain.dto.SpecialtyDTO}
+	 *         représentant les spécialités trouvées.
+	 */
 	public List<SpecialtyDTO> findSpecialtiesByIdOrDescription(String string) {
 
 		if ("".equals(string)) {
@@ -189,6 +239,13 @@ public class DoctorService {
 		return specialtiesDTO;
 	}
 
+	/**
+	 * Service de récupération de toutes les spécialités médicales.
+	 * 
+	 * @return une liste ({@link java.util.List}) d'objets
+	 *         {@link fr.cnam.stefangeorgesco.dmp.domain.dto.SpecialtyDTO}
+	 *         représentant troutes les spécialités.
+	 */
 	public List<SpecialtyDTO> findAllSpecialties() {
 		Iterable<Specialty> specialties = specialtyDAO.findAll();
 
