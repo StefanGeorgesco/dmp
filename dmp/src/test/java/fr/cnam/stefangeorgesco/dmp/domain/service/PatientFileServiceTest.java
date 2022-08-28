@@ -35,6 +35,7 @@ import fr.cnam.stefangeorgesco.dmp.authentication.domain.service.UserService;
 import fr.cnam.stefangeorgesco.dmp.domain.dao.CorrespondenceDAO;
 import fr.cnam.stefangeorgesco.dmp.domain.dao.DiseaseDAO;
 import fr.cnam.stefangeorgesco.dmp.domain.dao.DoctorDAO;
+import fr.cnam.stefangeorgesco.dmp.domain.dao.FileDAO;
 import fr.cnam.stefangeorgesco.dmp.domain.dao.MedicalActDAO;
 import fr.cnam.stefangeorgesco.dmp.domain.dao.PatientFileDAO;
 import fr.cnam.stefangeorgesco.dmp.domain.dao.PatientFileItemDAO;
@@ -79,6 +80,9 @@ public class PatientFileServiceTest {
 
 	@MockBean
 	private PatientFileDAO patientFileDAO;
+
+	@MockBean
+	private FileDAO fileDAO;
 
 	@MockBean
 	private DoctorDAO doctorDAO;
@@ -381,13 +385,13 @@ public class PatientFileServiceTest {
 	@Test
 	public void testCreatePatientFileSuccess() throws CheckException {
 		doNothing().when(rnippService).checkPatientData(patientFileDTO);
-		when(patientFileDAO.existsById(patientFileDTO.getId())).thenReturn(false);
+		when(fileDAO.existsById(patientFileDTO.getId())).thenReturn(false);
 		when(patientFileDAO.save(patientFileCaptor.capture())).thenAnswer(invocation -> invocation.getArguments()[0]);
 
 		patientFileDTOResponse = assertDoesNotThrow(() -> patientFileService.createPatientFile(patientFileDTO));
 
 		verify(rnippService, times(1)).checkPatientData(patientFileDTO);
-		verify(patientFileDAO, times(1)).existsById(patientFileDTO.getId());
+		verify(fileDAO, times(1)).existsById(patientFileDTO.getId());
 		verify(patientFileDAO, times(1)).save(any(PatientFile.class));
 
 		savedPatientFile = patientFileCaptor.getValue();
@@ -420,16 +424,16 @@ public class PatientFileServiceTest {
 	@Test
 	public void testCreatePatientFileFailurePatientFileAlreadyExist() throws CheckException {
 		doNothing().when(rnippService).checkPatientData(patientFileDTO);
-		when(patientFileDAO.existsById(patientFileDTO.getId())).thenReturn(true);
+		when(fileDAO.existsById(patientFileDTO.getId())).thenReturn(true);
 
 		DuplicateKeyException ex = assertThrows(DuplicateKeyException.class,
 				() -> patientFileService.createPatientFile(patientFileDTO));
 
 		verify(rnippService, times(1)).checkPatientData(patientFileDTO);
-		verify(patientFileDAO, times(1)).existsById(patientFileDTO.getId());
+		verify(fileDAO, times(1)).existsById(patientFileDTO.getId());
 		verify(patientFileDAO, times(0)).save(any(PatientFile.class));
 
-		assertEquals("Le dossier patient existe déjà.", ex.getMessage());
+		assertEquals("Un dossier avec cet identifiant existe déjà.", ex.getMessage());
 	}
 
 	@Test

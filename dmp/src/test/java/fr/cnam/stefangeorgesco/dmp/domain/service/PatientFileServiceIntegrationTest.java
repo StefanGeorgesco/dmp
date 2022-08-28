@@ -252,7 +252,7 @@ public class PatientFileServiceIntegrationTest {
 		DuplicateKeyException ex = assertThrows(DuplicateKeyException.class,
 				() -> patientFileService.createPatientFile(patientFileDTO));
 
-		assertEquals("Le dossier patient existe déjà.", ex.getMessage());
+		assertEquals("Un dossier avec cet identifiant existe déjà.", ex.getMessage());
 	}
 
 	@Test

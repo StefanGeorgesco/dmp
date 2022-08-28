@@ -186,7 +186,7 @@ public class DoctorControllerIntegrationTest {
 		mockMvc.perform(post("/doctor").contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(doctorDTO))).andExpect(status().isConflict())
 				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
-				.andExpect(jsonPath("$.message", is("Le dossier de médecin existe déjà.")));
+				.andExpect(jsonPath("$.message", is("Un dossier avec cet identifiant existe déjà.")));
 	}
 
 	@Test

@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import fr.cnam.stefangeorgesco.dmp.authentication.domain.service.UserService;
 import fr.cnam.stefangeorgesco.dmp.domain.dao.DoctorDAO;
+import fr.cnam.stefangeorgesco.dmp.domain.dao.FileDAO;
 import fr.cnam.stefangeorgesco.dmp.domain.dao.SpecialtyDAO;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.DoctorDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.SpecialtyDTO;
@@ -25,11 +26,20 @@ import fr.cnam.stefangeorgesco.dmp.exception.domain.FinderException;
 import fr.cnam.stefangeorgesco.dmp.exception.domain.UpdateException;
 import fr.cnam.stefangeorgesco.dmp.utils.PasswordGenerator;
 
+/**
+ * Classe de service pour la gestion des dossiers de médecins et des spécialités médicales.
+ * 
+ * @author Stéfan Georgesco
+ *
+ */
 @Service
 public class DoctorService {
 
 	@Autowired
 	private UserService userService;
+	
+	@Autowired
+	private FileDAO fileDAO;
 
 	@Autowired
 	private DoctorDAO doctorDAO;
@@ -46,10 +56,17 @@ public class DoctorService {
 	@Autowired
 	private BCryptPasswordEncoder bCryptPasswordEncoder;
 
+	/**
+	 * Service de création d'un dossier de médecin. Le service qu'un dossier 
+	 * @param doctorDTO l'objet {@link fr.cnam.stefangeorgesco.dmp.domain.dto.DoctorDTO}
+	 * représentant le dossier de médecin à créer.
+	 * @return
+	 * @throws ApplicationException
+	 */
 	public DoctorDTO createDoctor(DoctorDTO doctorDTO) throws ApplicationException {
 
-		if (doctorDAO.existsById(doctorDTO.getId())) {
-			throw new DuplicateKeyException("Le dossier de médecin existe déjà.");
+		if (fileDAO.existsById(doctorDTO.getId())) {
+			throw new DuplicateKeyException("Un dossier avec cet identifiant existe déjà.");
 		}
 
 		doctorDTO.setSecurityCode(PasswordGenerator.generatePassword());

@@ -15,6 +15,7 @@ import fr.cnam.stefangeorgesco.dmp.authentication.domain.service.UserService;
 import fr.cnam.stefangeorgesco.dmp.domain.dao.CorrespondenceDAO;
 import fr.cnam.stefangeorgesco.dmp.domain.dao.DiseaseDAO;
 import fr.cnam.stefangeorgesco.dmp.domain.dao.DoctorDAO;
+import fr.cnam.stefangeorgesco.dmp.domain.dao.FileDAO;
 import fr.cnam.stefangeorgesco.dmp.domain.dao.MedicalActDAO;
 import fr.cnam.stefangeorgesco.dmp.domain.dao.PatientFileDAO;
 import fr.cnam.stefangeorgesco.dmp.domain.dao.PatientFileItemDAO;
@@ -60,6 +61,9 @@ public class PatientFileService {
 	private PatientFileDAO patientFileDAO;
 
 	@Autowired
+	private FileDAO fileDAO;
+
+	@Autowired
 	private DoctorDAO doctorDAO;
 
 	@Autowired
@@ -90,8 +94,8 @@ public class PatientFileService {
 
 		rnippService.checkPatientData(patientFileDTO);
 
-		if (patientFileDAO.existsById(patientFileDTO.getId())) {
-			throw new DuplicateKeyException("Le dossier patient existe déjà.");
+		if (fileDAO.existsById(patientFileDTO.getId())) {
+			throw new DuplicateKeyException("Un dossier avec cet identifiant existe déjà.");
 		}
 
 		patientFileDTO.setSecurityCode(PasswordGenerator.generatePassword());

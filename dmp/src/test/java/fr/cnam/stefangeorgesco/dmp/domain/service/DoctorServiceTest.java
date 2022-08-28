@@ -30,6 +30,7 @@ import org.springframework.test.context.TestPropertySource;
 
 import fr.cnam.stefangeorgesco.dmp.authentication.domain.service.UserService;
 import fr.cnam.stefangeorgesco.dmp.domain.dao.DoctorDAO;
+import fr.cnam.stefangeorgesco.dmp.domain.dao.FileDAO;
 import fr.cnam.stefangeorgesco.dmp.domain.dao.SpecialtyDAO;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.AddressDTO;
 import fr.cnam.stefangeorgesco.dmp.domain.dto.DoctorDTO;
@@ -46,8 +47,11 @@ import fr.cnam.stefangeorgesco.dmp.exception.domain.FinderException;
 public class DoctorServiceTest {
 
 	@MockBean
-	private DoctorDAO doctorDAO;
+	private FileDAO fileDAO;
 
+	@MockBean
+	private DoctorDAO doctorDAO;
+	
 	@MockBean
 	private SpecialtyDAO specialtyDAO;
 	
@@ -166,14 +170,14 @@ public class DoctorServiceTest {
 
 	@Test
 	public void testCreateDoctorSuccess() {
-		when(doctorDAO.existsById(doctorDTO.getId())).thenReturn(false);
+		when(fileDAO.existsById(doctorDTO.getId())).thenReturn(false);
 		when(specialtyDAO.findById(specialtyDTO1.getId())).thenReturn(Optional.of(specialty1));
 		when(specialtyDAO.findById(specialtyDTO2.getId())).thenReturn(Optional.of(specialty2));
 		when(doctorDAO.save(doctorCaptor.capture())).thenAnswer(invocation -> invocation.getArguments()[0]);
 
 		assertDoesNotThrow(() -> doctorService.createDoctor(doctorDTO));
 
-		verify(doctorDAO, times(1)).existsById(doctorDTO.getId());
+		verify(fileDAO, times(1)).existsById(doctorDTO.getId());
 		verify(specialtyDAO, times(2)).findById(any(String.class));
 		verify(doctorDAO, times(1)).save(any(Doctor.class));
 
@@ -203,15 +207,15 @@ public class DoctorServiceTest {
 
 	@Test
 	public void testCreateDoctorFailureDoctorAlreadyExists() {
-		when(doctorDAO.existsById(doctorDTO.getId())).thenReturn(true);
+		when(fileDAO.existsById(doctorDTO.getId())).thenReturn(true);
 
 		DuplicateKeyException ex = assertThrows(DuplicateKeyException.class,
 				() -> doctorService.createDoctor(doctorDTO));
 
-		verify(doctorDAO, times(1)).existsById(doctorDTO.getId());
+		verify(fileDAO, times(1)).existsById(doctorDTO.getId());
 		verify(doctorDAO, times(0)).save(any(Doctor.class));
 
-		assertEquals("Le dossier de médecin existe déjà.", ex.getMessage());
+		assertEquals("Un dossier avec cet identifiant existe déjà.", ex.getMessage());
 	}
 
 	@Test

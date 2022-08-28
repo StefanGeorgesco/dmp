@@ -149,7 +149,7 @@ public class DoctorServiceIntegrationTest {
 		DuplicateKeyException ex = assertThrows(DuplicateKeyException.class,
 				() -> doctorService.createDoctor(doctorDTO));
 
-		assertEquals("Le dossier de médecin existe déjà.", ex.getMessage());
+		assertEquals("Un dossier avec cet identifiant existe déjà.", ex.getMessage());
 	}
 
 	@Test
