@@ -87,7 +87,9 @@ public abstract class File {
 	 * @param passwordEncoder l'encodeur à utiliser pour vérifier la concordance du
 	 *                        code de sécurité de l'utilisateur et du code de
 	 *                        sécurité du dossier.
-	 * @throws CheckException
+	 * @throws CheckException on a voulu vérifier un utilisateur 'null' ou avec un
+	 *                        identifiant 'null' ou avec un code de sécurité 'null',
+	 *                        ou les données ne concordent pas.
 	 */
 	public void checkUserData(User user, PasswordEncoder passwordEncoder) throws CheckException {
 

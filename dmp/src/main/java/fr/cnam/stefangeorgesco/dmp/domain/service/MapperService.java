@@ -20,6 +20,15 @@ import fr.cnam.stefangeorgesco.dmp.domain.model.PatientFileItem;
 import fr.cnam.stefangeorgesco.dmp.domain.model.Prescription;
 import fr.cnam.stefangeorgesco.dmp.domain.model.Symptom;
 
+/**
+ * Classe de service pour la conversion des objets
+ * {@link fr.cnam.stefangeorgesco.dmp.domain.model.PatientFileItem} en objets
+ * {@link fr.cnam.stefangeorgesco.dmp.domain.dto.PatientFileItemDTO} et
+ * vice-versa.
+ * 
+ * @author Stéfan Georgesco
+ *
+ */
 @Service
 public class MapperService {
 
@@ -57,6 +66,18 @@ public class MapperService {
 		returnEntityTypes.put(SymptomDTO.class, Symptom.class);
 	}
 
+	/**
+	 * Service de conversion des objets
+	 * {@link fr.cnam.stefangeorgesco.dmp.domain.model.PatientFileItem} en objets
+	 * {@link fr.cnam.stefangeorgesco.dmp.domain.dto.PatientFileItemDTO}.
+	 * 
+	 * @param item l'objet
+	 *             {@link fr.cnam.stefangeorgesco.dmp.domain.model.PatientFileItem}
+	 *             à convertir.
+	 * @return l'objet
+	 *         {@link fr.cnam.stefangeorgesco.dmp.domain.dto.PatientFileItemDTO}
+	 *         résultant de la conversion.
+	 */
 	public PatientFileItemDTO mapToDTO(PatientFileItem item) {
 
 		modelMapper = commonModelMapper;
@@ -70,6 +91,18 @@ public class MapperService {
 		return modelMapper.map(item, returnDTOTypes.get(item.getClass()));
 	}
 
+	/**
+	 * Service de conversion des objets
+	 * {@link fr.cnam.stefangeorgesco.dmp.domain.dto.PatientFileItemDTO} en objets
+	 * {@link fr.cnam.stefangeorgesco.dmp.domain.model.PatientFileItem}.
+	 * 
+	 * @param itemDTO l'objet
+	 *             {@link fr.cnam.stefangeorgesco.dmp.domain.dto.PatientFileItemDTO}
+	 *             à convertir.
+	 * @return l'objet
+	 *         {@link fr.cnam.stefangeorgesco.dmp.domain.model.PatientFileItem}
+	 *         résultant de la conversion.
+	 */
 	public PatientFileItem mapToEntity(PatientFileItemDTO itemDTO) {
 
 		return commonModelMapper.map(itemDTO, returnEntityTypes.get(itemDTO.getClass()));

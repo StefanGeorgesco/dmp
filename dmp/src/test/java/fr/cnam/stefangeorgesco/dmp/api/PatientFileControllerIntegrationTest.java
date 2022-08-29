@@ -652,7 +652,7 @@ public class PatientFileControllerIntegrationTest {
 
 		mockMvc.perform(delete("/patient-file/P004/correspondence/" + uuid.toString())
 				.contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(correspondenceDTO)))
-				.andExpect(status().isBadRequest()).andExpect(content().contentType(MediaType.APPLICATION_JSON))
+				.andExpect(status().isConflict()).andExpect(content().contentType(MediaType.APPLICATION_JSON))
 				.andExpect(jsonPath("$.message", is("L'utilisateur n'est pas le médecin référent.")));
 
 		assertEquals(count, correspondenceDAO.count());
@@ -1656,7 +1656,7 @@ public class PatientFileControllerIntegrationTest {
 
 		uuid = UUID.fromString("142763cf-6eeb-47a5-b8f8-8ec85f0025c4");
 
-		mockMvc.perform(delete("/patient-file/P013/item/" + uuid.toString())).andExpect(status().isNotFound())
+		mockMvc.perform(delete("/patient-file/P013/item/" + uuid.toString())).andExpect(status().isConflict())
 				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
 				.andExpect(jsonPath("$.message", is("L'utilisateur n'est pas le médecin référent ou correspondant.")));
 
@@ -1672,7 +1672,7 @@ public class PatientFileControllerIntegrationTest {
 
 		uuid = UUID.fromString("b7bdb6e4-da4b-47f9-9b67-cfd67567aaca");
 
-		mockMvc.perform(delete("/patient-file/P012/item/" + uuid.toString())).andExpect(status().isNotFound())
+		mockMvc.perform(delete("/patient-file/P012/item/" + uuid.toString())).andExpect(status().isConflict())
 				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
 				.andExpect(jsonPath("$.message", is("L'utilisateur n'est pas le médecin référent ou correspondant.")));
 

@@ -48,6 +48,12 @@ import fr.cnam.stefangeorgesco.dmp.exception.domain.FinderException;
 import fr.cnam.stefangeorgesco.dmp.exception.domain.UpdateException;
 import fr.cnam.stefangeorgesco.dmp.utils.PasswordGenerator;
 
+/**
+ * Classe de service pour la gestion des dossiers patients et objets rattachés.
+ * 
+ * @author Stéfan Georgesco
+ *
+ */
 @Service
 public class PatientFileService {
 
@@ -90,6 +96,19 @@ public class PatientFileService {
 	@Autowired
 	private BCryptPasswordEncoder bCryptPasswordEncoder;
 
+	/**
+	 * Service de création d'un dossier patient. Le service vérifie qu'un dossier
+	 * avec le même identifiant n'existe pas.
+	 * 
+	 * @param patientFileDTO l'objet
+	 *                       {@link fr.cnam.stefangeorgesco.dmp.domain.dto.PatientFileDTO}
+	 *                       représentant le dossier patient à créer.
+	 * @return un objet
+	 *         {@link fr.cnam.stefangeorgesco.dmp.domain.dto.PatientFileDTO}
+	 *         représentant le dossier patient créé.
+	 * @throws CheckException  le dossier patient n'existe pas au RNIPP.
+	 * @throws CreateException le dossier patient n'a pas pu être créé.
+	 */
 	public PatientFileDTO createPatientFile(PatientFileDTO patientFileDTO) throws CheckException, CreateException {
 
 		rnippService.checkPatientData(patientFileDTO);
@@ -113,6 +132,37 @@ public class PatientFileService {
 		return patientFileDTO;
 	}
 
+	/**
+	 * Service de recherche d'un dossier patient par son identifiant.
+	 * 
+	 * @param id l'identifiant du dossier recherché.
+	 * @return un objet
+	 *         {@link fr.cnam.stefangeorgesco.dmp.domain.dto.PatientFileDTO}
+	 *         représentant le dossier patient trouvé.
+	 * @throws FinderException dossier patient non trouvé.
+	 */
+	public PatientFileDTO findPatientFile(String id) throws FinderException {
+		Optional<PatientFile> optionalPatientFile = patientFileDAO.findById(id);
+
+		if (optionalPatientFile.isPresent()) {
+			return patientFileModelMapper.map(optionalPatientFile.get(), PatientFileDTO.class);
+		} else {
+			throw new FinderException("Dossier patient non trouvé.");
+		}
+	}
+
+	/**
+	 * Service de modification d'un dossier patient.
+	 * 
+	 * @param patientFileDTO l'objet
+	 *                       {@link fr.cnam.stefangeorgesco.dmp.domain.dto.PatientFileDTO}
+	 *                       représentant le dossier patient à modifier et les
+	 *                       données modifiées.
+	 * @return un objet
+	 *         {@link fr.cnam.stefangeorgesco.dmp.domain.dto.PatientFileDTO}
+	 *         représentant le dossier patient modifié.
+	 * @throws UpdateException le dossier patient n'a pas pu être modifié.
+	 */
 	public PatientFileDTO updatePatientFile(PatientFileDTO patientFileDTO) throws UpdateException {
 
 		PatientFile patientFile = patientFileDAO.findById(patientFileDTO.getId()).get();
@@ -135,16 +185,23 @@ public class PatientFileService {
 		return response;
 	}
 
-	public PatientFileDTO findPatientFile(String id) throws FinderException {
-		Optional<PatientFile> optionalPatientFile = patientFileDAO.findById(id);
-
-		if (optionalPatientFile.isPresent()) {
-			return patientFileModelMapper.map(optionalPatientFile.get(), PatientFileDTO.class);
-		} else {
-			throw new FinderException("Dossier patient non trouvé.");
-		}
-	}
-
+	/**
+	 * Service de modification du médecin référent d'un dossier patient. Le service
+	 * vérifie si le dossier patient et le dossier de médecin du nouveau médecin
+	 * référent existent.
+	 * 
+	 * @param patientFileDTO l'objet
+	 *                       {@link fr.cnam.stefangeorgesco.dmp.domain.dto.PatientFileDTO}
+	 *                       représentant le dossier patient dont on souhaite
+	 *                       modifier le médecin référent, comportant dans son
+	 *                       attribut referringDoctorId l'identifiant du dossier de
+	 *                       médecin du nouveau médecin référent.
+	 * @return l'objet {@link fr.cnam.stefangeorgesco.dmp.domain.dto.PatientFileDTO}
+	 *         représentant le dossier patient modifié.
+	 * @throws FinderException le dossier patient n'a pas été trouvé ou le dossier
+	 *                         de médecin référent n'a pas été trouvé.
+	 * @throws UpdateException le dossier patient n'a pas pu être modifié.
+	 */
 	public PatientFileDTO updateReferringDoctor(PatientFileDTO patientFileDTO) throws FinderException, UpdateException {
 
 		Optional<PatientFile> optionalPatientFile = patientFileDAO.findById(patientFileDTO.getId());
@@ -175,6 +232,15 @@ public class PatientFileService {
 		return response;
 	}
 
+	/**
+	 * Service de recherche de dossiers patients à partir d'une chaîne de
+	 * caractères.
+	 * 
+	 * @param q la chaîne de caractères de recherche.
+	 * @return une liste ({@link java.util.List}) d'objets
+	 *         {@link fr.cnam.stefangeorgesco.dmp.domain.dto.PatientFileDTO}
+	 *         représentant les dossiers trouvés.
+	 */
 	public List<PatientFileDTO> findPatientFilesByIdOrFirstnameOrLastname(String q) {
 
 		if ("".equals(q)) {
@@ -190,6 +256,17 @@ public class PatientFileService {
 		return response;
 	}
 
+	/**
+	 * Service de création d'un correspondance.
+	 * 
+	 * @param correspondenceDTO l'objet
+	 *                          {@link fr.cnam.stefangeorgesco.dmp.domain.dto.CorrespondenceDTO}
+	 *                          représentant la correspondance à créer.
+	 * @return un objet
+	 *         {@link fr.cnam.stefangeorgesco.dmp.domain.dto.CorrespondenceDTO}
+	 *         représentant la correspondance créée.
+	 * @throws CreateException la correspondance n'a pas pu être créé.
+	 */
 	public CorrespondenceDTO createCorrespondence(CorrespondenceDTO correspondenceDTO) throws CreateException {
 
 		Correspondence correspondence = commonModelMapper.map(correspondenceDTO, Correspondence.class);
@@ -207,11 +284,25 @@ public class PatientFileService {
 		return response;
 	}
 
+	/**
+	 * Service de suppression d'une correpondance désignée par son identifiant.
+	 * 
+	 * @param uuid l'identifiant de la correspondance à supprimer.
+	 */
 	public void deleteCorrespondence(UUID uuid) {
 
 		correspondenceDAO.deleteById(uuid);
 	}
 
+	/**
+	 * Service de recherche d'une correspondance par son identifiant.
+	 * 
+	 * @param id l'identifiant de la correspondance recherchée.
+	 * @return un objet
+	 *         {@link fr.cnam.stefangeorgesco.dmp.domain.dto.CorrespondenceDTO}
+	 *         représentant la correspondance trouvée.
+	 * @throws FinderException
+	 */
 	public CorrespondenceDTO findCorrespondence(String id) throws FinderException {
 
 		Optional<Correspondence> optionalCorrespondence = correspondenceDAO.findById(UUID.fromString(id));
@@ -223,6 +314,15 @@ public class PatientFileService {
 		}
 	}
 
+	/**
+	 * Service de recherche de toutes les correspondances associées à un dossier
+	 * patient.
+	 * 
+	 * @param patientFileId l'identifiant du dossier patient.
+	 * @return une liste ({@link java.util.List}) d'objets
+	 *         {@link fr.cnam.stefangeorgesco.dmp.domain.dto.CorrespondenceDTO}
+	 *         représentant les correspondances demandées.
+	 */
 	public List<CorrespondenceDTO> findCorrespondencesByPatientFileId(String patientFileId) {
 
 		Iterable<Correspondence> correspondences = correspondenceDAO.findByPatientFileId(patientFileId);

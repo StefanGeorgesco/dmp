@@ -65,8 +65,8 @@ public class DoctorService {
 	 *                  représentant le dossier de médecin à créer.
 	 * @return un objet {@link fr.cnam.stefangeorgesco.dmp.domain.dto.DoctorDTO}
 	 *         représentant le dossier de médecin créé.
-	 * @throws FinderException
-	 * @throws CreateException
+	 * @throws FinderException une spécialité du dossier de médecin n'existe pas.
+	 * @throws CreateException un dossier avec le même identifiant existe déjà.
 	 */
 	public DoctorDTO createDoctor(DoctorDTO doctorDTO) throws FinderException, CreateException {
 
@@ -105,7 +105,7 @@ public class DoctorService {
 	 * @param id l'identifiant du dossier recherché.
 	 * @return un objet {@link fr.cnam.stefangeorgesco.dmp.domain.dto.DoctorDTO}
 	 *         représentant le dossier de médecin trouvé.
-	 * @throws FinderException
+	 * @throws FinderException le dossier de médecin n'a pas été trouvé.
 	 */
 	public DoctorDTO findDoctor(String id) throws FinderException {
 
@@ -128,7 +128,7 @@ public class DoctorService {
 	 *                  modifiées.
 	 * @return un objet {@link fr.cnam.stefangeorgesco.dmp.domain.dto.DoctorDTO}
 	 *         représentant le dossier de médecin modifié.
-	 * @throws UpdateException
+	 * @throws UpdateException le dossier de médecin n'a pas pu être modifié.
 	 */
 	public DoctorDTO updateDoctor(DoctorDTO doctorDTO) throws UpdateException {
 
@@ -156,7 +156,7 @@ public class DoctorService {
 	 * Service de suppression d'un dossier de médecin désigné par son identifiant.
 	 * 
 	 * @param id l'identifiant du dossier à supprimer.
-	 * @throws DeleteException
+	 * @throws DeleteException Le dossier de médecin n'a pas pu être supprimé.
 	 */
 	public void deleteDoctor(String id) throws DeleteException {
 
@@ -178,18 +178,18 @@ public class DoctorService {
 	 * Service de recherche de dossiers de médecins à partir d'une chaîne de
 	 * caractères.
 	 * 
-	 * @param string la chaîne de caractères de recherche.
+	 * @param q la chaîne de caractères de recherche.
 	 * @return une liste ({@link java.util.List}) d'objets
 	 *         {@link fr.cnam.stefangeorgesco.dmp.domain.dto.DoctorDTO} représentant
 	 *         les dossiers trouvés.
 	 */
-	public List<DoctorDTO> findDoctorsByIdOrFirstnameOrLastname(String string) {
+	public List<DoctorDTO> findDoctorsByIdOrFirstnameOrLastname(String q) {
 
-		if ("".equals(string)) {
+		if ("".equals(q)) {
 			return new ArrayList<DoctorDTO>();
 		}
 
-		Iterable<Doctor> doctors = doctorDAO.findByIdOrFirstnameOrLastname(string);
+		Iterable<Doctor> doctors = doctorDAO.findByIdOrFirstnameOrLastname(q);
 
 		List<DoctorDTO> doctorsDTO = ((List<Doctor>) doctors).stream()
 				.map(doctor -> doctorModelMapper.map(doctor, DoctorDTO.class)).collect(Collectors.toList());
@@ -203,7 +203,7 @@ public class DoctorService {
 	 * @param id l'identifiant de la spécialité recherchée.
 	 * @return un objet {@link fr.cnam.stefangeorgesco.dmp.domain.dto.SpecialtyDTO}
 	 *         représentant la specialité trouvée.
-	 * @throws FinderException
+	 * @throws FinderException spécialité non trouvée.
 	 */
 	public SpecialtyDTO findSpecialty(String id) throws FinderException {
 
@@ -220,18 +220,18 @@ public class DoctorService {
 	/**
 	 * Service de recherche de spécialités à partir d'une chaîne de caractères.
 	 * 
-	 * @param string la chaîne de caractères de recherche.
+	 * @param q la chaîne de caractères de recherche.
 	 * @return une liste ({@link java.util.List}) d'objets
 	 *         {@link fr.cnam.stefangeorgesco.dmp.domain.dto.SpecialtyDTO}
 	 *         représentant les spécialités trouvées.
 	 */
-	public List<SpecialtyDTO> findSpecialtiesByIdOrDescription(String string) {
+	public List<SpecialtyDTO> findSpecialtiesByIdOrDescription(String q) {
 
-		if ("".equals(string)) {
+		if ("".equals(q)) {
 			return new ArrayList<>();
 		}
 
-		Iterable<Specialty> specialties = specialtyDAO.findByIdOrDescription(string);
+		Iterable<Specialty> specialties = specialtyDAO.findByIdOrDescription(q);
 
 		List<SpecialtyDTO> specialtiesDTO = ((List<Specialty>) specialties).stream()
 				.map(specialty -> commonModelMapper.map(specialty, SpecialtyDTO.class)).collect(Collectors.toList());

@@ -17,6 +17,7 @@ import fr.cnam.stefangeorgesco.dmp.authentication.domain.dto.UserDTO;
 import fr.cnam.stefangeorgesco.dmp.authentication.domain.service.UserService;
 import fr.cnam.stefangeorgesco.dmp.exception.domain.CheckException;
 import fr.cnam.stefangeorgesco.dmp.exception.domain.CreateException;
+import fr.cnam.stefangeorgesco.dmp.exception.domain.DuplicateKeyException;
 import fr.cnam.stefangeorgesco.dmp.exception.domain.FinderException;
 
 /**
@@ -43,9 +44,11 @@ public class UserController {
 	 * @return une réponse {@link RestResponse} encapsulée dans un objet
 	 *         org.springframework.http.ResponseEntity avec le statut
 	 *         {@link org.springframework.http.HttpStatus#CREATED} en cas de succès.
-	 * @throws CreateException
-	 * @throws CheckException
-	 * @throws FinderException
+	 * @throws FinderException       le dossier n'existe pas.
+	 * @throws CheckException        les données ne concordent pas.
+	 * @throws CreateException       le compte utilisateur n'a pas pu être créé.
+	 * @throws DuplicateKeyException Le compte utilisateur existe déjà ou le nom
+	 *                               d'utilisateur existe déjà.
 	 */
 	@PostMapping("/user")
 	public ResponseEntity<RestResponse> createAccount(@Valid @RequestBody UserDTO userDTO)
@@ -67,7 +70,7 @@ public class UserController {
 	 *         {@link fr.cnam.stefangeorgesco.dmp.authentication.domain.dto.UserDTO}
 	 *         représentant l'utilisateur authentifié, encapsulé dans un objet
 	 *         org.springframework.http.ResponseEntity.
-	 * @throws FinderException
+	 * @throws FinderException le compte utilisateur n'a pas été trouvé.
 	 */
 	@PostMapping("/login")
 	public ResponseEntity<UserDTO> login(Principal principal) throws FinderException {

@@ -64,9 +64,9 @@ public class PatientFileController {
 	 *         représentant le dossier patient créé, encapsulé dans un objet
 	 *         org.springframework.http.ResponseEntity avec le statut
 	 *         {@link org.springframework.http.HttpStatus#CREATED} en cas de succès.
-	 * @throws FinderException
-	 * @throws CreateException
-	 * @throws CheckException
+	 * @throws FinderException le compte utilisateur n'a pas été trouvé.
+	 * @throws CheckException  le dossier patient n'existe pas au RNIPP.
+	 * @throws CreateException le dossier patient n'a pas pu être créé.
 	 */
 	@PostMapping("/patient-file")
 	public ResponseEntity<PatientFileDTO> createPatientFile(@Valid @RequestBody PatientFileDTO patientFileDTO,
@@ -91,8 +91,8 @@ public class PatientFileController {
 	 * @return l'objet {@link fr.cnam.stefangeorgesco.dmp.domain.dto.PatientFileDTO}
 	 *         représentant le dossier patient modifié, encapsulé dans un objet
 	 *         org.springframework.http.ResponseEntity.
-	 * @throws FinderException
-	 * @throws UpdateException
+	 * @throws FinderException le compte utilisateur n'a pas été trouvé.
+	 * @throws UpdateException le dossier patient n'a pas pu être modifié.
 	 * @see PatientFileService#updatePatientFile(PatientFileDTO)
 	 */
 	@PutMapping("/patient-file/details")
@@ -114,7 +114,7 @@ public class PatientFileController {
 	 * @return l'objet {@link fr.cnam.stefangeorgesco.dmp.domain.dto.PatientFileDTO}
 	 *         représentant le dossier patient consulté, encapsulé dans un objet
 	 *         org.springframework.http.ResponseEntity.
-	 * @throws FinderException
+	 * @throws FinderException le compte utilisateur n'a pas été trouvé.
 	 */
 	@GetMapping("/patient-file/details")
 	public ResponseEntity<PatientFileDTO> getPatientFileDetails(Principal principal) throws FinderException {
@@ -133,7 +133,7 @@ public class PatientFileController {
 	 *         {@link fr.cnam.stefangeorgesco.dmp.domain.dto.CorrespondenceDTO}
 	 *         représentant les correspondances demandées, encapsulée dans un objet
 	 *         org.springframework.http.ResponseEntity.
-	 * @throws FinderException
+	 * @throws FinderException le compte utilisateur n'a pas été trouvé.
 	 */
 	@GetMapping("/patient-file/details/correspondence")
 	public ResponseEntity<List<CorrespondenceDTO>> findPatientCorrespondences(Principal principal)
@@ -153,7 +153,7 @@ public class PatientFileController {
 	 *         {@link fr.cnam.stefangeorgesco.dmp.domain.dto.PatientFileItemDTO}
 	 *         représentant les éléments médicaux demandés, encapsulée dans un objet
 	 *         org.springframework.http.ResponseEntity.
-	 * @throws FinderException
+	 * @throws FinderException le compte utilisateur n'a pas été trouvé.
 	 */
 	@GetMapping("/patient-file/details/item")
 	public ResponseEntity<List<PatientFileItemDTO>> findPatientPatientFileItems(Principal principal)
@@ -172,7 +172,7 @@ public class PatientFileController {
 	 * @return l'objet {@link fr.cnam.stefangeorgesco.dmp.domain.dto.PatientFileDTO}
 	 *         représentant le dossier patient consulté, encapsulé dans un objet
 	 *         org.springframework.http.ResponseEntity.
-	 * @throws FinderException
+	 * @throws FinderException dossier patient non trouvé.
 	 */
 	@GetMapping("/patient-file/{id}")
 	public ResponseEntity<PatientFileDTO> getPatientFileDetails(@PathVariable String id) throws FinderException {
@@ -187,7 +187,7 @@ public class PatientFileController {
 	 * @param id l'identifiant du dossier patient, fourni en variable de chemin.
 	 * @return une réponse {@link RestResponse} encapsulée dans un objet
 	 *         org.springframework.http.ResponseEntity.
-	 * @throws DeleteException
+	 * @throws DeleteException le dossier patient n'a pas pu être supprimé.
 	 */
 	@DeleteMapping("/patient-file/{id}")
 	public ResponseEntity<RestResponse> deletePatientFile(@PathVariable String id) throws DeleteException {
@@ -209,8 +209,8 @@ public class PatientFileController {
 	 * @return l'objet {@link fr.cnam.stefangeorgesco.dmp.domain.dto.PatientFileDTO}
 	 *         représentant le dossier patient modifié, encapsulé dans un objet
 	 *         org.springframework.http.ResponseEntity.
-	 * @throws FinderException
-	 * @throws UpdateException
+	 * @throws FinderException dossier patient non trouvé.
+	 * @throws UpdateException le dossier patient n'a pas pu être modifié.
 	 */
 	@PutMapping("/patient-file/{id}/referring-doctor")
 	public ResponseEntity<PatientFileDTO> updateReferringDoctor(@PathVariable String id,
@@ -233,11 +233,9 @@ public class PatientFileController {
 	 *         {@link fr.cnam.stefangeorgesco.dmp.domain.dto.PatientFileDTO}
 	 *         représentant le résultat de la recherche, encapsulée dans un objet
 	 *         org.springframework.http.ResponseEntity.
-	 * @throws FinderException
 	 */
 	@GetMapping("/patient-file")
-	public ResponseEntity<List<PatientFileDTO>> findPatientFilesByIdOrFirstnameOrLastname(@RequestParam String q)
-			throws FinderException {
+	public ResponseEntity<List<PatientFileDTO>> findPatientFilesByIdOrFirstnameOrLastname(@RequestParam String q) {
 
 		return ResponseEntity.status(HttpStatus.OK)
 				.body(patientFileService.findPatientFilesByIdOrFirstnameOrLastname(q));
@@ -259,8 +257,11 @@ public class PatientFileController {
 	 *         représentant la correspondance créée, encapsulé dans un objet
 	 *         org.springframework.http.ResponseEntity avec le statut
 	 *         {@link org.springframework.http.HttpStatus#CREATED} en cas de succès.
-	 * @throws FinderException
-	 * @throws CreateException
+	 * @throws FinderException le compte utilisateur n'a pas été trouvé ou le
+	 *                         dossier patient n'a pas été trouvé.
+	 * @throws CreateException l'utilisateur n'est pas le médecin référent ou on a
+	 *                         voulu créer une correspondance pour le médecin
+	 *                         référent ou la correspondance n'a pas pu être créé.
 	 */
 	@PostMapping("/patient-file/{id}/correspondence")
 	public ResponseEntity<CorrespondenceDTO> createCorrespondence(
@@ -303,12 +304,15 @@ public class PatientFileController {
 	 *         représentant l'élément médical créé, encapsulé dans un objet
 	 *         org.springframework.http.ResponseEntity avec le statut
 	 *         {@link org.springframework.http.HttpStatus#CREATED} en cas de succès.
-	 * @throws Exception
+	 * @throws FinderException le compte utilisateur n'a pas été trouvé ou le
+	 *                         dossier patient n'a pas été trouvé ou l'utilisateur
+	 *                         n'est pas le médecin référent ou correspondant.
+	 * @throws CreateException l'élément de dossier patient n'a pas pu être créé.
 	 */
 	@PostMapping("/patient-file/{id}/item")
 	public ResponseEntity<PatientFileItemDTO> createPatientFileItem(
 			@Valid @RequestBody PatientFileItemDTO patientFileItemDTO, @PathVariable String id, Principal principal)
-			throws Exception {
+			throws FinderException, CreateException {
 
 		String userId = userService.findUserByUsername(principal.getName()).getId();
 
@@ -348,7 +352,9 @@ public class PatientFileController {
 	 *         {@link fr.cnam.stefangeorgesco.dmp.domain.dto.CorrespondenceDTO}
 	 *         représentant les correspondances demandées, encapsulée dans un objet
 	 *         org.springframework.http.ResponseEntity.
-	 * @throws FinderException
+	 * @throws FinderException le compte utilisateur n'a pas été trouvé ou le
+	 *                         dossier patient n'a pas été trouvé ou l'utilisateur
+	 *                         n'est pas le médecin référent ou correspondant.
 	 */
 	@GetMapping("/patient-file/{id}/correspondence")
 	public ResponseEntity<List<CorrespondenceDTO>> findCorrespondencesByPatientFileId(@PathVariable String id,
@@ -389,7 +395,9 @@ public class PatientFileController {
 	 *         {@link fr.cnam.stefangeorgesco.dmp.domain.dto.PatientFileItemDTO}
 	 *         représentant les éléments médicaux demandés, encapsulée dans un objet
 	 *         org.springframework.http.ResponseEntity.
-	 * @throws FinderException
+	 * @throws FinderException le compte utilisateur n'a pas été trouvé ou le
+	 *                         dossier patient n'a pas été trouvé ou l'utilisateur
+	 *                         n'est pas le médecin référent ou correspondant.
 	 */
 	@GetMapping("/patient-file/{id}/item")
 	public ResponseEntity<List<PatientFileItemDTO>> findPatientFileItemsByPatientFileId(@PathVariable String id,
@@ -434,8 +442,11 @@ public class PatientFileController {
 	 *         {@link fr.cnam.stefangeorgesco.dmp.domain.dto.PatientFileItemDTO}
 	 *         représentant l'élément médical modifié, encapsulé dans un objet
 	 *         org.springframework.http.ResponseEntity.
-	 * @throws FinderException
-	 * @throws UpdateException
+	 * @throws FinderException le compte utilisateur n'a pas été trouvé ou l'élément
+	 *                         de dossier patient n'a pas été trouvé ou ne
+	 *                         correspond pas au dossier patient.
+	 * @throws UpdateException l'utilisateur n'est pas l'auteur de l'élément de
+	 *                         dossier patient.
 	 */
 	@PutMapping("/patient-file/{patienfFileId}/item/{itemId}")
 	public ResponseEntity<PatientFileItemDTO> updatePatientFileItem(
@@ -494,19 +505,23 @@ public class PatientFileController {
 	 * @param principal        l'utilisateur authentifié.
 	 * @return une réponse {@link RestResponse} encapsulée dans un objet
 	 *         org.springframework.http.ResponseEntity.
-	 * @throws FinderException
-	 * @throws CreateException
+	 * @throws FinderException le compte utilisateur n'a pas été trouvé ou le
+	 *                         dossier patient n'a pas été trouvé ou la
+	 *                         correspondance n'a pas été trouvée ou ne correspond
+	 *                         pas au dossier patient.
+	 * @throws DeleteException l'utilisateur n'est pas le médecin référent.
 	 */
 	@DeleteMapping("/patient-file/{patientFileId}/correspondence/{correspondenceId}")
 	public ResponseEntity<RestResponse> deleteCorrespondence(@PathVariable String patientFileId,
-			@PathVariable String correspondenceId, Principal principal) throws FinderException, CreateException {
+			@PathVariable String correspondenceId, Principal principal)
+			throws FinderException, DeleteException {
 
 		UserDTO userDTO = userService.findUserByUsername(principal.getName());
 
 		PatientFileDTO patientFileDTO = patientFileService.findPatientFile(patientFileId);
 
 		if (!userDTO.getId().equals(patientFileDTO.getReferringDoctorId())) {
-			throw new CreateException("L'utilisateur n'est pas le médecin référent.");
+			throw new DeleteException("L'utilisateur n'est pas le médecin référent.");
 		}
 
 		CorrespondenceDTO storedCorrespondenceDTO = patientFileService.findCorrespondence(correspondenceId);
@@ -535,12 +550,17 @@ public class PatientFileController {
 	 * @param principal     l'utilisateur authentifié.
 	 * @return une réponse {@link RestResponse} encapsulée dans un objet
 	 *         org.springframework.http.ResponseEntity.
-	 * @throws FinderException
-	 * @throws UpdateException
+	 * @throws FinderException le compte utilisateur n'a pas été trouvé ou le
+	 *                         dossier patient n'a pas été trouvé ou l'élément de
+	 *                         dossier patient n'a pas été trouvé ou ne correspond
+	 *                         pas au dossier patient.
+	 * @throws DeleteException l'utilisateur n'est pas le médecin référent ou
+	 *                         correspondant ou il n'est pas l'auteur de l'élément
+	 *                         de dossier patient.
 	 */
 	@DeleteMapping("/patient-file/{patienfFileId}/item/{itemId}")
 	public ResponseEntity<RestResponse> deletePatientFileItem(@PathVariable String patienfFileId,
-			@PathVariable String itemId, Principal principal) throws FinderException, UpdateException {
+			@PathVariable String itemId, Principal principal) throws FinderException, DeleteException {
 
 		String userId = userService.findUserByUsername(principal.getName()).getId();
 
@@ -556,7 +576,7 @@ public class PatientFileController {
 		boolean userIsAuthor = userId.equals(storedPatientFileItemDTO.getAuthoringDoctorId());
 
 		if (!userIsAuthor) {
-			throw new UpdateException(
+			throw new DeleteException(
 					"L'utilisateur n'est pas l'auteur de l'élément de dossier patient et ne peut pas le supprimer.");
 		}
 
@@ -574,7 +594,7 @@ public class PatientFileController {
 				.map(CorrespondenceDTO::getDoctorId).collect(Collectors.toList()).contains(userId);
 
 		if (!userIsReferringDoctor && !userIsCorrespondingDoctor) {
-			throw new FinderException("L'utilisateur n'est pas le médecin référent ou correspondant.");
+			throw new DeleteException("L'utilisateur n'est pas le médecin référent ou correspondant.");
 		}
 
 		patientFileService.deletePatientFileItem(patientFileItemId);
@@ -594,7 +614,7 @@ public class PatientFileController {
 	 * @return un objet {@link fr.cnam.stefangeorgesco.dmp.domain.dto.DiseaseDTO}
 	 *         représentant la maladie consultée, encapsulé dans un objet
 	 *         org.springframework.http.ResponseEntity.
-	 * @throws FinderException
+	 * @throws FinderException maladie non trouvée.
 	 */
 	@GetMapping("/disease/{id}")
 	public ResponseEntity<DiseaseDTO> getDisease(@PathVariable String id) throws FinderException {
@@ -614,11 +634,10 @@ public class PatientFileController {
 	 *         {@link fr.cnam.stefangeorgesco.dmp.domain.dto.DiseaseDTO}
 	 *         représentant le résultat de la recherche, encapsulée dans un objet
 	 *         org.springframework.http.ResponseEntity.
-	 * @throws FinderException
 	 */
 	@GetMapping("/disease")
 	public ResponseEntity<List<DiseaseDTO>> getDiseases(@RequestParam String q,
-			@RequestParam(required = false, defaultValue = "30") int limit) throws FinderException {
+			@RequestParam(required = false, defaultValue = "30") int limit) {
 
 		return ResponseEntity.ok(patientFileService.findDiseasesByIdOrDescription(q, limit));
 	}
@@ -631,7 +650,7 @@ public class PatientFileController {
 	 * @return un objet {@link fr.cnam.stefangeorgesco.dmp.domain.dto.MedicalActDTO}
 	 *         représentant l'acte médical consulté, encapsulé dans un objet
 	 *         org.springframework.http.ResponseEntity.
-	 * @throws FinderException
+	 * @throws FinderException acte médical non trouvé.
 	 */
 	@GetMapping("/medical-act/{id}")
 	public ResponseEntity<MedicalActDTO> getMedicalAct(@PathVariable String id) throws FinderException {
@@ -651,11 +670,10 @@ public class PatientFileController {
 	 *         {@link fr.cnam.stefangeorgesco.dmp.domain.dto.MedicalActDTO}
 	 *         représentant le résultat de la recherche, encapsulée dans un objet
 	 *         org.springframework.http.ResponseEntity.
-	 * @throws FinderException
 	 */
 	@GetMapping("/medical-act")
 	public ResponseEntity<List<MedicalActDTO>> getMedicalActs(@RequestParam String q,
-			@RequestParam(required = false, defaultValue = "30") int limit) throws FinderException {
+			@RequestParam(required = false, defaultValue = "30") int limit) {
 
 		return ResponseEntity.ok(patientFileService.findMedicalActsByIdOrDescription(q, limit));
 	}

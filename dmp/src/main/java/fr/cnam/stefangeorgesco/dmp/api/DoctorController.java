@@ -52,8 +52,8 @@ public class DoctorController {
 	 *         représentant le dossier de médecin créé, encapsulé dans un objet
 	 *         org.springframework.http.ResponseEntity avec le statut
 	 *         {@link org.springframework.http.HttpStatus#CREATED} en cas de succès.
-	 * @throws CreateException
-	 * @throws FinderException
+	 * @throws FinderException une spécialité du dossier de médecin n'existe pas.
+	 * @throws CreateException un dossier avec le même identifiant existe déjà.
 	 */
 	@PostMapping("/doctor")
 	public ResponseEntity<DoctorDTO> createDoctor(@Valid @RequestBody DoctorDTO doctorDTO)
@@ -74,8 +74,8 @@ public class DoctorController {
 	 * @return l'objet {@link fr.cnam.stefangeorgesco.dmp.domain.dto.DoctorDTO}
 	 *         représentant le dossier de médecin modifié, encapsulé dans un objet
 	 *         org.springframework.http.ResponseEntity.
-	 * @throws FinderException
-	 * @throws UpdateException
+	 * @throws FinderException le compte utilisateur n'a pas été trouvé.
+	 * @throws UpdateException le dossier de médecin n'a pas pu être modifié.
 	 * @see fr.cnam.stefangeorgesco.dmp.domain.service.DoctorService#updateDoctor(DoctorDTO)
 	 */
 	@PutMapping("/doctor/details")
@@ -97,7 +97,7 @@ public class DoctorController {
 	 * @return l'objet {@link fr.cnam.stefangeorgesco.dmp.domain.dto.DoctorDTO}
 	 *         représentant le dossier de médecin consulté, encapsulé dans un objet
 	 *         org.springframework.http.ResponseEntity.
-	 * @throws FinderException
+	 * @throws FinderException le compte utilisateur n'a pas été trouvé.
 	 */
 	@GetMapping("/doctor/details")
 	public ResponseEntity<DoctorDTO> getDoctorDetails(Principal principal) throws FinderException {
@@ -115,7 +115,7 @@ public class DoctorController {
 	 * @return l'objet {@link fr.cnam.stefangeorgesco.dmp.domain.dto.DoctorDTO}
 	 *         représentant le dossier de médecin consulté, encapsulé dans un objet
 	 *         org.springframework.http.ResponseEntity.
-	 * @throws FinderException
+	 * @throws FinderException le dossier de médecin n'a pas été trouvé.
 	 */
 	@GetMapping("/doctor/{id}")
 	public ResponseEntity<DoctorDTO> getDoctor(@PathVariable String id) throws FinderException {
@@ -130,7 +130,7 @@ public class DoctorController {
 	 * @param id l'identifiant du dossier de médecin, fourni en variable de chemin.
 	 * @return une réponse {@link RestResponse} encapsulée dans un objet
 	 *         org.springframework.http.ResponseEntity.
-	 * @throws DeleteException
+	 * @throws DeleteException Le dossier de médecin n'a pas pu être supprimé.
 	 */
 	@DeleteMapping("/doctor/{id}")
 	public ResponseEntity<RestResponse> deleteDoctor(@PathVariable String id) throws DeleteException {
@@ -152,12 +152,10 @@ public class DoctorController {
 	 *         {@link fr.cnam.stefangeorgesco.dmp.domain.dto.DoctorDTO} représentant
 	 *         le résultat de la recherche, encapsulée dans un objet
 	 *         org.springframework.http.ResponseEntity.
-	 * @throws FinderException
 	 * @see fr.cnam.stefangeorgesco.dmp.domain.service.DoctorService#findDoctorsByIdOrFirstnameOrLastname(String)
 	 */
 	@GetMapping("/doctor")
-	public ResponseEntity<List<DoctorDTO>> findDoctorsByIdOrFirstnameOrLastname(@RequestParam String q)
-			throws FinderException {
+	public ResponseEntity<List<DoctorDTO>> findDoctorsByIdOrFirstnameOrLastname(@RequestParam String q) {
 
 		return ResponseEntity.ok(doctorService.findDoctorsByIdOrFirstnameOrLastname(q));
 	}
@@ -170,7 +168,7 @@ public class DoctorController {
 	 * @return un objet {@link fr.cnam.stefangeorgesco.dmp.domain.dto.SpecialtyDTO}
 	 *         représentant la spécialité consultée, encapsulé dans un objet
 	 *         org.springframework.http.ResponseEntity.
-	 * @throws FinderException
+	 * @throws FinderException spécialité non trouvée.
 	 */
 	@GetMapping("/specialty/{id}")
 	public ResponseEntity<SpecialtyDTO> getSpecialty(@PathVariable String id) throws FinderException {
@@ -188,11 +186,9 @@ public class DoctorController {
 	 *         {@link fr.cnam.stefangeorgesco.dmp.domain.dto.SpecialtyDTO}
 	 *         représentant le résultat de la recherche, encapsulée dans un objet
 	 *         org.springframework.http.ResponseEntity.
-	 * @throws FinderException
 	 */
 	@GetMapping("/specialty")
-	public ResponseEntity<List<SpecialtyDTO>> getSpecialties(@RequestParam(required = false) String q)
-			throws FinderException {
+	public ResponseEntity<List<SpecialtyDTO>> getSpecialties(@RequestParam(required = false) String q) {
 
 		if (q == null) {
 			return ResponseEntity.ok(doctorService.findAllSpecialties());

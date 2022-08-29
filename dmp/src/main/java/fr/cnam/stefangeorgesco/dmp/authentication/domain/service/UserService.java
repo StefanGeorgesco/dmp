@@ -55,11 +55,14 @@ public class UserService {
 	 * @param userDTO l'objet
 	 *                {@link fr.cnam.stefangeorgesco.dmp.authentication.domain.dto.UserDTO}
 	 *                représentant le compte utilisateur à créer.
-	 * @throws FinderException
-	 * @throws CheckException
-	 * @throws CreateException
+	 * @throws FinderException       le dossier n'existe pas.
+	 * @throws CheckException        les données ne concordent pas.
+	 * @throws CreateException       le compte utilisateur n'a pas pu être créé.
+	 * @throws DuplicateKeyException Le compte utilisateur existe déjà ou le nom
+	 *                               d'utilisateur existe déjà.
 	 */
-	public void createAccount(UserDTO userDTO) throws FinderException, CheckException, CreateException {
+	public void createAccount(UserDTO userDTO)
+			throws FinderException, CheckException, CreateException, DuplicateKeyException {
 
 		if (userDAO.existsById(userDTO.getId())) {
 			throw new DuplicateKeyException("Le compte utilisateur existe déjà.");
@@ -105,7 +108,7 @@ public class UserService {
 	 *         {@link fr.cnam.stefangeorgesco.dmp.authentication.domain.dto.UserDTO}
 	 *         représentant le compte utilisateur recherché, encapsulé dans un objet
 	 *         org.springframework.http.ResponseEntity.
-	 * @throws FinderException
+	 * @throws FinderException le compte utilisateur n'a pas été trouvé.
 	 */
 	public UserDTO findUserByUsername(String username) throws FinderException {
 		Optional<User> optionalUser = userDAO.findByUsername(username);
@@ -122,7 +125,7 @@ public class UserService {
 	 * Service de suppression d'un compte utilisateur désigné par son identifiant.
 	 * 
 	 * @param id l'identifiant du compte utilisateur.
-	 * @throws DeleteException
+	 * @throws DeleteException le compte utilisateur n'a pas pu être supprimé.
 	 */
 	public void deleteUser(String id) throws DeleteException {
 		try {
