@@ -13,21 +13,24 @@ import javax.validation.constraints.PastOrPresent;
 /**
  * Enregistrement RNIPP
  * 
- * @author Stéfan Georgesco
+ * @author StÃ©fan Georgesco
  *
  */
 @Entity
 @Table(name = "t_record")
 public class RnippRecord {
 
+	/**
+	 * Identifiant.
+	 */
 	@Id
 	@NotBlank(message = "L'identifiant est obligatoire.")
 	private String id;
 
 	/**
-	 * Prénom.
+	 * PrÃ©nom.
 	 */
-	@NotBlank(message = "Le prénom est obligatoire.")
+	@NotBlank(message = "Le prï¿½nom est obligatoire.")
 	private String firstname;
 
 	/**
@@ -40,7 +43,7 @@ public class RnippRecord {
 	 * Date de naissance.
 	 */
 	@NotNull(message = "La date de naissance est obligatoire.")
-	@PastOrPresent(message = "La date de naissance doit être dans le passé ou aujourd'hui.")
+	@PastOrPresent(message = "La date de naissance doit ï¿½tre dans le passï¿½ ou aujourd'hui.")
 	@Column(name = "date_of_birth")
 	private LocalDate dateOfBirth;
 

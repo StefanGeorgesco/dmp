@@ -6,8 +6,17 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PastOrPresent;
 
+/**
+ * Objet de transfert de données transportant les données à vérifier.
+ * 
+ * @author Stéfan Georgesco
+ *
+ */
 public class RnippRecordDto {
-	
+
+	/**
+	 * Identifiant.
+	 */
 	@NotBlank(message = "L'identifiant est obligatoire.")
 	private String id;
 

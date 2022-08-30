@@ -12,7 +12,7 @@ public class RestResponse {
 	 * Résultat de la vérification RNIPP.
 	 */
 	private boolean result;
-	
+
 	/**
 	 * Message de la réponse.
 	 */

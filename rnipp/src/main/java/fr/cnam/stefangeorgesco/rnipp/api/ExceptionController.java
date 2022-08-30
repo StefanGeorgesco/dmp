@@ -51,7 +51,9 @@ public class ExceptionController {
 	 * Gestionnaire des autres exceptions.
 	 * 
 	 * @param ex l'exception {@link java.lang.Exception}
-	 * @return une réponse {@link }
+	 * @return une réponse {@link fr.cnam.stefangeorgesco.rnipp.api.RestResponse}
+	 *         avec le champ {@code result} à {@code null} et le champ
+	 *         {@code message} message reprenant le message de l'exception.
 	 */
 	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
 	@ExceptionHandler(Exception.class)

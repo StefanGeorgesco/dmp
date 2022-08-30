@@ -45,19 +45,19 @@ public class RnippServiceIntegrationTest {
 		rnippRecordDto.setId("P01");
 		assertFalse(rnippService.checkData(rnippRecordDto));
 	}
-	
+
 	@Test
 	public void testCheckDataFailureRecordFoundFirstNameDifferent() {
 		rnippRecordDto.setFirstname("Alain");
 		assertFalse(rnippService.checkData(rnippRecordDto));
 	}
-	
+
 	@Test
 	public void testCheckDataFailureRecordFoundLastNameDifferent() {
 		rnippRecordDto.setLastname("Durand");
 		assertFalse(rnippService.checkData(rnippRecordDto));
 	}
-	
+
 	@Test
 	public void testCheckDataFailureRecordFoundDateOfBirthDifferent() {
 		rnippRecordDto.setDateOfBirth(LocalDate.of(1975, 5, 24));
