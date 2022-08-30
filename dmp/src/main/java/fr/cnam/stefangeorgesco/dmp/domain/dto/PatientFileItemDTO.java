@@ -35,44 +35,44 @@ public abstract class PatientFileItemDTO {
 	/**
 	 * Identifiant
 	 */
-	private UUID id;
+	protected UUID id;
 
 	/**
 	 * Date de création de l'élément médical.
 	 */
-	@NotNull(message = "La date de l'élément de dossier patient est obligatoire.")
-	@PastOrPresent(message = "La date de l'élément de dossier patient doit être dans le passé ou aujourd'hui.")
-	private LocalDate date;
+	@NotNull(message = "La date de l'élément médical est obligatoire.")
+	@PastOrPresent(message = "La date de l'élément médical doit être dans le passé ou aujourd'hui.")
+	protected LocalDate date;
 
 	/**
 	 * Commentaires.
 	 */
-	private String comments;
+	protected String comments;
 
 	/**
 	 * Identifiant du médecin auteur de l'élément médical.
 	 */
-	private String authoringDoctorId;
+	protected String authoringDoctorId;
 
 	/**
 	 * Prénom du médecin auteur de l'élément médical.
 	 */
-	private String authoringDoctorFirstname;
+	protected String authoringDoctorFirstname;
 
 	/**
 	 * Nom du médecin auteur de l'élément médical.
 	 */
-	private String authoringDoctorLastname;
+	protected String authoringDoctorLastname;
 
 	/**
 	 * Spécialités médicales du médecin auteur de l'élément médical (descriptions
 	 * seulement).
 	 */
-	private List<String> authoringDoctorSpecialties;
+	protected List<String> authoringDoctorSpecialties;
 
 	/**
 	 * Identifiant du dossier patient auquel l'élément médical est associé.
 	 */
-	private String patientFileId;
+	protected String patientFileId;
 
 }

@@ -19,9 +19,9 @@ public class RestResponse {
 	/**
 	 * Statut HTTP de réponse à la requête.
 	 */
-	public int status;
+	private int status;
 	/**
 	 * Texte de réponse.
 	 */
-	public String message;
+	private String message;
 }

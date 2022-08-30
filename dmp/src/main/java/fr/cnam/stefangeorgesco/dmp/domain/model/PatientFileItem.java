@@ -39,19 +39,19 @@ public abstract class PatientFileItem {
 	@Id
 	@GeneratedValue
 	@Type(type = "org.hibernate.type.UUIDCharType")
-	private UUID id;
+	protected UUID id;
 
 	/**
 	 * Date de création de l'élément médical.
 	 */
-	@NotNull(message = "La date de l'élément de dossier patient est obligatoire.")
-	@PastOrPresent(message = "La date de l'élément de dossier patient doit être dans le passé ou aujourd'hui.")
-	private LocalDate date;
+	@NotNull(message = "La date de l'élément médical est obligatoire.")
+	@PastOrPresent(message = "La date de l'élément médical doit être dans le passé ou aujourd'hui.")
+	protected LocalDate date;
 
 	/**
 	 * Commentaires.
 	 */
-	private String comments;
+	protected String comments;
 
 	/**
 	 * Médecin auteur de l'élément médical.
@@ -59,7 +59,7 @@ public abstract class PatientFileItem {
 	@ManyToOne
 	@JoinColumn(name = "authoring_doctor_id")
 	@NotNull(message = "Le médecin auteur est obligatoire.")
-	private Doctor authoringDoctor;
+	protected Doctor authoringDoctor;
 
 	/**
 	 * Dossier patient auquel l'élément médical est associé.
@@ -67,6 +67,6 @@ public abstract class PatientFileItem {
 	@ManyToOne
 	@JoinColumn(name = "patient_file_id")
 	@NotNull(message = "Le dossier patient est obligatoire.")
-	private PatientFile patientFile;
+	protected PatientFile patientFile;
 
 }

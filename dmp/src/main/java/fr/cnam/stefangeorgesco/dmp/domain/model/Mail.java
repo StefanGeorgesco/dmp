@@ -33,7 +33,7 @@ public class Mail extends PatientFileItem {
 	 */
 	@Column(length = 1000)
 	@NotBlank(message = "Le texte du courrier est obligatoire.")
-	String text;
+	private String text;
 
 	/**
 	 * Médecin destinataire.

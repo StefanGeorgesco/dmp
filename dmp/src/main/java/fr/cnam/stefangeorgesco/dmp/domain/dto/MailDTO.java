@@ -21,7 +21,7 @@ public class MailDTO extends PatientFileItemDTO {
 	 * Texte du courrier.
 	 */
 	@NotBlank(message = "Le texte du courrier est obligatoire.")
-	String text;
+	private String text;
 
 	/**
 	 * Identifiant du médecin destinataire.
