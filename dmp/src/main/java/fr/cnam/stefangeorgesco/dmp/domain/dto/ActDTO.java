@@ -5,17 +5,12 @@ import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import lombok.Getter;
-import lombok.Setter;
-
 /**
  * Objet de transfert de données représentant un acte dispensé par un médecin.
  * 
  * @author Stéfan Georgesco
  *
  */
-@Getter
-@Setter
 public class ActDTO extends PatientFileItemDTO {
 
 	/**
@@ -25,5 +20,13 @@ public class ActDTO extends PatientFileItemDTO {
 	@Valid
 	@JsonProperty("medicalAct")
 	private MedicalActDTO medicalActDTO;
+
+	public MedicalActDTO getMedicalActDTO() {
+		return medicalActDTO;
+	}
+
+	public void setMedicalActDTO(MedicalActDTO medicalActDTO) {
+		this.medicalActDTO = medicalActDTO;
+	}
 
 }

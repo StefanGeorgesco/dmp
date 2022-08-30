@@ -9,9 +9,6 @@ import javax.validation.constraints.NotNull;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
-import lombok.Getter;
-import lombok.Setter;
-
 /**
  * Entité représentant un acte dispensé par un médecin.
  * 
@@ -21,8 +18,6 @@ import lombok.Setter;
 @Entity
 @Table(name = "t_act")
 @OnDelete(action = OnDeleteAction.CASCADE)
-@Getter
-@Setter
 public class Act extends PatientFileItem {
 
 	/**
@@ -32,5 +27,13 @@ public class Act extends PatientFileItem {
 	@JoinColumn(name = "medical_act_id")
 	@NotNull(message = "L'acte médical est obligatoire.")
 	private MedicalAct medicalAct;
+
+	public MedicalAct getMedicalAct() {
+		return medicalAct;
+	}
+
+	public void setMedicalAct(MedicalAct medicalAct) {
+		this.medicalAct = medicalAct;
+	}
 
 }

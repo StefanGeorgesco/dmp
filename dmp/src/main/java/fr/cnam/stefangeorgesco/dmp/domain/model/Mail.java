@@ -11,9 +11,6 @@ import javax.validation.constraints.NotNull;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
-import lombok.Getter;
-import lombok.Setter;
-
 /**
  * Entité représentant un courrier adressé par le médecin référent à un autre
  * médecin.
@@ -24,8 +21,6 @@ import lombok.Setter;
 @Entity
 @Table(name = "t_mail")
 @OnDelete(action = OnDeleteAction.CASCADE)
-@Getter
-@Setter
 public class Mail extends PatientFileItem {
 
 	/**
@@ -42,5 +37,21 @@ public class Mail extends PatientFileItem {
 	@JoinColumn(name = "recipient_doctor_id")
 	@NotNull(message = "Le médecin destinataire est obligatoire.")
 	private Doctor recipientDoctor;
+
+	public String getText() {
+		return text;
+	}
+
+	public void setText(String text) {
+		this.text = text;
+	}
+
+	public Doctor getRecipientDoctor() {
+		return recipientDoctor;
+	}
+
+	public void setRecipientDoctor(Doctor recipientDoctor) {
+		this.recipientDoctor = recipientDoctor;
+	}
 
 }

@@ -7,8 +7,6 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PastOrPresent;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import lombok.Getter;
-import lombok.Setter;
 
 /**
  * Objet de transfert de données représentant un dossier patient.
@@ -16,8 +14,6 @@ import lombok.Setter;
  * @author Stéfan Georgesco
  *
  */
-@Getter
-@Setter
 public class PatientFileDTO extends FileDTO {
 
 	/**
@@ -47,4 +43,44 @@ public class PatientFileDTO extends FileDTO {
 	 * Spécialités médicales du médecin référent (descriptions seulement).
 	 */
 	private List<String> referringDoctorSpecialties;
+
+	public LocalDate getDateOfBirth() {
+		return dateOfBirth;
+	}
+
+	public void setDateOfBirth(LocalDate dateOfBirth) {
+		this.dateOfBirth = dateOfBirth;
+	}
+
+	public String getReferringDoctorId() {
+		return referringDoctorId;
+	}
+
+	public void setReferringDoctorId(String referringDoctorId) {
+		this.referringDoctorId = referringDoctorId;
+	}
+
+	public String getReferringDoctorFirstname() {
+		return referringDoctorFirstname;
+	}
+
+	public void setReferringDoctorFirstname(String referringDoctorFirstname) {
+		this.referringDoctorFirstname = referringDoctorFirstname;
+	}
+
+	public String getReferringDoctorLastname() {
+		return referringDoctorLastname;
+	}
+
+	public void setReferringDoctorLastname(String referringDoctorLastname) {
+		this.referringDoctorLastname = referringDoctorLastname;
+	}
+
+	public List<String> getReferringDoctorSpecialties() {
+		return referringDoctorSpecialties;
+	}
+
+	public void setReferringDoctorSpecialties(List<String> referringDoctorSpecialties) {
+		this.referringDoctorSpecialties = referringDoctorSpecialties;
+	}
 }

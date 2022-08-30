@@ -14,9 +14,6 @@ import javax.validation.constraints.Size;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
-import lombok.Getter;
-import lombok.Setter;
-
 /**
  * Entité représentant un dossier de médecin.
  * 
@@ -26,8 +23,6 @@ import lombok.Setter;
 @Entity
 @Table(name = "t_doctor")
 @OnDelete(action = OnDeleteAction.CASCADE)
-@Getter
-@Setter
 public class Doctor extends File {
 
 	/**
@@ -38,5 +33,13 @@ public class Doctor extends File {
 	@NotNull(message = "Les spécialités sont obligatoires.")
 	@Size(min = 1, message = "Le médecin doit avoir au moins une spécialité.")
 	private Collection<Specialty> specialties;
+
+	public Collection<Specialty> getSpecialties() {
+		return specialties;
+	}
+
+	public void setSpecialties(Collection<Specialty> specialties) {
+		this.specialties = specialties;
+	}
 
 }

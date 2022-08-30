@@ -10,10 +10,6 @@ import javax.validation.constraints.PastOrPresent;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-
 /**
  * Classe abstraite parente des objets de transfert de données représentant les
  * éléments médicaux des dossiers patients.
@@ -21,9 +17,6 @@ import lombok.Setter;
  * @author Stéfan Georgesco
  *
  */
-@Getter
-@Setter
-@NoArgsConstructor
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY)
 @JsonSubTypes({ @JsonSubTypes.Type(value = ActDTO.class, name = "act"),
 		@JsonSubTypes.Type(value = DiagnosisDTO.class, name = "diagnosis"),
@@ -74,5 +67,69 @@ public abstract class PatientFileItemDTO {
 	 * Identifiant du dossier patient auquel l'élément médical est associé.
 	 */
 	protected String patientFileId;
+
+	public UUID getId() {
+		return id;
+	}
+
+	public void setId(UUID id) {
+		this.id = id;
+	}
+
+	public LocalDate getDate() {
+		return date;
+	}
+
+	public void setDate(LocalDate date) {
+		this.date = date;
+	}
+
+	public String getComments() {
+		return comments;
+	}
+
+	public void setComments(String comments) {
+		this.comments = comments;
+	}
+
+	public String getAuthoringDoctorId() {
+		return authoringDoctorId;
+	}
+
+	public void setAuthoringDoctorId(String authoringDoctorId) {
+		this.authoringDoctorId = authoringDoctorId;
+	}
+
+	public String getAuthoringDoctorFirstname() {
+		return authoringDoctorFirstname;
+	}
+
+	public void setAuthoringDoctorFirstname(String authoringDoctorFirstname) {
+		this.authoringDoctorFirstname = authoringDoctorFirstname;
+	}
+
+	public String getAuthoringDoctorLastname() {
+		return authoringDoctorLastname;
+	}
+
+	public void setAuthoringDoctorLastname(String authoringDoctorLastname) {
+		this.authoringDoctorLastname = authoringDoctorLastname;
+	}
+
+	public List<String> getAuthoringDoctorSpecialties() {
+		return authoringDoctorSpecialties;
+	}
+
+	public void setAuthoringDoctorSpecialties(List<String> authoringDoctorSpecialties) {
+		this.authoringDoctorSpecialties = authoringDoctorSpecialties;
+	}
+
+	public String getPatientFileId() {
+		return patientFileId;
+	}
+
+	public void setPatientFileId(String patientFileId) {
+		this.patientFileId = patientFileId;
+	}
 
 }

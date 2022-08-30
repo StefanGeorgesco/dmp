@@ -16,9 +16,6 @@ import javax.validation.constraints.PastOrPresent;
 
 import org.hibernate.annotations.Type;
 
-import lombok.Getter;
-import lombok.Setter;
-
 /**
  * Classe abstraite parente des entités représentant les éléments médicaux des
  * dossiers patients.
@@ -29,8 +26,6 @@ import lombok.Setter;
 @Entity
 @Table(name = "t_patient_file_item")
 @Inheritance(strategy = InheritanceType.JOINED)
-@Getter
-@Setter
 public abstract class PatientFileItem {
 
 	/**
@@ -68,5 +63,45 @@ public abstract class PatientFileItem {
 	@JoinColumn(name = "patient_file_id")
 	@NotNull(message = "Le dossier patient est obligatoire.")
 	protected PatientFile patientFile;
+
+	public UUID getId() {
+		return id;
+	}
+
+	public void setId(UUID id) {
+		this.id = id;
+	}
+
+	public LocalDate getDate() {
+		return date;
+	}
+
+	public void setDate(LocalDate date) {
+		this.date = date;
+	}
+
+	public String getComments() {
+		return comments;
+	}
+
+	public void setComments(String comments) {
+		this.comments = comments;
+	}
+
+	public Doctor getAuthoringDoctor() {
+		return authoringDoctor;
+	}
+
+	public void setAuthoringDoctor(Doctor authoringDoctor) {
+		this.authoringDoctor = authoringDoctor;
+	}
+
+	public PatientFile getPatientFile() {
+		return patientFile;
+	}
+
+	public void setPatientFile(PatientFile patientFile) {
+		this.patientFile = patientFile;
+	}
 
 }

@@ -5,9 +5,6 @@ import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import lombok.Getter;
-import lombok.Setter;
-
 /**
  * Objet de transfert de données représentant un diagnostic réalisé par un
  * médecin.
@@ -15,8 +12,6 @@ import lombok.Setter;
  * @author Stéfan Georgesco
  *
  */
-@Getter
-@Setter
 public class DiagnosisDTO extends PatientFileItemDTO {
 
 	/**
@@ -26,5 +21,13 @@ public class DiagnosisDTO extends PatientFileItemDTO {
 	@Valid
 	@JsonProperty("disease")
 	private DiseaseDTO diseaseDTO;
+
+	public DiseaseDTO getDiseaseDTO() {
+		return diseaseDTO;
+	}
+
+	public void setDiseaseDTO(DiseaseDTO diseaseDTO) {
+		this.diseaseDTO = diseaseDTO;
+	}
 
 }

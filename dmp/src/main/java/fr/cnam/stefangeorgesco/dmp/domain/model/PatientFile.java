@@ -13,9 +13,6 @@ import javax.validation.constraints.PastOrPresent;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
-import lombok.Getter;
-import lombok.Setter;
-
 /**
  * Entité représentant un dossier patient.
  * 
@@ -25,8 +22,6 @@ import lombok.Setter;
 @Entity
 @Table(name = "t_patient_file")
 @OnDelete(action = OnDeleteAction.CASCADE)
-@Getter
-@Setter
 public class PatientFile extends File {
 
 	/**
@@ -44,5 +39,21 @@ public class PatientFile extends File {
 	@JoinColumn(name = "referring_doctor_id")
 	@NotNull(message = "Le médecin référent est obligatoire.")
 	private Doctor referringDoctor;
+
+	public LocalDate getDateOfBirth() {
+		return dateOfBirth;
+	}
+
+	public void setDateOfBirth(LocalDate dateOfBirth) {
+		this.dateOfBirth = dateOfBirth;
+	}
+
+	public Doctor getReferringDoctor() {
+		return referringDoctor;
+	}
+
+	public void setReferringDoctor(Doctor referringDoctor) {
+		this.referringDoctor = referringDoctor;
+	}
 
 }

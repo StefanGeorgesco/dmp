@@ -8,9 +8,6 @@ import javax.validation.constraints.NotBlank;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
-import lombok.Getter;
-import lombok.Setter;
-
 /**
  * Entité représentant une prescription délivrée par un médecin.
  * 
@@ -20,8 +17,6 @@ import lombok.Setter;
 @Entity
 @Table(name = "t_prescription")
 @OnDelete(action = OnDeleteAction.CASCADE)
-@Getter
-@Setter
 public class Prescription extends PatientFileItem {
 
 	/**
@@ -30,5 +25,13 @@ public class Prescription extends PatientFileItem {
 	@Column(length = 800)
 	@NotBlank(message = "La description est obligatoire.")
 	private String description;
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
 
 }

@@ -8,9 +8,6 @@ import javax.validation.constraints.Future;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
-import lombok.Getter;
-import lombok.Setter;
-
 /**
  * Objet de transfert de données représentant une correspondance avec un
  * médecin.
@@ -18,8 +15,6 @@ import lombok.Setter;
  * @author Stéfan Georgesco
  *
  */
-@Getter
-@Setter
 public class CorrespondenceDTO {
 
 	private UUID id;
@@ -56,5 +51,61 @@ public class CorrespondenceDTO {
 	 * Identifiant du dossier patient auquel la correspondance est associée.
 	 */
 	private String patientFileId;
+
+	public UUID getId() {
+		return id;
+	}
+
+	public void setId(UUID id) {
+		this.id = id;
+	}
+
+	public LocalDate getDateUntil() {
+		return dateUntil;
+	}
+
+	public void setDateUntil(LocalDate dateUntil) {
+		this.dateUntil = dateUntil;
+	}
+
+	public String getDoctorId() {
+		return doctorId;
+	}
+
+	public void setDoctorId(String doctorId) {
+		this.doctorId = doctorId;
+	}
+
+	public String getDoctorFirstname() {
+		return doctorFirstname;
+	}
+
+	public void setDoctorFirstname(String doctorFirstname) {
+		this.doctorFirstname = doctorFirstname;
+	}
+
+	public String getDoctorLastname() {
+		return doctorLastname;
+	}
+
+	public void setDoctorLastname(String doctorLastname) {
+		this.doctorLastname = doctorLastname;
+	}
+
+	public List<String> getDoctorSpecialties() {
+		return doctorSpecialties;
+	}
+
+	public void setDoctorSpecialties(List<String> doctorSpecialties) {
+		this.doctorSpecialties = doctorSpecialties;
+	}
+
+	public String getPatientFileId() {
+		return patientFileId;
+	}
+
+	public void setPatientFileId(String patientFileId) {
+		this.patientFileId = patientFileId;
+	}
 
 }

@@ -4,8 +4,6 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
-import lombok.Getter;
-import lombok.Setter;
 
 /**
  * Entité représentant une spécialité médicale.
@@ -15,8 +13,6 @@ import lombok.Setter;
  */
 @Entity
 @Table(name = "t_specialty")
-@Getter
-@Setter
 public class Specialty {
 
 	/**
@@ -38,6 +34,22 @@ public class Specialty {
 	@Override
 	public String toString() {
 		return this.description;
+	}
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
 	}
 
 }

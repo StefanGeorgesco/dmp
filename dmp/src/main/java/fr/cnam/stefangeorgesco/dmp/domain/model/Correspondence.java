@@ -15,9 +15,6 @@ import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.Type;
 
-import lombok.Getter;
-import lombok.Setter;
-
 /**
  * Entité représentant une correspondance avec un médecin.
  * 
@@ -26,8 +23,6 @@ import lombok.Setter;
  */
 @Entity
 @Table(name = "t_correspondence")
-@Getter
-@Setter
 public class Correspondence {
 
 	@Id
@@ -58,5 +53,37 @@ public class Correspondence {
 	@JoinColumn(name = "patient_file_id")
 	@NotNull(message = "Le dossier patient est obligatoire.")
 	private PatientFile patientFile;
+
+	public UUID getId() {
+		return id;
+	}
+
+	public void setId(UUID id) {
+		this.id = id;
+	}
+
+	public LocalDate getDateUntil() {
+		return dateUntil;
+	}
+
+	public void setDateUntil(LocalDate dateUntil) {
+		this.dateUntil = dateUntil;
+	}
+
+	public Doctor getDoctor() {
+		return doctor;
+	}
+
+	public void setDoctor(Doctor doctor) {
+		this.doctor = doctor;
+	}
+
+	public PatientFile getPatientFile() {
+		return patientFile;
+	}
+
+	public void setPatientFile(PatientFile patientFile) {
+		this.patientFile = patientFile;
+	}
 
 }

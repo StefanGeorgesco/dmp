@@ -2,17 +2,12 @@ package fr.cnam.stefangeorgesco.dmp.domain.dto;
 
 import javax.validation.constraints.NotBlank;
 
-import lombok.Getter;
-import lombok.Setter;
-
 /**
  * Objet de transfert de données représentant une spécialité médicale.
  * 
  * @author Stéfan Georgesco
  *
  */
-@Getter
-@Setter
 public class SpecialtyDTO {
 
 	/**
@@ -25,5 +20,21 @@ public class SpecialtyDTO {
 	 * Libellé.
 	 */
 	private String description;
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
 
 }

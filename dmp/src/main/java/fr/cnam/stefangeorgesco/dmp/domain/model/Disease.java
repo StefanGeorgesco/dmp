@@ -6,9 +6,6 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 
-import lombok.Getter;
-import lombok.Setter;
-
 /**
  * Entité représentant une maladie de la nomenclature CIM 10.
  * 
@@ -17,8 +14,6 @@ import lombok.Setter;
  */
 @Entity
 @Table(name = "t_disease")
-@Getter
-@Setter
 public class Disease {
 
 	/**
@@ -34,5 +29,21 @@ public class Disease {
 	@Column(length = 320)
 	@NotBlank(message = "La description est obligatoire.")
 	private String description;
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
 
 }

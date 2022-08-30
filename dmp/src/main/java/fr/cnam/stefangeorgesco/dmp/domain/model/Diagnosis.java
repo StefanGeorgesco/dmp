@@ -9,9 +9,6 @@ import javax.validation.constraints.NotNull;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
-import lombok.Getter;
-import lombok.Setter;
-
 /**
  * Entité représentant un diagnostic réalisé par un médecin.
  * 
@@ -21,8 +18,6 @@ import lombok.Setter;
 @Entity
 @Table(name = "t_diagnosis")
 @OnDelete(action = OnDeleteAction.CASCADE)
-@Getter
-@Setter
 public class Diagnosis extends PatientFileItem {
 
 	/**
@@ -32,5 +27,13 @@ public class Diagnosis extends PatientFileItem {
 	@JoinColumn(name = "disease_id")
 	@NotNull(message = "La maladie est obligatoire.")
 	private Disease disease;
+
+	public Disease getDisease() {
+		return disease;
+	}
+
+	public void setDisease(Disease disease) {
+		this.disease = disease;
+	}
 
 }
