@@ -24,16 +24,16 @@ public class MailTest {
 	private LocalDate now;
 	private LocalDate futureDate;
 	private LocalDate pastDate;
-	
+
 	@Autowired
 	private Mail mail;
-	
+
 	@Autowired
 	private Doctor authoringDoctor;
-	
+
 	@Autowired
 	private PatientFile patientFile;
-	
+
 	@Autowired
 	private Doctor recipientDoctor;
 
@@ -80,7 +80,8 @@ public class MailTest {
 		Set<ConstraintViolation<Mail>> violations = validator.validate(mail);
 
 		assertEquals(1, violations.size());
-		assertEquals("La date de l'élément de dossier patient doit être dans le passé ou aujourd'hui.", violations.iterator().next().getMessage());
+		assertEquals("La date de l'élément médical doit être dans le passé ou aujourd'hui.",
+				violations.iterator().next().getMessage());
 	}
 
 	@Test
@@ -102,7 +103,7 @@ public class MailTest {
 		Set<ConstraintViolation<Mail>> violations = validator.validate(mail);
 
 		assertEquals(1, violations.size());
-		assertEquals("La date de l'élément de dossier patient est obligatoire.", violations.iterator().next().getMessage());
+		assertEquals("La date de l'élément médical est obligatoire.", violations.iterator().next().getMessage());
 	}
 
 	@Test

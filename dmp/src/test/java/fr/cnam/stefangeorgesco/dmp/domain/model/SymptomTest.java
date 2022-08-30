@@ -24,13 +24,13 @@ public class SymptomTest {
 	private LocalDate now;
 	private LocalDate futureDate;
 	private LocalDate pastDate;
-	
+
 	@Autowired
 	private Symptom symptom;
-	
+
 	@Autowired
 	private Doctor authoringDoctor;
-	
+
 	@Autowired
 	private PatientFile patientFile;
 
@@ -49,7 +49,7 @@ public class SymptomTest {
 		symptom.setAuthoringDoctor(authoringDoctor);
 		symptom.setPatientFile(patientFile);
 	}
-	
+
 	@Test
 	public void symptomValidationSymptomValidDateNow() {
 
@@ -76,14 +76,15 @@ public class SymptomTest {
 		Set<ConstraintViolation<Symptom>> violations = validator.validate(symptom);
 
 		assertEquals(1, violations.size());
-		assertEquals("La date de l'élément de dossier patient doit être dans le passé ou aujourd'hui.", violations.iterator().next().getMessage());
+		assertEquals("La date de l'élément médical doit être dans le passé ou aujourd'hui.",
+				violations.iterator().next().getMessage());
 	}
-	
+
 	@Test
 	public void symptomValidationInvalidDesciptionBlank() {
-		
+
 		symptom.setDescription("");
-		
+
 		Set<ConstraintViolation<Symptom>> violations = validator.validate(symptom);
 
 		assertEquals(1, violations.size());
@@ -98,7 +99,7 @@ public class SymptomTest {
 		Set<ConstraintViolation<Symptom>> violations = validator.validate(symptom);
 
 		assertEquals(1, violations.size());
-		assertEquals("La date de l'élément de dossier patient est obligatoire.", violations.iterator().next().getMessage());
+		assertEquals("La date de l'élément médical est obligatoire.", violations.iterator().next().getMessage());
 	}
 
 	@Test
@@ -125,9 +126,9 @@ public class SymptomTest {
 
 	@Test
 	public void symptomValidationInvalidDesciptionNull() {
-		
+
 		symptom.setDescription(null);
-		
+
 		Set<ConstraintViolation<Symptom>> violations = validator.validate(symptom);
 
 		assertEquals(1, violations.size());

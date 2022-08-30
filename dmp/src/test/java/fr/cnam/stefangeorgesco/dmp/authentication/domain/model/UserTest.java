@@ -18,7 +18,7 @@ import org.springframework.test.context.TestPropertySource;
 public class UserTest {
 
 	private static Validator validator;
-	
+
 	@Autowired
 	private User user;
 
@@ -26,7 +26,7 @@ public class UserTest {
 	public static void setupAll() {
 		validator = Validation.buildDefaultValidatorFactory().getValidator();
 	}
-	
+
 	@BeforeEach
 	public void setupEach() {
 		user.setId("A");
@@ -38,7 +38,7 @@ public class UserTest {
 	public void userValidationUserValid() {
 
 		Set<ConstraintViolation<User>> violations = validator.validate(user);
-		
+
 		assertEquals(0, violations.size());
 	}
 
@@ -65,7 +65,7 @@ public class UserTest {
 		assertEquals("Le non utilisateur est obligatoire.", violations.iterator().next().getMessage());
 
 	}
-	
+
 	@Test
 	public void userValidationPasswordInvalidLessThanFourCharacters() {
 
@@ -77,12 +77,12 @@ public class UserTest {
 		assertEquals("Le mot de passe doit contenir au moins 4 caractères.", violations.iterator().next().getMessage());
 
 	}
-	
+
 	@Test
 	public void userValidationIdInvalidNull() {
 
 		user.setId(null);
-		
+
 		Set<ConstraintViolation<User>> violations = validator.validate(user);
 
 		assertEquals(1, violations.size());
@@ -94,24 +94,24 @@ public class UserTest {
 	public void userValidationUsernameInvalidNull() {
 
 		user.setUsername(null);
-		
+
 		Set<ConstraintViolation<User>> violations = validator.validate(user);
 
 		assertEquals(1, violations.size());
 		assertEquals("Le non utilisateur est obligatoire.", violations.iterator().next().getMessage());
 
 	}
-	
+
 	@Test
 	public void userValidationPasswordInvalidNull() {
 
 		user.setPassword(null);
-		
+
 		Set<ConstraintViolation<User>> violations = validator.validate(user);
 
 		assertEquals(1, violations.size());
 		assertEquals("Le mot de passe est obligatoire.", violations.iterator().next().getMessage());
 
 	}
-	
+
 }

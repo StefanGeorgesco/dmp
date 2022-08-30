@@ -20,7 +20,7 @@ import org.springframework.test.context.TestPropertySource;
 public class AddressTest {
 
 	private static Validator validator;
-	
+
 	@Autowired
 	private Address address;
 
@@ -98,7 +98,7 @@ public class AddressTest {
 	public void AddressValidationStreet1InvalidNull() {
 
 		address.setStreet1(null);
-		
+
 		Set<ConstraintViolation<Address>> violations = validator.validate(address);
 
 		assertEquals(1, violations.size());
@@ -110,7 +110,7 @@ public class AddressTest {
 	public void AddressValidationStreet2InvalidNull() {
 
 		address.setStreet2(null);
-		
+
 		Set<ConstraintViolation<Address>> violations = validator.validate(address);
 
 		assertEquals(1, violations.size());
@@ -122,7 +122,7 @@ public class AddressTest {
 	public void AddressValidationCityInvalidNull() {
 
 		address.setCity(null);
-		
+
 		Set<ConstraintViolation<Address>> violations = validator.validate(address);
 
 		assertEquals(1, violations.size());
@@ -133,7 +133,7 @@ public class AddressTest {
 	public void AddressValidationStateInvalidNull() {
 
 		address.setState(null);
-		
+
 		Set<ConstraintViolation<Address>> violations = validator.validate(address);
 
 		assertEquals(1, violations.size());
@@ -144,7 +144,7 @@ public class AddressTest {
 	public void AddressValidationZipcodeInvalidNull() {
 
 		address.setZipcode(null);
-		
+
 		Set<ConstraintViolation<Address>> violations = validator.validate(address);
 
 		assertEquals(1, violations.size());
@@ -156,7 +156,7 @@ public class AddressTest {
 	public void AddressValidationCountryInvalidNull() {
 
 		address.setCountry(null);
-		
+
 		Set<ConstraintViolation<Address>> violations = validator.validate(address);
 
 		assertEquals(1, violations.size());

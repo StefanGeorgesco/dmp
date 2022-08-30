@@ -51,10 +51,10 @@ public class DoctorServiceTest {
 
 	@MockBean
 	private DoctorDAO doctorDAO;
-	
+
 	@MockBean
 	private SpecialtyDAO specialtyDAO;
-	
+
 	@MockBean
 	private UserService userService;
 
@@ -72,13 +72,13 @@ public class DoctorServiceTest {
 
 	@Autowired
 	private DoctorDTO doctorDTO;
-	
+
 	@Autowired
 	private DoctorDTO doctorDTO1;
 
 	@Autowired
 	private DoctorDTO doctorDTO2;
-	
+
 	@Autowired
 	private DoctorDTO response;
 
@@ -93,16 +93,16 @@ public class DoctorServiceTest {
 
 	@Autowired
 	private Doctor persistentDoctor;
-	
+
 	@Autowired
 	private Address address1;
-	
+
 	@Autowired
 	private Address address2;
-	
+
 	@Autowired
 	private Doctor foundDoctor1;
-	
+
 	@Autowired
 	private Doctor foundDoctor2;
 
@@ -142,31 +142,31 @@ public class DoctorServiceTest {
 		persistentDoctor.setLastname("lastname");
 		persistentDoctor.setSecurityCode("securityCode");
 		persistentDoctor.setSpecialties(List.of(specialty1, specialty2));
-		
+
 		address1.setStreet1("street1_1");
 		address1.setZipcode("zipcode_1");
 		address1.setCity("city_1");
 		address1.setCountry("country_1");
-		
+
 		address2.setStreet1("street1_2");
 		address2.setZipcode("zipcode_2");
 		address2.setCity("city_2");
 		address2.setCountry("country_2");
-		
+
 		foundDoctor1.setId("ID_1");
 		foundDoctor1.setFirstname("firstname_1");
 		foundDoctor1.setLastname("lastname_1");
 		foundDoctor1.setSecurityCode("securityCode_1");
 		foundDoctor1.setSpecialties(List.of(specialty1, specialty2));
 		foundDoctor1.setAddress(address1);
-		
+
 		foundDoctor2.setId("ID_2");
 		foundDoctor2.setFirstname("firstname_2");
 		foundDoctor2.setLastname("lastname_2");
 		foundDoctor2.setSecurityCode("securityCode_2");
 		foundDoctor2.setSpecialties(List.of(specialty1, specialty2));
 		foundDoctor2.setAddress(address2);
-}
+	}
 
 	@Test
 	public void testCreateDoctorSuccess() {
@@ -246,7 +246,7 @@ public class DoctorServiceTest {
 		savedSp = itSavedSp.next();
 		assertEquals(persistentSp.getId(), savedSp.getId());
 		assertEquals(persistentSp.getDescription(), savedSp.getDescription());
-		
+
 		// updated - compared to captured saved object
 		assertEquals(doctorDTO.getId(), savedDoctor.getId());
 		assertEquals(doctorDTO.getPhone(), savedDoctor.getPhone());
@@ -282,15 +282,15 @@ public class DoctorServiceTest {
 		assertEquals(doctorDTO.getAddressDTO().getCity(), response.getAddressDTO().getCity());
 		assertEquals(doctorDTO.getAddressDTO().getCountry(), response.getAddressDTO().getCountry());
 	}
-	
+
 	@Test
 	public void testFindDoctorSuccess() {
 		when(doctorDAO.findById("D001")).thenReturn(Optional.of(persistentDoctor));
-		
+
 		response = assertDoesNotThrow(() -> doctorService.findDoctor("D001"));
-		
+
 		verify(doctorDAO, times(1)).findById("D001");
-		
+
 		assertEquals("D001", response.getId());
 		assertEquals("firstname", response.getFirstname());
 		assertEquals("lastname", response.getLastname());
@@ -308,21 +308,21 @@ public class DoctorServiceTest {
 	@Test
 	public void testFindDoctorFailureDoctorDoesNotExist() throws FinderException {
 		when(doctorDAO.findById("D003")).thenReturn(Optional.ofNullable(null));
-		
+
 		FinderException ex = assertThrows(FinderException.class, () -> doctorService.findDoctor("D001"));
-		
+
 		verify(doctorDAO, times(1)).findById("D001");
-		
+
 		assertEquals("Le dossier de médecin n'a pas été trouvé.", ex.getMessage());
 	}
-	
+
 	@Test
 	public void testDeleteDoctorSuccessNoUser() throws DeleteException {
 		doNothing().when(doctorDAO).deleteById("D002");
 		doThrow(new DeleteException("")).when(userService).deleteUser("D002");
-		
+
 		assertDoesNotThrow(() -> doctorService.deleteDoctor("D002"));
-		
+
 		verify(doctorDAO, times(1)).deleteById("D002");
 		verify(userService, times(1)).deleteUser("D002");
 	}
@@ -331,20 +331,20 @@ public class DoctorServiceTest {
 	public void testDeleteDoctorSuccessUserPresent() throws DeleteException {
 		doNothing().when(doctorDAO).deleteById("D001");
 		doNothing().when(userService).deleteUser("D001");
-		
+
 		assertDoesNotThrow(() -> doctorService.deleteDoctor("D001"));
-		
+
 		verify(doctorDAO, times(1)).deleteById("D001");
 		verify(userService, times(1)).deleteUser("D001");
 	}
-	
+
 	@Test
 	public void testDeleteDoctorFailureDoctorDoesNotExist() throws DeleteException {
 		doThrow(new RuntimeException("")).when(doctorDAO).deleteById("D003");
 		doThrow(new DeleteException("")).when(userService).deleteUser("D003");
-		
+
 		DeleteException ex = assertThrows(DeleteException.class, () -> doctorService.deleteDoctor("D003"));
-		
+
 		verify(doctorDAO, times(1)).deleteById("D003");
 		verify(userService, times(0)).deleteUser("D003");
 		assertEquals("Le dossier de médecin n'a pas pu être supprimé.", ex.getMessage());
@@ -353,82 +353,82 @@ public class DoctorServiceTest {
 	@Test
 	public void testFindDoctorsByIdOrFirstnameOrLastnameFound2() {
 		when(doctorDAO.findByIdOrFirstnameOrLastname("la")).thenReturn(List.of(foundDoctor1, foundDoctor2));
-		
+
 		List<DoctorDTO> doctorsDTO = doctorService.findDoctorsByIdOrFirstnameOrLastname("la");
-		
+
 		verify(doctorDAO, times(1)).findByIdOrFirstnameOrLastname("la");
-		
+
 		assertEquals(2, doctorsDTO.size());
-		
+
 		doctorDTO1 = doctorsDTO.get(0);
 		doctorDTO2 = doctorsDTO.get(1);
-		
+
 		assertEquals("ID_1", doctorDTO1.getId());
 		assertEquals("street1_1", doctorDTO1.getAddressDTO().getStreet1());
 		assertEquals("S001", doctorDTO1.getSpecialtiesDTO().iterator().next().getId());
 		assertEquals("ID_2", doctorDTO2.getId());
 		assertEquals("street1_2", doctorDTO2.getAddressDTO().getStreet1());
-		
+
 		Iterator<SpecialtyDTO> itSpDTO = doctorDTO2.getSpecialtiesDTO().iterator();
-		
+
 		assertEquals("S001", itSpDTO.next().getId());
 		assertEquals("S002", itSpDTO.next().getId());
 	}
-	
+
 	@Test
 	public void testFindDoctorsByIdOrFirstnameOrLastnameFound0() {
 		when(doctorDAO.findByIdOrFirstnameOrLastname("la")).thenReturn(List.of());
-		
+
 		List<DoctorDTO> doctors = doctorService.findDoctorsByIdOrFirstnameOrLastname("la");
-		
+
 		verify(doctorDAO, times(1)).findByIdOrFirstnameOrLastname("la");
-		
+
 		assertEquals(0, doctors.size());
 	}
 
 	@Test
 	public void testFindDoctorsByIdOrFirstnameOrLastnameFound0SearchStringIsBlank() {
 		when(doctorDAO.findByIdOrFirstnameOrLastname("")).thenReturn(List.of(foundDoctor1, foundDoctor2));
-		
+
 		List<DoctorDTO> doctors = doctorService.findDoctorsByIdOrFirstnameOrLastname("");
-		
+
 		verify(doctorDAO, times(0)).findByIdOrFirstnameOrLastname("");
-		
+
 		assertEquals(0, doctors.size());
 	}
-	
+
 	@Test
 	public void testFindSpecialtySuccess() {
-		
+
 		when(specialtyDAO.findById(specialty1.getId())).thenReturn(Optional.of(specialty1));
-		
+
 		specialtyDTO1 = assertDoesNotThrow(() -> doctorService.findSpecialty(specialty1.getId()));
-		
+
 		verify(specialtyDAO, times(1)).findById(specialty1.getId());
-		
+
 		assertEquals(specialty1.getId(), specialtyDTO1.getId());
 		assertEquals(specialty1.getDescription(), specialtyDTO1.getDescription());
 	}
-	
+
 	@Test
 	void testFindSpecialtyFailureSpecialtyDoesNotExist() {
-		
+
 		when(specialtyDAO.findById(specialty1.getId())).thenReturn(Optional.ofNullable(null));
-		
+
 		FinderException ex = assertThrows(FinderException.class, () -> doctorService.findSpecialty(specialty1.getId()));
-		
+
 		assertEquals("Spécialité non trouvée.", ex.getMessage());
 	}
-	
+
 	@Test
 	void testFindSpecialtiesByIdOrDescriptionFound2() {
-		
+
 		when(specialtyDAO.findByIdOrDescription("chirur")).thenReturn(List.of(specialty1, specialty2));
-		
+
 		List<SpecialtyDTO> specialtiesDTO = doctorService.findSpecialtiesByIdOrDescription("chirur");
-		
+
 		verify(specialtyDAO, times(1)).findByIdOrDescription("chirur");
-		
+
 		assertEquals(2, specialtiesDTO.size());
 		assertEquals("S001", specialtiesDTO.get(0).getId());
 		assertEquals("First specialty", specialtiesDTO.get(0).getDescription());
@@ -436,13 +436,13 @@ public class DoctorServiceTest {
 
 	@Test
 	void testFindSpecialtiesFound2() {
-		
+
 		when(specialtyDAO.findAll()).thenReturn(List.of(specialty1, specialty2));
-		
+
 		List<SpecialtyDTO> specialtiesDTO = doctorService.findAllSpecialties();
-		
+
 		verify(specialtyDAO, times(1)).findAll();
-		
+
 		assertEquals(2, specialtiesDTO.size());
 		assertEquals("S001", specialtiesDTO.get(0).getId());
 		assertEquals("First specialty", specialtiesDTO.get(0).getDescription());

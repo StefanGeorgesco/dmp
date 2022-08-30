@@ -455,8 +455,7 @@ public class DoctorControllerIntegrationTest {
 		assertFalse(doctorDAO.existsById("D003"));
 
 		mockMvc.perform(delete("/doctor/D003")).andExpect(status().isConflict())
-				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
-				.andExpect(jsonPath("$.status", is(409)))
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON)).andExpect(jsonPath("$.status", is(409)))
 				.andExpect(jsonPath("$.message", is("Le dossier de médecin n'a pas pu être supprimé.")));
 	}
 
@@ -612,9 +611,9 @@ public class DoctorControllerIntegrationTest {
 	public void testGetSpecialtiesSuccessUserIsAdmin() throws Exception {
 
 		mockMvc.perform(get("/specialty")).andExpect(status().isOk())
-		.andExpect(content().contentType(MediaType.APPLICATION_JSON)).andExpect(jsonPath("$", hasSize(45)))
-		.andExpect(jsonPath("$[2].id", is("S003")))
-		.andExpect(jsonPath("$[2].description", is("anesthésiologie")));
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON)).andExpect(jsonPath("$", hasSize(45)))
+				.andExpect(jsonPath("$[2].id", is("S003")))
+				.andExpect(jsonPath("$[2].description", is("anesthésiologie")));
 	}
 
 	@Test

@@ -194,29 +194,29 @@ public class PatientFileDAOTest {
 
 		assertEquals(0, patientFilesList.size());
 	}
-	
+
 	@Test
 	public void testPatientFileDAODeleteSuccess() {
 		assertTrue(patientFileDAO.existsById("P014"));
-		
+
 		assertDoesNotThrow(() -> patientFileDAO.deleteById("P014"));
-		
+
 		assertFalse(patientFileDAO.existsById("P014"));
 	}
-	
+
 	@Test
 	public void testPatientFileDAODeleteFailurePatientFileIsReferredTo() {
 		assertTrue(patientFileDAO.existsById("P001"));
-		
+
 		assertThrows(RuntimeException.class, () -> patientFileDAO.deleteById("P001"));
-		
+
 		assertTrue(patientFileDAO.existsById("P001"));
 	}
 
 	@Test
 	public void testPatientFileDAODeleteFailurePatientFileDoesNotExist() {
 		assertFalse(patientFileDAO.existsById("P002"));
-		
+
 		assertThrows(RuntimeException.class, () -> patientFileDAO.deleteById("P002"));
 	}
 

@@ -24,13 +24,13 @@ public class PrescriptionTest {
 	private LocalDate now;
 	private LocalDate futureDate;
 	private LocalDate pastDate;
-	
+
 	@Autowired
 	private Prescription prescription;
-	
+
 	@Autowired
 	private Doctor authoringDoctor;
-	
+
 	@Autowired
 	private PatientFile patientFile;
 
@@ -49,7 +49,7 @@ public class PrescriptionTest {
 		prescription.setAuthoringDoctor(authoringDoctor);
 		prescription.setPatientFile(patientFile);
 	}
-	
+
 	@Test
 	public void prescriptionValidationSymptomValidDateNow() {
 
@@ -76,14 +76,15 @@ public class PrescriptionTest {
 		Set<ConstraintViolation<Prescription>> violations = validator.validate(prescription);
 
 		assertEquals(1, violations.size());
-		assertEquals("La date de l'élément de dossier patient doit être dans le passé ou aujourd'hui.", violations.iterator().next().getMessage());
+		assertEquals("La date de l'élément médical doit être dans le passé ou aujourd'hui.",
+				violations.iterator().next().getMessage());
 	}
-	
+
 	@Test
 	public void prescriptionValidationInvalidDesciptionBlank() {
-		
+
 		prescription.setDescription("");
-		
+
 		Set<ConstraintViolation<Prescription>> violations = validator.validate(prescription);
 
 		assertEquals(1, violations.size());
@@ -98,7 +99,7 @@ public class PrescriptionTest {
 		Set<ConstraintViolation<Prescription>> violations = validator.validate(prescription);
 
 		assertEquals(1, violations.size());
-		assertEquals("La date de l'élément de dossier patient est obligatoire.", violations.iterator().next().getMessage());
+		assertEquals("La date de l'élément médical est obligatoire.", violations.iterator().next().getMessage());
 	}
 
 	@Test
@@ -125,9 +126,9 @@ public class PrescriptionTest {
 
 	@Test
 	public void prescriptionValidationInvalidDesciptionNull() {
-		
+
 		prescription.setDescription(null);
-		
+
 		Set<ConstraintViolation<Prescription>> violations = validator.validate(prescription);
 
 		assertEquals(1, violations.size());

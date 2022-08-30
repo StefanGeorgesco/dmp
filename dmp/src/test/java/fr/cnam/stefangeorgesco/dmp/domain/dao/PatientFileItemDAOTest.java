@@ -336,7 +336,7 @@ public class PatientFileItemDAOTest {
 		assertEquals(comment, savedPatientFileItem.getComments());
 		assertEquals(description, ((Symptom) savedPatientFileItem).getDescription());
 	}
-	
+
 	@Test
 	public void testPatientFileItemDAODeleteByIdSuccess() {
 

@@ -286,22 +286,22 @@ public class UserServiceIntegrationTest {
 
 		assertEquals("Compte utilisateur non trouvé.", ex.getMessage());
 	}
-	
+
 	@Test
 	public void testDeleteUserSuccess() {
 		assertTrue(userDAO.existsById("D001"));
-		
+
 		assertDoesNotThrow(() -> userService.deleteUser("D001"));
-		
+
 		assertFalse(userDAO.existsById("D001"));
 	}
 
 	@Test
 	public void testDeleteUserFailureUserDoesNotExist() {
 		assertFalse(userDAO.existsById("D002"));
-		
+
 		DeleteException ex = assertThrows(DeleteException.class, () -> userService.deleteUser("D002"));
-		
+
 		assertEquals("Le compte utilisateur n'a pas pu être supprimé.", ex.getMessage());
 	}
 

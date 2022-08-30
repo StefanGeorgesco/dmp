@@ -217,7 +217,8 @@ public class DoctorServiceIntegrationTest {
 		assertEquals("15 rue de Vaugirard", doctorDTO.getAddressDTO().getStreet1());
 		assertEquals(2, ((List<SpecialtyDTO>) doctorDTO.getSpecialtiesDTO()).size());
 		assertEquals("S012", ((List<SpecialtyDTO>) doctorDTO.getSpecialtiesDTO()).get(0).getId());
-		assertEquals("chirurgie vasculaire", ((List<SpecialtyDTO>) doctorDTO.getSpecialtiesDTO()).get(0).getDescription());
+		assertEquals("chirurgie vasculaire",
+				((List<SpecialtyDTO>) doctorDTO.getSpecialtiesDTO()).get(0).getDescription());
 		assertEquals("S013", ((List<SpecialtyDTO>) doctorDTO.getSpecialtiesDTO()).get(1).getId());
 		assertEquals("neurochirurgie", ((List<SpecialtyDTO>) doctorDTO.getSpecialtiesDTO()).get(1).getDescription());
 		assertNull(doctorDTO.getSecurityCode());
@@ -317,50 +318,50 @@ public class DoctorServiceIntegrationTest {
 
 	@Test
 	public void testFindSpecialtySuccess() {
-		
+
 		specialtyDTO = assertDoesNotThrow(() -> doctorService.findSpecialty("S045"));
-		
+
 		assertEquals("S045", specialtyDTO.getId());
 		assertEquals("urologie", specialtyDTO.getDescription());
 	}
-	
+
 	@Test
 	public void testFindSpecialtyFailureSpecialtyDoesNotExist() {
-		
+
 		FinderException ex = assertThrows(FinderException.class, () -> doctorService.findSpecialty("S145"));
-		
+
 		assertEquals("Spécialité non trouvée.", ex.getMessage());
 	}
-	
+
 	@Test
 	public void testFindSpecialtiesByIdOrDescriptionFound8() {
-		
+
 		List<SpecialtyDTO> specialtiesDTO = doctorService.findSpecialtiesByIdOrDescription("chirur");
-		
+
 		assertEquals(8, specialtiesDTO.size());
 	}
 
 	@Test
 	public void testFindSpecialtiesByIdOrDescriptionFound0() {
-		
+
 		List<SpecialtyDTO> specialtiesDTO = doctorService.findSpecialtiesByIdOrDescription("tu");
-		
+
 		assertEquals(0, specialtiesDTO.size());
 	}
 
 	@Test
 	public void testFindSpecialtiesByIdOrDescriptionSearchStringIsBlank() {
-		
+
 		List<SpecialtyDTO> specialtiesDTO = doctorService.findSpecialtiesByIdOrDescription("");
-		
+
 		assertEquals(0, specialtiesDTO.size());
 	}
 
 	@Test
 	public void testFindAllSpecialtiesFound45() {
-		
+
 		List<SpecialtyDTO> specialtiesDTO = doctorService.findAllSpecialties();
-		
+
 		assertEquals(45, specialtiesDTO.size());
 	}
 

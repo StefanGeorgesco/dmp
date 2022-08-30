@@ -24,16 +24,16 @@ public class DiagnosisTest {
 	private LocalDate now;
 	private LocalDate futureDate;
 	private LocalDate pastDate;
-	
+
 	@Autowired
 	private Diagnosis diagnosis;
-	
+
 	@Autowired
 	private Doctor authoringDoctor;
-	
+
 	@Autowired
 	private PatientFile patientFile;
-	
+
 	@Autowired
 	private Disease disease;
 
@@ -54,7 +54,7 @@ public class DiagnosisTest {
 		diagnosis.setPatientFile(patientFile);
 		diagnosis.setDisease(disease);
 	}
-	
+
 	@Test
 	public void diagnosisValidationValidDateNow() {
 
@@ -81,9 +81,10 @@ public class DiagnosisTest {
 		Set<ConstraintViolation<Diagnosis>> violations = validator.validate(diagnosis);
 
 		assertEquals(1, violations.size());
-		assertEquals("La date de l'élément de dossier patient doit être dans le passé ou aujourd'hui.", violations.iterator().next().getMessage());
+		assertEquals("La date de l'élément médical doit être dans le passé ou aujourd'hui.",
+				violations.iterator().next().getMessage());
 	}
-	
+
 	@Test
 	public void diagnosisValidationInvalidDateNull() {
 
@@ -92,7 +93,7 @@ public class DiagnosisTest {
 		Set<ConstraintViolation<Diagnosis>> violations = validator.validate(diagnosis);
 
 		assertEquals(1, violations.size());
-		assertEquals("La date de l'élément de dossier patient est obligatoire.", violations.iterator().next().getMessage());
+		assertEquals("La date de l'élément médical est obligatoire.", violations.iterator().next().getMessage());
 	}
 
 	@Test
@@ -119,9 +120,9 @@ public class DiagnosisTest {
 
 	@Test
 	public void diagnosisValidationInvalidDiseaseNull() {
-		
+
 		diagnosis.setDisease(null);
-		
+
 		Set<ConstraintViolation<Diagnosis>> violations = validator.validate(diagnosis);
 
 		assertEquals(1, violations.size());

@@ -24,13 +24,13 @@ public class CorrespondenceTest {
 	private LocalDate now;
 	private LocalDate futureDate;
 	private LocalDate pastDate;
-	
+
 	@Autowired
 	private Correspondence correspondence;
-	
+
 	@Autowired
 	private Doctor doctor;
-	
+
 	@Autowired
 	private PatientFile patientFile;
 
@@ -65,7 +65,8 @@ public class CorrespondenceTest {
 		Set<ConstraintViolation<Correspondence>> violations = validator.validate(correspondence);
 
 		assertEquals(1, violations.size());
-		assertEquals("La date de la correspondance doit être dans le futur.", violations.iterator().next().getMessage());
+		assertEquals("La date de la correspondance doit être dans le futur.",
+				violations.iterator().next().getMessage());
 	}
 
 	@Test
@@ -76,7 +77,8 @@ public class CorrespondenceTest {
 		Set<ConstraintViolation<Correspondence>> violations = validator.validate(correspondence);
 
 		assertEquals(1, violations.size());
-		assertEquals("La date de la correspondance doit être dans le futur.", violations.iterator().next().getMessage());
+		assertEquals("La date de la correspondance doit être dans le futur.",
+				violations.iterator().next().getMessage());
 	}
 
 	@Test
@@ -89,29 +91,29 @@ public class CorrespondenceTest {
 		assertEquals(1, violations.size());
 		assertEquals("La date de la correspondance est obligatoire.", violations.iterator().next().getMessage());
 	}
-	
+
 	@Test
 	public void correspondenceValidationInvalidDoctorNull() {
-		
+
 		correspondence.setDoctor(null);
-		
+
 		Set<ConstraintViolation<Correspondence>> violations = validator.validate(correspondence);
 
 		assertEquals(1, violations.size());
 		assertEquals("L'identifiant du médecin est obligatoire.", violations.iterator().next().getMessage());
 
 	}
-	
+
 	@Test
 	public void correspondenceValidationInvalidPatientFileNull() {
-		
+
 		correspondence.setPatientFile(null);
-		
+
 		Set<ConstraintViolation<Correspondence>> violations = validator.validate(correspondence);
 
 		assertEquals(1, violations.size());
 		assertEquals("Le dossier patient est obligatoire.", violations.iterator().next().getMessage());
 
 	}
-	
+
 }

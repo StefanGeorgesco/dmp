@@ -24,16 +24,16 @@ public class ActTest {
 	private LocalDate now;
 	private LocalDate futureDate;
 	private LocalDate pastDate;
-		
+
 	@Autowired
 	private Act act;
-	
+
 	@Autowired
 	private Doctor authoringDoctor;
-	
+
 	@Autowired
 	private PatientFile patientFile;
-	
+
 	@Autowired
 	private MedicalAct medicalAct;
 
@@ -52,7 +52,7 @@ public class ActTest {
 		act.setPatientFile(patientFile);
 		act.setMedicalAct(medicalAct);
 	}
-	
+
 	@Test
 	public void actValidationSymptomValidDateNow() {
 
@@ -79,9 +79,10 @@ public class ActTest {
 		Set<ConstraintViolation<Act>> violations = validator.validate(act);
 
 		assertEquals(1, violations.size());
-		assertEquals("La date de l'élément de dossier patient doit être dans le passé ou aujourd'hui.", violations.iterator().next().getMessage());
+		assertEquals("La date de l'élément médical doit être dans le passé ou aujourd'hui.",
+				violations.iterator().next().getMessage());
 	}
-	
+
 	@Test
 	public void actValidationInvalidDateNull() {
 
@@ -90,7 +91,7 @@ public class ActTest {
 		Set<ConstraintViolation<Act>> violations = validator.validate(act);
 
 		assertEquals(1, violations.size());
-		assertEquals("La date de l'élément de dossier patient est obligatoire.", violations.iterator().next().getMessage());
+		assertEquals("La date de l'élément médical est obligatoire.", violations.iterator().next().getMessage());
 	}
 
 	@Test
@@ -117,9 +118,9 @@ public class ActTest {
 
 	@Test
 	public void actValidationInvalidMedicalActNull() {
-		
+
 		act.setMedicalAct(null);
-		
+
 		Set<ConstraintViolation<Act>> violations = validator.validate(act);
 
 		assertEquals(1, violations.size());

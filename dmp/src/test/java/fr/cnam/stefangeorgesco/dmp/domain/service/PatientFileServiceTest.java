@@ -550,7 +550,7 @@ public class PatientFileServiceTest {
 
 		verify(patientFileItemDAO, times(1)).findById(uuid);
 
-		assertEquals("Elément de dossier patient non trouvé.", ex.getMessage());
+		assertEquals("Elément médical non trouvé.", ex.getMessage());
 	}
 
 	@Test
@@ -1176,7 +1176,7 @@ public class PatientFileServiceTest {
 		verify(patientFileDAO, times(1)).deleteById("P001");
 		verify(userService, times(1)).deleteUser("P001");
 	}
-	
+
 	@Test
 	public void testDeletePatientFileSuccessUserPresent() throws DeleteException {
 		when(correspondenceDAO.deleteAllByPatientFileId("P001")).thenReturn(3);
@@ -1191,7 +1191,7 @@ public class PatientFileServiceTest {
 		verify(patientFileDAO, times(1)).deleteById("P001");
 		verify(userService, times(1)).deleteUser("P001");
 	}
-	
+
 	@Test
 	public void testDeletePatientFileFailurePatientFileDoesNotExist() throws DeleteException {
 		when(correspondenceDAO.deleteAllByPatientFileId("P001")).thenReturn(0);
@@ -1207,5 +1207,5 @@ public class PatientFileServiceTest {
 		verify(userService, times(0)).deleteUser("P001");
 		assertEquals("Le dossier patient n'a pas pu être supprimé.", ex.getMessage());
 	}
-	
+
 }

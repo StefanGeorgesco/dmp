@@ -43,16 +43,16 @@ import fr.cnam.stefangeorgesco.dmp.domain.model.Specialty;
 @AutoConfigureMockMvc
 @SpringBootTest
 public class UserControllerIntegrationTest {
-	
+
 	@Autowired
 	private MockMvc mockMvc;
-	
+
 	@Autowired
 	ObjectMapper objectMapper;
-	
+
 	@Autowired
 	UserDTO userDTO;
-	
+
 	@Autowired
 	private UserDAO userDAO;
 
@@ -64,7 +64,7 @@ public class UserControllerIntegrationTest {
 
 	@Autowired
 	private Address doctorAddress;
-	
+
 	@Autowired
 	private Address patientFileAddress;
 
@@ -73,7 +73,7 @@ public class UserControllerIntegrationTest {
 
 	@Autowired
 	private Doctor doctor;
-	
+
 	@Autowired
 	private PatientFile patientFile;
 
@@ -110,12 +110,12 @@ public class UserControllerIntegrationTest {
 		doctor.setSecurityCode(bCryptPasswordEncoder.encode("12345678"));
 
 		fileDAO.save(doctor);
-		
+
 		patientFileAddress.setStreet1("1 rue de la Paix");
 		patientFileAddress.setCity("Paris");
 		patientFileAddress.setZipcode("75001");
 		patientFileAddress.setCountry("France");
-		
+
 		patientFile.setId("patientFileId");
 		patientFile.setFirstname("Eric");
 		patientFile.setLastname("Martin");
@@ -127,7 +127,7 @@ public class UserControllerIntegrationTest {
 		patientFile.setSecurityCode(bCryptPasswordEncoder.encode("7890"));
 
 		fileDAO.save(patientFile);
-		
+
 		userDTO.setId("doctorId");
 		userDTO.setUsername("username");
 		userDTO.setPassword("password");
@@ -152,119 +152,111 @@ public class UserControllerIntegrationTest {
 
 	@Test
 	public void testCreateDoctorAccountSuccess() throws Exception {
-		
+
 		assertFalse(userDAO.existsById("doctorId"));
-		
+
 		mockMvc.perform(
-				post("/user")
-				.contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(userDTO)))
+				post("/user").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(userDTO)))
 				.andExpect(status().isCreated()).andExpect(content().contentType(MediaType.APPLICATION_JSON))
 				.andExpect(jsonPath("$.message", is("Le compte utilisateur a été créé.")));
-		
+
 		assertTrue(userDAO.existsById("doctorId"));
 	}
-	
 
 	@Test
 	public void testCreatePatientAccountSuccess() throws Exception {
-		
+
 		userDTO.setId("patientFileId");
 		userDTO.setSecurityCode("7890");
-		
+
 		assertFalse(userDAO.existsById("patientFileId"));
-		
+
 		mockMvc.perform(
-				post("/user")
-				.contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(userDTO)))
+				post("/user").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(userDTO)))
 				.andExpect(status().isCreated()).andExpect(content().contentType(MediaType.APPLICATION_JSON))
 				.andExpect(jsonPath("$.message", is("Le compte utilisateur a été créé.")));
-		
+
 		assertTrue(userDAO.existsById("patientFileId"));
 	}
 
 	@Test
 	public void testCreateDoctorAccountFailureUserDTONonValid() throws Exception {
-		
+
 		userDTO.setId(null);
 		userDTO.setUsername("");
 		userDTO.setPassword("123");
-		
+
 		mockMvc.perform(
-				post("/user")
-				.contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(userDTO)))
+				post("/user").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(userDTO)))
 				.andExpect(status().isNotAcceptable()).andExpect(content().contentType(MediaType.APPLICATION_JSON))
 				.andExpect(jsonPath("$.id", is("L'identifiant est obligatoire.")))
 				.andExpect(jsonPath("$.username", is("Le non utilisateur est obligatoire.")))
 				.andExpect(jsonPath("$.password", is("Le mot de passe doit contenir au moins 4 caractères.")));
-		
+
 		assertFalse(userDAO.existsById("doctorId"));
 	}
-	
+
 	@Test
 	public void testCreateDoctorAccountFailureUserAccountAlreadyExistsById() throws Exception {
-		
+
 		user.setId("doctorId");
 		user.setUsername("John");
 		user.setRole("USER");
 		user.setPassword("0123");
 		user.setSecurityCode("0000");
 		userDAO.save(user);
-		
+
 		mockMvc.perform(
-				post("/user")
-				.contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(userDTO)))
+				post("/user").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(userDTO)))
 				.andExpect(status().isConflict()).andExpect(content().contentType(MediaType.APPLICATION_JSON))
 				.andExpect(jsonPath("$.message", is("Le compte utilisateur existe déjà.")));
-		
+
 	}
-	
+
 	@Test
 	public void testCreateDoctorAccountFailureUserAccountAlreadyExistsByUsername() throws Exception {
-		
+
 		user.setId("id");
 		user.setUsername("username");
 		user.setRole("USER");
 		user.setPassword("0123");
 		user.setSecurityCode("0000");
 		userDAO.save(user);
-		
+
 		mockMvc.perform(
-				post("/user")
-				.contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(userDTO)))
+				post("/user").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(userDTO)))
 				.andExpect(status().isConflict()).andExpect(content().contentType(MediaType.APPLICATION_JSON))
 				.andExpect(jsonPath("$.message", is("Le nom d'utilisateur existe déjà.")));
-		
+
 	}
-	
+
 	@Test
 	public void testCreatePatientAccountFailureFileDoesNotExist() throws Exception {
-		
+
 		fileDAO.delete(patientFile);
-		
+
 		userDTO.setId("patientFileId");
 		userDTO.setSecurityCode("7890");
-		
+
 		mockMvc.perform(
-				post("/user")
-				.contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(userDTO)))
+				post("/user").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(userDTO)))
 				.andExpect(status().isNotFound()).andExpect(content().contentType(MediaType.APPLICATION_JSON))
 				.andExpect(jsonPath("$.message", is("Le dossier n'existe pas.")));
-		
+
 		assertFalse(userDAO.existsById("patientFileId"));
 	}
-	
+
 	@Test
 	public void testCreateDoctorAccountFailureCheckUserDataError() throws Exception {
-		
+
 		userDTO.setSecurityCode("1111");
-		
+
 		mockMvc.perform(
-				post("/user")
-				.contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(userDTO)))
+				post("/user").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(userDTO)))
 				.andExpect(status().isBadRequest()).andExpect(content().contentType(MediaType.APPLICATION_JSON))
 				.andExpect(jsonPath("$.message", is("Les données ne correspondent pas.")));
-		
+
 		assertFalse(userDAO.existsById("doctorId"));
 	}
-	
+
 }
