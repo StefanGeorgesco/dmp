@@ -1,7 +1,9 @@
 plugins {
 	id 'org.springframework.boot' version '2.7.3'
 	id 'io.spring.dependency-management' version '1.0.13.RELEASE'
+	id "org.flywaydb.flyway" version "7.10.0"
 	id 'java'
+	id 'jacoco'
 }
 
 group = 'fr.cnam.stefangeorgesco'
@@ -31,4 +33,37 @@ dependencies {
 
 tasks.named('test') {
 	useJUnitPlatform()
+}
+
+ext {
+  dbHost = "${dbHost}"
+  dbPort = "${dbPort}"
+  dbSid = "${dbSid}"
+  dbDriver = "com.mysql.cj.jdbc.Driver"
+  dbUrl = "jdbc:mysql://${dbHost}:${dbPort}/${dbSid}?useSSL=false&serverTimezone=Europe/Paris"
+  dbUser = "${dbUser}"
+  dbPassword = "${dbPassword}"
+}
+
+flyway {
+    url = dbUrl
+    user = dbUser
+    password = dbPassword
+}
+
+test {
+    finalizedBy jacocoTestReport
+}
+
+jacocoTestReport {
+    dependsOn test
+}
+
+bootRun {
+	dependsOn flywayClean, flywayMigrate
+}
+
+javadoc {
+	options.memberLevel = JavadocMemberLevel.PRIVATE
+	options.encoding = 'UTF-8'
 }
