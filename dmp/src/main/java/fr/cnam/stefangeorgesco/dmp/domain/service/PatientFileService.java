@@ -152,7 +152,9 @@ public class PatientFileService {
 	}
 
 	/**
-	 * Service de modification d'un dossier patient.
+	 * Service de modification d'un dossier patient. Les données prises en compte
+	 * dans la modification sont le numéro de téléphone, l'adresse email et
+	 * l'adresse postale. Les autres données ne sont pas considérées.
 	 * 
 	 * @param patientFileDTO l'objet
 	 *                       {@link fr.cnam.stefangeorgesco.dmp.domain.dto.PatientFileDTO}
@@ -301,7 +303,7 @@ public class PatientFileService {
 	 * @return un objet
 	 *         {@link fr.cnam.stefangeorgesco.dmp.domain.dto.CorrespondenceDTO}
 	 *         représentant la correspondance trouvée.
-	 * @throws FinderException
+	 * @throws FinderException correspondance non trouvée.
 	 */
 	public CorrespondenceDTO findCorrespondence(String id) throws FinderException {
 
@@ -334,6 +336,14 @@ public class PatientFileService {
 		return correspondencesDTO;
 	}
 
+	/**
+	 * Service de recherche d'une maladie par son identifiant.
+	 * 
+	 * @param id l'identifiant de la maladie recherchée.
+	 * @return un objet {@link fr.cnam.stefangeorgesco.dmp.domain.dto.DiseaseDTO}
+	 *         représentant la maladie trouvée.
+	 * @throws FinderException maladie non trouvée.
+	 */
 	public DiseaseDTO findDisease(String id) throws FinderException {
 
 		Optional<Disease> optionalDisease = diseaseDAO.findById(id);
@@ -345,6 +355,14 @@ public class PatientFileService {
 		}
 	}
 
+	/**
+	 * Service de recherche d'un acte médical par son identifiant.
+	 * 
+	 * @param id l'identifiant de l'acte médical recherché.
+	 * @return un objet {@link fr.cnam.stefangeorgesco.dmp.domain.dto.MedicalActDTO}
+	 *         représentant l'acte médical trouvé.
+	 * @throws FinderException acte médical non trouvé.
+	 */
 	public MedicalActDTO findMedicalAct(String id) throws FinderException {
 
 		Optional<MedicalAct> optionalMedicalAct = medicalActDAO.findById(id);
@@ -356,6 +374,15 @@ public class PatientFileService {
 		}
 	}
 
+	/**
+	 * Service de recherche de maladies à partir d'une chaîne de caractères.
+	 * 
+	 * @param q     la chaîne de caractères de recherche.
+	 * @param limit le nombre maximum d'objets récupérés.
+	 * @return une liste ({@link java.util.List}) d'objets
+	 *         {@link fr.cnam.stefangeorgesco.dmp.domain.dto.DiseaseDTO}
+	 *         représentant le résultat de la recherche.
+	 */
 	public List<DiseaseDTO> findDiseasesByIdOrDescription(String q, int limit) {
 
 		if ("".equals(q)) {
@@ -370,6 +397,15 @@ public class PatientFileService {
 		return diseasesDTO;
 	}
 
+	/**
+	 * Service de recherche d'actes médicaux à partir d'une chaîne de caractères.
+	 * 
+	 * @param q     la chaîne de caractères de recherche.
+	 * @param limit le nombre maximum d'objets récupérés.
+	 * @return une liste ({@link java.util.List}) d'objets
+	 *         {@link fr.cnam.stefangeorgesco.dmp.domain.dto.MedicalActDTO}
+	 *         représentant le résultat de la recherche.
+	 */
 	public List<MedicalActDTO> findMedicalActsByIdOrDescription(String q, int limit) {
 
 		if ("".equals(q)) {
@@ -384,6 +420,17 @@ public class PatientFileService {
 		return medicalActsDTO;
 	}
 
+	/**
+	 * Service de création d'un élément médical.
+	 * 
+	 * @param patientFileItemDTO l'objet
+	 *                           {@link fr.cnam.stefangeorgesco.dmp.domain.dto.PatientFileItemDTO}
+	 *                           représentant l'élément médical à créer.
+	 * @return un objet
+	 *         {@link fr.cnam.stefangeorgesco.dmp.domain.dto.PatientFileItemDTO}
+	 *         représentant l'élément médical créé.
+	 * @throws CreateException l'élément médical n'a pas pu être créé.
+	 */
 	public PatientFileItemDTO createPatientFileItem(PatientFileItemDTO patientFileItemDTO) throws CreateException {
 
 		PatientFileItem patientFileItem = mapperService.mapToEntity(patientFileItemDTO);
@@ -391,7 +438,7 @@ public class PatientFileService {
 		try {
 			patientFileItem = patientFileItemDAO.save(patientFileItem);
 		} catch (Exception e) {
-			throw new CreateException("L'élément de dossier patient n'a pas pu être créé.");
+			throw new CreateException("L'élément médical n'a pas pu être créé.");
 		}
 
 		patientFileItem = patientFileItemDAO.findById(patientFileItem.getId()).get();
@@ -401,13 +448,68 @@ public class PatientFileService {
 		return respsonse;
 	}
 
+	/**
+	 * Service de recherche d'un élément médical par son identifiant.
+	 * 
+	 * @param uuid l'identifiant de l'élément médical recherché.
+	 * @return un objet
+	 *         {@link fr.cnam.stefangeorgesco.dmp.domain.dto.PatientFileItemDTO}
+	 *         représentant l'élément médical trouvé.
+	 * @throws FinderException élément médical non trouvé.
+	 */
+	public PatientFileItemDTO findPatientFileItem(UUID uuid) throws FinderException {
+
+		Optional<PatientFileItem> optionalPatientFileItem = patientFileItemDAO.findById(uuid);
+
+		if (optionalPatientFileItem.isPresent()) {
+			return mapperService.mapToDTO(optionalPatientFileItem.get());
+		} else {
+			throw new FinderException("Elément médical non trouvé.");
+		}
+	}
+
+	/**
+	 * Service de recherche des éléments médicaux associés à un dossier patient.
+	 * 
+	 * @param patientFileId l'identifiant du dossier patient.
+	 * @return une liste ({@link java.util.List}) d'objets
+	 *         {@link fr.cnam.stefangeorgesco.dmp.domain.dto.PatientFileItemDTO}
+	 *         représentant les éléments médicaux demandés.
+	 */
+	public List<PatientFileItemDTO> findPatientFileItemsByPatientFileId(String patientFileId) {
+
+		Iterable<PatientFileItem> patientFileItems = patientFileItemDAO.findByPatientFileId(patientFileId);
+
+		List<PatientFileItemDTO> patientFileItemsDTO = ((List<PatientFileItem>) patientFileItems).stream()
+				.map(item -> mapperService.mapToDTO(item)).collect(Collectors.toList());
+
+		return patientFileItemsDTO;
+	}
+
+	/**
+	 * Service de modification d'un élément médical. Les données prises en compte
+	 * dans la modification sont les commentaires, l'acte médical pour un acte, la
+	 * maladie pour un diagnostic, le texte du courrier et le médecin destinataire
+	 * pour un courrier et la description pour une prescription ou un symptôme. Les
+	 * autres données ne sont pas considérées.
+	 * 
+	 * @param patientFileItemDTO l'objet
+	 *                           {@link fr.cnam.stefangeorgesco.dmp.domain.dto.PatientFileItemDTO}
+	 *                           représentant l'élément médical à modifier.
+	 * @return un objet
+	 *         {@link fr.cnam.stefangeorgesco.dmp.domain.dto.PatientFileItemDTO}
+	 *         représentant l'élément médical modifié.
+	 * @throws FinderException l'élément médical n'a pas été trouvé.
+	 * @throws UpdateException le type de l'élément médical est incorrect ou
+	 *                         l'élément médical n'a pas pu être modifié.
+	 */
 	public PatientFileItemDTO updatePatientFileItem(PatientFileItemDTO patientFileItemDTO)
 			throws FinderException, UpdateException {
 
 		Optional<PatientFileItem> optionalPatientFileItem = patientFileItemDAO.findById(patientFileItemDTO.getId());
 
 		if (optionalPatientFileItem.isEmpty()) {
-			throw new FinderException("Elément de dossier patient non trouvé.");
+			throw new FinderException("Elément médical non trouvé.");
 		}
 
 		PatientFileItem patientFileItem = optionalPatientFileItem.get();
@@ -427,13 +529,13 @@ public class PatientFileService {
 		} else if (patientFileItemDTO instanceof SymptomDTO && patientFileItem instanceof Symptom) {
 			((Symptom) patientFileItem).setDescription(((SymptomDTO) patientFileItemDTO).getDescription());
 		} else {
-			throw new UpdateException("patient file items types do not match");
+			throw new UpdateException("Le type de l'élément médical est incorrect.");
 		}
 
 		try {
 			patientFileItem = patientFileItemDAO.save(patientFileItem);
 		} catch (Exception e) {
-			throw new UpdateException("L'élément de dossier patient n'a pas pu être modifié.");
+			throw new UpdateException("L'élément médical n'a pas pu être modifié.");
 		}
 
 		PatientFileItemDTO response = mapperService.mapToDTO(patientFileItem);
@@ -441,32 +543,24 @@ public class PatientFileService {
 		return response;
 	}
 
+	/**
+	 * Service de suppression d'un élément médical désigné par son identifiant.
+	 * 
+	 * @param uuid l'identifiant de l'élément médical à supprimer.
+	 */
 	public void deletePatientFileItem(UUID uuid) {
 
 		patientFileItemDAO.deleteById(uuid);
 	}
 
-	public PatientFileItemDTO findPatientFileItem(UUID uuid) throws FinderException {
-
-		Optional<PatientFileItem> optionalPatientFileItem = patientFileItemDAO.findById(uuid);
-
-		if (optionalPatientFileItem.isPresent()) {
-			return mapperService.mapToDTO(optionalPatientFileItem.get());
-		} else {
-			throw new FinderException("Elément de dossier patient non trouvé.");
-		}
-	}
-
-	public List<PatientFileItemDTO> findPatientFileItemsByPatientFileId(String patientFileId) {
-
-		Iterable<PatientFileItem> patientFileItems = patientFileItemDAO.findByPatientFileId(patientFileId);
-
-		List<PatientFileItemDTO> patientFileItemsDTO = ((List<PatientFileItem>) patientFileItems).stream()
-				.map(item -> mapperService.mapToDTO(item)).collect(Collectors.toList());
-
-		return patientFileItemsDTO;
-	}
-
+	/**
+	 * Service de suppression d'un dossier patient désigné par son identifiant. Les
+	 * éventuels correspondances, éléments médicaux et compte utilisateur associés
+	 * au dossier sont également supprimés.
+	 * 
+	 * @param patientFileId l'identifiant du dossier à supprimer.
+	 * @throws DeleteException le dossier patient n'a pas pu être supprimé.
+	 */
 	public void deletePatientFile(String patientFileId) throws DeleteException {
 
 		correspondenceDAO.deleteAllByPatientFileId(patientFileId);

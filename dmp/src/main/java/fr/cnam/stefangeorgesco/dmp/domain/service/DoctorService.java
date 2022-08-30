@@ -120,6 +120,29 @@ public class DoctorService {
 	}
 
 	/**
+	 * Service de recherche de dossiers de médecins à partir d'une chaîne de
+	 * caractères.
+	 * 
+	 * @param q la chaîne de caractères de recherche.
+	 * @return une liste ({@link java.util.List}) d'objets
+	 *         {@link fr.cnam.stefangeorgesco.dmp.domain.dto.DoctorDTO} représentant
+	 *         les dossiers trouvés.
+	 */
+	public List<DoctorDTO> findDoctorsByIdOrFirstnameOrLastname(String q) {
+
+		if ("".equals(q)) {
+			return new ArrayList<DoctorDTO>();
+		}
+
+		Iterable<Doctor> doctors = doctorDAO.findByIdOrFirstnameOrLastname(q);
+
+		List<DoctorDTO> doctorsDTO = ((List<Doctor>) doctors).stream()
+				.map(doctor -> doctorModelMapper.map(doctor, DoctorDTO.class)).collect(Collectors.toList());
+
+		return doctorsDTO;
+	}
+
+	/**
 	 * Service de modification d'un dossier de médecin.
 	 * 
 	 * @param doctorDTO l'objet
@@ -154,6 +177,7 @@ public class DoctorService {
 
 	/**
 	 * Service de suppression d'un dossier de médecin désigné par son identifiant.
+	 * L'éventuel compte utilisateur associé au dossier est également supprimé.
 	 * 
 	 * @param id l'identifiant du dossier à supprimer.
 	 * @throws DeleteException Le dossier de médecin n'a pas pu être supprimé.
@@ -172,29 +196,6 @@ public class DoctorService {
 			System.out.println("Pas de compte utilisateur associé au dossier de médecin supprimé.");
 		}
 
-	}
-
-	/**
-	 * Service de recherche de dossiers de médecins à partir d'une chaîne de
-	 * caractères.
-	 * 
-	 * @param q la chaîne de caractères de recherche.
-	 * @return une liste ({@link java.util.List}) d'objets
-	 *         {@link fr.cnam.stefangeorgesco.dmp.domain.dto.DoctorDTO} représentant
-	 *         les dossiers trouvés.
-	 */
-	public List<DoctorDTO> findDoctorsByIdOrFirstnameOrLastname(String q) {
-
-		if ("".equals(q)) {
-			return new ArrayList<DoctorDTO>();
-		}
-
-		Iterable<Doctor> doctors = doctorDAO.findByIdOrFirstnameOrLastname(q);
-
-		List<DoctorDTO> doctorsDTO = ((List<Doctor>) doctors).stream()
-				.map(doctor -> doctorModelMapper.map(doctor, DoctorDTO.class)).collect(Collectors.toList());
-
-		return doctorsDTO;
 	}
 
 	/**

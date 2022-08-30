@@ -20,6 +20,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 
+/**
+ * Classe de gestion des exceptions fournissant des réponses REST aux requêtes
+ * en erreur.
+ * 
+ * @author Stéfan Georgesco
+ * 
+ */
 @ControllerAdvice
 @RestController
 public class ExceptionController {
@@ -33,6 +40,18 @@ public class ExceptionController {
 		map.put(DeleteException.class, HttpStatus.CONFLICT);
 	}
 
+	/**
+	 * Gestionnaire des erreurs de validation des objets de transfert de données
+	 * transmis dans le corps des requêtes REST.
+	 * 
+	 * @param ex l'exception
+	 *           {@link org.springframework.web.bind.MethodArgumentNotValidException}
+	 *           levée par une ou plusieurs erreurs de validation d'un objet de
+	 *           transfert de données.
+	 * @return un objet {@link java.util.Map} donnant un texte d'erreur pour chaque
+	 *         attribut de l'objet de transfert de données n'ayant pas respecté les
+	 *         contraintes de validation.
+	 */
 	@ResponseStatus(HttpStatus.NOT_ACCEPTABLE)
 	@ExceptionHandler(MethodArgumentNotValidException.class)
 	public Map<String, String> handleValidationExceptions(MethodArgumentNotValidException ex) {
@@ -45,6 +64,15 @@ public class ExceptionController {
 		return errors;
 	}
 
+	/**
+	 * Gestionnaire des exceptions applicatives.
+	 * 
+	 * @param ex l'exception
+	 *           {@link fr.cnam.stefangeorgesco.dmp.exception.domain.ApplicationException}
+	 *           levée par l'application.
+	 * @return une réponse {@link fr.cnam.stefangeorgesco.dmp.api.RestResponse}
+	 *         encapsulée dans un objet org.springframework.http.ResponseEntity.
+	 */
 	@ExceptionHandler(ApplicationException.class)
 	public ResponseEntity<RestResponse> handleApplicationException(ApplicationException ex) {
 		HttpStatus status = HttpStatus.BAD_REQUEST;
@@ -60,6 +88,12 @@ public class ExceptionController {
 		return ResponseEntity.status(status).body(response);
 	}
 
+	/**
+	 * Gestionnaire des autres exceptions.
+	 * 
+	 * @param ex l'exception {@link java.lang.Exception}
+	 * @return une réponse {@link fr.cnam.stefangeorgesco.dmp.api.RestResponse}
+	 */
 	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
 	@ExceptionHandler(Exception.class)
 	public RestResponse handleUnknownException(Exception ex) {

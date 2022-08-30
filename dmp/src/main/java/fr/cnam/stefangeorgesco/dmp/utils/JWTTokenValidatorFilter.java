@@ -20,8 +20,22 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 
+/**
+ * Classe de vérification des Jwt.
+ * 
+ * @author Stéfan Georgesco
+ *
+ */
 public class JWTTokenValidatorFilter extends OncePerRequestFilter {
 
+	/**
+	 * Cherche le Jwt dans l'en-tête
+	 * {@code fr.cnam.stefangeorgesco.dmp.constants.SecurityConstants.JWT_HEADER} de
+	 * la requête {@link javax.servlet.http.HttpServletRequest} et le vérifie. Si la
+	 * vérification est positive, met en place l'authentification dans le contexte
+	 * de sécurité de l'application. Voir
+	 * {@code org.springframework.web.filter.OncePerRequestFilter}.
+	 */
 	@Override
 	public void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
 			throws IOException, ServletException {
@@ -45,6 +59,10 @@ public class JWTTokenValidatorFilter extends OncePerRequestFilter {
 		chain.doFilter(request, response);
 	}
 
+	/**
+	 * Détermine si le filtre doit être inhibé pour la requête. Voir
+	 * {@code org.springframework.web.filter.OncePerRequestFilter}.
+	 */
 	@Override
 	protected boolean shouldNotFilter(HttpServletRequest request) {
 		return request.getMethod().equals("POST") && request.getServletPath().equals("/login");

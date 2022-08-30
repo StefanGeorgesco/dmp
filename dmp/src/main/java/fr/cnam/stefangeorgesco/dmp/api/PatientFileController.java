@@ -307,7 +307,7 @@ public class PatientFileController {
 	 * @throws FinderException le compte utilisateur n'a pas été trouvé ou le
 	 *                         dossier patient n'a pas été trouvé ou l'utilisateur
 	 *                         n'est pas le médecin référent ou correspondant.
-	 * @throws CreateException l'élément de dossier patient n'a pas pu être créé.
+	 * @throws CreateException l'élément médical n'a pas pu être créé.
 	 */
 	@PostMapping("/patient-file/{id}/item")
 	public ResponseEntity<PatientFileItemDTO> createPatientFileItem(
@@ -443,10 +443,10 @@ public class PatientFileController {
 	 *         représentant l'élément médical modifié, encapsulé dans un objet
 	 *         org.springframework.http.ResponseEntity.
 	 * @throws FinderException le compte utilisateur n'a pas été trouvé ou l'élément
-	 *                         de dossier patient n'a pas été trouvé ou ne
-	 *                         correspond pas au dossier patient.
-	 * @throws UpdateException l'utilisateur n'est pas l'auteur de l'élément de
+	 *                         médical n'a pas été trouvé ou ne correspond pas au
 	 *                         dossier patient.
+	 * @throws UpdateException l'utilisateur n'est pas l'auteur de l'élément
+	 *                         médical.
 	 */
 	@PutMapping("/patient-file/{patienfFileId}/item/{itemId}")
 	public ResponseEntity<PatientFileItemDTO> updatePatientFileItem(
@@ -462,15 +462,14 @@ public class PatientFileController {
 		PatientFileItemDTO storedPatientFileItemDTO = patientFileService.findPatientFileItem(patientFileItemId);
 
 		if (!patienfFileId.equals(storedPatientFileItemDTO.getPatientFileId())) {
-			throw new FinderException(
-					"Elément de dossier patient non trouvé pour le dossier patient '" + patienfFileId + "'");
+			throw new FinderException("Elément médical non trouvé pour le dossier patient '" + patienfFileId + "'");
 		}
 
 		boolean userIsAuthor = userId.equals(storedPatientFileItemDTO.getAuthoringDoctorId());
 
 		if (!userIsAuthor) {
 			throw new UpdateException(
-					"L'utilisateur n'est pas l'auteur de l'élément de dossier patient et ne peut pas le modifier.");
+					"L'utilisateur n'est pas l'auteur de l'élément médical et ne peut pas le modifier.");
 		}
 
 		String referringDoctorId = patientFileService.findPatientFile(patienfFileId).getReferringDoctorId();
@@ -513,8 +512,7 @@ public class PatientFileController {
 	 */
 	@DeleteMapping("/patient-file/{patientFileId}/correspondence/{correspondenceId}")
 	public ResponseEntity<RestResponse> deleteCorrespondence(@PathVariable String patientFileId,
-			@PathVariable String correspondenceId, Principal principal)
-			throws FinderException, DeleteException {
+			@PathVariable String correspondenceId, Principal principal) throws FinderException, DeleteException {
 
 		UserDTO userDTO = userService.findUserByUsername(principal.getName());
 
@@ -551,12 +549,12 @@ public class PatientFileController {
 	 * @return une réponse {@link RestResponse} encapsulée dans un objet
 	 *         org.springframework.http.ResponseEntity.
 	 * @throws FinderException le compte utilisateur n'a pas été trouvé ou le
-	 *                         dossier patient n'a pas été trouvé ou l'élément de
-	 *                         dossier patient n'a pas été trouvé ou ne correspond
-	 *                         pas au dossier patient.
+	 *                         dossier patient n'a pas été trouvé ou l'élément
+	 *                         médical n'a pas été trouvé ou ne correspond pas au
+	 *                         dossier patient.
 	 * @throws DeleteException l'utilisateur n'est pas le médecin référent ou
 	 *                         correspondant ou il n'est pas l'auteur de l'élément
-	 *                         de dossier patient.
+	 *                         médical.
 	 */
 	@DeleteMapping("/patient-file/{patienfFileId}/item/{itemId}")
 	public ResponseEntity<RestResponse> deletePatientFileItem(@PathVariable String patienfFileId,
@@ -569,15 +567,14 @@ public class PatientFileController {
 		PatientFileItemDTO storedPatientFileItemDTO = patientFileService.findPatientFileItem(patientFileItemId);
 
 		if (!patienfFileId.equals(storedPatientFileItemDTO.getPatientFileId())) {
-			throw new FinderException(
-					"Elément de dossier patient non trouvé pour le dossier patient '" + patienfFileId + "'");
+			throw new FinderException("Elément médical non trouvé pour le dossier patient '" + patienfFileId + "'");
 		}
 
 		boolean userIsAuthor = userId.equals(storedPatientFileItemDTO.getAuthoringDoctorId());
 
 		if (!userIsAuthor) {
 			throw new DeleteException(
-					"L'utilisateur n'est pas l'auteur de l'élément de dossier patient et ne peut pas le supprimer.");
+					"L'utilisateur n'est pas l'auteur de l'élément médical et ne peut pas le supprimer.");
 		}
 
 		String referringDoctorId = patientFileService.findPatientFile(patienfFileId).getReferringDoctorId();
@@ -599,8 +596,7 @@ public class PatientFileController {
 
 		patientFileService.deletePatientFileItem(patientFileItemId);
 
-		RestResponse response = new RestResponse(HttpStatus.OK.value(),
-				"L'élément de dossier patient a bien été supprimé.");
+		RestResponse response = new RestResponse(HttpStatus.OK.value(), "L'élément médical a bien été supprimé.");
 
 		return ResponseEntity.ok(response);
 

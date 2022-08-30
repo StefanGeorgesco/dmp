@@ -97,8 +97,8 @@ public class MapperService {
 	 * {@link fr.cnam.stefangeorgesco.dmp.domain.model.PatientFileItem}.
 	 * 
 	 * @param itemDTO l'objet
-	 *             {@link fr.cnam.stefangeorgesco.dmp.domain.dto.PatientFileItemDTO}
-	 *             à convertir.
+	 *                {@link fr.cnam.stefangeorgesco.dmp.domain.dto.PatientFileItemDTO}
+	 *                à convertir.
 	 * @return l'objet
 	 *         {@link fr.cnam.stefangeorgesco.dmp.domain.model.PatientFileItem}
 	 *         résultant de la conversion.

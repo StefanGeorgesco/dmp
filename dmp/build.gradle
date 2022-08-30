@@ -81,7 +81,6 @@ bootRun {
 }
 
 javadoc {
-	options {
-        encoding 'UTF-8'
-    }
+	options.memberLevel = JavadocMemberLevel.PRIVATE
+	options.encoding = 'UTF-8'
 }
