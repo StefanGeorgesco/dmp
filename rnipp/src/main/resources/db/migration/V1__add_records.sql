@@ -20,3 +20,4 @@ INSERT INTO `t_record` VALUES ('P011', 'Marie-Louise', 'Leroux', '2000-11-30');
 INSERT INTO `t_record` VALUES ('P012', 'Julio', 'Bernard', '1962-06-29');
 INSERT INTO `t_record` VALUES ('P013', 'Magnus', 'Jensen', '1986-02-27');
 INSERT INTO `t_record` VALUES ('P014', 'Fatih', 'Toraman', '1999-05-22');
+INSERT INTO `t_record` VALUES ('P015', 'Marc', 'Dubois', '1975-06-12');
