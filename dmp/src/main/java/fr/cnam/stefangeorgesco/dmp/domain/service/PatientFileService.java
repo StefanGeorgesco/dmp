@@ -58,7 +58,7 @@ import fr.cnam.stefangeorgesco.dmp.utils.PasswordGenerator;
 public class PatientFileService {
 
 	@Autowired
-	private RNIPPService rnippService;
+	private RnippService rnippService;
 
 	@Autowired
 	private UserService userService;

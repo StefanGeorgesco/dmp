@@ -62,7 +62,7 @@ import fr.cnam.stefangeorgesco.dmp.domain.model.Address;
 import fr.cnam.stefangeorgesco.dmp.domain.model.Doctor;
 import fr.cnam.stefangeorgesco.dmp.domain.model.Mail;
 import fr.cnam.stefangeorgesco.dmp.domain.model.PatientFile;
-import fr.cnam.stefangeorgesco.dmp.domain.service.RNIPPService;
+import fr.cnam.stefangeorgesco.dmp.domain.service.RnippService;
 
 @TestPropertySource("/application-test.properties")
 @AutoConfigureMockMvc
@@ -90,7 +90,7 @@ public class PatientFileControllerIntegrationTest {
 	ObjectMapper objectMapper;
 
 	@MockBean
-	private RNIPPService rnippService;
+	private RnippService rnippService;
 
 	@Autowired
 	private UserDAO userDAO;

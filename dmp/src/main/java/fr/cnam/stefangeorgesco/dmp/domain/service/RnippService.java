@@ -18,7 +18,7 @@ import reactor.core.publisher.Mono;
  *
  */
 @Service
-public class RNIPPService {
+public class RnippService {
 
 	@Autowired
 	private WebClient rnippClient;

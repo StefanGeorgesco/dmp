@@ -75,7 +75,7 @@ import fr.cnam.stefangeorgesco.dmp.exception.domain.UpdateException;
 public class PatientFileServiceIntegrationTest {
 
 	@MockBean
-	private RNIPPService rnippService;
+	private RnippService rnippService;
 
 	@Autowired
 	private UserDAO userDAO;

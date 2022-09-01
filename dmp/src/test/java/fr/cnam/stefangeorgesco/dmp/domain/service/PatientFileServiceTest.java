@@ -73,7 +73,7 @@ import fr.cnam.stefangeorgesco.dmp.exception.domain.FinderException;
 public class PatientFileServiceTest {
 
 	@MockBean
-	private RNIPPService rnippService;
+	private RnippService rnippService;
 
 	@MockBean
 	private UserService userService;
@@ -412,7 +412,7 @@ public class PatientFileServiceTest {
 	}
 
 	@Test
-	public void testCreatePatientFileFailureRNIPPServiceThrowsException() throws CheckException {
+	public void testCreatePatientFileFailureRnippServiceThrowsException() throws CheckException {
 		doThrow(new CheckException("patient data did not match")).when(rnippService).checkPatientData(patientFileDTO);
 
 		CheckException ex = assertThrows(CheckException.class,
