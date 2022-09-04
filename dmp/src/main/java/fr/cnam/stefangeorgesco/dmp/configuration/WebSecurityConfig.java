@@ -80,7 +80,7 @@ public class WebSecurityConfig {
 						.mvcMatchers(HttpMethod.GET, "/disease").hasRole("DOCTOR")
 						.mvcMatchers(HttpMethod.GET, "/medical-act/{id}").hasRole("DOCTOR")
 						.mvcMatchers(HttpMethod.GET, "/medical-act").hasRole("DOCTOR")
-						.mvcMatchers(HttpMethod.GET, "/**").permitAll()
+						.mvcMatchers(HttpMethod.GET, "/", "/assets/**").permitAll()
 						.anyRequest().denyAll())
 						.httpBasic(Customizer.withDefaults());
 		
