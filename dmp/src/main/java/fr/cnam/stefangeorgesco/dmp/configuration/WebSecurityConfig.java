@@ -5,6 +5,7 @@ import java.util.Collections;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -12,6 +13,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -23,6 +25,9 @@ import org.springframework.web.cors.CorsConfigurationSource;
 @EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true, jsr250Enabled = true)
 public class WebSecurityConfig {
 
+	@Autowired
+	UserDetailsService userDetailsService;
+	
 	@Value("${frontend.url}")
 	private String frontEndUrl;
 
@@ -52,7 +57,7 @@ public class WebSecurityConfig {
 						return config;
 					}
 				}).and().csrf().disable()
-				.addFilterBefore(new JWTTokenValidatorFilter(jwtKey, jwtHeader), BasicAuthenticationFilter.class)
+				.addFilterBefore(new JWTTokenValidatorFilter(jwtKey, jwtHeader, userDetailsService), BasicAuthenticationFilter.class)
 				.addFilterAfter(new JWTTokenGeneratorFilter(jwtKey, jwtHeader, jwtValidityPeriod),
 						BasicAuthenticationFilter.class)
 				.authorizeHttpRequests((auth) -> auth

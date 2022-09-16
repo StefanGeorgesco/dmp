@@ -13,6 +13,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import io.jsonwebtoken.Claims;
@@ -31,10 +32,13 @@ public class JWTTokenValidatorFilter extends OncePerRequestFilter {
 	
 	private String jwtHeader;
 	
-	public JWTTokenValidatorFilter(String jwtKey, String jwtHeader) {
+	private UserDetailsService userDetailsService;
+	
+	public JWTTokenValidatorFilter(String jwtKey, String jwtHeader, UserDetailsService userDetailsService) {
 		super();
 		this.jwtKey = jwtKey;
 		this.jwtHeader = jwtHeader;
+		this.userDetailsService = userDetailsService;
 	}
 
 	/**
@@ -56,6 +60,7 @@ public class JWTTokenValidatorFilter extends OncePerRequestFilter {
 				Claims claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(jwt).getBody();
 
 				String username = String.valueOf(claims.get("username"));
+				userDetailsService.loadUserByUsername(username); // check user (still) exists
 				String authorities = (String) claims.get("authorities");
 				Authentication auth = new UsernamePasswordAuthenticationToken(username, null,
 						AuthorityUtils.commaSeparatedStringToAuthorityList(authorities));
