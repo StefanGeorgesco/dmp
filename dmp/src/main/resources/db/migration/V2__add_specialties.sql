@@ -6,48 +6,49 @@ CREATE TABLE `t_specialty` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB;
 
-INSERT INTO `t_specialty` VALUES ('S001', 'allergologie');
-INSERT INTO `t_specialty` VALUES ('S002', 'immunologie');
-INSERT INTO `t_specialty` VALUES ('S003', 'anesthésiologie');
-INSERT INTO `t_specialty` VALUES ('S004', 'andrologie');
-INSERT INTO `t_specialty` VALUES ('S005', 'cardiologie');
-INSERT INTO `t_specialty` VALUES ('S006', 'chirurgie cardiaque');
-INSERT INTO `t_specialty` VALUES ('S007', 'chirurgie esthétique, plastique et reconstructive');
-INSERT INTO `t_specialty` VALUES ('S008', 'chirurgie générale');
-INSERT INTO `t_specialty` VALUES ('S009', 'chirurgie maxillo-faciale');
-INSERT INTO `t_specialty` VALUES ('S010', 'chirurgie pédiatrique');
-INSERT INTO `t_specialty` VALUES ('S011', 'chirurgie thoracique');
-INSERT INTO `t_specialty` VALUES ('S012', 'chirurgie vasculaire');
-INSERT INTO `t_specialty` VALUES ('S013', 'neurochirurgie');
-INSERT INTO `t_specialty` VALUES ('S014', 'dermatologie');
-INSERT INTO `t_specialty` VALUES ('S015', 'endocrinologie');
-INSERT INTO `t_specialty` VALUES ('S016', 'gastro-entérologie');
-INSERT INTO `t_specialty` VALUES ('S017', 'gériatrie');
-INSERT INTO `t_specialty` VALUES ('S018', 'gynécologie');
-INSERT INTO `t_specialty` VALUES ('S019', 'hématologie');
-INSERT INTO `t_specialty` VALUES ('S020', 'hépatologie');
-INSERT INTO `t_specialty` VALUES ('S021', 'infectiologie');
-INSERT INTO `t_specialty` VALUES ('S022', 'médecine aiguë');
-INSERT INTO `t_specialty` VALUES ('S023', 'médecine du travail');
-INSERT INTO `t_specialty` VALUES ('S024', 'médecine générale');
-INSERT INTO `t_specialty` VALUES ('S025', 'médecine interne');
-INSERT INTO `t_specialty` VALUES ('S026', 'médecine nucléaire');
-INSERT INTO `t_specialty` VALUES ('S027', 'médecine palliative');
-INSERT INTO `t_specialty` VALUES ('S028', 'médecine physique');
-INSERT INTO `t_specialty` VALUES ('S029', 'médecine préventive');
-INSERT INTO `t_specialty` VALUES ('S030', 'néonatologie');
-INSERT INTO `t_specialty` VALUES ('S031', 'néphrologie');
-INSERT INTO `t_specialty` VALUES ('S032', 'neurologie');
-INSERT INTO `t_specialty` VALUES ('S033', 'odontologie');
-INSERT INTO `t_specialty` VALUES ('S034', 'oncologie');
-INSERT INTO `t_specialty` VALUES ('S035', 'obstétrique');
-INSERT INTO `t_specialty` VALUES ('S036', 'ophtalmologie');
-INSERT INTO `t_specialty` VALUES ('S037', 'orthopédie');
-INSERT INTO `t_specialty` VALUES ('S038', 'oto-rhino-laryngologie');
-INSERT INTO `t_specialty` VALUES ('S039', 'pédiatrie');
-INSERT INTO `t_specialty` VALUES ('S040', 'pneumologie');
-INSERT INTO `t_specialty` VALUES ('S041', 'psychiatrie');
-INSERT INTO `t_specialty` VALUES ('S042', 'radiologie');
-INSERT INTO `t_specialty` VALUES ('S043', 'radiothérapie');
-INSERT INTO `t_specialty` VALUES ('S044', 'rhumatologie');
-INSERT INTO `t_specialty` VALUES ('S045', 'urologie');
+INSERT INTO `t_specialty` VALUES 
+('S001', 'allergologie'),
+('S002', 'immunologie'),
+('S003', 'anesthésiologie'),
+('S004', 'andrologie'),
+('S005', 'cardiologie'),
+('S006', 'chirurgie cardiaque'),
+('S007', 'chirurgie esthétique, plastique et reconstructive'),
+('S008', 'chirurgie générale'),
+('S009', 'chirurgie maxillo-faciale'),
+('S010', 'chirurgie pédiatrique'),
+('S011', 'chirurgie thoracique'),
+('S012', 'chirurgie vasculaire'),
+('S013', 'neurochirurgie'),
+('S014', 'dermatologie'),
+('S015', 'endocrinologie'),
+('S016', 'gastro-entérologie'),
+('S017', 'gériatrie'),
+('S018', 'gynécologie'),
+('S019', 'hématologie'),
+('S020', 'hépatologie'),
+('S021', 'infectiologie'),
+('S022', 'médecine aiguë'),
+('S023', 'médecine du travail'),
+('S024', 'médecine générale'),
+('S025', 'médecine interne'),
+('S026', 'médecine nucléaire'),
+('S027', 'médecine palliative'),
+('S028', 'médecine physique'),
+('S029', 'médecine préventive'),
+('S030', 'néonatologie'),
+('S031', 'néphrologie'),
+('S032', 'neurologie'),
+('S033', 'odontologie'),
+('S034', 'oncologie'),
+('S035', 'obstétrique'),
+('S036', 'ophtalmologie'),
+('S037', 'orthopédie'),
+('S038', 'oto-rhino-laryngologie'),
+('S039', 'pédiatrie'),
+('S040', 'pneumologie'),
+('S041', 'psychiatrie'),
+('S042', 'radiologie'),
+('S043', 'radiothérapie'),
+('S044', 'rhumatologie'),
+('S045', 'urologie');
