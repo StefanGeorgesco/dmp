@@ -27,10 +27,10 @@ import fr.cnam.stefangeorgesco.dmp.utils.JWTTokenValidatorFilter;
 public class WebSecurityConfig {
 
 	@Value("${frontend.url}")
-	String frontEndUrl;
+	private String frontEndUrl;
 
 	@Bean
-	SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
+	public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
 		
 		http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and().cors()
 				.configurationSource(new CorsConfigurationSource() {
