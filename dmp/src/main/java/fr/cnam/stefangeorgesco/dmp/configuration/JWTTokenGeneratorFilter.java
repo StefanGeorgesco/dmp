@@ -1,4 +1,4 @@
-package fr.cnam.stefangeorgesco.dmp.utils;
+package fr.cnam.stefangeorgesco.dmp.configuration;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -21,8 +21,6 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 
-import fr.cnam.stefangeorgesco.dmp.constants.SecurityConstants;
-
 /**
  * Classe de génération des Jwt.
  * 
@@ -30,6 +28,19 @@ import fr.cnam.stefangeorgesco.dmp.constants.SecurityConstants;
  *
  */
 public class JWTTokenGeneratorFilter extends OncePerRequestFilter {
+
+	private String jwtKey;
+	
+	private String jwtHeader;
+	
+	private long jwtValidityPeriod;
+
+	public JWTTokenGeneratorFilter(String jwtKey, String jwtHeader, long jwtValidityPeriod) {
+		super();
+		this.jwtKey = jwtKey;
+		this.jwtHeader = jwtHeader;
+		this.jwtValidityPeriod = jwtValidityPeriod;
+	}
 
 	/**
 	 * Génère le Jwt et l'ajoute à l'en-tête
@@ -42,13 +53,13 @@ public class JWTTokenGeneratorFilter extends OncePerRequestFilter {
 			throws IOException, ServletException {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		if (null != authentication) {
-			SecretKey key = Keys.hmacShaKeyFor(SecurityConstants.JWT_KEY.getBytes(StandardCharsets.UTF_8));
+			SecretKey key = Keys.hmacShaKeyFor(jwtKey.getBytes(StandardCharsets.UTF_8));
 			String jwt = Jwts.builder().setIssuer("fr.cnam.stefangeorgesco.dmp").setSubject("JWT Token")
 					.claim("username", authentication.getName())
 					.claim("authorities", populateAuthorities(authentication.getAuthorities())).setIssuedAt(new Date())
-					.setExpiration(new Date((new Date()).getTime() + SecurityConstants.JWT_VALIDITY_PERIOD))
+					.setExpiration(new Date((new Date()).getTime() + jwtValidityPeriod))
 					.signWith(key).compact();
-			response.setHeader(SecurityConstants.JWT_HEADER, jwt);
+			response.setHeader(jwtHeader, jwt);
 		}
 
 		chain.doFilter(request, response);

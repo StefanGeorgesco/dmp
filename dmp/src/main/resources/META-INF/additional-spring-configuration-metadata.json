@@ -1,14 +1,27 @@
-{
-	"properties": [
-		{
-			"name": "frontend.url",
-			"type": "java.lang.String",
-			"description": "front-end url for development (cors settings)"
-		},
-		{
-			"name": "rnipp.url",
-			"type": "java.lang.String",
-			"description": "Rnipp Service url"
-		}
-	]
-}
+{"properties": [
+  {
+    "name": "frontend.url",
+    "type": "java.lang.String",
+    "description": "front-end url for development (cors settings)"
+  },
+  {
+    "name": "rnipp.url",
+    "type": "java.lang.String",
+    "description": "Rnipp Service url"
+  },
+  {
+    "name": "jwt.key",
+    "type": "java.lang.String",
+    "description": "JWT signature key"
+  },
+  {
+    "name": "jwt.header",
+    "type": "java.lang.String",
+    "description": "http header for JWT"
+  },
+  {
+    "name": "jwt.validity.period",
+    "type": "java.lang.Long",
+    "description": "JWT validity period"
+  }
+]}

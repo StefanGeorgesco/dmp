@@ -19,15 +19,21 @@ import org.springframework.security.web.authentication.www.BasicAuthenticationFi
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 
-import fr.cnam.stefangeorgesco.dmp.utils.JWTTokenGeneratorFilter;
-import fr.cnam.stefangeorgesco.dmp.utils.JWTTokenValidatorFilter;
-
 @Configuration
 @EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true, jsr250Enabled = true)
 public class WebSecurityConfig {
 
 	@Value("${frontend.url}")
 	private String frontEndUrl;
+
+	@Value("${jwt.key}")
+	private String jwtKey;
+
+	@Value("${jwt.header}")
+	private String jwtHeader;
+
+	@Value("${jwt.validity.period}")
+	private long jwtValidityPeriod;
 
 	@Bean
 	public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
@@ -46,8 +52,9 @@ public class WebSecurityConfig {
 						return config;
 					}
 				}).and().csrf().disable()
-				.addFilterBefore(new JWTTokenValidatorFilter(), BasicAuthenticationFilter.class)
-				.addFilterAfter(new JWTTokenGeneratorFilter(), BasicAuthenticationFilter.class)
+				.addFilterBefore(new JWTTokenValidatorFilter(jwtKey, jwtHeader), BasicAuthenticationFilter.class)
+				.addFilterAfter(new JWTTokenGeneratorFilter(jwtKey, jwtHeader, jwtValidityPeriod),
+						BasicAuthenticationFilter.class)
 				.authorizeHttpRequests((auth) -> auth
 						.mvcMatchers(HttpMethod.POST, "/login").permitAll()
 						.mvcMatchers(HttpMethod.POST, "/user").permitAll()
@@ -85,7 +92,6 @@ public class WebSecurityConfig {
 						.httpBasic(Customizer.withDefaults());
 		
 		return http.build();
-
 	}
 
 	@Bean

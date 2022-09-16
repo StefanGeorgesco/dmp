@@ -1,4 +1,4 @@
-package fr.cnam.stefangeorgesco.dmp.utils;
+package fr.cnam.stefangeorgesco.dmp.configuration;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -15,7 +15,6 @@ import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import fr.cnam.stefangeorgesco.dmp.constants.SecurityConstants;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
@@ -27,6 +26,16 @@ import io.jsonwebtoken.security.Keys;
  *
  */
 public class JWTTokenValidatorFilter extends OncePerRequestFilter {
+	
+	private String jwtKey;
+	
+	private String jwtHeader;
+	
+	public JWTTokenValidatorFilter(String jwtKey, String jwtHeader) {
+		super();
+		this.jwtKey = jwtKey;
+		this.jwtHeader = jwtHeader;
+	}
 
 	/**
 	 * Cherche le Jwt dans l'en-tête
@@ -39,10 +48,10 @@ public class JWTTokenValidatorFilter extends OncePerRequestFilter {
 	@Override
 	public void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
 			throws IOException, ServletException {
-		String jwt = request.getHeader(SecurityConstants.JWT_HEADER);
+		String jwt = request.getHeader(jwtHeader);
 		if (null != jwt) {
 			try {
-				SecretKey key = Keys.hmacShaKeyFor(SecurityConstants.JWT_KEY.getBytes(StandardCharsets.UTF_8));
+				SecretKey key = Keys.hmacShaKeyFor(jwtKey.getBytes(StandardCharsets.UTF_8));
 
 				Claims claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(jwt).getBody();
 
